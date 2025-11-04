@@ -4,6 +4,7 @@
 // File          : reset_sync.v
 // Author        : Jiwoon Lee (@metr0jw)
 // Organization  : Kwangwoon University, Seoul, South Korea
+// Contact       : jwlee@linux.com
 // Description   : Asynchronous reset synchronizer
 //-----------------------------------------------------------------------------
 

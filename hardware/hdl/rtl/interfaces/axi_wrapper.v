@@ -4,6 +4,7 @@
 // File          : axi_wrapper.v
 // Author        : Jiwoon Lee (@metr0jw)
 // Organization  : Kwangwoon University, Seoul, South Korea
+// Contact       : jwlee@linux.com
 // Description   : AXI interfaces for PS-PL communication
 //-----------------------------------------------------------------------------
 

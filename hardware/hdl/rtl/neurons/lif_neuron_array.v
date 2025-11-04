@@ -4,6 +4,7 @@
 // File          : lif_neuron_array.v
 // Author        : Jiwoon Lee (@metr0jw)
 // Organization  : Kwangwoon University, Seoul, South Korea
+// Contact       : jwlee@linux.com
 // Description   : Array of LIF neurons with shared processing units
 //-----------------------------------------------------------------------------
 

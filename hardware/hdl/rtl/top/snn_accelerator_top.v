@@ -4,6 +4,7 @@
 // File          : snn_accelerator_top.v
 // Author        : Jiwoon Lee (@metr0jw)
 // Organization  : Kwangwoon University, Seoul, South Korea
+// Contact       : jwlee@linux.com
 // Description   : Top-level IP core for Zynq-based SNN accelerator
 //-----------------------------------------------------------------------------
 
@@ -17,9 +18,22 @@ module snn_accelerator_top #(
     
     // SNN Parameters
     parameter NUM_NEURONS           = 64,
-    parameter NUM_AXONS            = 64,
-    parameter NEURON_ID_WIDTH      = $clog2(NUM_NEURONS),
-    parameter AXON_ID_WIDTH        = $clog2(NUM_AXONS),
+    parameter NUM_AXONS             = 64,
+    // Calculate log2 ceiling manually for Verilog-2001 compatibility
+    parameter NEURON_ID_WIDTH      = (NUM_NEURONS <= 2) ? 1 :
+                                    (NUM_NEURONS <= 4) ? 2 :
+                                    (NUM_NEURONS <= 8) ? 3 :
+                                    (NUM_NEURONS <= 16) ? 4 :
+                                    (NUM_NEURONS <= 32) ? 5 :
+                                    (NUM_NEURONS <= 64) ? 6 :
+                                    (NUM_NEURONS <= 128) ? 7 : 8,
+    parameter AXON_ID_WIDTH        = (NUM_AXONS <= 2) ? 1 :
+                                    (NUM_AXONS <= 4) ? 2 :
+                                    (NUM_AXONS <= 8) ? 3 :
+                                    (NUM_AXONS <= 16) ? 4 :
+                                    (NUM_AXONS <= 32) ? 5 :
+                                    (NUM_AXONS <= 64) ? 6 :
+                                    (NUM_AXONS <= 128) ? 7 : 8,
     parameter DATA_WIDTH           = 16,
     parameter WEIGHT_WIDTH         = 8,
     parameter LEAK_WIDTH           = 8,
@@ -141,6 +155,26 @@ module snn_accelerator_top #(
     wire                        output_spike_valid;
     wire [NEURON_ID_WIDTH-1:0]  output_spike_neuron_id;
     wire                        output_spike_ready;
+
+    // Width adaptation helpers for AXI wrapper (8-bit neuron IDs)
+    wire [7:0] spike_in_neuron_id_axi;
+    wire [7:0] spike_out_neuron_id_axi;
+
+generate
+    if (AXON_ID_WIDTH >= 8) begin : gen_spike_in_slice
+        assign spike_in_neuron_id_axi = input_spike_neuron_id[7:0];
+    end else begin : gen_spike_in_extend
+        assign spike_in_neuron_id_axi = {{(8-AXON_ID_WIDTH){1'b0}}, input_spike_neuron_id[AXON_ID_WIDTH-1:0]};
+    end
+endgenerate
+
+generate
+    if (NEURON_ID_WIDTH >= 8) begin : gen_spike_out_slice
+        assign spike_out_neuron_id_axi = output_spike_neuron_id[7:0];
+    end else begin : gen_spike_out_extend
+        assign spike_out_neuron_id_axi = {{(8-NEURON_ID_WIDTH){1'b0}}, output_spike_neuron_id[NEURON_ID_WIDTH-1:0]};
+    end
+endgenerate
     
     // Status signals
     wire [31:0]                 neuron_spike_count;
@@ -213,11 +247,11 @@ module snn_accelerator_top #(
         
         // Spike interface
         .spike_in_valid(input_spike_valid),
-        .spike_in_neuron_id(input_spike_neuron_id[7:0]),
+        .spike_in_neuron_id(spike_in_neuron_id_axi),
         .spike_in_weight(input_spike_weight),
         .spike_in_ready(input_spike_ready),
         .spike_out_valid(output_spike_valid),
-        .spike_out_neuron_id(output_spike_neuron_id[7:0]),
+        .spike_out_neuron_id(spike_out_neuron_id_axi),
         .spike_out_ready(output_spike_ready)
     );
     
@@ -251,7 +285,7 @@ module snn_accelerator_top #(
         // Weight configuration
         .weight_we(config_reg[8] && (s_axi_awaddr[15:12] == 4'h1)),
         .weight_addr_axon(s_axi_awaddr[AXON_ID_WIDTH+7:8]),
-        .weight_addr_neuron(s_axi_awaddr[7:0]),
+    .weight_addr_neuron(s_axi_awaddr[NEURON_ID_WIDTH-1:0]),
         .weight_data({s_axi_wdata[8], s_axi_wdata[7:0]}),
         
         .enable(snn_enable)

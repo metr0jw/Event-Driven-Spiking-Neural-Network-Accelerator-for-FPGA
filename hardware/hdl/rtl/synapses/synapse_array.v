@@ -4,6 +4,7 @@
 // File          : synapse_array.v
 // Author        : Jiwoon Lee (@metr0jw)
 // Organization  : Kwangwoon University, Seoul, South Korea
+// Contact       : jwlee@linux.com
 // Description   : Configurable synapse array with BRAM weight storage
 //-----------------------------------------------------------------------------
 

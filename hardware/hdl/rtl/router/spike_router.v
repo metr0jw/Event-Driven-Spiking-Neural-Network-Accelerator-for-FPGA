@@ -4,6 +4,7 @@
 // File          : spike_router.v
 // Author        : Jiwoon Lee (@metr0jw)
 // Organization  : Kwangwoon University, Seoul, South Korea
+// Contact       : jwlee@linux.com
 // Description   : Routes spikes between neurons with configurable connectivity
 //-----------------------------------------------------------------------------
 
@@ -13,7 +14,14 @@ module spike_router #(
     parameter NUM_NEURONS       = 64,
     parameter MAX_FANOUT        = 32,      // Max connections per neuron
     parameter WEIGHT_WIDTH      = 8,
-    parameter NEURON_ID_WIDTH   = $clog2(NUM_NEURONS),
+    // Calculate log2 ceiling manually for Verilog-2001 compatibility
+    parameter NEURON_ID_WIDTH   = (NUM_NEURONS <= 2) ? 1 :
+                                 (NUM_NEURONS <= 4) ? 2 :
+                                 (NUM_NEURONS <= 8) ? 3 :
+                                 (NUM_NEURONS <= 16) ? 4 :
+                                 (NUM_NEURONS <= 32) ? 5 :
+                                 (NUM_NEURONS <= 64) ? 6 :
+                                 (NUM_NEURONS <= 128) ? 7 : 8,
     parameter DELAY_WIDTH       = 8,
     parameter FIFO_DEPTH        = 256
 )(
