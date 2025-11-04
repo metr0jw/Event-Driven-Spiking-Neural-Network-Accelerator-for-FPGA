@@ -67,6 +67,8 @@ This project implements a complete event-driven spiking neural network (SNN) acc
 - [x] **Communication Interface**: AXI-based PC communication
 
 ### In Progress
+- [ ] **Fix bugs in existing features**
+- [ ] **Triplet STDP**: Enhanced learning stability
 - [ ] **Advanced Connectivity**: Recurrent and convolutional layer support
 - [ ] **Optimized Bitstreams**: Power and performance optimization
 - [ ] **Real-time Demos**: Live inference applications
@@ -385,9 +387,7 @@ vivado -mode batch -source create_vivado_project.tcl -tclargs [BOARD]
 
 # Supported boards:
 # - pynq-z2       # PYNQ-Z2 development board
-# - zcu104        # ZCU104 evaluation board  
-# - zc706         # ZC706 evaluation board
-# - custom        # Custom Zynq-based board
+# Support for other boards is not planned since I don't own any other boards.
 ```
 
 **Configuration Examples:**
@@ -562,14 +562,15 @@ with SNNAccelerator() as accelerator:
 
 ## Performance Characteristics
 
-| Metric | Value |
-|--------|--------|
-| **Max Neurons** | 64 (current), 1024+ (scalable) |
-| **Spike Rate** | 100K spikes/second |
-| **Latency** | <10μs per spike |
-| **Power** | ~2W (PYNQ-Z2) |
-| **Precision** | 8-bit weights, 16-bit membrane potential |
+| Metric | Current Implementation | Planned/Projected | Notes |
+|--------|------------------------|-------------------|-------|
+| **Max Neurons** | 64 neurons synthesized and verified in RTL simulation | ≥1024 neurons via time-multiplexed expansion | Scaling gated by BRAM budget and router partitioning |
+| **Spike Throughput** | Characterization in progress under Icarus/Vivado sim benches | ≥100K spikes/s at 100 MHz fabric clock | Projection assumes one spike accepted per cycle after router optimizations |
+| **End-to-End Latency** | Microsecond-scale in-cycle pipeline (pending hardware timestamping) | <10 µs per spike including AXI transfer | Latency dominated by AXI ingress + neuron update stages |
+| **Power (Board)** | TBD (hardware bring-up scheduled) | ~2 W on PYNQ-Z2 during inference workload | Estimate from Vivado power analysis with 20% toggle rate |
+| **Numeric Precision** | 8-bit weights, 16-bit membrane potential | Higher precision paths under evaluation | Fixed-point format matches current RTL + software stack |
 
+Bench characterization will be updated once on-board measurements complete.
 
 ## Contributing
 
