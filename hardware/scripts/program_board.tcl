@@ -4,6 +4,7 @@
 ## File          : program_board.tcl
 ## Author        : Jiwoon Lee (@metr0jw)
 ## Organization  : Kwangwoon University, Seoul, South Korea
+## Contact       : jwlee@linux.com
 ## Description   : Programs PYNQ-Z2 board with bitstream
 ##-----------------------------------------------------------------------------
 

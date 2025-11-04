@@ -4,6 +4,7 @@
 ## File          : create_block_design.tcl
 ## Author        : Jiwoon Lee (@metr0jw)
 ## Organization  : Kwangwoon University, Seoul, South Korea
+## Contact       : jwlee@linux.com
 ## Description   : Creates Zynq block design for PYNQ-Z2
 ##-----------------------------------------------------------------------------
 

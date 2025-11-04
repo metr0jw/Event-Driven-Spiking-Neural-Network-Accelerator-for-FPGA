@@ -4,6 +4,7 @@
 ## File          : build_bitstream.tcl
 ## Author        : Jiwoon Lee (@metr0jw)
 ## Organization  : Kwangwoon University, Seoul, South Korea
+## Contact       : jwlee@linux.com
 ## Description   : Automated synthesis, implementation, and bitstream generation
 ##-----------------------------------------------------------------------------
 

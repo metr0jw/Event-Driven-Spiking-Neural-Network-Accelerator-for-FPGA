@@ -4,6 +4,7 @@
 ## File          : create_project.tcl
 ## Author        : Jiwoon Lee (@metr0jw)
 ## Organization  : Kwangwoon University, Seoul, South Korea
+## Contact       : jwlee@linux.com
 ## Description   : Creates Vivado project for PYNQ-Z2 SNN accelerator
 ##-----------------------------------------------------------------------------
 

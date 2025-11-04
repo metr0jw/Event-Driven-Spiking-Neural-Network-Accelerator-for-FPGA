@@ -4,6 +4,7 @@
 ## File          : package_ip.tcl
 ## Author        : Jiwoon Lee (@metr0jw)
 ## Organization  : Kwangwoon University, Seoul, South Korea
+## Contact       : jwlee@linux.com
 ## Description   : Packages the SNN accelerator as a reusable IP core
 ##-----------------------------------------------------------------------------
 

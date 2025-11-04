@@ -6,6 +6,7 @@
 ## File          : run_all.sh
 ## Author        : Jiwoon Lee (@metr0jw)
 ## Organization  : Kwangwoon University, Seoul, South Korea
+## Contact       : jwlee@linux.com
 ## Description   : Runs complete hardware build flow
 ##-----------------------------------------------------------------------------
 
