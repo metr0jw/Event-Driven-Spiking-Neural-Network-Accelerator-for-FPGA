@@ -29,7 +29,7 @@ SIM_DIR="$PROJECT_ROOT/hardware/hdl/sim"
 WORK_DIR="$SIM_DIR/work"
 
 # Default values
-TB_TOP="tb_top"
+TB_TOP="tb_snn_accelerator_top"
 GUI_MODE=0
 CLEAN_MODE=0
 DEBUG_MODE="typical"
@@ -87,9 +87,10 @@ usage() {
     echo "  -h, --help              Display this help message"
     echo ""
     echo "Available testbenches:"
-    echo "  tb_top                  - Top level system testbench (default)"
+    echo "  tb_top                  - Top level system testbench"
     echo "  tb_lif_neuron           - LIF neuron testbench"
     echo "  tb_spike_router         - Spike router testbench"
+    echo "  tb_snn_accelerator_top  - Complete SNN accelerator testbench (default)"
     echo ""
     echo "Simulator Support:"
     echo "  Vivado Simulator  - Full support (GUI, coverage, advanced debugging)"
@@ -98,128 +99,11 @@ usage() {
     echo ""
     echo "Examples:"
     echo "  $0                              # Run default testbench with auto-detected simulator"
-    echo "  $0 tb_top                       # Run top-level testbench"
+    echo "  $0 tb_snn_accelerator_top       # Run SNN accelerator testbench"
     echo "  $0 -t tb_lif_neuron -g          # Run LIF neuron testbench in GUI mode"
     echo "  $0 -s icarus -w -c               # Force Icarus Verilog with waveforms"
     echo "  $0 --clean --waves               # Clean, run simulation, then open waves"
     exit 1
-}
-
-# Find all source files
-find_sources() {
-    local sources=""
-    
-    # Add RTL sources
-    if [[ -d "$RTL_DIR" ]]; then
-        sources="$sources $(find "$RTL_DIR" -name "*.v" -o -name "*.sv" | sort)"
-    fi
-    
-    # Add testbench
-    if [[ -f "$TB_DIR/${TB_TOP}.v" ]]; then
-        sources="$sources $TB_DIR/${TB_TOP}.v"
-    elif [[ -f "$TB_DIR/${TB_TOP}.sv" ]]; then
-        sources="$sources $TB_DIR/${TB_TOP}.sv"
-    else
-        print_error "Testbench file not found: $TB_DIR/${TB_TOP}.v or ${TB_TOP}.sv"
-        exit 1
-    fi
-    
-    echo "$sources"
-}
-
-# Vivado Simulator function
-run_vivado_sim() {
-    print_msg "Running Vivado Simulator..."
-    
-    # Create simulation project
-    xvlog $SOURCES
-    if [[ $? -ne 0 ]]; then
-        print_error "Compilation failed with Vivado Simulator"
-        exit 1
-    fi
-    
-    # Elaborate design
-    xelab -debug typical $TB_TOP -s sim_snapshot
-    if [[ $? -ne 0 ]]; then
-        print_error "Elaboration failed with Vivado Simulator"
-        exit 1
-    fi
-    
-    # Run simulation
-    if [[ $GUI_MODE -eq 1 ]]; then
-        xsim sim_snapshot -gui
-    else
-        xsim sim_snapshot -runall
-    fi
-}
-
-# Icarus Verilog function
-run_icarus_sim() {
-    print_msg "Running Icarus Verilog..."
-    
-    local sim_args=""
-    if [[ $WAVES_MODE -eq 1 ]]; then
-        sim_args="-DVCD_OUTPUT"
-    fi
-    
-    # Compile and run
-    print_info "Compiling with: iverilog -o sim_exe $sim_args -I\"$RTL_DIR\" $SOURCES"
-    iverilog -o sim_exe $sim_args -I"$RTL_DIR" $SOURCES
-    if [[ $? -ne 0 ]]; then
-        print_error "Compilation failed with Icarus Verilog"
-        exit 1
-    fi
-    
-    print_msg "Running simulation..."
-    ./sim_exe
-    
-    # Open waveforms if requested
-    if [[ $WAVES_MODE -eq 1 && -f "waves.vcd" ]]; then
-        print_msg "Opening waveforms in GTKWave..."
-        if command -v gtkwave >/dev/null 2>&1; then
-            gtkwave waves.vcd &
-        else
-            print_warning "GTKWave not found. VCD file saved as waves.vcd"
-        fi
-    fi
-}
-
-# Verilator function
-run_verilator_sim() {
-    print_msg "Running Verilator..."
-    
-    # Create simple C++ testbench wrapper
-    cat > tb_wrapper.cpp << 'EOF'
-#include <verilated.h>
-#include <iostream>
-
-extern "C" {
-    void run_simulation();
-}
-
-int main(int argc, char** argv) {
-    Verilated::commandArgs(argc, argv);
-    
-    std::cout << "Starting Verilator simulation..." << std::endl;
-    
-    // Run for some cycles
-    for (int i = 0; i < 10000; i++) {
-        // Basic clock cycles - would need proper testbench for real simulation
-    }
-    
-    std::cout << "Simulation completed" << std::endl;
-    return 0;
-}
-EOF
-    
-    # Compile with Verilator
-    verilator --cc $SOURCES --exe tb_wrapper.cpp
-    if [[ $? -ne 0 ]]; then
-        print_error "Compilation failed with Verilator"
-        exit 1
-    fi
-    
-    print_warning "Verilator support is basic - for full simulation use Vivado or Icarus"
 }
 
 # Parse command line arguments
@@ -321,6 +205,28 @@ fi
 mkdir -p "$WORK_DIR"
 cd "$WORK_DIR"
 
+# Find all source files
+find_sources() {
+    local sources=""
+    
+    # Add RTL sources
+    if [[ -d "$RTL_DIR" ]]; then
+        sources="$sources $(find "$RTL_DIR" -name "*.v" -o -name "*.sv" | sort)"
+    fi
+    
+    # Add testbench
+    if [[ -f "$TB_DIR/${TB_TOP}.v" ]]; then
+        sources="$sources $TB_DIR/${TB_TOP}.v"
+    elif [[ -f "$TB_DIR/${TB_TOP}.sv" ]]; then
+        sources="$sources $TB_DIR/${TB_TOP}.sv"
+    else
+        print_error "Testbench file not found: $TB_DIR/${TB_TOP}.v or ${TB_TOP}.sv"
+        exit 1
+    fi
+    
+    echo "$sources"
+}
+
 # Get all source files
 SOURCES=$(find_sources)
 print_info "Found $(echo $SOURCES | wc -w) source files"
@@ -337,5 +243,99 @@ case $SIMULATOR in
         run_verilator_sim
         ;;
 esac
+
+# Vivado Simulator function
+run_vivado_sim() {
+    print_msg "Running Vivado Simulator..."
+    
+    # Create simulation project
+    xvlog $SOURCES
+    if [[ $? -ne 0 ]]; then
+        print_error "Compilation failed with Vivado Simulator"
+        exit 1
+    fi
+    
+    # Elaborate design
+    xelab -debug typical $TB_TOP -s sim_snapshot
+    if [[ $? -ne 0 ]]; then
+        print_error "Elaboration failed with Vivado Simulator"
+        exit 1
+    fi
+    
+    # Run simulation
+    if [[ $GUI_MODE -eq 1 ]]; then
+        xsim sim_snapshot -gui
+    else
+        xsim sim_snapshot -runall
+    fi
+}
+
+# Icarus Verilog function
+run_icarus_sim() {
+    print_msg "Running Icarus Verilog..."
+    
+    local sim_args=""
+    if [[ $WAVES_MODE -eq 1 ]]; then
+        sim_args="-DVCD_OUTPUT"
+    fi
+    
+    # Compile and run
+    iverilog -o sim_exe $sim_args -I"$RTL_DIR" $SOURCES
+    if [[ $? -ne 0 ]]; then
+        print_error "Compilation failed with Icarus Verilog"
+        exit 1
+    fi
+    
+    print_msg "Running simulation..."
+    ./sim_exe
+    
+    # Open waveforms if requested
+    if [[ $WAVES_MODE -eq 1 && -f "waves.vcd" ]]; then
+        print_msg "Opening waveforms in GTKWave..."
+        if command -v gtkwave >/dev/null 2>&1; then
+            gtkwave waves.vcd &
+        else
+            print_warning "GTKWave not found. VCD file saved as waves.vcd"
+        fi
+    fi
+}
+
+# Verilator function
+run_verilator_sim() {
+    print_msg "Running Verilator..."
+    
+    # Create simple C++ testbench wrapper
+    cat > tb_wrapper.cpp << 'EOF'
+#include <verilated.h>
+#include <iostream>
+
+extern "C" {
+    void run_simulation();
+}
+
+int main(int argc, char** argv) {
+    Verilated::commandArgs(argc, argv);
+    
+    std::cout << "Starting Verilator simulation..." << std::endl;
+    
+    // Run for some cycles
+    for (int i = 0; i < 10000; i++) {
+        // Basic clock cycles - would need proper testbench for real simulation
+    }
+    
+    std::cout << "Simulation completed" << std::endl;
+    return 0;
+}
+EOF
+    
+    # Compile with Verilator
+    verilator --cc $SOURCES --exe tb_wrapper.cpp
+    if [[ $? -ne 0 ]]; then
+        print_error "Compilation failed with Verilator"
+        exit 1
+    fi
+    
+    print_warning "Verilator support is basic - for full simulation use Vivado or Icarus"
+}
 
 print_msg "Simulation completed successfully!"
