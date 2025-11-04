@@ -1,4 +1,10 @@
-# snn_accelerator/config_loader.py
+"""
+Configuration loader and saver for SNN network settings
+
+Author: Jiwoon Lee (@metr0jw)
+Organization: Kwangwoon University, Seoul, South Korea
+Contact: jwlee@linux.com
+"""
 import json
 import yaml
 

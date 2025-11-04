@@ -1,65 +1,161 @@
-# examples/mnist_snn_example.py
+"""
+MNIST SNN Classification Example with PyTorch-Compatible Layers
+
+This example demonstrates how to use PyTorch-compatible SNN layers
+for MNIST digit classification on the FPGA accelerator.
+Now supports convolution, pooling, and area-efficient STDP learning.
+
+Author: Jiwoon Lee (@metr0jw)
+Organization: Kwangwoon University, Seoul, South Korea
+Contact: jwlee@linux.com
+"""
+
+import sys
+import os
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'software', 'python'))
+
 import numpy as np
-from snn_accelerator import SNNNetwork
 import matplotlib.pyplot as plt
+import time
+import logging
 
-def encode_mnist_to_spikes(image, duration=0.1, max_rate=100):
-    """Convert MNIST image to spike times"""
-    spike_times = {}
-    flat_image = image.flatten()
-    
-    for i, pixel in enumerate(flat_image):
-        if pixel > 0:
-            rate = (pixel / 255.0) * max_rate
-            n_spikes = np.random.poisson(rate * duration)
-            times = np.sort(np.random.uniform(0, duration, n_spikes))
-            spike_times[i] = times.tolist()
-    
-    return spike_times
+# Setup logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
-# Initialize network
-network = SNNNetwork(fpga_ip="192.168.1.100")
-network.connect()
-
-# Create a 3-layer feedforward network
-# 784 input (28x28 MNIST) -> 100 hidden -> 10 output
-network.create_network("feedforward", layer_sizes=[784, 100, 10])
-
-# Define neuron groups
-network.add_neuron_group("input", list(range(784)))
-network.add_neuron_group("hidden", list(range(784, 884)))
-network.add_neuron_group("output", list(range(884, 894)))
-
-# Set neuron parameters
-network.fpga.set_neuron_parameters(
-    leak_rate=10,
-    refractory_period=20,
-    threshold=1000
+# Import our custom modules
+from snn_fpga_accelerator.pytorch_snn_layers import (
+    SNNConv2d, SNNAvgPool2d, SNNMaxPool2d, SNNSequential,
+    create_spike_train, convert_pytorch_to_snn
 )
+from snn_fpga_accelerator.fpga_controller import SNNFPGAController, PyTorchFPGABridge
 
-# Load MNIST sample (you'd load real data here)
-sample_image = np.random.rand(28, 28) * 255
+# Try to import torch for comparison (optional)
+try:
+    import torch
+    import torch.nn as nn
+    import torch.nn.functional as F
+    TORCH_AVAILABLE = True
+    logger.info("PyTorch available for comparison")
+except ImportError:
+    TORCH_AVAILABLE = False
+    logger.warning("PyTorch not available, using simulation only")
 
-# Encode to spikes
-input_spikes = encode_mnist_to_spikes(sample_image)
+def load_mnist_data():
+    """Load MNIST dataset (simplified version)"""
+    # For this example, create synthetic MNIST-like data
+    # In practice, you would load real MNIST data
+    np.random.seed(42)
+    
+    # Generate synthetic data
+    train_images = np.random.rand(1000, 28, 28).astype(np.float32)
+    train_labels = np.random.randint(0, 10, 1000)
+    
+    test_images = np.random.rand(200, 28, 28).astype(np.float32)
+    test_labels = np.random.randint(0, 10, 200)
+    
+    logger.info(f"Loaded {len(train_images)} training samples, {len(test_images)} test samples")
+    return train_images, train_labels, test_images, test_labels
 
-# Run simulation
-output_spikes = network.run_simulation(duration=0.1, input_pattern=input_spikes)
+def create_snn_cnn_model():
+    """Create a CNN-like SNN model using our PyTorch-compatible layers"""
+    model = SNNSequential(
+        # First convolutional block
+        SNNConv2d(in_channels=1, out_channels=32, kernel_size=3, stride=1, padding=1, 
+                  threshold=0.25, decay_factor=0.9),
+        SNNMaxPool2d(kernel_size=2, stride=2, winner_take_all=True),
+        
+        # Second convolutional block  
+        SNNConv2d(in_channels=32, out_channels=64, kernel_size=3, stride=1, padding=1,
+                  threshold=0.3, decay_factor=0.9),
+        SNNAvgPool2d(kernel_size=2, stride=2, threshold=0.15),
+        
+        # Third convolutional block
+        SNNConv2d(in_channels=64, out_channels=128, kernel_size=3, stride=1, padding=1,
+                  threshold=0.35, decay_factor=0.85),
+        SNNMaxPool2d(kernel_size=2, stride=2, winner_take_all=False)
+    )
+    
+    logger.info("Created SNN CNN model with Conv2d and Pooling layers")
+    return model
 
-# Analyze results
-stats = network.get_spike_statistics(output_spikes)
-print(f"Total output spikes: {stats['total_spikes']}")
-print(f"Active neurons: {stats['active_neurons']}")
+def create_spike_train_numpy(image, time_steps):
+    """Numpy version of spike train creation"""
+    # Rate encoding
+    normalized = image / np.max(image) if np.max(image) > 0 else image
+    spike_train = np.zeros((28, 28, time_steps))
+    
+    for t in range(time_steps):
+        random_vals = np.random.rand(28, 28)
+        spike_train[:, :, t] = (random_vals < normalized).astype(np.float32)
+    
+    return spike_train
 
-# Plot output neuron activity
-output_neuron_spikes = [s for s in output_spikes if s.neuron_id >= 884]
-plt.figure(figsize=(10, 6))
-for spike in output_neuron_spikes:
-    plt.scatter(spike.timestamp/1000, spike.neuron_id - 884, c='black', s=1)
-plt.xlabel('Time (ms)')
-plt.ylabel('Output Neuron')
-plt.title('Output Layer Spike Raster')
-plt.show()
+def main():
+    print("PyTorch-Compatible SNN MNIST Example")
+    print("====================================")
+    print("Features: Conv2d, Pooling, Area-Efficient STDP Learning")
+    print()
+    
+    # Load data
+    train_images, train_labels, test_images, test_labels = load_mnist_data()
+    
+    # Create SNN CNN model
+    snn_model = create_snn_cnn_model()
+    print(f"SNN Model Configuration:")
+    fpga_config = snn_model.get_fpga_config()
+    print(f"  Number of layers: {fpga_config['num_layers']}")
+    for layer in fpga_config['layers']:
+        print(f"  Layer {layer['layer_id']}: {layer['layer_type']}")
+    print()
+    
+    # Initialize FPGA controller
+    fpga_controller = SNNFPGAController()
+    if fpga_controller.initialize_hardware():
+        print("FPGA hardware initialized successfully")
+        
+        # Deploy model to FPGA
+        bridge = PyTorchFPGABridge(fpga_controller)
+        sample_input = np.random.rand(1, 1, 28, 28, 50).astype(np.float32)
+        success = bridge.deploy_model(snn_model, sample_input)
+        
+        if success:
+            print("Model deployed to FPGA successfully")
+        else:
+            print("Failed to deploy model to FPGA")
+    else:
+        print("FPGA hardware not available, running in simulation mode")
+    
+    # Test with sample data
+    test_image = test_images[0]
+    
+    # Convert to spike train
+    if TORCH_AVAILABLE:
+        spike_input = create_spike_train(
+            torch.tensor(test_image).unsqueeze(0).unsqueeze(0),
+            time_steps=100, encoding='rate'
+        )[0].numpy()
+    else:
+        spike_input_2d = create_spike_train_numpy(test_image, 100)
+        spike_input = np.expand_dims(spike_input_2d, axis=(0, 1))
+    
+    # Process through model
+    if TORCH_AVAILABLE and hasattr(snn_model, 'forward'):
+        output_spikes = snn_model(torch.tensor(spike_input)).detach().numpy()
+    else:
+        # Simulation fallback
+        output_spikes = spike_input
+    
+    print(f"Input shape: {spike_input.shape}")
+    print(f"Output shape: {output_spikes.shape}")
+    print(f"Total input spikes: {np.sum(spike_input)}")
+    print(f"Total output spikes: {np.sum(output_spikes)}")
+    
+    # Cleanup
+    if fpga_controller.is_initialized:
+        fpga_controller.shutdown()
+    
+    print("\nExample completed successfully!")
 
-# Disconnect
-network.disconnect()
+if __name__ == "__main__":
+    main()

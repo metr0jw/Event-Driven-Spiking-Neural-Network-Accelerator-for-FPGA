@@ -1,5 +1,12 @@
 # snn_accelerator/monitor.py
-# Real-time monitoring and visualization of SNN activity
+"""
+Real-time monitoring and visualization of SNN activity
+
+Author: Jiwoon Lee (@metr0jw)
+Organization: Kwangwoon University, Seoul, South Korea
+Contact: jwlee@linux.com
+"""
+
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 from collections import deque
