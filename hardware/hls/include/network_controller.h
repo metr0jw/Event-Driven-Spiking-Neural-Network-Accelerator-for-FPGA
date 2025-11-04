@@ -4,6 +4,7 @@
 // File          : network_controller.h
 // Author        : Jiwoon Lee (@metr0jw)
 // Organization  : Kwangwoon University, Seoul, South Korea
+// Contact       : jwlee@linux.com
 // Description   : High-level network control interface
 //-----------------------------------------------------------------------------
 

@@ -4,6 +4,7 @@
 // File          : spike_encoder.h
 // Author        : Jiwoon Lee (@metr0jw)
 // Organization  : Kwangwoon University, Seoul, South Korea
+// Contact       : jwlee@linux.com
 // Description   : Interface for data to spike conversion
 //-----------------------------------------------------------------------------
 

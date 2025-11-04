@@ -4,6 +4,7 @@
 // File          : weight_updater.h
 // Author        : Jiwoon Lee (@metr0jw)
 // Organization  : Kwangwoon University, Seoul, South Korea
+// Contact       : jwlee@linux.com
 // Description   : Interface for synaptic weight management
 //-----------------------------------------------------------------------------
 

@@ -4,6 +4,7 @@
 // File          : spike_decoder.h
 // Author        : Jiwoon Lee (@metr0jw)
 // Organization  : Kwangwoon University, Seoul, South Korea
+// Contact       : jwlee@linux.com
 // Description   : Interface for spike to output conversion
 //-----------------------------------------------------------------------------
 
