@@ -206,7 +206,7 @@ If you use this work in your research, please cite:
   title={Event-Driven Spiking Neural Network Accelerator for FPGA},
   author={Jiwoon Lee},
   year={2025},
-  howpublished={\url{https://github.com/metr0jw/Spiking-Neural-Network-on-FPGA}}
+  howpublished={\url{https://github.com/metr0jw/Event-Driven-Spiking-Neural-Network-Accelerator-for-FPGA}}
 }
 ```
 
@@ -225,3 +225,4 @@ For common issues and solutions, see the [User Guide - Troubleshooting](docs/use
 
 ## Author
 [Jiwoon Lee](https://github.com/metr0jw)
+
