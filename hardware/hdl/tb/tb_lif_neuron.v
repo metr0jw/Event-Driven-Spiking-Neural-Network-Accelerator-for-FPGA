@@ -4,6 +4,7 @@
 // File          : tb_lif_neuron.v
 // Author        : Jiwoon Lee (@metr0jw)
 // Organization  : Kwangwoon University, Seoul, South Korea
+// Contact       : jwlee@linux.com
 // Description   : Comprehensive testbench for LIF neuron module
 //-----------------------------------------------------------------------------
 
@@ -54,6 +55,8 @@ module tb_lif_neuron();
     time                        current_spike_time;
     real                        spike_frequency;
     integer                     i;
+    reg                         spike_generated;
+    reg                         error_occurred;
     
     // Test logging
     reg [255:0] test_name;
@@ -227,13 +230,14 @@ module tb_lif_neuron();
         init_test("Basic Integration and Spike Generation");
         
         // Apply excitatory inputs until spike
-        for (i = 0; i < 20; i = i + 1) begin
+        spike_generated = 1'b0;
+        for (i = 0; i < 20 && !spike_generated; i = i + 1) begin
             apply_synapse(8'd60, 1'b1);
             wait_and_monitor(2);
             $display("  Cycle %0d: Membrane = %0d", i, membrane_potential);
             if (spike_out) begin
                 $display("  Spike generated after %0d inputs", i+1);
-                break;
+                spike_generated = 1'b1;
             end
         end
         
@@ -299,14 +303,15 @@ module tb_lif_neuron();
             $display("  First spike generated, entering refractory period");
             
             // Try to generate another spike during refractory
-            for (i = 0; i < refractory_period; i = i + 1) begin
+            error_occurred = 1'b0;
+            for (i = 0; i < refractory_period && !error_occurred; i = i + 1) begin
                 apply_synapse(8'd100, 1'b1);
                 if (is_refractory) begin
                     if (i == 0) $display("  In refractory period (count=%0d)", refrac_count);
                 end else begin
                     $display("ERROR: Not in refractory period when expected!");
                     error_count = error_count + 1;
-                    break;
+                    error_occurred = 1'b1;
                 end
             end
             
@@ -362,7 +367,7 @@ module tb_lif_neuron();
         if (membrane_potential != reset_potential && is_refractory) begin
             $display("ERROR: Reset potential not applied correctly!");
             error_count = error_count + 1;
-        } end else begin
+        end else begin
             $display("  Reset potential correctly applied: %0d", membrane_potential);
         end
         
@@ -398,9 +403,10 @@ module tb_lif_neuron();
         apply_reset();
         
         // Try to overflow membrane potential
-        for (i = 0; i < 100; i = i + 1) begin
+        spike_generated = 1'b0;
+        for (i = 0; i < 100 && !spike_generated; i = i + 1) begin
             apply_synapse(8'd255, 1'b1);
-            if (spike_out) break;
+            if (spike_out) spike_generated = 1'b1;
         end
         
         $display("  Maximum membrane potential reached: %0d", membrane_potential);

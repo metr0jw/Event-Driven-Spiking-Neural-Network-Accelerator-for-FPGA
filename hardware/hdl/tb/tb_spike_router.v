@@ -4,6 +4,7 @@
 // File          : tb_spike_router.v
 // Author        : Jiwoon Lee (@metr0jw)
 // Organization  : Kwangwoon University, Seoul, South Korea
+// Contact       : jwlee@linux.com
 // Description   : Comprehensive testbench for spike router module
 //-----------------------------------------------------------------------------
 
@@ -15,7 +16,14 @@ module tb_spike_router();
     localparam NUM_NEURONS      = 64;
     localparam MAX_FANOUT       = 32;
     localparam WEIGHT_WIDTH     = 8;
-    localparam NEURON_ID_WIDTH  = $clog2(NUM_NEURONS);
+    // Calculate log2 ceiling manually for Verilog-2001 compatibility
+    localparam NEURON_ID_WIDTH  = (NUM_NEURONS <= 2) ? 1 :
+                                 (NUM_NEURONS <= 4) ? 2 :
+                                 (NUM_NEURONS <= 8) ? 3 :
+                                 (NUM_NEURONS <= 16) ? 4 :
+                                 (NUM_NEURONS <= 32) ? 5 :
+                                 (NUM_NEURONS <= 64) ? 6 :
+                                 (NUM_NEURONS <= 128) ? 7 : 8;
     localparam DELAY_WIDTH      = 8;
     localparam FIFO_DEPTH       = 256;
     
@@ -199,12 +207,13 @@ module tb_spike_router();
     task wait_with_timeout(input integer cycles);
         integer k;
         begin
-            for (k = 0; k < cycles; k = k + 1) begin
+            k = 0;
+            while (k < cycles && router_busy) begin
                 @(posedge clk);
-                if (!router_busy) begin
-                    repeat(10) @(posedge clk);
-                    break;
-                end
+                k = k + 1;
+            end
+            if (!router_busy) begin
+                repeat(10) @(posedge clk);
             end
         end
     endtask
@@ -224,7 +233,7 @@ module tb_spike_router();
                         $display("ERROR: Neuron %0d - Expected weight %0d, got %0d", 
                                  i, expected_weights[i], received_weights[i]);
                         errors = errors + 1;
-                    } end else begin
+                    end else begin
                         $display("PASS: Neuron %0d - Correctly received %0d spikes with weight %0d", 
                                  i, received_spikes[i], received_weights[i]);
                     end
@@ -539,7 +548,7 @@ module tb_spike_router();
                 expected_spikes[i] = 1;
                 expected_weights[i] = 10 + i;
                 j = j + 1;
-            } end else begin
+            end else begin
                 expected_spikes[61] = 1;
                 expected_weights[61] = 10 + i;
             end

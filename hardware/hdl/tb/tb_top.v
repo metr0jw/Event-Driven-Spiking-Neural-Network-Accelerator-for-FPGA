@@ -4,6 +4,7 @@
 // File          : tb_top.v
 // Author        : Jiwoon Lee (@metr0jw)
 // Organization  : Kwangwoon University, Seoul, South Korea
+// Contact       : jwlee@linux.com
 // Description   : System testbench for SNN accelerator with AXI interfaces
 //-----------------------------------------------------------------------------
 
@@ -696,7 +697,8 @@ module tb_top();
         end
     end
     
-    // Check for AXI protocol violations
+    // Check for AXI protocol violations (requires $past, not supported by Icarus)
+`ifndef __ICARUS__
     always @(posedge aclk) begin
         // Check that VALID doesn't drop without READY
         if ($past(s_axi_awvalid) && !$past(s_axi_awready) && !s_axi_awvalid) begin
@@ -704,5 +706,6 @@ module tb_top();
             error_count = error_count + 1;
         end
     end
+`endif
 
 endmodule
