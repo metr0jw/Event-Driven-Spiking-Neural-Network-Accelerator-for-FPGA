@@ -4,6 +4,7 @@
 ## File          : config_hls.tcl
 ## Author        : Jiwoon Lee (@metr0jw)
 ## Organization  : Kwangwoon University, Seoul, South Korea
+## Contact       : jwlee@linux.com
 ## Description   : Common configuration settings for all HLS projects
 ##-----------------------------------------------------------------------------
 

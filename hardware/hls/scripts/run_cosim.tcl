@@ -4,6 +4,7 @@
 ## File          : run_cosim.tcl
 ## Author        : Jiwoon Lee (@metr0jw)
 ## Organization  : Kwangwoon University, Seoul, South Korea
+## Contact       : jwlee@linux.com
 ## Description   : Runs C/RTL co-simulation for verification
 ##-----------------------------------------------------------------------------
 

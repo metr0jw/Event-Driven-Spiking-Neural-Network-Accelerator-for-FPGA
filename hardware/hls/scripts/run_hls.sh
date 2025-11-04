@@ -6,6 +6,7 @@
 ## File          : run_hls.sh
 ## Author        : Jiwoon Lee (@metr0jw)
 ## Organization  : Kwangwoon University, Seoul, South Korea
+## Contact       : jwlee@linux.com
 ## Description   : Shell wrapper for HLS build process
 ##-----------------------------------------------------------------------------
 

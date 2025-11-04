@@ -4,6 +4,7 @@
 ## File          : run_synthesis.tcl
 ## Author        : Jiwoon Lee (@metr0jw)
 ## Organization  : Kwangwoon University, Seoul, South Korea
+## Contact       : jwlee@linux.com
 ## Description   : Runs synthesis for all HLS modules with optimizations
 ##-----------------------------------------------------------------------------
 
