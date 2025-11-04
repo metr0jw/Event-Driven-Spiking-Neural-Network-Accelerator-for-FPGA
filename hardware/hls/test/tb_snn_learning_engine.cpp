@@ -4,6 +4,7 @@
 // File          : tb_snn_learning_engine.cpp
 // Author        : Jiwoon Lee (@metr0jw)
 // Organization  : Kwangwoon University, Seoul, South Korea
+// Contact       : jwlee@linux.com
 // Description   : Comprehensive testbench for STDP learning
 //-----------------------------------------------------------------------------
 

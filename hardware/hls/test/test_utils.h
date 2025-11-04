@@ -4,6 +4,7 @@
 // File          : test_utils.h
 // Author        : Jiwoon Lee (@metr0jw)
 // Organization  : Kwangwoon University, Seoul, South Korea
+// Contact       : jwlee@linux.com
 // Description   : Common utilities for HLS testbenches
 //-----------------------------------------------------------------------------
 

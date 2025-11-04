@@ -4,6 +4,7 @@
 // File          : tb_spike_decoder.cpp
 // Author        : Jiwoon Lee (@metr0jw)
 // Organization  : Kwangwoon University, Seoul, South Korea
+// Contact       : jwlee@linux.com
 // Description   : Tests spike train to output decoding
 //-----------------------------------------------------------------------------
 

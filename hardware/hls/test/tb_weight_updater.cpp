@@ -4,6 +4,7 @@
 // File          : tb_weight_updater.cpp
 // Author        : Jiwoon Lee (@metr0jw)
 // Organization  : Kwangwoon University, Seoul, South Korea
+// Contact       : jwlee@linux.com
 // Description   : Tests weight update application and management
 //-----------------------------------------------------------------------------
 
