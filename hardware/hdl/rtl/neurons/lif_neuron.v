@@ -4,6 +4,7 @@
 // File          : lif_neuron.v
 // Author        : Jiwoon Lee (@metr0jw)
 // Organization  : Kwangwoon University, Seoul, South Korea
+// Contact       : jwlee@linux.com
 // Description   : Digital LIF neuron with configurable parameters
 //-----------------------------------------------------------------------------
 
