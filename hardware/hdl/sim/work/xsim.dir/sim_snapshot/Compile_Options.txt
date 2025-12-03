@@ -1,1 +1,0 @@
--debug "typical" "tb_top" -s "sim_snapshot" 

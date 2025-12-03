@@ -277,7 +277,7 @@ pytest -k "encoder"
 ```bash
 # Run RTL simulations
 cd hardware/hdl/sim
-./run_sim_working.sh tb_simple_lif
+./simple_sim.sh tb_simple_lif
 
 # Run HLS tests
 cd hardware/hls/test
@@ -344,7 +344,7 @@ git rebase upstream/main
 
 # Run tests
 pytest software/python/tests
-cd hardware/hdl/sim && ./run_sim_working.sh tb_simple_lif
+cd hardware/hdl/sim && ./simple_sim.sh tb_simple_lif
 
 # Format code
 black software/python/snn_fpga_accelerator

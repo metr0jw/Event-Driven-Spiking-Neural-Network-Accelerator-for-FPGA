@@ -247,7 +247,7 @@ endmodule
 cd hardware/hdl/sim
 
 # Run simulation
-./run_sim_working.sh tb_simple_lif
+./simple_sim.sh tb_simple_lif
 
 # View waveforms
 gtkwave work/waves.vcd
@@ -851,7 +851,7 @@ pytest -k "encoder"
 ```bash
 # RTL simulation
 cd hardware/hdl/sim
-./run_sim_working.sh tb_simple_lif
+./simple_sim.sh tb_simple_lif
 
 # HLS tests
 cd hardware/hls/test
@@ -887,7 +887,7 @@ def problematic_function(data):
 ```bash
 # Generate VCD file
 cd hardware/hdl/sim
-./run_sim_working.sh tb_module
+./simple_sim.sh tb_module
 
 # View with GTKWave
 gtkwave work/tb_module.vcd

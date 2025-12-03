@@ -47,10 +47,26 @@ env/
 vivado_*.backup.*
 xsim_*.backup.*
 
+# HLS
+*.pb
+*.sdb
+*.rlx
+# HLS compiled test binaries
+hardware/hls/test/tb_active_tracking
+hardware/hls/test/tb_baseline
+hardware/hls/test/tb_cam_lookup
+hardware/hls/test/tb_dataflow
+hardware/hls/test/tb_hierarchical
+
+# Simulation work directories
+hardware/hdl/sim/work/
+hardware/hdl/build/
+
 # Build outputs
 *.bit
 *.bin
 *.ltx
+*.vvp
 
 # Editor
 .vscode/
@@ -59,11 +75,15 @@ xsim_*.backup.*
 *.swo
 *~
 
-# Data files (optional - uncomment if you want to track these)
-# data/
-# logs/
-# models/
-# outputs/
+# Data files - keep .gitkeep files
+data/*
+!data/.gitkeep
+logs/*
+!logs/.gitkeep
+models/*
+!models/.gitkeep
+outputs/*
+!outputs/.gitkeep
 
 # OS
 .DS_Store
