@@ -3,12 +3,167 @@
 Complete Python API documentation for the SNN FPGA Accelerator package.
 
 ## Table of Contents
+- [PYNQ Driver](#pynq-driver)
 - [Core Classes](#core-classes)
 - [Spike Encoding](#spike-encoding)
 - [Learning Algorithms](#learning-algorithms)
 - [PyTorch Integration](#pytorch-integration)
 - [Utilities](#utilities)
 - [FPGA Controller](#fpga-controller)
+
+## PYNQ Driver
+
+Low-level driver for direct hardware control on PYNQ boards.
+
+### SNNAccelerator (Hardware Driver)
+
+Direct hardware interface using PYNQ overlay.
+
+**Location**: `software/python/snn_driver.py`
+
+```python
+from snn_driver import SNNAccelerator
+
+snn = SNNAccelerator(bitstream_path='snn_accelerator.bit')
+```
+
+#### Constructor
+
+```python
+SNNAccelerator(bitstream_path='snn_accelerator.bit')
+```
+
+**Parameters**:
+- `bitstream_path` (str): Path to `.bit` file (requires matching `.hwh` file)
+
+#### Methods
+
+##### reset()
+```python
+reset() -> None
+```
+Reset the SNN accelerator hardware.
+
+##### enable() / disable()
+```python
+enable() -> None
+disable() -> None
+```
+Enable or disable the accelerator.
+
+##### configure()
+```python
+configure(threshold=None, leak_rate=None, refractory_period=None) -> None
+```
+Configure neuron parameters.
+
+**Parameters**:
+- `threshold` (int): Spike threshold (0-65535)
+- `leak_rate` (int): Membrane leak rate (0-65535)
+- `refractory_period` (int): Refractory period in clock cycles
+
+##### get_status()
+```python
+get_status() -> dict
+```
+Get accelerator status.
+
+**Returns**:
+```python
+{
+    'status_raw': int,      # Raw status register
+    'spike_count': int,     # Output spike counter
+    'enabled': bool         # Accelerator enabled state
+}
+```
+
+##### clear_counters()
+```python
+clear_counters() -> None
+```
+Clear spike counters.
+
+##### close()
+```python
+close() -> None
+```
+Disable accelerator and release resources.
+
+#### Properties
+
+- `threshold` (int): Get/set spike threshold
+- `leak_rate` (int): Get/set membrane leak rate
+- `refractory_period` (int): Get/set refractory period
+
+#### Example Usage
+
+```python
+from snn_driver import SNNAccelerator
+
+# Initialize
+snn = SNNAccelerator('snn_accelerator.bit')
+
+# Configure
+snn.configure(threshold=100, leak_rate=16, refractory_period=5)
+
+# Enable and monitor
+snn.enable()
+for _ in range(10):
+    status = snn.get_status()
+    print(f"Spikes: {status['spike_count']}")
+    time.sleep(0.1)
+
+# Cleanup
+snn.close()
+```
+
+### SNNAcceleratorDMA
+
+Extended driver with DMA support for high-throughput operations.
+
+```python
+from snn_driver import SNNAcceleratorDMA
+
+snn = SNNAcceleratorDMA('snn_accelerator.bit')
+```
+
+#### Additional Methods
+
+##### send_spikes_dma()
+```python
+send_spikes_dma(spike_data: np.ndarray) -> int
+```
+Send multiple spikes via DMA.
+
+**Parameters**:
+- `spike_data` (np.ndarray): Array of spike packets (uint32)
+  - Format: `[neuron_id(8) | weight(8) | reserved(16)]`
+
+**Returns**: Number of spikes sent
+
+##### receive_spikes_dma()
+```python
+receive_spikes_dma(max_spikes=1024, timeout=1.0) -> np.ndarray
+```
+Receive output spikes via DMA.
+
+##### process_input_spike_train()
+```python
+process_input_spike_train(spike_times, neuron_ids, weights) -> dict
+```
+Process a complete spike train.
+
+**Returns**:
+```python
+{
+    'output_spikes': np.ndarray,
+    'total_output_spikes': int,
+    'processing_time_ms': float,
+    'spikes_per_second': float
+}
+```
+
+---
 
 ## Core Classes
 

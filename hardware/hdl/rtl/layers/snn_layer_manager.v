@@ -94,15 +94,17 @@ module snn_layer_manager #(
     reg [31:0] total_input_count;
     reg [31:0] total_output_count;
     
+    // Loop variables (Verilog-2001 compatible)
+    integer cfg_i, cfg_j;
+    
     // Configuration management
     always @(posedge clk) begin
         if (reset) begin
-            integer i, j;
-            for (i = 0; i < MAX_LAYERS; i = i + 1) begin
-                layer_types[i] <= LAYER_INACTIVE;
-                layer_enabled[i] <= 1'b0;
-                for (j = 0; j < 16; j = j + 1) begin
-                    layer_configs[i][j] <= 32'b0;
+            for (cfg_i = 0; cfg_i < MAX_LAYERS; cfg_i = cfg_i + 1) begin
+                layer_types[cfg_i] <= LAYER_INACTIVE;
+                layer_enabled[cfg_i] <= 1'b0;
+                for (cfg_j = 0; cfg_j < 16; cfg_j = cfg_j + 1) begin
+                    layer_configs[cfg_i][cfg_j] <= 32'b0;
                 end
             end
             active_layer <= 8'hFF;

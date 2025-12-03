@@ -6,6 +6,8 @@ Complete guide for using the Event-Driven SNN FPGA Accelerator.
 - [Installation](#installation)
 - [Quick Start](#quick-start)
 - [Basic Usage](#basic-usage)
+- [Simulation Mode](#simulation-mode)
+- [RTL Simulation](#rtl-simulation)
 - [Step Modes](#step-modes)
 - [Spike Encoding](#spike-encoding)
 - [PyTorch Integration](#pytorch-integration)
@@ -19,9 +21,7 @@ Complete guide for using the Event-Driven SNN FPGA Accelerator.
 
 ### Prerequisites
 
-- Python 3.13 or higher
-- PyTorch 2.9.0 or higher
-- NumPy 1.24+
+- Tested on Python 3.13 with PyTorch 2.9.0
 - PYNQ 2.7+ (for hardware deployment)
 
 ### Automated Installation
@@ -30,8 +30,8 @@ The easiest way to get started:
 
 ```bash
 # Clone repository
-git clone https://github.com/metr0jw/Spiking-Neural-Network-on-FPGA.git
-cd Spiking-Neural-Network-on-FPGA
+git clone https://github.com/metr0jw/Event-Driven-Spiking-Neural-Network-Accelerator-for-FPGA.git
+cd Event-Driven-Spiking-Neural-Network-Accelerator-for-FPGA
 
 # Activate environment (if using provided virtualenv)
 source venv/bin/activate
@@ -174,9 +174,349 @@ spike_counts = output_spikes.sum(axis=1)
 prediction = np.argmax(spike_counts)
 ```
 
+## Simulation Mode
+
+The accelerator supports two execution modes: **simulation mode** (software-only) and **hardware mode** (FPGA deployment).
+
+### Overview
+
+| Mode | Description | Use Case |
+|------|-------------|----------|
+| Simulation | Pure software simulation | Development, testing, debugging |
+| Hardware | FPGA-accelerated execution | Deployment, benchmarking |
+
+### Simulation Mode (Default)
+
+Run the SNN entirely in software without FPGA hardware:
+
+```python
+from snn_fpga_accelerator import SNNAccelerator
+
+# Initialize in simulation mode (default)
+accelerator = SNNAccelerator(simulation_mode=True)
+
+# Configure network
+config = {
+    'num_neurons': 100,
+    'layers': [
+        {'type': 'input', 'size': 784},
+        {'type': 'hidden', 'size': 100},
+        {'type': 'output', 'size': 10}
+    ]
+}
+accelerator.configure_network(config)
+
+# Run inference (executed in software)
+output = accelerator.infer(input_spikes, duration=0.1)
+```
+
+### Hardware Mode
+
+Deploy to FPGA for accelerated execution:
+
+```python
+# Initialize with bitstream for hardware mode
+accelerator = SNNAccelerator(
+    bitstream_path='snn_accelerator.bit',
+    simulation_mode=False
+)
+
+# Or switch modes at runtime
+accelerator = SNNAccelerator(simulation_mode=True)
+accelerator.set_mode('hardware', bitstream_path='snn_accelerator.bit')
+```
+
+### Mode Selection Guidelines
+
+**Use Simulation Mode when:**
+- Developing and testing new network architectures
+- Debugging spike encoding or learning algorithms
+- No FPGA hardware is available
+- Running unit tests or integration tests
+- Prototyping before hardware deployment
+
+**Use Hardware Mode when:**
+- Deploying trained models for inference
+- Benchmarking performance
+- Running real-time applications
+- Energy efficiency is critical
+
+### Checking Current Mode
+
+```python
+# Check if running in simulation mode
+if accelerator.is_simulation_mode():
+    print("Running in simulation mode")
+else:
+    print("Running on FPGA hardware")
+
+# Get detailed mode information
+mode_info = accelerator.get_mode_info()
+print(f"Mode: {mode_info['mode']}")
+print(f"Device: {mode_info['device']}")
+```
+
+### Behavioral Differences
+
+The simulation mode provides cycle-accurate behavior matching the hardware:
+
+```python
+# Both modes produce equivalent results
+sim_accelerator = SNNAccelerator(simulation_mode=True)
+hw_accelerator = SNNAccelerator(bitstream_path='snn_accelerator.bit')
+
+# Same configuration
+sim_accelerator.configure_network(config)
+hw_accelerator.configure_network(config)
+
+# Same weights
+sim_accelerator.load_weights(weights)
+hw_accelerator.load_weights(weights)
+
+# Results should be equivalent (within numerical precision)
+sim_output = sim_accelerator.infer(input_spikes)
+hw_output = hw_accelerator.infer(input_spikes)
+```
+
+## RTL Simulation
+
+For cycle-accurate simulation using actual Verilog RTL code, the accelerator provides integration with open-source RTL simulators.
+
+### Overview
+
+| Method | Description | Requirements |
+|--------|-------------|--------------|
+| Python Behavioral | Software model simulation | None |
+| Icarus Verilog | Cycle-accurate RTL simulation | iverilog |
+| Cocotb | Python-controlled RTL testbench | cocotb + iverilog |
+| Verilator | High-performance RTL simulation | verilator |
+
+### Checking Available Tools
+
+```python
+from snn_fpga_accelerator import check_simulation_tools, print_tool_status
+
+# Check which simulation tools are available
+print_tool_status()
+
+# Get programmatic status
+tools = check_simulation_tools()
+print(tools)
+# {'icarus_verilog': True, 'verilator': False, 'cocotb': True}
+```
+
+### Installing Simulation Tools
+
+**Icarus Verilog (Recommended):**
+```bash
+# Ubuntu/Debian
+sudo apt install iverilog
+
+# macOS
+brew install icarus-verilog
+
+# Verify installation
+iverilog -V
+```
+
+**Cocotb (Python testbench framework):**
+```bash
+pip install cocotb
+```
+
+**Verilator (High-performance):**
+```bash
+# Ubuntu/Debian
+sudo apt install verilator
+
+# Verify installation
+verilator --version
+```
+
+### Icarus Verilog Simulation
+
+Compile and run RTL simulation using Icarus Verilog:
+
+```python
+from snn_fpga_accelerator import IcarusSimulator
+from snn_fpga_accelerator.spike_encoding import SpikeEvent
+
+# Initialize simulator with RTL directory
+simulator = IcarusSimulator(
+    rtl_dir='hardware/hdl/rtl',
+    top_module='snn_accelerator_top'
+)
+
+# Compile Verilog
+binary_path = simulator.compile()
+print(f"Compiled: {binary_path}")
+
+# Create test spikes
+test_spikes = [
+    SpikeEvent(neuron_id=0, timestamp=0.0001, weight=1.0),
+    SpikeEvent(neuron_id=5, timestamp=0.0002, weight=0.8),
+]
+
+# Run RTL simulation
+result = simulator.run(
+    test_spikes,
+    duration_ns=100000,  # 100us
+    dump_vcd=True  # Save waveform
+)
+
+print(f"Simulation cycles: {result.cycle_count}")
+print(f"Output spikes: {len(result.output_spikes)}")
+print(f"Waveform: {result.waveform_file}")
+
+# Clean up
+simulator.cleanup()
+```
+
+### RTL vs Python Model Comparison
+
+Compare RTL simulation results with Python behavioral model:
+
+```python
+from snn_fpga_accelerator import (
+    IcarusSimulator,
+    RTLvsPythonComparator,
+    SNNModel,
+    SNNLayer
+)
+
+# Create Python model
+model = SNNModel()
+model.add_layer(SNNLayer("input", 64, "input"))
+model.add_layer(SNNLayer("hidden", 32, "lif"))
+model.add_layer(SNNLayer("output", 10, "lif"))
+
+# Create RTL simulator
+simulator = IcarusSimulator(rtl_dir='hardware/hdl/rtl')
+
+# Create comparator
+comparator = RTLvsPythonComparator(
+    rtl_simulator=simulator,
+    python_model=model
+)
+
+# Generate test spikes
+test_spikes = generate_test_spikes(count=20)
+
+# Run comparison
+results = comparator.compare(test_spikes, duration=0.01)
+
+# Print detailed report
+RTLvsPythonComparator.print_report(results)
+```
+
+**Sample output:**
+```
+============================================================
+RTL vs Python Model Comparison Report
+============================================================
+
+[Input]
+  Spike Count: 20
+  Duration: 0.01s
+
+[RTL Simulation]
+  Output Spikes: 5
+  Cycle Count: 10000
+
+[Python Model]
+  Output Spikes: 5
+
+[Comparison]
+  Spike Count: MATCH
+  Difference: 0
+
+============================================================
+```
+
+### Cocotb Test Generation
+
+Generate Cocotb test files for interactive RTL testing:
+
+```python
+from snn_fpga_accelerator import CocotbSimulator
+
+# Initialize Cocotb simulator
+cocotb_sim = CocotbSimulator(
+    rtl_dir='hardware/hdl/rtl',
+    top_module='snn_accelerator_top',
+    simulator='icarus'
+)
+
+# Generate test files
+output_dir = 'outputs/cocotb_test'
+makefile = cocotb_sim.generate_makefile(output_dir)
+test_file = cocotb_sim.generate_test_template(output_dir)
+
+print(f"Generated: {makefile}")
+print(f"Generated: {test_file}")
+```
+
+**Running Cocotb tests:**
+```bash
+cd outputs/cocotb_test
+make
+```
+
+### Cocotb Test Example
+
+The generated test template includes:
+
+```python
+import cocotb
+from cocotb.clock import Clock
+from cocotb.triggers import RisingEdge, ClockCycles
+
+@cocotb.test()
+async def test_basic_spike(dut):
+    """Test basic spike propagation."""
+    clock = Clock(dut.clk, 10, units='ns')
+    cocotb.start_soon(clock.start())
+    
+    # Reset
+    dut.rst_n.value = 0
+    await ClockCycles(dut.clk, 10)
+    dut.rst_n.value = 1
+    
+    # Send spike
+    dut.spike_in_valid.value = 1
+    dut.spike_in_neuron_id.value = 0
+    await RisingEdge(dut.clk)
+    dut.spike_in_valid.value = 0
+    
+    # Wait for output
+    await ClockCycles(dut.clk, 100)
+```
+
+### Use Cases
+
+**Python Behavioral Model:**
+- Quick prototyping and development
+- Algorithm validation
+- No tool installation required
+
+**Icarus Verilog:**
+- Verify RTL correctness
+- Debug hardware logic
+- Generate waveforms for analysis
+
+**Cocotb:**
+- Complex test scenarios
+- Python-based stimulus generation
+- Integration with Python test frameworks
+
+**Verilator:**
+- High-speed simulation
+- Large design verification
+- Coverage analysis
+
 ## Step Modes
 
-The accelerator supports two simulation modes similar to SpikingJelly framework:
+The accelerator supports two step modes similar to SpikingJelly framework:
 
 ### Multi-Step Mode (Default)
 
@@ -777,6 +1117,64 @@ accelerator.apply_accumulated_weight_updates()
 
 ## Hardware Deployment
 
+### Generated Files
+
+After successful build, the following files are generated in `outputs/`:
+
+| File | Description |
+|------|-------------|
+| `snn_accelerator.bit` | FPGA bitstream (3.86 MB) |
+| `snn_accelerator.hwh` | Hardware handoff file for PYNQ overlay |
+| `utilization.txt` | Resource utilization report |
+| `timing.txt` | Timing analysis report |
+
+### PYNQ Driver Usage
+
+The PYNQ driver (`software/python/snn_driver.py`) provides a high-level interface:
+
+```python
+from snn_driver import SNNAccelerator
+
+# Initialize with bitstream
+snn = SNNAccelerator('snn_accelerator.bit')
+
+# Configure neuron parameters
+snn.configure(
+    threshold=100,       # Spike threshold
+    leak_rate=16,        # Membrane leak rate
+    refractory_period=5  # Refractory cycles
+)
+
+# Enable accelerator
+snn.enable()
+
+# Get status
+status = snn.get_status()
+print(f"Enabled: {status['enabled']}")
+print(f"Spike count: {status['spike_count']}")
+
+# Reset and reconfigure
+snn.reset()
+snn.clear_counters()
+
+# Clean up
+snn.close()
+```
+
+### Register Map
+
+| Offset | Register | Description |
+|--------|----------|-------------|
+| 0x00 | Control | [0] Enable, [1] Reset, [2] Clear |
+| 0x04 | Config | Configuration register |
+| 0x08 | Status | Status (read-only) |
+| 0x0C | Spike Count | Output spike counter (read-only) |
+| 0x10 | Threshold | Spike threshold value |
+| 0x14 | Leak Rate | Membrane leak rate |
+| 0x18 | Refractory | Refractory period |
+
+###
+
 Deploy your trained SNN on FPGA hardware.
 
 ### Programming the FPGA
@@ -1236,9 +1634,9 @@ plt.show()
 
 If you encounter issues not covered here:
 
-1. Check the [FAQ](https://github.com/metr0jw/Spiking-Neural-Network-on-FPGA/wiki/FAQ)
-2. Search [existing issues](https://github.com/metr0jw/Spiking-Neural-Network-on-FPGA/issues)
-3. Open a [new issue](https://github.com/metr0jw/Spiking-Neural-Network-on-FPGA/issues/new) with:
+1. Check the [FAQ](https://github.com/metr0jw/Event-Driven-Spiking-Neural-Network-Accelerator-for-FPGA/wiki/FAQ)
+2. Search [existing issues](https://github.com/metr0jw/Event-Driven-Spiking-Neural-Network-Accelerator-for-FPGA/issues)
+3. Open a [new issue](https://github.com/metr0jw/Event-Driven-Spiking-Neural-Network-Accelerator-for-FPGA/issues/new) with:
    - Detailed description of the problem
    - Code to reproduce the issue
    - Error messages and logs

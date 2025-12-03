@@ -242,10 +242,13 @@ module spike_router #(
     //-------------------------------------------------------------------------
     // Configuration interface and spike counter
     //-------------------------------------------------------------------------
+    // Loop variable for Verilog-2001 compatibility
+    integer i;
+    
     always @(posedge clk) begin
         if (!rst_n) begin
             // Initialize connection counts
-            for (integer i = 0; i < NUM_NEURONS; i = i + 1) begin
+            for (i = 0; i < NUM_NEURONS; i = i + 1) begin
                 conn_count[i] <= 8'd0;
             end
             // Note: conn_memory is not reset to save simulation time

@@ -157,17 +157,22 @@ module snn_accelerator_top #(
     wire                        output_spike_ready;
 
     // Width adaptation helpers for AXI wrapper (8-bit neuron IDs)
+    // axi_wrapper outputs 8-bit spike_in_neuron_id, we extend to NEURON_ID_WIDTH
     wire [7:0] spike_in_neuron_id_axi;
     wire [7:0] spike_out_neuron_id_axi;
 
+    // Convert from AXI wrapper 8-bit output to internal NEURON_ID_WIDTH
+    // spike_in_neuron_id_axi comes FROM axi_wrapper, goes TO input_spike_neuron_id
 generate
-    if (AXON_ID_WIDTH >= 8) begin : gen_spike_in_slice
-        assign spike_in_neuron_id_axi = input_spike_neuron_id[7:0];
-    end else begin : gen_spike_in_extend
-        assign spike_in_neuron_id_axi = {{(8-AXON_ID_WIDTH){1'b0}}, input_spike_neuron_id[AXON_ID_WIDTH-1:0]};
+    if (NEURON_ID_WIDTH > 8) begin : gen_spike_in_extend
+        assign input_spike_neuron_id = {{(NEURON_ID_WIDTH-8){1'b0}}, spike_in_neuron_id_axi};
+    end else begin : gen_spike_in_slice
+        assign input_spike_neuron_id = spike_in_neuron_id_axi[NEURON_ID_WIDTH-1:0];
     end
 endgenerate
 
+    // Convert from internal NEURON_ID_WIDTH to AXI wrapper 8-bit input
+    // output_spike_neuron_id goes TO axi_wrapper as spike_out_neuron_id_axi
 generate
     if (NEURON_ID_WIDTH >= 8) begin : gen_spike_out_slice
         assign spike_out_neuron_id_axi = output_spike_neuron_id[7:0];

@@ -343,7 +343,7 @@ show_final_instructions() {
     echo -e "${GREEN}Documentation and support:${NC}"
     echo -e "• README.md - Comprehensive project documentation"
     echo -e "• examples/ - Complete example implementations"
-    echo -e "• GitHub: https://github.com/your-repo/Spiking-Neural-Network-on-FPGA"
+    echo -e "• GitHub: https://github.com/your-repo/Event-Driven-Spiking-Neural-Network-Accelerator-for-FPGA"
     echo
 }
 

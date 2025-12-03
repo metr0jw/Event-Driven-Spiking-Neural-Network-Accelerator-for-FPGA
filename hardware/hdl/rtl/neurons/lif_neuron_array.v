@@ -173,67 +173,86 @@ module lif_neuron_array #(
         end
     end
     
-    // Neuron state update
-    integer i;
+    // Spike queue flag - track which spikes have been queued (declared before use)
+    reg [NUM_NEURONS-1:0] spike_queued;
+    
+    // Unified neuron state update - single always block to avoid multi-driver
+    integer j;
+    reg [DATA_WIDTH-1:0] new_potential;
+    reg threshold_crossed;
+    
     always @(posedge clk) begin
         if (!rst_n) begin
-            for (i = 0; i < NUM_NEURONS; i = i + 1) begin
-                membrane_potential[i] <= 0;
-                refractory_counter[i] <= 0;
+            for (j = 0; j < NUM_NEURONS; j = j + 1) begin
+                membrane_potential[j] <= 0;
+                refractory_counter[j] <= 0;
             end
             spike_flags <= 0;
-        end else if (enable) begin
-            // Update specific neuron
-            if (state == UPDATE && update_en) begin
+        end else begin
+            // Priority 1: Configuration write (highest priority)
+            if (config_we && config_addr < NUM_NEURONS) begin
+                case (config_data[31:30])
+                    2'b00: membrane_potential[config_addr] <= config_data[DATA_WIDTH-1:0];
+                    2'b01: refractory_counter[config_addr] <= config_data[REFRAC_WIDTH-1:0];
+                    default: ; // Reserved
+                endcase
+            end
+            // Priority 2: Neuron update from spike
+            else if (enable && state == UPDATE && update_en) begin
                 if (current_refrac > 0) begin
                     // In refractory period
                     refractory_counter[spike_dest] <= current_refrac - 1'b1;
                 end else begin
-                    // Update membrane potential
+                    // Calculate new potential
                     if (spike_exc_inh) begin
                         // Excitatory
                         if (current_potential + spike_weight < current_potential) begin
-                            // Overflow - saturate
-                            membrane_potential[spike_dest] <= {DATA_WIDTH{1'b1}};
+                            new_potential = {DATA_WIDTH{1'b1}}; // Saturate
                         end else begin
-                            membrane_potential[spike_dest] <= current_potential + spike_weight;
+                            new_potential = current_potential + spike_weight;
                         end
                     end else begin
                         // Inhibitory
                         if (current_potential < spike_weight) begin
-                            membrane_potential[spike_dest] <= 0;
+                            new_potential = 0;
                         end else begin
-                            membrane_potential[spike_dest] <= current_potential - spike_weight;
+                            new_potential = current_potential - spike_weight;
                         end
                     end
                     
                     // Check threshold
-                    if (membrane_potential[spike_dest] >= global_threshold) begin
+                    threshold_crossed = (new_potential >= global_threshold);
+                    
+                    if (threshold_crossed) begin
                         spike_flags[spike_dest] <= 1'b1;
                         membrane_potential[spike_dest] <= 0;
                         refractory_counter[spike_dest] <= global_refrac_period;
+                    end else begin
+                        membrane_potential[spike_dest] <= new_potential;
                     end
                 end
             end
-            
-            // Global leak update (time-multiplexed)
-            // Process TIME_MULTIPLEX_FACTOR neurons per cycle for better scalability
-            for (i = 0; i < TIME_MULTIPLEX_FACTOR; i = i + 1) begin
-                if ((process_idx + i) < NUM_NEURONS) begin  // Bounds check
-                    if (refractory_counter[process_idx + i] == 0) begin
-                        if (membrane_potential[process_idx + i] > global_leak_rate) begin
-                            membrane_potential[process_idx + i] <= 
-                                membrane_potential[process_idx + i] - global_leak_rate;
-                        end else begin
-                            membrane_potential[process_idx + i] <= 0;
+            // Priority 3: Leak update (when not updating from spike)
+            else if (enable) begin
+                for (j = 0; j < TIME_MULTIPLEX_FACTOR; j = j + 1) begin
+                    if ((process_idx + j) < NUM_NEURONS) begin
+                        if (refractory_counter[process_idx + j] == 0) begin
+                            if (membrane_potential[process_idx + j] > global_leak_rate) begin
+                                membrane_potential[process_idx + j] <= 
+                                    membrane_potential[process_idx + j] - global_leak_rate;
+                            end else begin
+                                membrane_potential[process_idx + j] <= 0;
+                            end
                         end
                     end
                 end
             end
             
-            // Clear spike flags that have been queued
-            if (spike_flags[queue_wr_ptr[3:0]] && queue_count < 16) begin
-                spike_flags[queue_wr_ptr[3:0]] <= 1'b0;
+            // Clear spike flags - use registered version of queue write pointer
+            for (j = 0; j < NUM_NEURONS; j = j + 1) begin
+                if (spike_flags[j] && spike_queued[j]) begin
+                    spike_flags[j] <= 1'b0;
+                end
             end
         end
     end
@@ -250,6 +269,9 @@ module lif_neuron_array #(
         end
     end
     
+    // Loop variable for queue management (integer k already used as j above)
+    integer k;
+    
     // Output spike queue management
     always @(posedge clk) begin
         if (!rst_n) begin
@@ -259,16 +281,20 @@ module lif_neuron_array #(
             m_axis_spike_valid <= 1'b0;
             m_axis_spike_neuron_id <= 0;
             total_spikes <= 0;
+            spike_queued <= 0;
         end else begin
-            // Add spikes to queue
-            if (|spike_flags && queue_count < 16) begin
-                for (i = 0; i < NUM_NEURONS; i = i + 1) begin
-                    if (spike_flags[i] && queue_count < 16) begin
-                        spike_queue[queue_wr_ptr] <= i;
+            // Clear queued flags at start of cycle
+            spike_queued <= 0;
+            
+            // Add spikes to queue - find first spike flag and queue it
+            if (queue_count < 16) begin
+                for (k = 0; k < NUM_NEURONS; k = k + 1) begin
+                    if (spike_flags[k] && !spike_queued[k] && queue_count < 16) begin
+                        spike_queue[queue_wr_ptr] <= k;
                         queue_wr_ptr <= queue_wr_ptr + 1'b1;
                         queue_count <= queue_count + 1'b1;
                         total_spikes <= total_spikes + 1'b1;
-                        spike_flags[i] <= 1'b0;
+                        spike_queued[k] <= 1'b1;
                     end
                 end
             end
@@ -282,19 +308,6 @@ module lif_neuron_array #(
             end else if (m_axis_spike_ready) begin
                 m_axis_spike_valid <= 1'b0;
             end
-        end
-    end
-    
-    // Configuration write
-    always @(posedge clk) begin
-        if (!rst_n) begin
-            // Reset handled above
-        end else if (config_we && config_addr < NUM_NEURONS) begin
-            case (config_data[31:30])
-                2'b00: membrane_potential[config_addr] <= config_data[DATA_WIDTH-1:0];
-                2'b01: refractory_counter[config_addr] <= config_data[REFRAC_WIDTH-1:0];
-                default: ; // Reserved
-            endcase
         end
     end
 

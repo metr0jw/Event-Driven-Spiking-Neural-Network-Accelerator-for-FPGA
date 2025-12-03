@@ -74,9 +74,14 @@ module snn_avgpool2d #(
     
     // Loop variables for reset
     integer i, j, k;
+    integer ch, y, x;  // Loop variables for decay
     
     // Pool coordinate calculation registers
     reg [7:0] pool_x, pool_y;
+    
+    // Output calculation registers (moved outside always block for Verilog-2001)
+    reg signed [VMEM_WIDTH-1:0] avg_value;
+    reg [7:0] current_spike_count;
     
     // Input spike parsing
     always @(*) begin
@@ -184,9 +189,6 @@ module snn_avgpool2d #(
             // Output spike generation state machine
             case (output_state)
                 3'b001: begin // Check current position for spike
-                    reg signed [VMEM_WIDTH-1:0] avg_value;
-                    reg [7:0] current_spike_count;
-                    
                     current_spike_count = spike_count[output_ch][output_y][output_x];
                     
                     if (current_spike_count > 0) begin
@@ -239,7 +241,6 @@ module snn_avgpool2d #(
             
             // Apply decay to all accumulators (membrane leak)
             if (time_window_counter[3:0] == 4'b0000) begin // Every 16 cycles
-                integer ch, y, x;
                 for (ch = 0; ch < INPUT_CHANNELS; ch = ch + 1) begin
                     for (y = 0; y < OUTPUT_HEIGHT; y = y + 1) begin
                         for (x = 0; x < OUTPUT_WIDTH; x = x + 1) begin

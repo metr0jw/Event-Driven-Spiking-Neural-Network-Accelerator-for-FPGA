@@ -52,13 +52,13 @@ Before contributing, ensure you have:
 1. **Fork the repository** on GitHub
 2. **Clone your fork**:
    ```bash
-   git clone https://github.com/YOUR_USERNAME/Spiking-Neural-Network-on-FPGA.git
-   cd Spiking-Neural-Network-on-FPGA
+   git clone https://github.com/YOUR_USERNAME/Event-Driven-Spiking-Neural-Network-Accelerator-for-FPGA.git
+   cd Event-Driven-Spiking-Neural-Network-Accelerator-for-FPGA
    ```
 
 3. **Add upstream remote**:
    ```bash
-   git remote add upstream https://github.com/metr0jw/Spiking-Neural-Network-on-FPGA.git
+   git remote add upstream https://github.com/metr0jw/Event-Driven-Spiking-Neural-Network-Accelerator-for-FPGA.git
    ```
 
 4. **Run setup script**:
@@ -149,7 +149,7 @@ We welcome various types of contributions:
 
 ### Finding Issues to Work On
 
-- Check the [GitHub Issues](https://github.com/metr0jw/Spiking-Neural-Network-on-FPGA/issues) page
+- Check the [GitHub Issues](https://github.com/metr0jw/Event-Driven-Spiking-Neural-Network-Accelerator-for-FPGA/issues) page
 - Look for issues tagged `good first issue` or `help wanted`
 - Feel free to propose new features by opening an issue first
 

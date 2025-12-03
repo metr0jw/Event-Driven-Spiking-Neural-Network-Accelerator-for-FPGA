@@ -57,6 +57,7 @@ add_files -norecurse -fileset sources_1 [glob -nocomplain $hdl_dir/rtl/synapses/
 add_files -norecurse -fileset sources_1 [glob -nocomplain $hdl_dir/rtl/router/*.v]
 add_files -norecurse -fileset sources_1 [glob -nocomplain $hdl_dir/rtl/interfaces/*.v]
 add_files -norecurse -fileset sources_1 [glob -nocomplain $hdl_dir/rtl/common/*.v]
+add_files -norecurse -fileset sources_1 [glob -nocomplain $hdl_dir/rtl/layers/*.v]
 
 # Set top module
 set_property top snn_accelerator_top [current_fileset]
@@ -85,8 +86,7 @@ set_property PROCESSING_ORDER LATE [get_files bitstream.xdc]
 
 # Add IP repository paths (if any)
 set ip_repo_list [list]
-lappend ip_repo_list "$proj_root/hardware/ip/custom_ip"
-lappend ip_repo_list "$proj_root/hardware/ip/hls_ip"
+lappend ip_repo_list "$proj_root/hardware/ip_repo"
 
 set_property ip_repo_paths $ip_repo_list [current_project]
 update_ip_catalog

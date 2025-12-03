@@ -17,24 +17,24 @@ In-depth guide for developing and extending the Event-Driven SNN FPGA Accelerato
 ### Prerequisites
 
 **For Hardware Development**:
-- Xilinx Vivado 2025.1 or compatible
-- Xilinx Vitis HLS 2025.1 or compatible
+- Xilinx Vivado 2025.2 or compatible
+- Xilinx Vitis HLS 2025.2 or compatible
 - Icarus Verilog 11.0+ (for open-source simulation)
 - GTKWave (for waveform viewing)
 - PYNQ-Z2 board (for hardware testing)
 
 **For Software Development**:
-- Python 3.13 or higher
-- PyTorch 2.9.0 or higher
+- Python 3.13 or compatible
+- PyTorch 2.9.0 or compatible
+- PYNQ 2.7 or compatible
 - NumPy, pytest, black, flake8, mypy
-- Git for version control
 
 ### Setup Instructions
 
 #### 1. Clone Repository
 ```bash
-git clone https://github.com/metr0jw/Spiking-Neural-Network-on-FPGA.git
-cd Spiking-Neural-Network-on-FPGA
+git clone https://github.com/metr0jw/Event-Driven-Spiking-Neural-Network-Accelerator-for-FPGA.git
+cd Event-Driven-Spiking-Neural-Network-Accelerator-for-FPGA
 ```
 
 #### 2. Python Environment
@@ -54,17 +54,54 @@ pip install pytest pytest-cov black flake8 mypy sphinx
 #### 3. Hardware Tools
 ```bash
 # Source Xilinx tools (adjust paths for your installation)
-source /opt/Xilinx/Vivado/2025.1/settings64.sh
-source /opt/Xilinx/Vitis_HLS/2025.1/settings64.sh
+source ~/tools/2025.2/Vivado/settings64.sh
+export LC_ALL=en_US.UTF-8
 
 # Verify installation
 vivado -version
-vivado_hls -version
 iverilog -v
 
 # Set environment variables
-export XILINX_VIVADO=/opt/Xilinx/Vivado/2025.1
-export XILINX_HLS=/opt/Xilinx/Vitis_HLS/2025.1
+export XILINX_VIVADO=~/tools/2025.2/Vivado
+```
+
+### Building Bitstream
+
+#### Quick Build (Recommended)
+```bash
+cd hardware/scripts
+source ~/tools/2025.2/Vivado/settings64.sh
+export LC_ALL=en_US.UTF-8
+vivado -mode batch -source build_simple_pynq.tcl
+```
+
+#### Build Outputs
+After successful build, outputs are in `outputs/`:
+- `snn_accelerator.bit` - FPGA bitstream
+- `snn_accelerator.hwh` - Hardware handoff for PYNQ
+- `utilization.txt` - Resource usage report
+- `timing.txt` - Timing analysis
+
+### Running RTL Testbenches
+
+All 12 testbenches should pass:
+```bash
+cd hardware/hdl/sim
+./run_all_tests.sh
+```
+
+Expected output:
+```
+============================================================
+           SNN ACCELERATOR - ALL TESTS EXECUTION
+============================================================
+...
+============================================================
+                    FINAL SUMMARY
+============================================================
+PASSED: 12 / 12 tests
+ALL TESTS PASSED!
+============================================================
 ```
 
 ## Hardware Development

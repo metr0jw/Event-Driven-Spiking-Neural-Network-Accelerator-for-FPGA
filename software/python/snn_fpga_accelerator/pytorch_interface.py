@@ -518,6 +518,356 @@ def simulate_snn_inference(snn_model: SNNModel, input_spikes: List[SpikeEvent],
     
     logger.info(f"Software simulation complete: {len(current_spikes)} output spikes")
     return current_spikes
+
+
+class CPUvsSNNComparator:
+    """
+    Compare inference results between CPU (traditional ANN) and SNN simulation.
+    
+    This utility helps validate that the SNN conversion maintains model accuracy
+    and provides insights into the behavior differences between rate-coded SNNs
+    and traditional ANNs.
+    
+    Example
+    -------
+    >>> comparator = CPUvsSNNComparator(torch_model, snn_model)
+    >>> results = comparator.compare(input_data)
+    >>> comparator.print_report(results)
+    """
+    
+    def __init__(
+        self,
+        torch_model: Optional['nn.Module'] = None,
+        snn_model: Optional[SNNModel] = None,
+        device: str = 'cpu'
+    ):
+        """
+        Initialize comparator.
+        
+        Parameters
+        ----------
+        torch_model : nn.Module, optional
+            PyTorch model for CPU inference. If None, will create from snn_model.
+        snn_model : SNNModel, optional
+            SNN model for neuromorphic simulation. If None, will convert from torch_model.
+        device : str
+            Device for PyTorch inference ('cpu' or 'cuda').
+        """
+        self.torch_model = torch_model
+        self.snn_model = snn_model
+        self.device = device
+        self._encoder = None
+        
+    def set_models(
+        self,
+        torch_model: Optional['nn.Module'] = None,
+        snn_model: Optional[SNNModel] = None
+    ) -> None:
+        """Set or update models for comparison."""
+        if torch_model is not None:
+            self.torch_model = torch_model
+        if snn_model is not None:
+            self.snn_model = snn_model
+            
+    def _run_cpu_inference(self, input_data: np.ndarray) -> np.ndarray:
+        """Run inference on CPU using PyTorch model."""
+        if torch is None:
+            raise RuntimeError("PyTorch is required for CPU inference")
+        if self.torch_model is None:
+            raise RuntimeError("PyTorch model not set. Use set_models() first.")
+            
+        self.torch_model.eval()
+        with torch.no_grad():
+            input_tensor = torch.from_numpy(input_data).float().to(self.device)
+            if input_tensor.dim() == 1:
+                input_tensor = input_tensor.unsqueeze(0)  # Add batch dimension
+            output = self.torch_model(input_tensor)
+            return output.cpu().numpy()
+    
+    def _run_snn_inference(
+        self,
+        input_data: np.ndarray,
+        duration: float = 0.1,
+        max_rate: float = 100.0,
+        num_repeats: int = 1
+    ) -> Tuple[np.ndarray, List['SpikeEvent']]:
+        """Run inference using SNN simulation."""
+        if self.snn_model is None:
+            raise RuntimeError("SNN model not set. Use set_models() first.")
+        
+        from .spike_encoding import PoissonEncoder
+        
+        # Flatten input if needed
+        flat_input = input_data.flatten()
+        
+        # Encode to spikes
+        encoder = PoissonEncoder(
+            num_neurons=len(flat_input),
+            duration=duration,
+            max_rate=max_rate
+        )
+        
+        all_output_spikes = []
+        spike_counts = np.zeros(self.snn_model.layers[-1].output_size)
+        
+        for _ in range(num_repeats):
+            spikes = encoder.encode(flat_input)
+            output_spikes = simulate_snn_inference(self.snn_model, spikes, duration)
+            all_output_spikes.extend(output_spikes)
+            
+            # Count output spikes per neuron
+            output_start_id = self.snn_model.total_neurons - self.snn_model.layers[-1].output_size
+            for spike in output_spikes:
+                if spike.neuron_id >= output_start_id:
+                    spike_counts[spike.neuron_id - output_start_id] += 1
+        
+        # Normalize by number of repeats
+        spike_rates = spike_counts / num_repeats
+        
+        return spike_rates, all_output_spikes
+    
+    def compare(
+        self,
+        input_data: np.ndarray,
+        duration: float = 0.1,
+        max_rate: float = 100.0,
+        num_repeats: int = 5
+    ) -> Dict[str, Any]:
+        """
+        Compare CPU and SNN inference results.
+        
+        Parameters
+        ----------
+        input_data : np.ndarray
+            Input data for inference.
+        duration : float
+            SNN simulation duration in seconds.
+        max_rate : float
+            Maximum spike rate for encoding.
+        num_repeats : int
+            Number of SNN inference repeats for averaging.
+            
+        Returns
+        -------
+        dict
+            Comparison results including:
+            - cpu_output: Raw CPU model output
+            - cpu_prediction: Predicted class from CPU
+            - snn_spike_rates: Spike rates from SNN
+            - snn_prediction: Predicted class from SNN
+            - snn_output_spikes: List of output spike events
+            - agreement: Whether predictions match
+            - cpu_confidence: Confidence of CPU prediction
+            - snn_confidence: Confidence of SNN prediction
+            - correlation: Correlation between outputs
+        """
+        import time
+        
+        results = {
+            'input_shape': input_data.shape,
+            'duration': duration,
+            'max_rate': max_rate,
+            'num_repeats': num_repeats,
+        }
+        
+        # CPU inference
+        if self.torch_model is not None:
+            start_time = time.time()
+            cpu_output = self._run_cpu_inference(input_data)
+            results['cpu_time_ms'] = (time.time() - start_time) * 1000
+            results['cpu_output'] = cpu_output.flatten()
+            
+            # Softmax for probabilities
+            cpu_exp = np.exp(cpu_output - np.max(cpu_output))
+            cpu_probs = cpu_exp / cpu_exp.sum()
+            results['cpu_probabilities'] = cpu_probs.flatten()
+            results['cpu_prediction'] = int(np.argmax(cpu_output))
+            results['cpu_confidence'] = float(np.max(cpu_probs))
+        else:
+            results['cpu_output'] = None
+            results['cpu_prediction'] = None
+            results['cpu_confidence'] = None
+            results['cpu_time_ms'] = None
+        
+        # SNN inference
+        if self.snn_model is not None:
+            start_time = time.time()
+            snn_rates, snn_spikes = self._run_snn_inference(
+                input_data, duration, max_rate, num_repeats
+            )
+            results['snn_time_ms'] = (time.time() - start_time) * 1000
+            results['snn_spike_rates'] = snn_rates
+            results['snn_output_spikes'] = snn_spikes
+            results['snn_total_output_spikes'] = len(snn_spikes)
+            
+            # Normalize rates to probabilities
+            if snn_rates.sum() > 0:
+                snn_probs = snn_rates / snn_rates.sum()
+                results['snn_probabilities'] = snn_probs
+                results['snn_prediction'] = int(np.argmax(snn_rates))
+                results['snn_confidence'] = float(np.max(snn_probs))
+            else:
+                results['snn_probabilities'] = np.zeros_like(snn_rates)
+                results['snn_prediction'] = None
+                results['snn_confidence'] = 0.0
+        else:
+            results['snn_spike_rates'] = None
+            results['snn_prediction'] = None
+            results['snn_confidence'] = None
+            results['snn_time_ms'] = None
+        
+        # Compute comparison metrics
+        if results['cpu_prediction'] is not None and results['snn_prediction'] is not None:
+            results['agreement'] = results['cpu_prediction'] == results['snn_prediction']
+            
+            # Correlation between output distributions
+            if results['cpu_output'] is not None and results['snn_spike_rates'] is not None:
+                cpu_norm = results['cpu_output'] - results['cpu_output'].mean()
+                snn_norm = results['snn_spike_rates'] - results['snn_spike_rates'].mean()
+                
+                if np.std(cpu_norm) > 0 and np.std(snn_norm) > 0:
+                    correlation = np.corrcoef(cpu_norm, snn_norm)[0, 1]
+                    results['correlation'] = float(correlation) if not np.isnan(correlation) else 0.0
+                else:
+                    results['correlation'] = 0.0
+        else:
+            results['agreement'] = None
+            results['correlation'] = None
+            
+        return results
+    
+    def compare_batch(
+        self,
+        inputs: np.ndarray,
+        labels: Optional[np.ndarray] = None,
+        **kwargs
+    ) -> Dict[str, Any]:
+        """
+        Compare CPU and SNN inference on a batch of inputs.
+        
+        Parameters
+        ----------
+        inputs : np.ndarray
+            Batch of inputs with shape (N, ...).
+        labels : np.ndarray, optional
+            Ground truth labels for accuracy calculation.
+        **kwargs
+            Additional arguments passed to compare().
+            
+        Returns
+        -------
+        dict
+            Batch comparison results including accuracy metrics.
+        """
+        batch_size = inputs.shape[0]
+        
+        cpu_predictions = []
+        snn_predictions = []
+        agreements = []
+        correlations = []
+        
+        for i in range(batch_size):
+            result = self.compare(inputs[i], **kwargs)
+            
+            if result['cpu_prediction'] is not None:
+                cpu_predictions.append(result['cpu_prediction'])
+            if result['snn_prediction'] is not None:
+                snn_predictions.append(result['snn_prediction'])
+            if result['agreement'] is not None:
+                agreements.append(result['agreement'])
+            if result['correlation'] is not None:
+                correlations.append(result['correlation'])
+        
+        batch_results = {
+            'batch_size': batch_size,
+            'cpu_predictions': np.array(cpu_predictions) if cpu_predictions else None,
+            'snn_predictions': np.array(snn_predictions) if snn_predictions else None,
+            'agreement_rate': np.mean(agreements) if agreements else None,
+            'mean_correlation': np.mean(correlations) if correlations else None,
+            'std_correlation': np.std(correlations) if correlations else None,
+        }
+        
+        if labels is not None:
+            if cpu_predictions:
+                batch_results['cpu_accuracy'] = np.mean(
+                    np.array(cpu_predictions) == labels[:len(cpu_predictions)]
+                )
+            if snn_predictions:
+                batch_results['snn_accuracy'] = np.mean(
+                    np.array(snn_predictions) == labels[:len(snn_predictions)]
+                )
+                
+        return batch_results
+    
+    @staticmethod
+    def print_report(results: Dict[str, Any], verbose: bool = True) -> None:
+        """
+        Print a formatted comparison report.
+        
+        Parameters
+        ----------
+        results : dict
+            Results from compare() or compare_batch().
+        verbose : bool
+            Whether to print detailed information.
+        """
+        print("\n" + "=" * 60)
+        print("CPU vs SNN Comparison Report")
+        print("=" * 60)
+        
+        # Single sample results
+        if 'cpu_output' in results:
+            print("\n[Input]")
+            print(f"  Shape: {results.get('input_shape', 'N/A')}")
+            print(f"  SNN Duration: {results.get('duration', 'N/A')}s")
+            print(f"  Max Spike Rate: {results.get('max_rate', 'N/A')} Hz")
+            
+            print("\n[CPU Inference (PyTorch)]")
+            if results.get('cpu_prediction') is not None:
+                print(f"  Prediction: {results['cpu_prediction']}")
+                print(f"  Confidence: {results['cpu_confidence']:.4f}")
+                print(f"  Time: {results.get('cpu_time_ms', 'N/A'):.2f} ms")
+                if verbose and results.get('cpu_probabilities') is not None:
+                    print(f"  Probabilities: {results['cpu_probabilities']}")
+            else:
+                print("  (Not available)")
+                
+            print("\n[SNN Inference (Neuromorphic Simulation)]")
+            if results.get('snn_prediction') is not None:
+                print(f"  Prediction: {results['snn_prediction']}")
+                print(f"  Confidence: {results['snn_confidence']:.4f}")
+                print(f"  Time: {results.get('snn_time_ms', 'N/A'):.2f} ms")
+                print(f"  Total Output Spikes: {results.get('snn_total_output_spikes', 0)}")
+                if verbose and results.get('snn_spike_rates') is not None:
+                    print(f"  Spike Rates: {results['snn_spike_rates']}")
+            else:
+                print("  (Not available - no output spikes)")
+                
+            print("\n[Comparison]")
+            if results.get('agreement') is not None:
+                status = "MATCH" if results['agreement'] else "MISMATCH"
+                print(f"  Agreement: {status}")
+                print(f"  Output Correlation: {results.get('correlation', 'N/A'):.4f}")
+            else:
+                print("  (Cannot compare - missing results)")
+                
+        # Batch results
+        if 'batch_size' in results:
+            print(f"\n[Batch Summary]")
+            print(f"  Batch Size: {results['batch_size']}")
+            
+            if results.get('agreement_rate') is not None:
+                print(f"  Agreement Rate: {results['agreement_rate']*100:.2f}%")
+            if results.get('mean_correlation') is not None:
+                print(f"  Mean Correlation: {results['mean_correlation']:.4f} +/- {results.get('std_correlation', 0):.4f}")
+            if results.get('cpu_accuracy') is not None:
+                print(f"  CPU Accuracy: {results['cpu_accuracy']*100:.2f}%")
+            if results.get('snn_accuracy') is not None:
+                print(f"  SNN Accuracy: {results['snn_accuracy']*100:.2f}%")
+                
+        print("\n" + "=" * 60)
+
+
 if torch is not None and nn is not None:
 
     class TorchSNNLayer(nn.Module):

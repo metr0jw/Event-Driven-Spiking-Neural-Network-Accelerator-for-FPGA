@@ -257,21 +257,25 @@ Bridges between PS (ARM processor) and PL (FPGA fabric).
 - Batch spike injection
 - Output spike collection
 
-### Resource Utilization
+### Resource Utilization (Verified Build)
 
-Typical utilization for 64-neuron configuration on PYNQ-Z2 (XC7Z020):
+Actual utilization for PYNQ-Z2 block design with PS (XC7Z020):
 
 | Resource    | Used  | Available | Utilization |
 |-------------|-------|-----------|-------------|
-| LUTs        | 15,234| 53,200    | 28.6%       |
-| FFs         | 12,456| 106,400   | 11.7%       |
-| BRAM        | 18    | 140       | 12.9%       |
-| DSPs        | 12    | 220       | 5.5%        |
+| LUTs        | 4,689 | 53,200    | 8.81%       |
+| Registers   | 3,212 | 106,400   | 3.02%       |
+| Slices      | 1,620 | 13,300    | 12.18%      |
+| BRAM36K     | 2     | 140       | 1.4%        |
+| DSPs        | 0     | 220       | 0%          |
 
-Scaling to 1024 neurons (estimated):
-- LUTs: ~45% (resource sharing in time-multiplexing)
-- BRAM: ~80% (weight memory dominates)
-- DSPs: ~15% (fixed-point multiply-accumulate)
+**Timing Results (100 MHz)**:
+| Metric | Value | Status |
+|--------|-------|--------|
+| WNS (Setup) | +0.159 ns | PASS |
+| WHS (Hold) | +0.057 ns | PASS |
+| WPWS (Pulse Width) | +3.750 ns | PASS |
+| Timing Violations | 0 | OK |
 
 ### Clock Domains
 
