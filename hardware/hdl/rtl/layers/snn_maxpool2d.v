@@ -76,6 +76,12 @@ module snn_maxpool2d #(
     reg [31:0] local_input_count;
     reg [31:0] local_output_count;
     
+    // Loop variables for reset
+    integer i, j, k;
+    
+    // Pool coordinate calculation registers
+    reg [7:0] pool_x, pool_y;
+    
     // Input spike parsing
     always @(*) begin
         input_timestamp = s_axis_input_tdata[47:32];
@@ -133,7 +139,6 @@ module snn_maxpool2d #(
             pooling_window_active <= 1'b0;
             
             // Reset spike memories
-            integer i, j, k;
             for (i = 0; i < INPUT_CHANNELS; i = i + 1) begin
                 for (j = 0; j < OUTPUT_HEIGHT; j = j + 1) begin
                     for (k = 0; k < OUTPUT_WIDTH; k = k + 1) begin
@@ -171,7 +176,6 @@ module snn_maxpool2d #(
                 local_input_count <= local_input_count + 1;
                 
                 // Calculate which pooling windows this spike contributes to
-                reg [7:0] pool_x, pool_y;
                 pool_x = calc_pool_x(input_x);
                 pool_y = calc_pool_y(input_y);
                 

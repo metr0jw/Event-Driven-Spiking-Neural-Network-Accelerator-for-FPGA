@@ -1,33 +1,70 @@
-# Build outputs [[8]]
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
 build/
-*.bit
-*.ltx
-*.hwh
-!overlays/*/*.bit
-!overlays/*/*.hwh
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+venv/
+.venv/
+env/
+.env/
 
-# Vivado generated
+# Pytest
+.pytest_cache/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Vivado/Vitis
+*.jou
+*.log
+*.backup.*
+*.str
+*.wdb
+*.vcd
+.Xil/
+*.sim/
 *.cache/
+*.gen/
 *.hw/
 *.ip_user_files/
 *.runs/
-*.sim/
-*.xpr
-*.jou
-*.log
-*.str
+vivado_*.backup.*
+xsim_*.backup.*
 
-# Python
-__pycache__/
-*.pyc
-.ipynb_checkpoints/
-*.egg-info/
-dist/
+# Build outputs
+*.bit
+*.bin
+*.ltx
 
-# OS files
-.DS_Store
-Thumbs.db
-
-# IDE
+# Editor
 .vscode/
 .idea/
+*.swp
+*.swo
+*~
+
+# Data files (optional - uncomment if you want to track these)
+# data/
+# logs/
+# models/
+# outputs/
+
+# OS
+.DS_Store
+Thumbs.db

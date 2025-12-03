@@ -1,0 +1,26 @@
+0.7
+2020.2
+May 21 2025
+22:59:56
+/mnt/workspace/Spiking-Neural-Network-on-FPGA/hardware/hdl/rtl/common/fifo.v,1762259589,systemVerilog,,/mnt/workspace/Spiking-Neural-Network-on-FPGA/hardware/hdl/rtl/common/reset_sync.v,,fifo,,,,,,,,
+/mnt/workspace/Spiking-Neural-Network-on-FPGA/hardware/hdl/rtl/common/reset_sync.v,1762259594,systemVerilog,,/mnt/workspace/Spiking-Neural-Network-on-FPGA/hardware/hdl/rtl/common/sync_pulse.v,,por_gen;reset_sync;reset_sync_n,,,,,,,,
+/mnt/workspace/Spiking-Neural-Network-on-FPGA/hardware/hdl/rtl/common/sync_pulse.v,1762259597,systemVerilog,,/mnt/workspace/Spiking-Neural-Network-on-FPGA/hardware/hdl/rtl/interfaces/axi_wrapper.v,,sync_pulse;sync_pulse_ack,,,,,,,,
+/mnt/workspace/Spiking-Neural-Network-on-FPGA/hardware/hdl/rtl/interfaces/axi_wrapper.v,1762335846,systemVerilog,,/mnt/workspace/Spiking-Neural-Network-on-FPGA/hardware/hdl/rtl/layers/snn_avgpool1d.v,,axi_wrapper,,,,,,,,
+/mnt/workspace/Spiking-Neural-Network-on-FPGA/hardware/hdl/rtl/layers/snn_avgpool1d.v,1762259609,systemVerilog,,/mnt/workspace/Spiking-Neural-Network-on-FPGA/hardware/hdl/rtl/layers/snn_avgpool2d.v,,snn_avgpool1d,,,,,,,,
+/mnt/workspace/Spiking-Neural-Network-on-FPGA/hardware/hdl/rtl/layers/snn_avgpool2d.v,1762316515,systemVerilog,,/mnt/workspace/Spiking-Neural-Network-on-FPGA/hardware/hdl/rtl/layers/snn_conv1d.v,,snn_avgpool2d,,,,,,,,
+/mnt/workspace/Spiking-Neural-Network-on-FPGA/hardware/hdl/rtl/layers/snn_conv1d.v,1762262666,systemVerilog,,/mnt/workspace/Spiking-Neural-Network-on-FPGA/hardware/hdl/rtl/layers/snn_conv2d.v,,snn_conv1d,,,,,,,,
+/mnt/workspace/Spiking-Neural-Network-on-FPGA/hardware/hdl/rtl/layers/snn_conv2d.v,1762316515,systemVerilog,,/mnt/workspace/Spiking-Neural-Network-on-FPGA/hardware/hdl/rtl/layers/snn_layer_manager.v,,axi_lite_weight_interface;snn_conv2d,,,,,,,,
+/mnt/workspace/Spiking-Neural-Network-on-FPGA/hardware/hdl/rtl/layers/snn_layer_manager.v,1762316515,systemVerilog,,/mnt/workspace/Spiking-Neural-Network-on-FPGA/hardware/hdl/rtl/layers/snn_maxpool1d.v,,snn_layer_manager,,,,,,,,
+/mnt/workspace/Spiking-Neural-Network-on-FPGA/hardware/hdl/rtl/layers/snn_maxpool1d.v,1762259629,systemVerilog,,/mnt/workspace/Spiking-Neural-Network-on-FPGA/hardware/hdl/rtl/layers/snn_maxpool2d.v,,snn_maxpool1d,,,,,,,,
+/mnt/workspace/Spiking-Neural-Network-on-FPGA/hardware/hdl/rtl/layers/snn_maxpool2d.v,1762316515,systemVerilog,,/mnt/workspace/Spiking-Neural-Network-on-FPGA/hardware/hdl/rtl/layers/snn_pooling.v,,snn_maxpool2d,,,,,,,,
+/mnt/workspace/Spiking-Neural-Network-on-FPGA/hardware/hdl/rtl/layers/snn_pooling.v,1762317148,systemVerilog,,/mnt/workspace/Spiking-Neural-Network-on-FPGA/hardware/hdl/rtl/neurons/lif_neuron_array.v,,snn_pooling,,,,,,,,
+/mnt/workspace/Spiking-Neural-Network-on-FPGA/hardware/hdl/rtl/neurons/lif_neuron.sv,1762310658,systemVerilog,,/mnt/workspace/Spiking-Neural-Network-on-FPGA/hardware/hdl/rtl/neurons/lif_neuron.v,,,,,,,,,,
+/mnt/workspace/Spiking-Neural-Network-on-FPGA/hardware/hdl/rtl/neurons/lif_neuron.v,1762259653,systemVerilog,,/mnt/workspace/Spiking-Neural-Network-on-FPGA/hardware/hdl/rtl/router/spike_router.v,,lif_neuron,,,,,,,,
+/mnt/workspace/Spiking-Neural-Network-on-FPGA/hardware/hdl/rtl/neurons/lif_neuron_array.v,1762310659,systemVerilog,,/mnt/workspace/Spiking-Neural-Network-on-FPGA/hardware/hdl/rtl/neurons/lif_neuron.sv,,lif_neuron_array,,,,,,,,
+/mnt/workspace/Spiking-Neural-Network-on-FPGA/hardware/hdl/rtl/router/spike_router.v,1762259657,systemVerilog,,/mnt/workspace/Spiking-Neural-Network-on-FPGA/hardware/hdl/rtl/synapses/synapse_array.v,,spike_router,,,,,,,,
+/mnt/workspace/Spiking-Neural-Network-on-FPGA/hardware/hdl/rtl/synapses/synapse_array.v,1762259662,systemVerilog,,/mnt/workspace/Spiking-Neural-Network-on-FPGA/hardware/hdl/rtl/synapses/weight_memory.v,,synapse_array,,,,,,,,
+/mnt/workspace/Spiking-Neural-Network-on-FPGA/hardware/hdl/rtl/synapses/weight_memory.v,1762259667,systemVerilog,,/mnt/workspace/Spiking-Neural-Network-on-FPGA/hardware/hdl/rtl/top/snn_accelerator_top.v,,weight_memory,,,,,,,,
+/mnt/workspace/Spiking-Neural-Network-on-FPGA/hardware/hdl/rtl/top/snn_accelerator_top.v,1762264006,systemVerilog,,/mnt/workspace/Spiking-Neural-Network-on-FPGA/hardware/ip_repo/axi_lite_regs_v1_0/src/axi_lite_regs_v1_0_S00_AXI.v,,snn_accelerator_top,,,,,,,,
+/mnt/workspace/Spiking-Neural-Network-on-FPGA/hardware/hdl/tb/tb_top.v,1762335354,systemVerilog,,,,tb_top,,,,,,,,
+/mnt/workspace/Spiking-Neural-Network-on-FPGA/hardware/ip_repo/axi_lite_regs_v1_0/src/axi_lite_regs_v1_0.v,1762334970,systemVerilog,,/mnt/workspace/Spiking-Neural-Network-on-FPGA/hardware/hdl/tb/tb_top.v,,axi_lite_regs_v1_0,,,,,,,,
+/mnt/workspace/Spiking-Neural-Network-on-FPGA/hardware/ip_repo/axi_lite_regs_v1_0/src/axi_lite_regs_v1_0_S00_AXI.v,1762336677,systemVerilog,,/mnt/workspace/Spiking-Neural-Network-on-FPGA/hardware/ip_repo/axi_lite_regs_v1_0/src/axi_lite_regs_v1_0.v,,axi_lite_regs_v1_0_S00_AXI,,,,,,,,

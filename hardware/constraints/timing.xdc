@@ -2,6 +2,7 @@
 ## File: timing.xdc
 ## Author        : Jiwoon Lee (@metr0jw)
 ## Organization  : Kwangwoon University, Seoul, South Korea
+## Contact       : jwlee@linux.com
 ## Description: Timing constraints for SNN Accelerator
 ##-----------------------------------------------------------------------------
 

@@ -4,6 +4,7 @@
 ## File          : pynq_z2_pins.xdc
 ## Author        : Jiwoon Lee (@metr0jw)
 ## Organization  : Kwangwoon University, Seoul, South Korea
+## Contact       : jwlee@linux.com
 ## Description   : Additional constraints for SNN-specific pins
 ##-----------------------------------------------------------------------------
 

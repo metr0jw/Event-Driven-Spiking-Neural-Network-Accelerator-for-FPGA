@@ -11,7 +11,6 @@ Contact: jwlee@linux.com
 
 import torch
 import torch.nn as nn
-import torch.optim as optim
 from torch.utils.data import DataLoader
 import torchvision
 import torchvision.transforms as transforms
@@ -21,6 +20,7 @@ from tqdm import tqdm
 import argparse
 import os
 import sys
+from typing import Union
 
 # Add the software package to path
 sys.path.append('../../software/python')
@@ -29,15 +29,15 @@ from snn_fpga_accelerator import (
     SNNAccelerator, pytorch_to_snn, PoissonEncoder, 
     SNNModel, create_feedforward_snn
 )
-from snn_fpga_accelerator.pytorch_interface import TorchSNNLayer, spike_function
+from snn_fpga_accelerator.pytorch_interface import TorchSNNLayer
 
 
 class SpikingMLP(nn.Module):
     """
     Spiking Multi-Layer Perceptron for MNIST classification.
     
-    This model uses PyTorch-compatible spiking layers that can be
-    trained with backpropagation and then converted to run on FPGA.
+    This model uses PyTorch-compatible spiking layers that collect spike
+    statistics for STDP-style updates before conversion to FPGA hardware.
     """
     
     def __init__(self, input_size=784, hidden_sizes=[256, 128], num_classes=10,
@@ -72,6 +72,9 @@ class SpikingMLP(nn.Module):
         ))
         
         self.layers = nn.ModuleList(layers)
+        self.last_input_spikes = None
+        self.last_layer_spikes = []
+        self.last_output_spikes = None
         
     def forward(self, x):
         """
@@ -94,21 +97,28 @@ class SpikingMLP(nn.Module):
             layer.reset_state()
         
         # Simulate over time steps
-        output_spikes = torch.zeros(batch_size, self.num_classes, device=x.device)
-        
-        for t in range(self.num_timesteps):
-            # Convert input to spikes (Poisson encoding)
-            spike_input = torch.rand_like(x) < (x * 0.1)  # Poisson approximation
-            current_activity = spike_input.float()
-            
-            # Forward through layers
-            for layer in self.layers:
+        output_spike_sum = torch.zeros(batch_size, self.num_classes, device=x.device)
+        input_spike_history = []
+        layer_spike_histories = [[] for _ in self.layers]
+
+        for _ in range(self.num_timesteps):
+            spike_input = (torch.rand_like(x) < (x * 0.1)).float()
+            input_spike_history.append(spike_input)
+            current_activity = spike_input
+
+            for layer_idx, layer in enumerate(self.layers):
                 current_activity = layer(current_activity)
-            
-            # Accumulate output spikes
-            output_spikes += current_activity
-        
-        return output_spikes
+                layer_spike_histories[layer_idx].append(current_activity)
+
+            output_spike_sum += current_activity
+
+        # Persist spike history for STDP-based updates
+        self.last_input_spikes = torch.stack(input_spike_history, dim=2).detach()
+        self.last_layer_spikes = [torch.stack(history, dim=2).detach()
+                                  for history in layer_spike_histories]
+        self.last_output_spikes = self.last_layer_spikes[-1]
+
+        return output_spike_sum
     
     def reset_states(self):
         """Reset all neuron states."""
@@ -144,99 +154,94 @@ def load_mnist_data(batch_size=128, download=True):
     return train_loader, test_loader
 
 
-def train_model(model, train_loader, test_loader, num_epochs=10, learning_rate=0.001,
-                device='cpu', save_path='snn_mnist_model.pth'):
-    """
-    Train the spiking neural network model.
-    
-    Args:
-        model: SNN model to train
-        train_loader: Training data loader
-        test_loader: Test data loader
-        num_epochs: Number of training epochs
-        learning_rate: Learning rate
-        device: Device to train on
-        save_path: Path to save the trained model
-    """
-    
-    # Move model to device
+def train_model(model, train_loader, test_loader, num_epochs: int = 10, learning_rate: float = 0.01,
+                device: Union[str, torch.device] = 'cpu', save_path: str = 'snn_mnist_model.pth'):
+    """Train the spiking neural network with reward-modulated STDP updates."""
+
     model = model.to(device)
-    
-    # Loss function and optimizer
-    criterion = nn.CrossEntropyLoss()
-    optimizer = optim.Adam(model.parameters(), lr=learning_rate)
-    scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=5, gamma=0.5)
-    
-    # Training history
-    train_losses = []
+
+    train_rewards = []
     train_accuracies = []
     test_accuracies = []
-    
-    print(f"Training SNN model on {device}")
+
+    print(f"Training SNN model on {device} with STDP-inspired updates")
     print(f"Model parameters: {sum(p.numel() for p in model.parameters())}")
-    
+
     for epoch in range(num_epochs):
         model.train()
-        running_loss = 0.0
         correct_train = 0
         total_train = 0
-        
-        # Training loop
+        cumulative_reward = 0.0
+
         train_pbar = tqdm(train_loader, desc=f'Epoch {epoch+1}/{num_epochs}')
         for batch_idx, (data, target) in enumerate(train_pbar):
             data, target = data.to(device), target.to(device)
-            
-            # Zero gradients
-            optimizer.zero_grad()
-            
-            # Forward pass
-            output = model(data)
-            loss = criterion(output, target)
-            
-            # Backward pass
-            loss.backward()
-            
-            # Gradient clipping to stabilize training
-            torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
-            
-            # Update weights
-            optimizer.step()
-            
-            # Statistics
-            running_loss += loss.item()
-            _, predicted = torch.max(output.data, 1)
-            total_train += target.size(0)
-            correct_train += (predicted == target).sum().item()
-            
-            # Update progress bar
-            train_pbar.set_postfix({
-                'Loss': f'{loss.item():.4f}',
-                'Acc': f'{100.*correct_train/total_train:.2f}%'
-            })
-        
-        # Calculate epoch statistics
-        epoch_loss = running_loss / len(train_loader)
-        epoch_acc = 100. * correct_train / total_train
-        
-        train_losses.append(epoch_loss)
+
+            with torch.no_grad():
+                output_spikes = model(data)
+
+            output_counts = model.last_output_spikes.sum(dim=2)
+            predictions = output_counts.argmax(dim=1)
+            rewards = torch.where(predictions == target, 1.0, -1.0)
+
+            batch_size = data.size(0)
+            total_train += batch_size
+            correct_train += (predictions == target).sum().item()
+            cumulative_reward += rewards.sum().item()
+
+            layer_spike_rates = [layer_spikes.float().mean(dim=2)
+                                 for layer_spikes in model.last_layer_spikes]
+            input_rates = model.last_input_spikes.float().mean(dim=2)
+
+            with torch.no_grad():
+                for layer_idx, layer in enumerate(model.layers):
+                    pre_activity = input_rates if layer_idx == 0 else layer_spike_rates[layer_idx - 1]
+                    post_activity = layer_spike_rates[layer_idx]
+
+                    delta_w = torch.zeros_like(layer.weight.data)
+                    delta_b = torch.zeros_like(layer.bias.data)
+
+                    # Hebbian-style plasticity scaled by a simple reward signal
+                    for b in range(batch_size):
+                        hebbian = torch.outer(post_activity[b], pre_activity[b])
+                        delta_w += rewards[b] * hebbian
+                        delta_b += rewards[b] * (post_activity[b] - 0.5)
+
+                    delta_w /= max(batch_size, 1)
+                    delta_b /= max(batch_size, 1)
+
+                    layer.weight.data += learning_rate * delta_w
+                    layer.bias.data += learning_rate * delta_b
+
+                    decay = 0.005 * learning_rate
+                    layer.weight.data *= (1.0 - decay)
+                    layer.bias.data *= (1.0 - decay)
+
+                    layer.weight.data.clamp_(-1.0, 1.0)
+                    layer.bias.data.clamp_(-1.0, 1.0)
+
+            if batch_idx % 50 == 0:
+                avg_acc = 100.0 * correct_train / max(total_train, 1)
+                avg_reward = cumulative_reward / max(total_train, 1)
+                train_pbar.set_postfix({'Acc': f'{avg_acc:.2f}%', 'Reward': f'{avg_reward:.3f}'})
+
+        epoch_acc = 100.0 * correct_train / max(total_train, 1)
+        avg_reward = cumulative_reward / max(total_train, 1)
+
+        train_rewards.append(avg_reward)
         train_accuracies.append(epoch_acc)
-        
-        # Test evaluation
+
         test_acc = evaluate_model(model, test_loader, device)
         test_accuracies.append(test_acc)
-        
-        # Update learning rate
-        scheduler.step()
-        
+
         print(f'Epoch [{epoch+1}/{num_epochs}]')
-        print(f'Train Loss: {epoch_loss:.4f}, Train Acc: {epoch_acc:.2f}%')
+        print(f'Train Reward: {avg_reward:.3f}, Train Acc: {epoch_acc:.2f}%')
         print(f'Test Acc: {test_acc:.2f}%')
         print('-' * 50)
-    
-    # Save the trained model
+
     torch.save({
         'model_state_dict': model.state_dict(),
-        'train_losses': train_losses,
+        'train_rewards': train_rewards,
         'train_accuracies': train_accuracies,
         'test_accuracies': test_accuracies,
         'model_config': {
@@ -245,16 +250,15 @@ def train_model(model, train_loader, test_loader, num_epochs=10, learning_rate=0
             'hidden_sizes': [layer.out_features for layer in model.layers[:-1]],
         }
     }, save_path)
-    
+
     print(f'Model saved to {save_path}')
-    
-    # Plot training curves
-    plot_training_curves(train_losses, train_accuracies, test_accuracies)
-    
-    return model, train_losses, test_accuracies
+
+    plot_training_curves(train_rewards, train_accuracies, test_accuracies)
+
+    return model, train_rewards, test_accuracies
 
 
-def evaluate_model(model, test_loader, device='cpu'):
+def evaluate_model(model, test_loader, device: Union[str, torch.device] = 'cpu'):
     """Evaluate model accuracy on test set."""
     model.eval()
     correct = 0
@@ -272,21 +276,19 @@ def evaluate_model(model, test_loader, device='cpu'):
     return accuracy
 
 
-def plot_training_curves(train_losses, train_accuracies, test_accuracies):
-    """Plot training curves."""
-    epochs = range(1, len(train_losses) + 1)
-    
+def plot_training_curves(train_rewards, train_accuracies, test_accuracies):
+    """Plot training curves for reward and accuracy."""
+    epochs = range(1, len(train_rewards) + 1)
+
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 4))
-    
-    # Loss plot
-    ax1.plot(epochs, train_losses, 'b-', label='Training Loss')
-    ax1.set_title('Training Loss')
+
+    ax1.plot(epochs, train_rewards, 'g-', label='Average Reward')
+    ax1.set_title('Training Reward')
     ax1.set_xlabel('Epoch')
-    ax1.set_ylabel('Loss')
+    ax1.set_ylabel('Reward')
     ax1.legend()
     ax1.grid(True)
-    
-    # Accuracy plot
+
     ax2.plot(epochs, train_accuracies, 'b-', label='Training Accuracy')
     ax2.plot(epochs, test_accuracies, 'r-', label='Test Accuracy')
     ax2.set_title('Model Accuracy')
@@ -294,13 +296,13 @@ def plot_training_curves(train_losses, train_accuracies, test_accuracies):
     ax2.set_ylabel('Accuracy (%)')
     ax2.legend()
     ax2.grid(True)
-    
+
     plt.tight_layout()
     plt.savefig('training_curves.png', dpi=300, bbox_inches='tight')
     plt.show()
 
 
-def convert_and_deploy_to_fpga(model_path, test_loader, device='cpu'):
+def convert_and_deploy_to_fpga(model_path: str, test_loader, device: Union[str, torch.device] = 'cpu'):
     """
     Convert trained PyTorch model to SNN format and deploy to FPGA.
     
@@ -497,7 +499,7 @@ def main():
         print(model)
         
         # Train the model
-        trained_model, train_losses, test_accuracies = train_model(
+    trained_model, train_rewards, test_accuracies = train_model(
             model=model,
             train_loader=train_loader,
             test_loader=test_loader,
@@ -507,7 +509,7 @@ def main():
             save_path=args.model_path
         )
         
-        print(f"Best test accuracy: {max(test_accuracies):.2f}%")
+    print(f"Best test accuracy: {max(test_accuracies):.2f}%")
     
     if args.deploy:
         # Convert and deploy to FPGA

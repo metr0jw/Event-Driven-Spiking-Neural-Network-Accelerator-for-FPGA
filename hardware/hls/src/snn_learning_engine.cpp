@@ -4,6 +4,7 @@
 // File          : snn_learning_engine.cpp
 // Author        : Jiwoon Lee (@metr0jw)
 // Organization  : Kwangwoon University, Seoul, South Korea
+// Email         : jwlee@linux.com
 // Description   : STDP learning algorithm implementation in HLS
 //-----------------------------------------------------------------------------
 
@@ -27,22 +28,31 @@ void snn_learning_engine(
     // Status output
     ap_uint<32> &status
 ) {
-    #pragma HLS INTERFACE s_axilite port=enable
-    #pragma HLS INTERFACE s_axilite port=reset
-    #pragma HLS INTERFACE s_axilite port=config
-    #pragma HLS INTERFACE s_axilite port=status
+    #pragma HLS INTERFACE s_axilite port=enable bundle=ctrl
+    #pragma HLS INTERFACE s_axilite port=reset bundle=ctrl
+    #pragma HLS INTERFACE s_axilite port=config bundle=ctrl
+    #pragma HLS INTERFACE s_axilite port=status bundle=ctrl
     #pragma HLS INTERFACE axis port=pre_spikes
     #pragma HLS INTERFACE axis port=post_spikes
     #pragma HLS INTERFACE axis port=weight_updates
-    #pragma HLS INTERFACE s_axilite port=return
+    #pragma HLS INTERFACE s_axilite port=return bundle=ctrl
+    
+    // Consider ap_ctrl_none for free-running mode if continuous processing needed
+    // #pragma HLS INTERFACE ap_ctrl_none port=return
     
     // Internal state
     static spike_time_t pre_spike_times[MAX_NEURONS];
     static spike_time_t post_spike_times[MAX_NEURONS];
     static ap_uint<32> update_counter = 0;
     
+    // Enhanced partitioning for better memory bandwidth
+    // Cyclic factor=8 allows 8 parallel accesses per cycle
     #pragma HLS ARRAY_PARTITION variable=pre_spike_times cyclic factor=8
     #pragma HLS ARRAY_PARTITION variable=post_spike_times cyclic factor=8
+    
+    // Alternative: Complete partition for small arrays (<256 elements)
+    // #pragma HLS ARRAY_PARTITION variable=pre_spike_times complete
+    // This uses more resources but provides maximum parallelism
     
     if (reset) {
         RESET_LOOP: for (int i = 0; i < MAX_NEURONS; i++) {
@@ -70,11 +80,30 @@ void snn_learning_engine(
             pre_spike_times[pre_id] = pre_time;
             
             // Check for post-pre spike pairs (LTD)
+            // Performance Note: This loop scans all neurons which can be a bottleneck
+            // For MAX_NEURONS=64 with II=2: 128 cycles latency
+            // Alternative approaches for larger networks:
+            // 1. Event queue: Only check neurons that recently spiked
+            // 2. CAM-based lookup: Content-addressable memory for O(1) search
+            // 3. Dataflow architecture: Parallel processing of spike pairs
+            
+            // Optimization: Track number of valid post-spike entries
+            ap_uint<16> valid_post_count = 0;
+            
             LTD_LOOP: for (int post_id = 0; post_id < MAX_NEURONS; post_id++) {
                 #pragma HLS PIPELINE II=2
-                if (post_spike_times[post_id] > 0) {
-                    ap_int<32> dt = pre_time - post_spike_times[post_id];
+                // II=2 allows BRAM read + calculation in 2 cycles
+                // Can achieve II=1 with complete array partition (more resources)
+                #pragma HLS LOOP_TRIPCOUNT min=64 max=256 avg=128
+                
+                // Load spike time once
+                spike_time_t post_time = post_spike_times[post_id];
+                
+                if (post_time > 0) {
+                    // Calculate time difference
+                    ap_int<32> dt = pre_time - post_time;
                     
+                    // Check if within STDP window
                     if (dt > 0 && dt < config.stdp_window) {
                         // Calculate LTD weight change
                         weight_delta_t delta = calculate_ltd(dt, config);
@@ -90,7 +119,13 @@ void snn_learning_engine(
                             update_counter++;
                         }
                     }
+                    
+                    valid_post_count++;
                 }
+                
+                // Early exit optimization: if we know max active neurons
+                // Uncomment if you track active neuron count
+                // if (valid_post_count >= active_neuron_count) break;
             }
         }
     }
@@ -105,8 +140,11 @@ void snn_learning_engine(
             post_spike_times[post_id] = post_time;
             
             // Check for pre-post spike pairs (LTP)
+            // Same performance considerations as LTD loop above
             LTP_LOOP: for (int pre_id = 0; pre_id < MAX_NEURONS; pre_id++) {
                 #pragma HLS PIPELINE II=2
+                #pragma HLS LOOP_TRIPCOUNT min=64 max=256 avg=128
+                
                 if (pre_spike_times[pre_id] > 0) {
                     ap_int<32> dt = post_time - pre_spike_times[pre_id];
                     

@@ -3,7 +3,9 @@
 // Project       : PYNQ-Z2 SNN Accelerator
 // File          : spike_decoder.cpp
 // Author        : Jiwoon Lee (@metr0jw)
+// Author        : Jiwoon Lee (@metr0jw)
 // Organization  : Kwangwoon University, Seoul, South Korea
+// Email         : jwlee@linux.com
 // Description   : Decodes spike trains to output values
 //-----------------------------------------------------------------------------
 

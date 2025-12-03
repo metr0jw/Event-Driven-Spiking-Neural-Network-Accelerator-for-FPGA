@@ -16,23 +16,22 @@ setup(
     description="PyTorch integration for FPGA-based Spiking Neural Network Accelerator",
     long_description=open("README.md").read(),
     long_description_content_type="text/markdown",
-    url="https://github.com/metr0jw/Spiking-Neural-Network-on-FPGA",
+    url="https://github.com/metr0jw/Event-Driven-Spiking-Neural-Network-Accelerator-for-FPGA",
     packages=find_packages(),
     classifiers=[
         "Development Status :: 3 - Alpha",
         "Intended Audience :: Science/Research",
         "License :: OSI Approved :: MIT License",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.8",
-        "Programming Language :: Python :: 3.9",
-        "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.13",
+        "Programming Language :: Python :: 3.13",
+        "Programming Language :: Python :: 3.13",
         "Topic :: Scientific/Engineering :: Artificial Intelligence",
     ],
     python_requires=">=3.8",
     install_requires=[
-        "torch>=1.12.0",
+        "torch>=2.0.0",
         "numpy>=1.21.0",
-        "pynq>=2.7.0",
         "matplotlib>=3.5.0",
         "scipy>=1.8.0",
         "tqdm>=4.64.0",
@@ -50,6 +49,9 @@ setup(
         "examples": [
             "torchvision>=0.13.0",
             "datasets>=2.0.0",
+        ],
+        "pynq": [
+            "pynq>=2.7.0",
         ],
     },
     entry_points={

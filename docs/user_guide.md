@@ -6,6 +6,7 @@ Complete guide for using the Event-Driven SNN FPGA Accelerator.
 - [Installation](#installation)
 - [Quick Start](#quick-start)
 - [Basic Usage](#basic-usage)
+- [Step Modes](#step-modes)
 - [Spike Encoding](#spike-encoding)
 - [PyTorch Integration](#pytorch-integration)
 - [Learning Algorithms](#learning-algorithms)
@@ -32,11 +33,11 @@ The easiest way to get started:
 git clone https://github.com/metr0jw/Spiking-Neural-Network-on-FPGA.git
 cd Spiking-Neural-Network-on-FPGA
 
-# Run setup script
-./setup.sh
-
 # Activate environment (if using provided virtualenv)
 source venv/bin/activate
+
+# Run setup script
+./setup.sh
 ```
 
 ### Manual Installation
@@ -173,6 +174,132 @@ spike_counts = output_spikes.sum(axis=1)
 prediction = np.argmax(spike_counts)
 ```
 
+## Step Modes
+
+The accelerator supports two simulation modes similar to SpikingJelly framework:
+
+### Multi-Step Mode (Default)
+
+Process the entire simulation time at once:
+
+```python
+from snn_fpga_accelerator import SNNAccelerator
+
+accelerator = SNNAccelerator(simulation_mode=True)
+accelerator.set_step_mode("multi")  # Default mode
+
+# Encode input data
+spikes = encoder.encode(input_data)
+
+# Process entire simulation (e.g., 100ms)
+output = accelerator.infer(spikes, duration=0.1)
+
+# Output contains firing rates for entire duration
+print(f"Output shape: {output.shape}")  # (num_output_neurons,)
+```
+
+### Single-Step Mode
+
+Process one timestep at a time for fine-grained control:
+
+```python
+accelerator.set_step_mode("single", timestep_dt=0.001)  # 1ms timesteps
+
+# Reset state before starting
+accelerator.reset()
+
+# Process timestep by timestep
+num_timesteps = 100
+for t in range(num_timesteps):
+    # Get spikes for this timestep
+    timestep_spikes = [s for s in spikes if int(s.timestamp * 1000) == t]
+    
+    # Process one timestep
+    output = accelerator.single_step(timestep_spikes)
+    
+    # Output contains firing activity for this timestep only
+    print(f"Timestep {t}: Output = {output}")
+
+# Get complete spike history
+history = accelerator.get_spike_history()
+print(f"Total timesteps processed: {len(history)}")
+```
+
+### Single-Step with Events
+
+Get detailed spike events from each timestep:
+
+```python
+accelerator.set_step_mode("single", timestep_dt=0.001)
+accelerator.reset()
+
+all_events = []
+for t in range(num_timesteps):
+    timestep_spikes = get_spikes_for_timestep(t)
+    
+    # Return spike events instead of firing rates
+    events = accelerator.single_step(timestep_spikes, return_events=True)
+    all_events.extend(events)
+    
+    # Process events
+    for event in events:
+        print(f"Neuron {event.neuron_id} spiked at {event.timestamp:.3f}s")
+```
+
+### Mode Comparison
+
+```python
+# Multi-step: Fast, processes entire simulation
+accelerator.set_step_mode("multi")
+output_multi = accelerator.infer(spikes, duration=0.1)
+# Result: Aggregated firing rates for entire duration
+
+# Single-step: Fine control, iterate timestep by timestep
+accelerator.set_step_mode("single", timestep_dt=0.001)
+accelerator.reset()
+outputs_single = []
+for t in range(100):
+    output = accelerator.single_step(get_spikes_for_timestep(t))
+    outputs_single.append(output)
+# Result: List of outputs, one per timestep
+
+# Verify equivalence (may differ slightly due to temporal resolution)
+print(f"Multi-step sum: {output_multi.sum():.3f}")
+print(f"Single-step sum: {sum(o.sum() for o in outputs_single):.3f}")
+```
+
+### Use Cases
+
+**Multi-Step Mode:**
+- Fast inference for classification tasks
+- Batch processing of inputs
+- When only final output matters
+- Backward-compatible with existing code
+
+**Single-Step Mode:**
+- Online learning with real-time feedback
+- Debugging and visualization
+- Fine-grained control over simulation
+- State inspection between timesteps
+- Implementing custom temporal dynamics
+
+### State Management
+
+```python
+# Check current mode
+mode = accelerator.get_step_mode()
+print(f"Current mode: {mode}")
+
+# Switch modes preserves network configuration
+accelerator.set_step_mode("single")
+# ... do single-step processing ...
+accelerator.set_step_mode("multi")
+# Network weights and configuration unchanged
+
+# Reset clears temporal state but preserves configuration
+accelerator.reset()  # Clears membrane potentials, spike history
+```
+
 ## Spike Encoding
 
 Convert conventional data to spike trains using various encoding schemes.
@@ -274,7 +401,66 @@ prediction = decoder.decode(output_spikes)
 
 Seamlessly integrate with PyTorch for training and deployment.
 
-### Converting PyTorch Models
+### Gradient-Free SNN Training
+
+All distributed examples train spiking networks with reward-modulated STDP instead of backpropagation. Layers such as `TorchSNNLayer` run their forward pass under `torch.no_grad()`, so gradients are never recorded. Weight updates are driven by spike statistics that are cached during the forward sweep and adjusted with a reward signal.
+
+```python
+import torch
+import torch.nn as nn
+from snn_fpga_accelerator.pytorch_interface import TorchSNNLayer
+
+class SpikingMLP(nn.Module):
+    def __init__(self, hidden_sizes=(256, 128), num_classes=10):
+        super().__init__()
+        layers = []
+        in_features = 784
+        for hidden in hidden_sizes:
+            layers.append(TorchSNNLayer(in_features, hidden))
+            in_features = hidden
+        layers.append(TorchSNNLayer(in_features, num_classes))
+        self.layers = nn.ModuleList(layers)
+        self.last_input_spikes = None
+        self.last_layer_spikes = []
+        self.last_output_spikes = None
+
+    def forward(self, encoded_input: torch.Tensor) -> torch.Tensor:
+        spike_history = []
+        layer_histories = [[] for _ in self.layers]
+        current = encoded_input
+        for t in range(encoded_input.shape[2]):
+            timestep_input = encoded_input[:, :, t]
+            for layer_idx, layer in enumerate(self.layers):
+                timestep_input = layer(timestep_input)
+                layer_histories[layer_idx].append(timestep_input)
+            spike_history.append(timestep_input)
+
+        self.last_input_spikes = encoded_input.detach()
+        self.last_layer_spikes = [torch.stack(history, dim=2).detach() for history in layer_histories]
+        self.last_output_spikes = self.last_layer_spikes[-1]
+        return torch.stack(spike_history, dim=2)
+
+def stdp_update(model: SpikingMLP, reward: torch.Tensor, learning_rate: float = 0.01) -> None:
+    input_rate = model.last_input_spikes.mean(dim=2)
+    layer_rates = [spikes.mean(dim=2) for spikes in model.last_layer_spikes]
+    with torch.no_grad():
+        for idx, layer in enumerate(model.layers):
+            pre = input_rate if idx == 0 else layer_rates[idx - 1]
+            post = layer_rates[idx]
+            delta_w = torch.zeros_like(layer.weight)
+            delta_b = torch.zeros_like(layer.bias)
+            for b in range(pre.size(0)):
+                delta_w += reward[b] * torch.outer(post[b], pre[b])
+                delta_b += reward[b] * (post[b] - 0.5)
+            layer.weight += learning_rate * (delta_w / pre.size(0))
+            layer.bias += learning_rate * (delta_b / pre.size(0))
+            layer.weight.clamp_(-1.0, 1.0)
+            layer.bias.clamp_(-1.0, 1.0)
+```
+
+The training loop computes rewards from task-specific feedback (e.g., classification accuracy) and calls the STDP update helper instead of `loss.backward()`. See `examples/pytorch/mnist_training_example.py` and `examples/complete_integration_example.py` for end-to-end workflows.
+
+### Converting Fully Connected Models
 
 ```python
 import torch
@@ -300,9 +486,160 @@ model = SNNModel()
 # ... training code ...
 
 # Convert to FPGA-compatible format
-network_config = pytorch_to_snn(model)
+network_config = pytorch_to_snn(
+    model, 
+    input_shape=(784,),
+    neuron_params={'threshold': 1.0, 'leak': 0.9}
+)
 accelerator.configure_network(network_config)
 ```
+
+### Converting Convolutional Neural Networks
+
+The accelerator supports Conv2d layers with automatic spatial dimension tracking:
+
+```python
+import torch.nn as nn
+from snn_fpga_accelerator.pytorch_interface import pytorch_to_snn
+
+class ConvSNN(nn.Module):
+    def __init__(self):
+        super().__init__()
+        # MNIST: 1×28×28 input
+        self.conv1 = nn.Conv2d(1, 16, kernel_size=3, stride=1, padding=1)
+        # Output: 16×28×28
+        self.conv2 = nn.Conv2d(16, 32, kernel_size=5, stride=2, padding=2)
+        # Output: 32×14×14
+        self.fc1 = nn.Linear(32 * 14 * 14, 128)
+        self.fc2 = nn.Linear(128, 10)
+        
+    def forward(self, x):
+        x = torch.relu(self.conv1(x))
+        x = torch.relu(self.conv2(x))
+        x = x.view(x.size(0), -1)  # Flatten
+        x = torch.relu(self.fc1(x))
+        x = self.fc2(x)
+        return x
+
+# Train your model
+model = ConvSNN()
+# ... training code ...
+
+# Convert to SNN format
+network_config = pytorch_to_snn(
+    model,
+    input_shape=(1, 28, 28),  # Channels, Height, Width
+    neuron_params={'threshold': 1.0, 'leak': 0.95}
+)
+
+# The converter automatically:
+# 1. Extracts Conv2d weights (out_channels × in_channels × kH × kW)
+# 2. Calculates spatial dimensions: out_size = (in_size + 2×padding - kernel) / stride + 1
+# 3. Tracks flattening for first Linear layer
+# 4. Validates weight shapes at each layer
+```
+
+**Important Notes for CNN Conversion:**
+
+1. **Pooling Layers**: MaxPool2d and AvgPool2d are not yet tracked during conversion. Avoid pooling or manually calculate the flattened size.
+
+2. **Spatial Dimension Tracking**: The converter tracks height and width through conv layers:
+   ```python
+   # Example: Input 28×28, Conv(k=5, s=2, p=2)
+   # Output = (28 + 2×2 - 5) / 2 + 1 = 14×14
+   ```
+
+3. **Weight Validation**: Conv2d layers validate 4D weight tensors:
+   ```python
+   # Expected shape: (out_channels, in_channels, kernel_h, kernel_w)
+   assert len(conv_weights.shape) == 4
+   ```
+
+4. **Mixed Architectures**: You can combine Conv2d and Linear layers freely:
+   ```python
+   # Conv → Conv → Flatten → FC → FC
+   # All spatial dimensions are tracked automatically
+   ```
+
+### Example: MNIST CNN End-to-End
+
+```python
+from snn_fpga_accelerator import SNNAccelerator
+from snn_fpga_accelerator.pytorch_interface import pytorch_to_snn
+from snn_fpga_accelerator.spike_encoding import PoissonEncoder
+import torch
+import torch.nn as nn
+
+# 1. Define and train model
+class MNISTConvSNN(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.conv1 = nn.Conv2d(1, 16, kernel_size=3, padding=1)
+        self.conv2 = nn.Conv2d(16, 32, kernel_size=3, padding=1)
+        self.fc1 = nn.Linear(32 * 28 * 28, 128)  # No pooling: 28×28
+        self.fc2 = nn.Linear(128, 10)
+        
+    def forward(self, x):
+        x = torch.relu(self.conv1(x))
+        x = torch.relu(self.conv2(x))
+        x = x.view(x.size(0), -1)
+        x = torch.relu(self.fc1(x))
+        x = self.fc2(x)
+        return x
+
+model = MNISTConvSNN()
+# Train model on MNIST...
+
+# 2. Convert to SNN format
+snn_model = pytorch_to_snn(
+    model,
+    input_shape=(1, 28, 28),
+    neuron_params={'threshold': 1.0, 'leak': 0.95, 'refractory_period': 5}
+)
+
+# 3. Save model for later use
+snn_model.save_weights('mnist_cnn_snn.h5')
+
+# 4. Deploy to accelerator
+accelerator = SNNAccelerator(simulation_mode=True)
+accelerator.configure_network(snn_model)
+
+# 5. Encode MNIST image and infer
+encoder = PoissonEncoder(max_rate=100.0, duration=0.05)
+mnist_image = ...  # Shape: (28, 28), values [0, 1]
+input_spikes = encoder.encode(mnist_image.flatten())
+
+output_spikes = accelerator.infer(input_spikes, duration=0.05)
+
+# 6. Decode output
+spike_counts = [0] * 10
+for spike in output_spikes:
+    if spike.neuron_id >= snn_model.total_neurons - 10:
+        class_id = spike.neuron_id - (snn_model.total_neurons - 10)
+        spike_counts[class_id] += 1
+
+predicted_class = spike_counts.index(max(spike_counts))
+print(f"Predicted digit: {predicted_class}")
+```
+
+### Weight Scaling for Fixed-Point Hardware
+
+The converter automatically scales floating-point weights to 8-bit integers:
+
+```python
+# PyTorch weights: float32 range [-∞, +∞]
+# FPGA weights: int8 range [-128, 127]
+
+# Automatic scaling:
+weight_min, weight_max = torch_weights.min(), torch_weights.max()
+scale_factor = 127.0 / max(abs(weight_min), abs(weight_max))
+fpga_weights = (torch_weights * scale_factor).astype(np.int8)
+```
+
+**Note**: This preserves weight ratios but may reduce precision. For better accuracy:
+1. Use quantization-aware training
+2. Clip outlier weights before conversion
+3. Tune neuron threshold to match scaled weights
 
 ### Using Custom PyTorch Layers
 

@@ -1,7 +1,7 @@
 # Create Vivado project for SNN Accelerator
 create_project snn_accelerator ./snn_accelerator -part xc7z020clg400-1
 
-# Add Verilog RTL sources
+# Add Verilog RTL sources - Core modules
 add_files {
     hardware/hdl/rtl/top/snn_accelerator_top.v
     hardware/hdl/rtl/neurons/lif_neuron_array.v
@@ -13,6 +13,17 @@ add_files {
     hardware/hdl/rtl/common/fifo.v
     hardware/hdl/rtl/common/reset_sync.v
     hardware/hdl/rtl/common/sync_pulse.v
+}
+
+# Add AC-based (energy-efficient) modules - NO MAC, only AC operations!
+# Energy savings: ~5x per operation + sparsity bonus
+add_files {
+    hardware/hdl/rtl/neurons/lif_neuron_ac.v
+    hardware/hdl/rtl/synapses/synapse_array_ac.v
+    hardware/hdl/rtl/layers/snn_conv1d_ac.v
+    hardware/hdl/rtl/layers/snn_conv2d_ac.v
+    hardware/hdl/rtl/layers/snn_fc_ac.v
+    hardware/hdl/rtl/common/snn_energy_monitor.v
 }
 
 # Add all layer implementations (convolution, pooling, etc.)

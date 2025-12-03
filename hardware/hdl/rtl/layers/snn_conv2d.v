@@ -20,20 +20,14 @@ module snn_conv2d #(
     // Precision parameters
     parameter WEIGHT_WIDTH = 8,         // INT8 weights for forward pass
     parameter ACTIVATION_WIDTH = 8,     // INT8 activations for forward pass
-    parameter GRADIENT_WIDTH = 16,      // FP16 for surrogate gradients
     parameter BIAS_WIDTH = 16,
     
     // Buffer parameters
-    parameter MAX_BATCH_SIZE = 32,
     parameter PIPELINE_DEPTH = 4
 ) (
     input wire clk,
     input wire reset,
     input wire enable,
-    
-    // Control signals
-    input wire training_mode,           // 0: inference (INT8), 1: training (FP16)
-    input wire [1:0] conv_mode,         // 0: forward, 1: backward_data, 2: backward_weight
     
     // Input feature maps (AXI-Stream)
     input wire [ACTIVATION_WIDTH-1:0] s_axis_input_tdata,
@@ -62,11 +56,6 @@ module snn_conv2d #(
     output wire s_axi_weight_bvalid,
     input wire s_axi_weight_bready,
     
-    // Gradient output (for surrogate gradient)
-    output wire [GRADIENT_WIDTH-1:0] m_axis_gradient_tdata,
-    output wire m_axis_gradient_tvalid,
-    input wire m_axis_gradient_tready,
-    
     // Performance counters
     output wire [31:0] conv_ops_count,
     output wire [31:0] spike_count
@@ -82,11 +71,6 @@ module snn_conv2d #(
     
     // Internal signals
     wire [ACTIVATION_WIDTH-1:0] input_buffer_data;
-    wire input_buffer_valid;
-    wire input_buffer_ready;
-    
-    wire [WEIGHT_WIDTH-1:0] weight_data;
-    wire weight_valid;
     
     wire [ACTIVATION_WIDTH-1:0] conv_result;
     wire conv_result_valid;
@@ -97,8 +81,7 @@ module snn_conv2d #(
     localparam IDLE = 3'b000,
                LOAD_INPUT = 3'b001,
                CONVOLUTION = 3'b010,
-               OUTPUT = 3'b011,
-               GRADIENT_CALC = 3'b100;
+               OUTPUT = 3'b011;
     
     // Counters
     reg [15:0] input_x, input_y, input_ch;
@@ -169,18 +152,6 @@ module snn_conv2d #(
                         ((biased_result > 127) ? 8'd127 : biased_result[ACTIVATION_WIDTH-1:0]) : 
                         8'd0;
     
-    // Surrogate gradient calculation (FP16)
-    reg [GRADIENT_WIDTH-1:0] surrogate_gradient;
-    wire [GRADIENT_WIDTH-1:0] gradient_input;
-    
-    // Fast sigmoid surrogate gradient: grad = 1 / (1 + |x|)
-    // Implemented using lookup table for efficiency
-    surrogate_gradient_lut surrogate_lut (
-        .clk(clk),
-        .input_val(biased_result[15:0]),  // Convert to 16-bit for gradient calc
-        .gradient(gradient_input)
-    );
-    
     // Main state machine
     always @(posedge clk) begin
         if (reset) begin
@@ -196,11 +167,10 @@ module snn_conv2d #(
             operation_count <= 0;
             spike_counter <= 0;
             weight_addr_read <= 0;
-            surrogate_gradient <= 0;
         end else if (enable) begin
             case (state)
                 IDLE: begin
-                    if (s_axis_input_tvalid && conv_mode == 2'b00) begin // Forward pass
+                    if (s_axis_input_tvalid) begin
                         state <= LOAD_INPUT;
                         input_x <= 0;
                         input_y <= 0;
@@ -285,10 +255,6 @@ module snn_conv2d #(
                             kernel_x <= kernel_x + 1;
                         end
                         
-                        // Calculate surrogate gradient if in training mode
-                        if (training_mode) begin
-                            surrogate_gradient <= gradient_input;
-                        end
                     end
                 end
                 
@@ -299,15 +265,7 @@ module snn_conv2d #(
                         end
                     end
                 end
-                
-                GRADIENT_CALC: begin
-                    // Handle gradient computation for backpropagation
-                    if (training_mode && conv_mode == 2'b01) begin // Backward data
-                        // Implement gradient computation logic
-                        state <= OUTPUT;
-                    end
-                end
-                
+
                 default: state <= IDLE;
             endcase
         end
@@ -316,7 +274,6 @@ module snn_conv2d #(
     // AXI-Stream input interface
     assign s_axis_input_tready = (state == LOAD_INPUT) && enable;
     assign input_buffer_data = s_axis_input_tdata;
-    assign input_buffer_valid = s_axis_input_tvalid && s_axis_input_tready;
     
     // AXI-Stream output interface
     assign m_axis_output_tdata = conv_result;
@@ -327,10 +284,6 @@ module snn_conv2d #(
                                 (output_y == OUTPUT_HEIGHT-1) && 
                                 (output_ch == OUTPUT_CHANNELS-1);
     assign m_axis_output_tuser = output_ch[7:0];
-    
-    // Gradient output interface
-    assign m_axis_gradient_tdata = surrogate_gradient;
-    assign m_axis_gradient_tvalid = training_mode && (state == CONVOLUTION);
     
     // Weight loading interface (AXI-Lite)
     axi_lite_weight_interface #(
@@ -361,48 +314,6 @@ module snn_conv2d #(
     // Performance counters
     assign conv_ops_count = operation_count;
     assign spike_count = spike_counter;
-    
-endmodule
-
-// Surrogate gradient lookup table for fast approximation
-module surrogate_gradient_lut (
-    input wire clk,
-    input wire [15:0] input_val,
-    output reg [15:0] gradient
-);
-    
-    // Fast sigmoid approximation: 1 / (1 + |x|)
-    // Using 8-bit LUT for efficiency
-    wire [7:0] lut_addr;
-    wire [15:0] lut_data;
-    
-    assign lut_addr = input_val[15] ? (~input_val[14:7] + 1) : input_val[14:7]; // abs(x) >> 7
-    
-    // Pre-computed gradient values in FP16 format
-    // gradient[i] = 1.0 / (1.0 + i/128.0) converted to FP16
-    reg [15:0] gradient_lut [0:255];
-    
-    initial begin
-        // Initialize with pre-computed FP16 values
-        gradient_lut[0] = 16'h3C00;   // 1.0 in FP16
-        gradient_lut[1] = 16'h3BFE;   // ~0.996
-        gradient_lut[2] = 16'h3BFB;   // ~0.992
-        gradient_lut[3] = 16'h3BF8;   // ~0.988
-        // ... continue for all 256 values
-        // This would be generated by a script in practice
-        
-        // Fill remaining with decreasing values
-        integer i;
-        for (i = 4; i < 256; i = i + 1) begin
-            gradient_lut[i] = 16'h3C00 - (i << 4); // Approximation
-        end
-    end
-    
-    assign lut_data = gradient_lut[lut_addr];
-    
-    always @(posedge clk) begin
-        gradient <= lut_data;
-    end
     
 endmodule
 

@@ -19,7 +19,7 @@ NC='\033[0m' # No Color
 
 # Script directory
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-PROJECT_ROOT="$( cd "$SCRIPT_DIR/../.." && pwd )"
+PROJECT_ROOT="$( cd "$SCRIPT_DIR/../../.." && pwd )"
 
 # Directories
 HDL_DIR="$PROJECT_ROOT/hardware/hdl"
@@ -41,8 +41,6 @@ FORCE_SIMULATOR=""
 detect_simulator() {
     if command -v xvlog >/dev/null 2>&1; then
         echo "vivado"
-    elif command -v iverilog >/dev/null 2>&1; then
-        echo "icarus"
     elif command -v verilator >/dev/null 2>&1; then
         echo "verilator"
     else
@@ -113,6 +111,12 @@ find_sources() {
     if [[ -d "$RTL_DIR" ]]; then
         sources="$sources $(find "$RTL_DIR" -name "*.v" -o -name "*.sv" | sort)"
     fi
+
+    # Add packaged IP RTL (AXI-Lite register bank)
+    local ip_src_dir="$PROJECT_ROOT/hardware/ip_repo"
+    if [[ -d "$ip_src_dir" ]]; then
+        sources="$sources $(find "$ip_src_dir" -path "*/src/*.v" ! -path "*/.tmp_*/*" | sort)"
+    fi
     
     # Add testbench
     if [[ -f "$TB_DIR/${TB_TOP}.v" ]]; then
@@ -131,8 +135,8 @@ find_sources() {
 run_vivado_sim() {
     print_msg "Running Vivado Simulator..."
     
-    # Create simulation project
-    xvlog $SOURCES
+    # Create simulation project - compile as SystemVerilog
+    xvlog -sv $SOURCES
     if [[ $? -ne 0 ]]; then
         print_error "Compilation failed with Vivado Simulator"
         exit 1

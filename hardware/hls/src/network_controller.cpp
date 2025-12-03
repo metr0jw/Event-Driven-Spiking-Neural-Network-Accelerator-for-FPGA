@@ -4,6 +4,7 @@
 // File          : network_controller.cpp
 // Author        : Jiwoon Lee (@metr0jw)
 // Organization  : Kwangwoon University, Seoul, South Korea
+// Email         : jwlee@linux.com
 // Description   : High-level network control and orchestration
 //-----------------------------------------------------------------------------
 

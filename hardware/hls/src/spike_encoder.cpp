@@ -4,6 +4,7 @@
 // File          : spike_encoder.cpp
 // Author        : Jiwoon Lee (@metr0jw)
 // Organization  : Kwangwoon University, Seoul, South Korea
+// Email         : jwlee@linux.com
 // Description   : Converts input data to spike trains
 //-----------------------------------------------------------------------------
 

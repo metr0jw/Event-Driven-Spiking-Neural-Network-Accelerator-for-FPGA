@@ -11,14 +11,15 @@
 `timescale 1ns / 1ps
 
 module lif_neuron_array #(
-    parameter NUM_NEURONS       = 64,     // Total number of neurons
-    parameter NUM_AXONS         = 64,     // Number of input axons
-    parameter DATA_WIDTH        = 16,
-    parameter WEIGHT_WIDTH      = 8,
-    parameter THRESHOLD_WIDTH   = 16,
-    parameter LEAK_WIDTH        = 8,
-    parameter REFRAC_WIDTH      = 8,
-    parameter NEURON_ID_WIDTH   = $clog2(NUM_NEURONS)
+    parameter NUM_NEURONS           = 64,     // Total number of neurons
+    parameter NUM_AXONS             = 64,     // Number of input axons
+    parameter DATA_WIDTH            = 16,
+    parameter WEIGHT_WIDTH          = 8,
+    parameter THRESHOLD_WIDTH       = 16,
+    parameter LEAK_WIDTH            = 8,
+    parameter REFRAC_WIDTH          = 8,
+    parameter TIME_MULTIPLEX_FACTOR = 4,      // Number of neurons processed per cycle for leak
+    parameter NEURON_ID_WIDTH       = $clog2(NUM_NEURONS)
 )(
     input  wire                         clk,
     input  wire                         rst_n,
@@ -26,14 +27,14 @@ module lif_neuron_array #(
     
     // Input spike interface (AXI-Stream compatible)
     input  wire                         s_axis_spike_valid,
-    input  wire [NEURON_ID_WIDTH-1:0]  s_axis_spike_dest_id,
-    input  wire [WEIGHT_WIDTH-1:0]     s_axis_spike_weight,
+    input  wire [NEURON_ID_WIDTH-1:0]   s_axis_spike_dest_id,
+    input  wire [WEIGHT_WIDTH-1:0]      s_axis_spike_weight,
     input  wire                         s_axis_spike_exc_inh,  // 1: exc, 0: inh
     output wire                         s_axis_spike_ready,
     
     // Output spike interface
     output reg                          m_axis_spike_valid,
-    output reg  [NEURON_ID_WIDTH-1:0]  m_axis_spike_neuron_id,
+    output reg  [NEURON_ID_WIDTH-1:0]   m_axis_spike_neuron_id,
     input  wire                         m_axis_spike_ready,
     
     // Configuration interface (AXI-Lite would connect here)
@@ -67,14 +68,14 @@ module lif_neuron_array #(
     
     // Input spike buffer
     reg                         spike_pending;
-    reg [NEURON_ID_WIDTH-1:0]  spike_dest;
-    reg [WEIGHT_WIDTH-1:0]     spike_weight;
+    reg [NEURON_ID_WIDTH-1:0]   spike_dest;
+    reg [WEIGHT_WIDTH-1:0]      spike_weight;
     reg                         spike_exc_inh;
     
     // Processing variables
-    reg [NEURON_ID_WIDTH-1:0]  process_idx;
-    reg [DATA_WIDTH-1:0]       current_potential;
-    reg [REFRAC_WIDTH-1:0]     current_refrac;
+    reg [NEURON_ID_WIDTH-1:0]   process_idx;
+    reg [DATA_WIDTH-1:0]        current_potential;
+    reg [REFRAC_WIDTH-1:0]      current_refrac;
     reg                         update_en;
     
     // Output spike queue
@@ -216,13 +217,16 @@ module lif_neuron_array #(
             end
             
             // Global leak update (time-multiplexed)
-            for (i = 0; i < 4; i = i + 1) begin  // Process 4 neurons per cycle
-                if (refractory_counter[process_idx + i] == 0) begin
-                    if (membrane_potential[process_idx + i] > global_leak_rate) begin
-                        membrane_potential[process_idx + i] <= 
-                            membrane_potential[process_idx + i] - global_leak_rate;
-                    end else begin
-                        membrane_potential[process_idx + i] <= 0;
+            // Process TIME_MULTIPLEX_FACTOR neurons per cycle for better scalability
+            for (i = 0; i < TIME_MULTIPLEX_FACTOR; i = i + 1) begin
+                if ((process_idx + i) < NUM_NEURONS) begin  // Bounds check
+                    if (refractory_counter[process_idx + i] == 0) begin
+                        if (membrane_potential[process_idx + i] > global_leak_rate) begin
+                            membrane_potential[process_idx + i] <= 
+                                membrane_potential[process_idx + i] - global_leak_rate;
+                        end else begin
+                            membrane_potential[process_idx + i] <= 0;
+                        end
                     end
                 end
             end
@@ -239,8 +243,8 @@ module lif_neuron_array #(
         if (!rst_n) begin
             process_idx <= 0;
         end else begin
-            process_idx <= process_idx + 4;
-            if (process_idx >= NUM_NEURONS - 4) begin
+            process_idx <= process_idx + TIME_MULTIPLEX_FACTOR;
+            if (process_idx >= NUM_NEURONS - TIME_MULTIPLEX_FACTOR) begin
                 process_idx <= 0;
             end
         end

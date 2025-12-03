@@ -498,6 +498,19 @@ vivado_hls -f create_hls_project.tcl
 vivado -mode batch -source create_vivado_project.tcl
 ```
 
+#### Generating AXI-Lite Register IP
+
+The control-plane register file is delivered as a reusable AXI4-Lite IP. Repackage it whenever RTL changes are made by running the automation script.
+
+```bash
+# From the repository root with Vivado environment sourced
+vivado -mode batch -source hardware/scripts/create_axi_lite_regs_ip.tcl
+```
+
+- Vivado writes the packaged IP to `hardware/ip_repo/axi_lite_regs_v1_0`.
+- The script is idempotent; rerunning it will overwrite the IP with the latest HDL.
+- Project scripts automatically add `hardware/ip_repo` to the IP catalog, so the refreshed component is visible on the next `update_ip_catalog`.
+
 #### Manual Project Creation
 
 ```tcl

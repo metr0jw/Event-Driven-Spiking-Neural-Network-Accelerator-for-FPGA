@@ -29,16 +29,9 @@ from snn_fpga_accelerator.pytorch_snn_layers import (
 )
 from snn_fpga_accelerator.fpga_controller import SNNFPGAController, PyTorchFPGABridge
 
-# Try to import torch for comparison (optional)
-try:
-    import torch
-    import torch.nn as nn
-    import torch.nn.functional as F
-    TORCH_AVAILABLE = True
-    logger.info("PyTorch available for comparison")
-except ImportError:
-    TORCH_AVAILABLE = False
-    logger.warning("PyTorch not available, using simulation only")
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
 
 def generate_synthetic_temporal_data():
     """Generate synthetic temporal data (e.g., ECG-like signals)"""
@@ -110,10 +103,7 @@ def create_snn_temporal_model():
     return model
 
 def create_pytorch_temporal_model():
-    """Create equivalent PyTorch 1D CNN for comparison (if available)"""
-    if not TORCH_AVAILABLE:
-        return None
-    
+    """Create equivalent PyTorch 1D CNN for comparison (if available)"""   
     class TemporalCNN(nn.Module):
         def __init__(self):
             super().__init__()
@@ -154,14 +144,9 @@ def create_spike_train_1d(data, time_steps=100, encoding='rate'):
         spike_prob = np.expand_dims(data_norm, axis=-1)
         spike_prob = np.repeat(spike_prob, time_steps, axis=-1)
         
-        if TORCH_AVAILABLE:
-            spike_prob_tensor = torch.tensor(spike_prob, dtype=torch.float32)
-            spikes = torch.rand_like(spike_prob_tensor) < spike_prob_tensor
-            return spikes.float()
-        else:
-            # Numpy fallback
-            spikes = np.random.rand(batch_size, channels, length, time_steps) < spike_prob
-            return spikes.astype(np.float32)
+        spike_prob_tensor = torch.tensor(spike_prob, dtype=torch.float32)
+        spikes = torch.rand_like(spike_prob_tensor) < spike_prob_tensor
+        return spikes.float()
         
     elif encoding == 'temporal':
         # Temporal encoding: higher values = earlier spikes
@@ -170,10 +155,7 @@ def create_spike_train_1d(data, time_steps=100, encoding='rate'):
         
         spike_times = ((1.0 - data_norm) * (time_steps - 1)).astype(int)
         
-        if TORCH_AVAILABLE:
-            spikes = torch.zeros(batch_size, channels, length, time_steps)
-        else:
-            spikes = np.zeros((batch_size, channels, length, time_steps))
+        spikes = torch.zeros(batch_size, channels, length, time_steps)
         
         for b in range(batch_size):
             for c in range(channels):
@@ -190,11 +172,8 @@ def create_spike_train_1d(data, time_steps=100, encoding='rate'):
         data_norm = np.clip(data_norm, 0, 1)
         
         # Multiple spikes with latency-based timing
-        if TORCH_AVAILABLE:
-            spikes = torch.zeros(batch_size, channels, length, time_steps)
-        else:
-            spikes = np.zeros((batch_size, channels, length, time_steps))
-        
+        spikes = torch.zeros(batch_size, channels, length, time_steps)
+
         for b in range(batch_size):
             for c in range(channels):
                 for l in range(length):
@@ -225,23 +204,13 @@ def analyze_temporal_patterns(model, test_data, test_labels, encoding='rate'):
     # Process each class sample
     results = {}
     for class_id, sample in class_samples.items():
-        # Convert to spike train
-        if TORCH_AVAILABLE:
-            sample_tensor = torch.tensor(sample).unsqueeze(0)
-            spike_input = create_spike_train_1d(sample_tensor.numpy(), time_steps=100, encoding=encoding)
-            spike_input_tensor = torch.tensor(spike_input)
-            
-            # Process through model
-            if hasattr(model, 'forward'):
-                output_spikes = model(spike_input_tensor).detach().numpy()
-            else:
-                output_spikes = spike_input  # Fallback
-        else:
-            # Numpy-only processing
-            spike_input = create_spike_train_1d(
-                np.expand_dims(sample, axis=0), time_steps=100, encoding=encoding
-            )
-            output_spikes = spike_input  # Simplified
+    # Convert to spike train
+        sample_tensor = torch.tensor(sample).unsqueeze(0)
+        spike_input = create_spike_train_1d(sample_tensor.numpy(), time_steps=100, encoding=encoding)
+        spike_input_tensor = torch.tensor(spike_input)
+        
+        # Process through model
+        output_spikes = model(spike_input_tensor).detach().numpy()
         
         # Analyze patterns
         results[class_id] = {
@@ -355,12 +324,9 @@ def main():
             print(f"    - Channels: {layer['in_channels']} -> {layer['out_channels']}")
     print()
     
-    # Create PyTorch reference model (if available)
-    if TORCH_AVAILABLE:
-        pytorch_model = create_pytorch_temporal_model()
-        print("Created PyTorch reference model for comparison")
-    else:
-        print("PyTorch not available, using SNN-only workflow")
+    # Create PyTorch reference model
+    pytorch_model = create_pytorch_temporal_model()
+
     print()
     
     # Initialize FPGA controller
@@ -405,25 +371,17 @@ def main():
             sample = test_data[class_indices[0]]
             
             # Convert to spike trains
-            if TORCH_AVAILABLE:
-                sample_tensor = torch.tensor(sample).unsqueeze(0)
-                spike_input = create_spike_train_1d(sample_tensor.numpy(), time_steps=100, encoding=encoding)
-                spike_input_tensor = torch.tensor(spike_input)
-                
-                # Process through SNN model
-                start_time = time.time()
-                if hasattr(snn_model, 'forward'):
-                    output_spikes = snn_model(spike_input_tensor).detach().numpy()
-                else:
-                    output_spikes = spike_input  # Fallback
-                end_time = time.time()
+            sample_tensor = torch.tensor(sample).unsqueeze(0)
+            spike_input = create_spike_train_1d(sample_tensor.numpy(), time_steps=100, encoding=encoding)
+            spike_input_tensor = torch.tensor(spike_input)
+            
+            # Process through SNN model
+            start_time = time.time()
+            if hasattr(snn_model, 'forward'):
+                output_spikes = snn_model(spike_input_tensor).detach().numpy()
             else:
-                spike_input = create_spike_train_1d(
-                    np.expand_dims(sample, axis=0), time_steps=100, encoding=encoding
-                )
-                start_time = time.time()
-                output_spikes = spike_input  # Simplified
-                end_time = time.time()
+                output_spikes = spike_input  # Fallback
+            end_time = time.time()
             
             processing_time = (end_time - start_time) * 1000
             
@@ -445,9 +403,6 @@ def main():
     print("✅ Multiple spike encoding schemes")
     print("✅ Multi-scale feature extraction")
     print("✅ Area-efficient FPGA implementation")
-    
-    if TORCH_AVAILABLE:
-        print("✅ PyTorch compatibility confirmed")
     
     print("\nKey Applications:")
     print("- Audio signal processing")

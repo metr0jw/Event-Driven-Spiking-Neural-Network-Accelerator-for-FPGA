@@ -4,6 +4,7 @@
 // File          : weight_updater.cpp
 // Author        : Jiwoon Lee (@metr0jw)
 // Organization  : Kwangwoon University, Seoul, South Korea
+// Email         : jwlee@linux.com
 // Description   : Applies weight updates to synaptic memory
 //-----------------------------------------------------------------------------
 

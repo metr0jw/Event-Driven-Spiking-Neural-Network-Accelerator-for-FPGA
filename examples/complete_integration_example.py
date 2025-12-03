@@ -17,7 +17,7 @@ Contact: jwlee@linux.com
 import numpy as np
 import torch
 import torch.nn as nn
-from torch.utils.data import DataLoader
+from torch.utils.data import DataLoader, Dataset
 import matplotlib.pyplot as plt
 import time
 import argparse
@@ -53,6 +53,10 @@ def create_simple_snn_model():
             self.tau_syn = 5.0   # Synaptic time constant
             self.threshold = 1.0  # Spike threshold
             self.reset_potential = 0.0
+
+            self.last_input_spikes = None
+            self.last_hidden_spikes = None
+            self.last_output_spikes = None
             
         def forward(self, input_spikes, num_steps=100):
             batch_size = input_spikes.shape[0]
@@ -96,8 +100,17 @@ def create_simple_snn_model():
                 spk2_rec.append(spk2)
                 mem1_rec.append(mem1)
                 mem2_rec.append(mem2)
-            
-            return torch.stack(spk2_rec, dim=2), torch.stack(mem2_rec, dim=2)
+
+            spk1_tensor = torch.stack(spk1_rec, dim=2)
+            spk2_tensor = torch.stack(spk2_rec, dim=2)
+            mem2_tensor = torch.stack(mem2_rec, dim=2)
+
+            # Persist spike history for STDP-style updates
+            self.last_input_spikes = input_spikes.detach()
+            self.last_hidden_spikes = spk1_tensor.detach()
+            self.last_output_spikes = spk2_tensor.detach()
+
+            return spk2_tensor, mem2_tensor
     
     return SimpleSNN()
 
@@ -129,7 +142,7 @@ def create_dummy_data():
     """Create dummy data for testing when MNIST is not available."""
     logger.info("Creating dummy data for testing...")
     
-    class DummyDataset:
+    class DummyDataset(Dataset):
         def __init__(self, size=1000):
             self.size = size
             
@@ -150,51 +163,76 @@ def create_dummy_data():
     
     return train_loader, test_loader
 
-def train_pytorch_model(model, train_loader, epochs=5):
-    """Train the PyTorch SNN model."""
-    logger.info("Training PyTorch SNN model...")
-    
-    optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
-    criterion = nn.CrossEntropyLoss()
-    
+def train_pytorch_model(model, train_loader, epochs=5, learning_rate=0.01):
+    """Train the PyTorch SNN model using STDP-inspired weight updates (no backprop)."""
+    logger.info("Training PyTorch SNN model with STDP-inspired updates (no backpropagation).")
+
     model.train()
+    potentiation = learning_rate
+    depression_scale = learning_rate * 0.1
+
     for epoch in range(epochs):
-        total_loss = 0
         correct = 0
         total = 0
-        
+        cumulative_reward = 0.0
+
         for batch_idx, (data, target) in enumerate(train_loader):
-            optimizer.zero_grad()
-            
-            # Convert input to spikes
             batch_size = data.shape[0]
             data_flat = data.view(batch_size, -1)
-            
-            # Simple rate encoding: higher intensity = higher spike rate
-            input_spikes = torch.rand(batch_size, 784, 100) < (data_flat.unsqueeze(2) * 0.5)
-            input_spikes = input_spikes.float()
-            
-            # Forward pass
-            output_spikes, output_mem = model(input_spikes)
-            
-            # Use membrane potential at the end for classification
-            output = output_mem[:, :, -1]
-            
-            # Compute loss
-            loss = criterion(output, target)
-            loss.backward()
-            optimizer.step()
-            
-            total_loss += loss.item()
-            pred = output.argmax(dim=1)
-            correct += pred.eq(target).sum().item()
+
+            # Simple rate encoding: higher intensity -> more spikes
+            input_spikes = (torch.rand(batch_size, 784, 100) < (data_flat.unsqueeze(2) * 0.5)).float()
+
+            with torch.no_grad():
+                output_spikes, output_mem = model(input_spikes)
+
+            hidden_spikes = model.last_hidden_spikes
+            output_rate = output_spikes.mean(dim=2)
+            hidden_rate = hidden_spikes.mean(dim=2)
+            input_rate = input_spikes.mean(dim=2)
+
+            predictions = output_rate.argmax(dim=1)
+            rewards = torch.where(predictions == target, 1.0, -1.0)
+
             total += target.size(0)
-            
+            correct += (predictions == target).sum().item()
+            cumulative_reward += rewards.sum().item()
+
+            delta_w2 = torch.zeros_like(model.fc2_weight.data)
+            delta_w1 = torch.zeros_like(model.fc1_weight.data)
+
+            for b in range(batch_size):
+                delta_w2 += rewards[b] * torch.outer(output_rate[b], hidden_rate[b])
+                delta_w1 += rewards[b] * torch.outer(hidden_rate[b], input_rate[b])
+
+            delta_w2 /= max(batch_size, 1)
+            delta_w1 /= max(batch_size, 1)
+
+            with torch.no_grad():
+                model.fc2_weight.data += potentiation * delta_w2
+                model.fc1_weight.data += potentiation * delta_w1
+
+                # Mild weight decay for stability
+                model.fc2_weight.data *= (1.0 - depression_scale)
+                model.fc1_weight.data *= (1.0 - depression_scale)
+
+                model.fc1_weight.data.clamp_(-1.0, 1.0)
+                model.fc2_weight.data.clamp_(-1.0, 1.0)
+
             if batch_idx % 100 == 0:
-                logger.info(f'Epoch {epoch+1}/{epochs}, Batch {batch_idx}, '
-                          f'Loss: {loss.item():.4f}, Acc: {100.*correct/total:.2f}%')
-    
-    logger.info(f"Training completed. Final accuracy: {100.*correct/total:.2f}%")
+                logger.info(
+                    "Epoch %d/%d, Batch %d, Acc %.2f%%, Avg reward %.3f",
+                    epoch + 1,
+                    epochs,
+                    batch_idx,
+                    100.0 * correct / max(total, 1),
+                    cumulative_reward / max(total, 1)
+                )
+
+        epoch_acc = 100.0 * correct / max(total, 1)
+        avg_reward = cumulative_reward / max(total, 1)
+        logger.info("Epoch %d completed: Acc %.2f%%, Avg reward %.3f", epoch + 1, epoch_acc, avg_reward)
+
     return model
 
 def deploy_to_fpga(model, accelerator):

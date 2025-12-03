@@ -492,17 +492,15 @@ Data = 8-bit signed weight
 ```
 Offset  | Register                 | Access | Description
 --------|--------------------------|--------|---------------------------
-0x00    | CTRL                     | RW     | Control register
-0x04    | STATUS                   | RO     | Status flags
-0x08    | NUM_NEURONS              | RW     | Total neuron count
-0x0C    | TIMESTEP                 | RW     | Simulation timestep
-0x10    | THRESHOLD_GLOBAL         | RW     | Global threshold
-0x14    | LEAK_GLOBAL              | RW     | Global leak factor
-0x18    | LEARNING_EN              | RW     | Enable on-chip learning
-0x1C    | LEARNING_RATE            | RW     | Learning rate parameter
-0x20    | SPIKE_COUNT_IN           | RO     | Input spike counter
-0x24    | SPIKE_COUNT_OUT          | RO     | Output spike counter
-0x28-FF | Layer-specific           | RW     | Layer configurations
+0x00    | CTRL                     | RW     | Control register (enable/reset/counter control/IRQ enable)
+0x04    | STATUS                   | RO     | Consolidated fabric status flags
+0x08    | CONFIG                   | RW     | Write-gating bits for fabric configuration paths
+0x0C    | SPIKE_COUNT              | RO     | Accumulated output spike count
+0x10    | LEAK_RATE                | RW     | Global neuron leak factor (16-bit)
+0x14    | THRESHOLD                | RW     | Global neuron firing threshold (16-bit)
+0x18    | REFRACTORY               | RW     | Global refractory period (16-bit)
+0x1C    | VERSION                  | RO     | Firmware version signature
+0x20+   | Reserved                 | --     | Future expansion
 ```
 
 ## Communication Interfaces
@@ -513,27 +511,44 @@ Offset  | Register                 | Access | Description
 ```
 Bit  | Field        | Description
 -----|--------------|--------------------------------
-0    | START        | Start processing
-1    | STOP         | Stop processing
-2    | RESET        | Reset all state
-3    | LEARN_EN     | Enable on-chip learning
-4-7  | Reserved     |
-8-15 | MODE         | Operating mode (inference/train)
-16-31| Reserved     |
+0    | ENABLE       | Assert to enable the accelerator fabric
+1    | SOFT_RESET   | Active-high soft reset into sub-modules
+2    | CLEAR_CNTS   | Pulse high to clear spike/performance counters
+3    | IRQ_ENABLE   | Enable spike-count threshold interrupt
+4-31 | Reserved     |
 ```
 
 **Status Register (0x04)**:
 ```
-Bit  | Field        | Description
------|--------------|--------------------------------
-0    | BUSY         | Processing in progress
-1    | DONE         | Processing complete
-2    | ERROR        | Error condition
-3    | LEARNING     | Learning active
-4-7  | Reserved     |
-8-15 | STATE        | FSM state (for debugging)
-16-31| Reserved     |
+Bit  | Field            | Description
+-----|------------------|--------------------------------
+0    | ENABLED          | Mirrors CTRL.ENABLE
+1    | INPUT_SEEN       | At least one input spike observed
+2    | NEURON_SPIKE     | Neuron array has pending spike
+3    | OUTPUT_VALID     | Output spike pending toward PS
+4-6  | Reserved         |
+7    | ACTIVITY         | Any neuron fired in the recent window
+8-11 | Reserved         |
+12   | Reserved         |
+13   | ARRAY_BUSY       | Neuron array currently integrating
+14   | ROUTER_BUSY      | Spike router has pending traffic
+15   | FIFO_OVERFLOW    | Router FIFO overflow detected
+16-31| Reserved         |
 ```
+
+**Configuration Register (0x08)**:
+```
+Bit  | Field            | Description
+-----|------------------|--------------------------------
+0-7  | Reserved         |
+8    | WEIGHT_WE        | Gate writes into synapse weight memory (AW[15:12]==0x1)
+9    | NEURON_CFG_WE    | Gate writes into neuron configuration space (AW[15:12]==0x2)
+10   | ROUTER_CFG_WE    | Gate writes into router configuration space (AW[15:12]==0x3)
+11   | SPIKE_THRESH_WE  | Allow writes to interrupt threshold register (AW[7:0]==0x20)
+12-31| Reserved         |
+```
+
+**Version Register (0x1C)**: Constant `0x2024_0100` identifying the RTL drop.
 
 ### AXI-Stream Spike Interface
 

@@ -1,0 +1,234 @@
+#==============================================================================
+# Makefile for Learning Engine Optimization Testing
+# Build and benchmark all optimization strategies
+#==============================================================================
+
+# Vivado HLS settings
+VIVADO_HLS := vitis_hls
+VIVADO_HLS_FLAGS := 
+
+# Compiler settings for software testbench
+CXX := g++
+CXXFLAGS := -std=c++11 -Wall -O2
+LDFLAGS := -lm
+
+# Source files
+SRC_DIR := ../src
+INC_DIR := ../include
+TEST_DIR := .
+
+COMMON_SRCS := 
+COMMON_INCS := 
+
+# Note: Software testbench uses self-contained types
+# HLS synthesis uses actual HLS headers
+
+# Optimization strategies
+STRATEGIES := baseline active_tracking cam_lookup dataflow hierarchical
+
+# Targets
+.PHONY: all clean test_all benchmark_all help
+
+all: test_all
+
+help:
+	@echo "Learning Engine Optimization Build System"
+	@echo "=========================================="
+	@echo ""
+	@echo "Available targets:"
+	@echo "  make all              - Build all tests"
+	@echo "  make test_all         - Run all tests"
+	@echo "  make benchmark_all    - Run all benchmarks"
+	@echo "  make test_<strategy>  - Test specific strategy"
+	@echo "  make synth_<strategy> - Synthesize specific strategy"
+	@echo "  make clean            - Clean all builds"
+	@echo ""
+	@echo "Strategies: $(STRATEGIES)"
+	@echo ""
+	@echo "Example: make test_active_tracking"
+
+#==============================================================================
+# Software Testbench Compilation
+#==============================================================================
+
+# Build testbench for each strategy
+test_baseline: tb_baseline
+	@echo "=========================================="
+	@echo "Testing BASELINE strategy"
+	@echo "=========================================="
+	./tb_baseline
+
+test_active_tracking: tb_active_tracking
+	@echo "=========================================="
+	@echo "Testing ACTIVE_TRACKING strategy"
+	@echo "=========================================="
+	./tb_active_tracking
+
+test_cam_lookup: tb_cam_lookup
+	@echo "=========================================="
+	@echo "Testing CAM_LOOKUP strategy"
+	@echo "=========================================="
+	./tb_cam_lookup
+
+test_dataflow: tb_dataflow
+	@echo "=========================================="
+	@echo "Testing DATAFLOW strategy"
+	@echo "=========================================="
+	./tb_dataflow
+
+test_hierarchical: tb_hierarchical
+	@echo "=========================================="
+	@echo "Testing HIERARCHICAL strategy"
+	@echo "=========================================="
+	./tb_hierarchical
+
+# Compile testbench executables
+tb_baseline: $(TEST_DIR)/tb_learning_engine_optimized.cpp
+	@echo "Building BASELINE testbench..."
+	$(CXX) $(CXXFLAGS) -DOPT_STRATEGY_BASELINE \
+		-o $@ $(TEST_DIR)/tb_learning_engine_optimized.cpp $(LDFLAGS)
+
+tb_active_tracking: $(TEST_DIR)/tb_learning_engine_optimized.cpp
+	@echo "Building ACTIVE_TRACKING testbench..."
+	$(CXX) $(CXXFLAGS) -DOPT_STRATEGY_ACTIVE_TRACKING \
+		-o $@ $(TEST_DIR)/tb_learning_engine_optimized.cpp $(LDFLAGS)
+
+tb_cam_lookup: $(TEST_DIR)/tb_learning_engine_optimized.cpp
+	@echo "Building CAM_LOOKUP testbench..."
+	$(CXX) $(CXXFLAGS) -DOPT_STRATEGY_CAM_LOOKUP \
+		-o $@ $(TEST_DIR)/tb_learning_engine_optimized.cpp $(LDFLAGS)
+
+tb_dataflow: $(TEST_DIR)/tb_learning_engine_optimized.cpp
+	@echo "Building DATAFLOW testbench..."
+	$(CXX) $(CXXFLAGS) -DOPT_STRATEGY_DATAFLOW \
+		-o $@ $(TEST_DIR)/tb_learning_engine_optimized.cpp $(LDFLAGS)
+
+tb_hierarchical: $(TEST_DIR)/tb_learning_engine_optimized.cpp
+	@echo "Building HIERARCHICAL testbench..."
+	$(CXX) $(CXXFLAGS) -DOPT_STRATEGY_HIERARCHICAL \
+		-o $@ $(TEST_DIR)/tb_learning_engine_optimized.cpp $(LDFLAGS)
+
+#==============================================================================
+# Run All Tests
+#==============================================================================
+
+test_all: tb_baseline tb_active_tracking tb_cam_lookup tb_dataflow tb_hierarchical
+	@echo ""
+	@echo "=========================================="
+	@echo "Running All Strategy Tests"
+	@echo "=========================================="
+	@echo ""
+	@$(MAKE) --no-print-directory test_baseline
+	@echo ""
+	@$(MAKE) --no-print-directory test_active_tracking
+	@echo ""
+	@$(MAKE) --no-print-directory test_cam_lookup
+	@echo ""
+	@$(MAKE) --no-print-directory test_dataflow
+	@echo ""
+	@$(MAKE) --no-print-directory test_hierarchical
+	@echo ""
+	@echo "=========================================="
+	@echo "All tests completed!"
+	@echo "=========================================="
+
+#==============================================================================
+# HLS Synthesis (requires Vivado HLS)
+#==============================================================================
+
+# Create HLS project and synthesize
+synth_baseline:
+	@echo "Synthesizing BASELINE strategy..."
+	@mkdir -p hls_baseline
+	@cd hls_baseline && $(VIVADO_HLS) -f ../tcl/synth_baseline.tcl
+
+synth_active_tracking:
+	@echo "Synthesizing ACTIVE_TRACKING strategy..."
+	@mkdir -p hls_active_tracking
+	@cd hls_active_tracking && $(VIVADO_HLS) -f ../tcl/synth_active_tracking.tcl
+
+synth_cam_lookup:
+	@echo "Synthesizing CAM_LOOKUP strategy..."
+	@mkdir -p hls_cam_lookup
+	@cd hls_cam_lookup && $(VIVADO_HLS) -f ../tcl/synth_cam_lookup.tcl
+
+synth_dataflow:
+	@echo "Synthesizing DATAFLOW strategy..."
+	@mkdir -p hls_dataflow
+	@cd hls_dataflow && $(VIVADO_HLS) -f ../tcl/synth_dataflow.tcl
+
+synth_hierarchical:
+	@echo "Synthesizing HIERARCHICAL strategy..."
+	@mkdir -p hls_hierarchical
+	@cd hls_hierarchical && $(VIVADO_HLS) -f ../tcl/synth_hierarchical.tcl
+
+synth_all: synth_baseline synth_active_tracking synth_cam_lookup synth_dataflow synth_hierarchical
+	@echo "All synthesis complete!"
+	@echo "See hls_*/ directories for results"
+
+#==============================================================================
+# Benchmarking
+#==============================================================================
+
+benchmark_all: test_all
+	@echo ""
+	@echo "=========================================="
+	@echo "Performance Benchmark Summary"
+	@echo "=========================================="
+	@echo ""
+	@echo "Running benchmarks with different activity rates..."
+	@echo ""
+	@echo "Strategy          | 10%   | 25%   | 50%   | 75%   | 100%"
+	@echo "------------------|-------|-------|-------|-------|-------"
+	@./tb_baseline 2>&1 | grep "Activity" | awk '{print "BASELINE          | " $$0}'
+	@./tb_active_tracking 2>&1 | grep "Activity" | awk '{print "ACTIVE_TRACKING   | " $$0}'
+	@./tb_cam_lookup 2>&1 | grep "Activity" | awk '{print "CAM_LOOKUP        | " $$0}'
+	@./tb_dataflow 2>&1 | grep "Activity" | awk '{print "DATAFLOW          | " $$0}'
+	@./tb_hierarchical 2>&1 | grep "Activity" | awk '{print "HIERARCHICAL      | " $$0}'
+	@echo ""
+
+#==============================================================================
+# Resource Comparison (requires synthesis results)
+#==============================================================================
+
+resource_report:
+	@echo "=========================================="
+	@echo "Resource Utilization Report"
+	@echo "=========================================="
+	@echo ""
+	@echo "Strategy          | LUT  | FF   | BRAM | DSP"
+	@echo "------------------|------|------|------|----"
+	@if [ -d hls_baseline ]; then \
+		echo -n "BASELINE          | "; \
+		grep -A5 "Utilization Estimates" hls_baseline/solution1/syn/report/snn_learning_engine_optimized_csynth.rpt | grep "Total" | awk '{print $$2 " | " $$3 " | " $$4 " | " $$5}'; \
+	fi
+	@if [ -d hls_active_tracking ]; then \
+		echo -n "ACTIVE_TRACKING   | "; \
+		grep -A5 "Utilization Estimates" hls_active_tracking/solution1/syn/report/snn_learning_engine_optimized_csynth.rpt | grep "Total" | awk '{print $$2 " | " $$3 " | " $$4 " | " $$5}'; \
+	fi
+	@if [ -d hls_cam_lookup ]; then \
+		echo -n "CAM_LOOKUP        | "; \
+		grep -A5 "Utilization Estimates" hls_cam_lookup/solution1/syn/report/snn_learning_engine_optimized_csynth.rpt | grep "Total" | awk '{print $$2 " | " $$3 " | " $$4 " | " $$5}'; \
+	fi
+	@if [ -d hls_dataflow ]; then \
+		echo -n "DATAFLOW          | "; \
+		grep -A5 "Utilization Estimates" hls_dataflow/solution1/syn/report/snn_learning_engine_optimized_csynth.rpt | grep "Total" | awk '{print $$2 " | " $$3 " | " $$4 " | " $$5}'; \
+	fi
+	@if [ -d hls_hierarchical ]; then \
+		echo -n "HIERARCHICAL      | "; \
+		grep -A5 "Utilization Estimates" hls_hierarchical/solution1/syn/report/snn_learning_engine_optimized_csynth.rpt | grep "Total" | awk '{print $$2 " | " $$3 " | " $$4 " | " $$5}'; \
+	fi
+	@echo ""
+
+#==============================================================================
+# Cleanup
+#==============================================================================
+
+clean:
+	@echo "Cleaning build artifacts..."
+	rm -f tb_baseline tb_active_tracking tb_cam_lookup tb_dataflow tb_hierarchical
+	rm -rf hls_baseline hls_active_tracking hls_cam_lookup hls_dataflow hls_hierarchical
+	rm -f *.log *.jou
+	@echo "Clean complete!"
+
+.PHONY: $(STRATEGIES) test_% synth_% resource_report

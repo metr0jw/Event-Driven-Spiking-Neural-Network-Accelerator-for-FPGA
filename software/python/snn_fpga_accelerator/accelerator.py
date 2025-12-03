@@ -207,6 +207,13 @@ class SNNAccelerator:
         self.last_spike_time = 0.0
         self.profiling_enabled = True
         
+        # Step mode configuration
+        self.step_mode: str = "multi"  # "multi" or "single"
+        self.current_timestep: int = 0
+        self.timestep_dt: float = 0.001  # 1ms default timestep
+        self.membrane_state: Optional[np.ndarray] = None
+        self.spike_history: List[List[SpikeEvent]] = []  # History for multi-step
+        
     def load_bitstream(self, bitstream_path: Optional[str] = None) -> None:
         """Load the FPGA bitstream and initialize hardware."""
         if self.simulation_mode:
@@ -470,7 +477,7 @@ class SNNAccelerator:
         duration: Optional[float] = None,
         return_events: bool = False,
     ) -> Union[List[SpikeEvent], np.ndarray]:
-        """Run inference and return spike rates or events.
+        """Run inference and return spike rates or events (multi-step mode).
 
         Parameters
         ----------
@@ -482,6 +489,10 @@ class SNNAccelerator:
             from the latest spike timestamp plus 10 ms.
         return_events:
             When true the raw spike events are returned instead of firing rates.
+            
+        Note:
+            This method operates in multi-step mode, processing the entire simulation
+            duration at once and returning all output spikes/rates.
         """
 
         spikes_list = self._normalize_spike_events(input_spikes)
@@ -494,6 +505,140 @@ class SNNAccelerator:
 
         rates = self._spike_events_to_rates(output_events, duration)
         return rates
+    
+    def single_step(
+        self,
+        input_spikes: Union[List[SpikeEvent], Sequence[SpikeEvent], np.ndarray],
+        return_events: bool = False,
+    ) -> Union[List[SpikeEvent], np.ndarray]:
+        """Process a single timestep and return output for that timestep only.
+        
+        This method maintains internal state (membrane potentials) between calls,
+        allowing for step-by-step simulation. Call reset() to clear state.
+        
+        Parameters
+        ----------
+        input_spikes:
+            Spike events for the current timestep. All events should have timestamps
+            within the current timestep window [t, t+dt).
+        return_events:
+            When true, return raw spike events. Otherwise return firing rates.
+            
+        Returns
+        -------
+        output:
+            Either a list of SpikeEvent objects (if return_events=True) or
+            an array of spike counts for this timestep (if return_events=False).
+            
+        Example
+        -------
+        >>> accelerator.reset()  # Clear state
+        >>> for t in range(num_timesteps):
+        ...     spikes_t = get_spikes_for_timestep(t)
+        ...     output_t = accelerator.single_step(spikes_t)
+        ...     process_output(output_t)
+        """
+        spikes_list = self._normalize_spike_events(input_spikes)
+        
+        # Adjust spike timestamps to current timestep
+        current_time = self.current_timestep * self.timestep_dt
+        adjusted_spikes = [
+            SpikeEvent(
+                neuron_id=spike.neuron_id,
+                timestamp=current_time + (spike.timestamp % self.timestep_dt),
+                weight=spike.weight
+            )
+            for spike in spikes_list
+        ]
+        
+        # Run simulation for one timestep
+        output_events = self.run_simulation(self.timestep_dt, adjusted_spikes)
+        
+        # Store output in history
+        self.spike_history.append(output_events)
+        
+        # Increment timestep counter
+        self.current_timestep += 1
+        
+        if return_events:
+            return output_events
+        
+        # Convert to spike counts for this timestep
+        if not output_events:
+            return np.zeros(self.num_neurons, dtype=np.float32)
+        
+        max_neuron = max(event.neuron_id for event in output_events)
+        counts = np.zeros(max(max_neuron + 1, self.num_neurons), dtype=np.float32)
+        for event in output_events:
+            counts[event.neuron_id] += 1
+        
+        return counts
+    
+    def set_step_mode(self, mode: str, timestep_dt: Optional[float] = None) -> None:
+        """Set the step mode for inference.
+        
+        Parameters
+        ----------
+        mode : str
+            Either "multi" for multi-step mode (process entire simulation at once)
+            or "single" for single-step mode (process one timestep at a time).
+        timestep_dt : float, optional
+            Timestep duration in seconds for single-step mode. Default is 0.001 (1ms).
+            
+        Example
+        -------
+        >>> # Multi-step mode (default)
+        >>> accelerator.set_step_mode("multi")
+        >>> output = accelerator.infer(all_spikes, duration=0.1)
+        
+        >>> # Single-step mode
+        >>> accelerator.set_step_mode("single", timestep_dt=0.001)
+        >>> accelerator.reset()
+        >>> for t in range(100):
+        ...     output_t = accelerator.single_step(spikes_t)
+        """
+        if mode not in ["multi", "single"]:
+            raise ValueError(f"Invalid step mode: {mode}. Must be 'multi' or 'single'")
+        
+        self.step_mode = mode
+        if timestep_dt is not None:
+            self.timestep_dt = timestep_dt
+        
+        logger.info(
+            "Step mode set to '%s'%s",
+            mode,
+            f" with timestep {self.timestep_dt*1000:.2f}ms" if mode == "single" else ""
+        )
+    
+    def get_step_mode(self) -> str:
+        """Get the current step mode.
+        
+        Returns
+        -------
+        mode : str
+            Current step mode ("multi" or "single").
+        """
+        return self.step_mode
+    
+    def get_spike_history(self) -> List[List[SpikeEvent]]:
+        """Get the complete spike history from single-step mode.
+        
+        Returns
+        -------
+        history : List[List[SpikeEvent]]
+            List where each element contains the spike events for that timestep.
+            Only populated when using single_step() method.
+            
+        Example
+        -------
+        >>> accelerator.set_step_mode("single")
+        >>> accelerator.reset()
+        >>> for t in range(100):
+        ...     output = accelerator.single_step(spikes[t])
+        >>> history = accelerator.get_spike_history()
+        >>> print(f"Total timesteps: {len(history)}")
+        """
+        return self.spike_history
 
     def infer_with_learning(
         self,
@@ -594,12 +739,16 @@ class SNNAccelerator:
             ip.write(0x00, 0x0)
 
         self.spike_count = 0
+        self.current_timestep = 0
+        self.membrane_state = None
+        self.spike_history = []
+        
         while not self.spike_queue.empty():
             self.spike_queue.get()
         while not self.output_queue.empty():
             self.output_queue.get()
             
-        logger.info("Accelerator reset")
+        logger.info("Accelerator reset (membrane state cleared)")
     
     def __enter__(self):
         """Context manager entry."""

@@ -4,6 +4,7 @@
 // File          : pc_interface.cpp
 // Author        : Jiwoon Lee (@metr0jw)
 // Organization  : Kwangwoon University, Seoul, South Korea
+// Email         : jwlee@linux.com
 // Description   : HLS implementation of PC communication interface
 //-----------------------------------------------------------------------------
 

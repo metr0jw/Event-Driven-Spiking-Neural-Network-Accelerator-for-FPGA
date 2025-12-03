@@ -30,16 +30,9 @@ from snn_fpga_accelerator.pytorch_snn_layers import (
 )
 from snn_fpga_accelerator.fpga_controller import SNNFPGAController, PyTorchFPGABridge
 
-# Try to import torch for comparison (optional)
-try:
-    import torch
-    import torch.nn as nn
-    import torch.nn.functional as F
-    TORCH_AVAILABLE = True
-    logger.info("PyTorch available for comparison")
-except ImportError:
-    TORCH_AVAILABLE = False
-    logger.warning("PyTorch not available, using simulation only")
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
 
 def load_mnist_data():
     """Load MNIST dataset (simplified version)"""
@@ -130,21 +123,14 @@ def main():
     test_image = test_images[0]
     
     # Convert to spike train
-    if TORCH_AVAILABLE:
-        spike_input = create_spike_train(
-            torch.tensor(test_image).unsqueeze(0).unsqueeze(0),
-            time_steps=100, encoding='rate'
-        )[0].numpy()
-    else:
-        spike_input_2d = create_spike_train_numpy(test_image, 100)
-        spike_input = np.expand_dims(spike_input_2d, axis=(0, 1))
+
+    spike_input = create_spike_train(
+        torch.tensor(test_image).unsqueeze(0).unsqueeze(0),
+        time_steps=100, encoding='rate'
+    )[0].numpy()
     
     # Process through model
-    if TORCH_AVAILABLE and hasattr(snn_model, 'forward'):
-        output_spikes = snn_model(torch.tensor(spike_input)).detach().numpy()
-    else:
-        # Simulation fallback
-        output_spikes = spike_input
+    output_spikes = snn_model(torch.tensor(spike_input)).detach().numpy()
     
     print(f"Input shape: {spike_input.shape}")
     print(f"Output shape: {output_spikes.shape}")
