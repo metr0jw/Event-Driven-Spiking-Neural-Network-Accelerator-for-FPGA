@@ -70,6 +70,16 @@ module lif_neuron #(
                        ($signed({1'b0, v_mem}) + syn_contribution) : 
                        ($signed({1'b0, v_mem}) + leak_contribution);
     
+    // Saturated membrane potential calculation
+    wire [DATA_WIDTH-1:0] v_mem_saturated;
+    assign v_mem_saturated = v_mem_next[DATA_WIDTH] ? {DATA_WIDTH{1'b0}} :           // Negative: saturate at 0
+                             (|v_mem_next[DATA_WIDTH:DATA_WIDTH-1]) ? {DATA_WIDTH{1'b1}} : // Overflow: saturate at max
+                             v_mem_next[DATA_WIDTH-1:0];                                   // Normal
+    
+    // Check if spike should be generated (using NEW membrane value)
+    wire spike_condition;
+    assign spike_condition = (v_mem_saturated >= threshold) && (refrac_counter == 0);
+    
     // Main neuron dynamics
     always @(posedge clk) begin
         if (!rst_n) begin
@@ -84,31 +94,22 @@ module lif_neuron #(
                 // In refractory period: count down and keep membrane potential at reset
                 refrac_counter <= refrac_counter - 1'b1;
                 v_mem <= reset_potential_en ? reset_potential : 16'd0;
+                membrane_potential <= reset_potential_en ? reset_potential : 16'd0;
             end else begin
                 // Normal operation: update membrane potential
                 
-                // Apply saturation to prevent overflow
-                if (v_mem_next[DATA_WIDTH]) begin
-                    // Negative result - saturate at 0
-                    v_mem <= 16'd0;
-                end else if (|v_mem_next[DATA_WIDTH:DATA_WIDTH-1]) begin
-                    // Positive overflow - saturate at max
-                    v_mem <= {DATA_WIDTH{1'b1}};
-                end else begin
-                    // Normal update
-                    v_mem <= v_mem_next[DATA_WIDTH-1:0];
-                end
-                
-                // Check for spike generation
-                if (v_mem >= threshold) begin
+                // Check for spike generation (using new calculated value)
+                if (spike_condition) begin
                     spike_reg <= 1'b1;
                     refrac_counter <= refractory_period;
                     v_mem <= reset_potential_en ? reset_potential : 16'd0;
+                    membrane_potential <= reset_potential_en ? reset_potential : 16'd0;
+                end else begin
+                    // No spike: update membrane with saturated value
+                    v_mem <= v_mem_saturated;
+                    membrane_potential <= v_mem_saturated;
                 end
             end
-            
-            // Update outputs
-            membrane_potential <= v_mem;
         end
     end
     
