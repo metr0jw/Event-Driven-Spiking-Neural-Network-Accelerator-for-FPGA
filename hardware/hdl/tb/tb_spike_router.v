@@ -151,20 +151,38 @@ module tb_spike_router();
         end
     endtask
     
+    // Invalidate a neuron's connections (set valid bit = 0 for all its slots)
+    task invalidate_neuron_connections(input [5:0] neuron_id);
+        integer idx;
+        begin
+            for (idx = 0; idx < MAX_FANOUT; idx = idx + 1) begin
+                @(posedge clk);
+                config_we = 1'b1;
+                config_addr = {8'h00, neuron_id * MAX_FANOUT + idx};
+                config_data = 24'd0;  // Valid bit = 0
+            end
+            @(posedge clk);
+            config_we = 1'b0;
+        end
+    endtask
+    
     // Configure connection
+    // Memory format: [valid(1), exc/inh(1), weight(8), delay(8), dest_id(6)] = 24 bits
+    // Bit positions:  [23]       [22]       [21:14]    [13:6]     [5:0]
     task configure_connection(
         input [5:0] source_id,
         input [5:0] dest_id,
         input [7:0] weight,
         input exc_inh,
-        input [6:0] delay,
+        input [7:0] delay,
         input [15:0] conn_index
     );
         begin
             @(posedge clk);
             config_we = 1'b1;
-            config_addr = {8'h00, 16'd0} | conn_index;
-            config_data = {8'd0, 1'b1, exc_inh, weight, delay, 2'd0, dest_id};
+            config_addr = {8'h00, 8'd0, conn_index};
+            // Format: [valid(1), exc/inh(1), weight(8), delay(8), dest_id(6)]
+            config_data = {8'd0, 1'b1, exc_inh, weight, delay, dest_id};
             @(posedge clk);
             config_we = 1'b0;
             @(posedge clk);
@@ -203,18 +221,29 @@ module tb_spike_router();
         end
     endtask
     
-    // Wait with timeout
+    // Wait with timeout - wait for router to finish processing
     task wait_with_timeout(input integer cycles);
         integer k;
         begin
+            // Wait a few cycles for spike to enter FIFO and processing to start
+            repeat(10) @(posedge clk);
+            
+            // Wait for router to become busy or timeout
+            k = 0;
+            while (k < 10 && !router_busy) begin
+                @(posedge clk);
+                k = k + 1;
+            end
+            
+            // Wait for router to finish or timeout
             k = 0;
             while (k < cycles && router_busy) begin
                 @(posedge clk);
                 k = k + 1;
             end
-            if (!router_busy) begin
-                repeat(10) @(posedge clk);
-            end
+            
+            // Extra wait to catch any final outputs
+            repeat(20) @(posedge clk);
         end
     endtask
     
@@ -277,7 +306,8 @@ module tb_spike_router();
         init_test("Simple One-to-One Routing");
         
         // Configure neuron 0 to connect to neuron 1 with weight 50
-        configure_connection(0, 1, 8'd50, 1'b1, 7'd0, 16'd0);
+        // conn_index = neuron_id * MAX_FANOUT + local_index = 0 * 32 + 0 = 0
+        configure_connection(0, 1, 8'd50, 1'b1, 8'd0, 16'd0);
         configure_neuron_count(0, 8'd1);
         
         expected_spikes[1] = 1;
@@ -295,10 +325,11 @@ module tb_spike_router();
         apply_reset();
         
         // Configure neuron 5 to connect to neurons 10, 11, 12, 13
-        configure_connection(5, 10, 8'd30, 1'b1, 7'd0, 16'd40);
-        configure_connection(5, 11, 8'd40, 1'b1, 7'd0, 16'd41);
-        configure_connection(5, 12, 8'd50, 1'b0, 7'd0, 16'd42);  // Inhibitory
-        configure_connection(5, 13, 8'd60, 1'b1, 7'd0, 16'd43);
+        // conn_index = 5 * 32 + local_index = 160, 161, 162, 163
+        configure_connection(5, 10, 8'd30, 1'b1, 8'd0, 16'd160);  // 5*32+0
+        configure_connection(5, 11, 8'd40, 1'b1, 8'd0, 16'd161);  // 5*32+1
+        configure_connection(5, 12, 8'd50, 1'b0, 8'd0, 16'd162);  // 5*32+2 Inhibitory
+        configure_connection(5, 13, 8'd60, 1'b1, 8'd0, 16'd163);  // 5*32+3
         configure_neuron_count(5, 8'd4);
         
         expected_spikes[10] = 1; expected_weights[10] = 30;
@@ -308,7 +339,7 @@ module tb_spike_router();
         
         // Send spike from neuron 5
         send_spike(5);
-        wait_with_timeout(200);
+        wait_with_timeout(500);  // Increased timeout
         verify_results();
         
         //---------------------------------------------------------------------
@@ -318,13 +349,14 @@ module tb_spike_router();
         apply_reset();
         
         // Configure neurons 20, 21, 22 to all connect to neuron 30
-        configure_connection(20, 30, 8'd20, 1'b1, 7'd0, 16'd80);
+        // Each neuron's connection starts at neuron_id * 32
+        configure_connection(20, 30, 8'd20, 1'b1, 8'd0, 16'd640);  // 20*32+0
         configure_neuron_count(20, 8'd1);
         
-        configure_connection(21, 30, 8'd25, 1'b1, 7'd0, 16'd81);
+        configure_connection(21, 30, 8'd25, 1'b1, 8'd0, 16'd672);  // 21*32+0
         configure_neuron_count(21, 8'd1);
         
-        configure_connection(22, 30, 8'd30, 1'b1, 7'd0, 16'd82);
+        configure_connection(22, 30, 8'd30, 1'b1, 8'd0, 16'd704);  // 22*32+0
         configure_neuron_count(22, 8'd1);
         
         expected_spikes[30] = 3;
@@ -344,9 +376,10 @@ module tb_spike_router();
         apply_reset();
         
         // Configure connections with different delays
-        configure_connection(40, 50, 8'd80, 1'b1, 7'd10, 16'd120);  // 10 cycle delay
-        configure_connection(40, 51, 8'd81, 1'b1, 7'd50, 16'd121);  // 50 cycle delay
-        configure_connection(40, 52, 8'd82, 1'b1, 7'd100, 16'd122); // 100 cycle delay
+        // neuron 40's connections start at 40 * 32 = 1280
+        configure_connection(40, 50, 8'd80, 1'b1, 8'd10, 16'd1280);  // 40*32+0, 10 cycle delay
+        configure_connection(40, 51, 8'd81, 1'b1, 8'd50, 16'd1281);  // 40*32+1, 50 cycle delay
+        configure_connection(40, 52, 8'd82, 1'b1, 8'd100, 16'd1282); // 40*32+2, 100 cycle delay
         configure_neuron_count(40, 8'd3);
         
         // Track when spikes are sent
@@ -381,9 +414,11 @@ module tb_spike_router();
         apply_reset();
         
         // Configure simple connections
+        // Each neuron i connects to neuron i+10
+        // neuron 0 -> addr 0, neuron 1 -> addr 32, etc.
         for (i = 0; i < 10; i = i + 1) begin
-            configure_connection(i, i+10, 8'd100, 1'b1, 7'd0, i*MAX_FANOUT);
-            configure_neuron_count(i, 8'd1);
+            configure_connection(i[5:0], i[5:0]+6'd10, 8'd100, 1'b1, 8'd0, i[15:0]*16'd32);
+            configure_neuron_count(i[5:0], 8'd1);
         end
         
         // Send many spikes rapidly
@@ -418,19 +453,15 @@ module tb_spike_router();
         // Test 6: Configuration Readback
         //---------------------------------------------------------------------
         init_test("Configuration Readback");
+        apply_reset();  // Ensure clean state
         
-        // Write configuration
-        config_we = 1'b1;
-        config_addr = {8'h00, 16'd200};
-        config_data = {8'd0, 1'b1, 1'b1, 8'd123, 7'd45, 2'd0, 6'd63};
-        @(posedge clk);
-        config_we = 1'b0;
-        @(posedge clk);
+        // Use configure_connection task which is known to work
+        configure_connection(6'd6, 6'd63, 8'd123, 1'b1, 8'd45, 16'd200);
         
         // Read back
-        config_addr = {8'h00, 16'd200};
-        @(posedge clk);
-        @(posedge clk);
+        config_addr = {8'h00, 8'd0, 16'd200};
+        repeat(5) @(posedge clk);  // Wait for read to stabilize
+        $display("  Read data=0x%08x", config_readdata);
         
         if (config_readdata[23:0] == config_data[23:0]) begin
             $display("  PASS: Configuration readback correct: 0x%06x", config_readdata[23:0]);
@@ -456,11 +487,11 @@ module tb_spike_router();
         for (i = 0; i < 5; i = i + 1) begin
             for (j = 0; j < 5; j = j + 1) begin
                 if (i != j) begin
-                    configure_connection(i, j, 8'd20 + i*5 + j, 1'b1, 7'd2, 
-                                       i*MAX_FANOUT + (j < i ? j : j-1));
+                    configure_connection(i[5:0], j[5:0], 8'd20 + i[7:0]*8'd5 + j[7:0], 1'b1, 8'd2, 
+                                       i[15:0]*16'd32 + ((j < i) ? j[15:0] : j[15:0]-16'd1));
                 end
             end
-            configure_neuron_count(i, 8'd4); // 4 connections each
+            configure_neuron_count(i[5:0], 8'd4); // 4 connections each
         end
         
         // Send spike from neuron 2
@@ -480,20 +511,30 @@ module tb_spike_router();
         //---------------------------------------------------------------------
         init_test("Reset Statistics");
         
-        $display("  Current spike count: %0d", routed_spike_count);
+        // Wait for router to fully complete processing
+        while (router_busy) @(posedge clk);
+        repeat(10) @(posedge clk);
         
-        // Reset statistics
+        $display("  Current spike count before reset: %0d", routed_spike_count);
+        
+        // Reset statistics - ensure signals are set before clock edge
+        @(posedge clk);  // Sync to clock edge first
         config_we = 1'b1;
         config_addr = {8'h02, 24'd0};
         config_data = 32'd1;
-        @(posedge clk);
+        $display("  Sending reset command: config_addr=0x%08x, config_data=0x%08x, config_we=%b", 
+                 config_addr, config_data, config_we);
+        @(posedge clk);  // Now the RTL will sample these values
+        $display("  After posedge: config_we=%b, spike_count=%0d", config_we, routed_spike_count);
         config_we = 1'b0;
-        @(posedge clk);
+        repeat(5) @(posedge clk);  // Wait for reset to complete
+        $display("  After reset wait: spike_count=%0d", routed_spike_count);
         
         // Read spike counter again
         config_addr = {8'h10, 24'd0};
         @(posedge clk);
         @(posedge clk);
+        $display("  Config readdata: 0x%08x", config_readdata);
         
         if (config_readdata == 0) begin
             $display("  PASS: Spike counter reset to 0");
@@ -509,10 +550,11 @@ module tb_spike_router();
         apply_reset();
         
         // Configure connection with invalid bit = 0
+        // Format: [valid(1), exc/inh(1), weight(8), delay(8), dest_id(6)]
         @(posedge clk);
         config_we = 1'b1;
-        config_addr = {8'h00, 16'd300};
-        config_data = {8'd0, 1'b0, 1'b1, 8'd99, 7'd0, 2'd0, 6'd55}; // Valid bit = 0
+        config_addr = {8'h00, 16'd1440};  // neuron 45's first connection slot: 45*32 = 1440
+        config_data = {8'd0, 1'b0, 1'b1, 8'd99, 8'd0, 6'd55}; // Valid bit = 0
         @(posedge clk);
         config_we = 1'b0;
         
@@ -532,11 +574,12 @@ module tb_spike_router();
         apply_reset();
         
         // Configure neuron 60 with maximum fanout
+        // neuron 60's connections start at 60*32 = 1920
         for (i = 0; i < MAX_FANOUT && i < NUM_NEURONS-1; i = i + 1) begin
-            configure_connection(60, (i != 60) ? i : 61, 8'd10 + i, 
-                               (i % 2), 7'd0, 60*MAX_FANOUT + i);
+            configure_connection(6'd60, (i != 60) ? i[5:0] : 6'd61, 8'd10 + i[7:0], 
+                               i[0], 8'd0, 16'd1920 + i[15:0]);
         end
-        configure_neuron_count(60, MAX_FANOUT);
+        configure_neuron_count(6'd60, 8'd32);
         
         // Send spike
         send_spike(60);

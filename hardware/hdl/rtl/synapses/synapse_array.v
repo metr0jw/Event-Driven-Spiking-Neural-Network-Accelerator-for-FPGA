@@ -51,6 +51,10 @@ module synapse_array #(
     reg [AXON_ID_WIDTH-1:0] current_axon;
     reg spike_pending;
     
+    // Latched weight data for DELIVER state
+    reg [WEIGHT_WIDTH:0] latched_weight;
+    reg latched_weight_valid;
+    
     // Weight memory interface
     wire [WEIGHT_WIDTH:0] weight_out;
     wire weight_valid;
@@ -66,6 +70,7 @@ module synapse_array #(
     weight_memory #(
         .NUM_WEIGHTS(NUM_AXONS * NUM_NEURONS),
         .WEIGHT_WIDTH(WEIGHT_WIDTH + 1),  // +1 for sign bit
+        .ADDR_WIDTH(AXON_ID_WIDTH + NEURON_ID_WIDTH),  // log2(NUM_AXONS * NUM_NEURONS)
         .USE_BRAM(USE_BRAM)
     ) weight_mem_inst (
         .clk(clk),
@@ -102,9 +107,12 @@ module synapse_array #(
         if (!rst_n) begin
             state <= IDLE;
             neuron_counter <= 0;
+            latched_weight <= 0;
+            latched_weight_valid <= 0;
         end else if (enable) begin
             case (state)
                 IDLE: begin
+                    latched_weight_valid <= 0;
                     if (spike_pending) begin
                         state <= FETCH;
                         neuron_counter <= 0;
@@ -112,10 +120,18 @@ module synapse_array #(
                 end
                 
                 FETCH: begin
+                    // Latch weight data when available
+                    if (weight_valid) begin
+                        latched_weight <= weight_out;
+                        latched_weight_valid <= 1;
+                    end else begin
+                        latched_weight_valid <= 0;
+                    end
                     state <= DELIVER;
                 end
                 
                 DELIVER: begin
+                    latched_weight_valid <= 0;  // Clear after use
                     if (neuron_counter == NUM_NEURONS - 1) begin
                         state <= IDLE;
                         neuron_counter <= 0;
@@ -140,13 +156,13 @@ module synapse_array #(
         end else begin
             spike_out_valid <= 1'b0;
             
-            if (state == DELIVER && weight_valid) begin
+            if (state == DELIVER && latched_weight_valid) begin
                 // Only output if weight is non-zero
-                if (|weight_out[WEIGHT_WIDTH-1:0]) begin
+                if (|latched_weight[WEIGHT_WIDTH-1:0]) begin
                     spike_out_valid <= 1'b1;
                     spike_out_neuron_id <= neuron_counter;
-                    spike_out_weight <= weight_out[WEIGHT_WIDTH-1:0];
-                    spike_out_exc_inh <= weight_out[WEIGHT_WIDTH];  // Sign bit
+                    spike_out_weight <= latched_weight[WEIGHT_WIDTH-1:0];
+                    spike_out_exc_inh <= latched_weight[WEIGHT_WIDTH];  // Sign bit
                 end
             end
         end

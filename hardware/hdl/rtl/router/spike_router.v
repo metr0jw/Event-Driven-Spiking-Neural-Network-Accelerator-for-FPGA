@@ -54,10 +54,11 @@ module spike_router #(
 
     // State machine states
     localparam IDLE         = 3'd0;
-    localparam FETCH_CONN   = 3'd1;
-    localparam CHECK_DELAY  = 3'd2;
-    localparam ROUTE_SPIKE  = 3'd3;
-    localparam NEXT_CONN    = 3'd4;
+    localparam WAIT_FIFO    = 3'd1;
+    localparam FETCH_CONN   = 3'd2;
+    localparam CHECK_DELAY  = 3'd3;
+    localparam ROUTE_SPIKE  = 3'd4;
+    localparam NEXT_CONN    = 3'd5;
     
     reg [2:0] state, next_state;
     
@@ -65,6 +66,14 @@ module spike_router #(
     // Format: [valid(1), exc/inh(1), weight(8), delay(8), dest_id(6)] = 24 bits
     (* ram_style = "block" *)
     reg [23:0] conn_memory [0:(NUM_NEURONS * MAX_FANOUT)-1];
+    
+    // Initialize connection memory to 0 (for simulation)
+    integer init_idx;
+    initial begin
+        for (init_idx = 0; init_idx < NUM_NEURONS * MAX_FANOUT; init_idx = init_idx + 1) begin
+            conn_memory[init_idx] = 24'd0;
+        end
+    end
     
     // Connection count per neuron
     reg [7:0] conn_count [0:NUM_NEURONS-1];
@@ -136,7 +145,12 @@ module spike_router #(
         case (state)
             IDLE: begin
                 if (!fifo_empty)
-                    next_state = FETCH_CONN;
+                    next_state = WAIT_FIFO;
+            end
+            
+            WAIT_FIFO: begin
+                // Wait one cycle for FIFO data to be valid
+                next_state = FETCH_CONN;
             end
             
             FETCH_CONN: begin
@@ -170,6 +184,10 @@ module spike_router #(
     //-------------------------------------------------------------------------
     // Connection processing
     //-------------------------------------------------------------------------
+    
+    // Internal signal for spike counter increment
+    reg spike_counter_inc;
+    
     always @(posedge clk) begin
         if (!rst_n) begin
             current_neuron <= 0;
@@ -177,15 +195,20 @@ module spike_router #(
             current_conn <= 0;
             spike_timestamp <= 0;
             out_valid <= 1'b0;
+            spike_counter_inc <= 1'b0;
         end else begin
+            spike_counter_inc <= 1'b0;  // Default
+            
             case (state)
                 IDLE: begin
                     out_valid <= 1'b0;
-                    if (!fifo_empty) begin
-                        current_neuron <= fifo_spike_id;
-                        spike_timestamp <= fifo_timestamp;
-                        conn_index <= 0;
-                    end
+                    conn_index <= 0;
+                end
+                
+                WAIT_FIFO: begin
+                    // FIFO data is now valid, capture it
+                    current_neuron <= fifo_spike_id;
+                    spike_timestamp <= fifo_timestamp;
                 end
                 
                 FETCH_CONN: begin
@@ -198,7 +221,7 @@ module spike_router #(
                         out_dest_id <= current_conn[5:0];
                         out_weight <= current_conn[21:14];
                         out_exc_inh <= current_conn[22];
-                        spike_counter <= spike_counter + 1'b1;
+                        spike_counter_inc <= 1'b1;  // Signal to increment counter
                     end
                 end
                 
@@ -217,7 +240,7 @@ module spike_router #(
     assign m_spike_exc_inh = out_exc_inh;
     
     //-------------------------------------------------------------------------
-    // Configuration interface
+    // Configuration interface and spike counter
     //-------------------------------------------------------------------------
     always @(posedge clk) begin
         if (!rst_n) begin
@@ -225,20 +248,28 @@ module spike_router #(
             for (integer i = 0; i < NUM_NEURONS; i = i + 1) begin
                 conn_count[i] <= 8'd0;
             end
+            // Note: conn_memory is not reset to save simulation time
+            // Software should ensure connections are properly configured
             spike_counter <= 32'd0;
-        end else if (config_we) begin
-            case (config_addr[31:24])
-                8'h00: begin // Write connection
-                    conn_memory[config_addr[15:0]] <= config_data[23:0];
-                end
-                8'h01: begin // Write connection count
-                    conn_count[config_addr[7:0]] <= config_data[7:0];
-                end
-                8'h02: begin // Reset statistics
-                    if (config_data[0])
-                        spike_counter <= 32'd0;
-                end
-            endcase
+        end else begin
+            // Handle configuration writes first (higher priority for reset)
+            if (config_we && config_addr[31:24] == 8'h02 && config_data[0]) begin
+                // Reset statistics command - highest priority
+                spike_counter <= 32'd0;
+            end else if (config_we) begin
+                case (config_addr[31:24])
+                    8'h00: begin // Write connection
+                        conn_memory[config_addr[15:0]] <= config_data[23:0];
+                    end
+                    8'h01: begin // Write connection count
+                        conn_count[config_addr[7:0]] <= config_data[7:0];
+                    end
+                    default: ; // Do nothing
+                endcase
+            end else if (spike_counter_inc) begin
+                // Only increment if not in reset command cycle
+                spike_counter <= spike_counter + 1'b1;
+            end
         end
     end
     

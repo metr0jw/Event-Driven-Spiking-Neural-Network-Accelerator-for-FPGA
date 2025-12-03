@@ -75,9 +75,9 @@ module axi_lite_regs_v1_0_S00_AXI #(
     assign S_AXI_RVALID  = axi_rvalid;
 
     assign slv_reg_wren = axi_awready && S_AXI_AWVALID && axi_wready && S_AXI_WVALID;
-    // Allow read decoding whenever a valid AR is presented (don't rely on arready pulse
-    // because some testbenches sample AR earlier). This makes read data muxing more robust.
-    assign slv_reg_rden = S_AXI_ARVALID && !axi_rvalid;
+    // Trigger read mux when AR handshake occurs (!axi_arready means we're about to assert it)
+    // This ensures read data is captured at the correct time for the current transaction
+    assign slv_reg_rden = !axi_arready && S_AXI_ARVALID;
 
     wire base_write_region;
     wire base_read_region;
@@ -85,7 +85,8 @@ module axi_lite_regs_v1_0_S00_AXI #(
 generate
     if (C_S_AXI_ADDR_WIDTH > 8) begin : gen_addr_filter
         assign base_write_region = (axi_awaddr[C_S_AXI_ADDR_WIDTH-1:8] == { (C_S_AXI_ADDR_WIDTH-8){1'b0} });
-        assign base_read_region  = (axi_araddr[C_S_AXI_ADDR_WIDTH-1:8] == { (C_S_AXI_ADDR_WIDTH-8){1'b0} });
+        // Use S_AXI_ARADDR directly for read region check (no latency)
+        assign base_read_region  = (S_AXI_ARADDR[C_S_AXI_ADDR_WIDTH-1:8] == { (C_S_AXI_ADDR_WIDTH-8){1'b0} });
     end else begin : gen_addr_filter_passthru
         assign base_write_region = 1'b1;
         assign base_read_region  = 1'b1;
@@ -234,14 +235,14 @@ endgenerate
     end
 
     // ---------------------------------------------------------------------
-    // Read data mux
+    // Read data mux - Use S_AXI_ARADDR directly for zero-latency read
     // ---------------------------------------------------------------------
     always @(posedge S_AXI_ACLK) begin
         if (!S_AXI_ARESETN) begin
             axi_rdata <= {C_S_AXI_DATA_WIDTH{1'b0}};
         end else if (slv_reg_rden) begin
             if (base_read_region) begin
-                case (axi_araddr[7:0])
+                case (S_AXI_ARADDR[7:0])
                     ADDR_CTRL:        axi_rdata <= ctrl_reg;
                     ADDR_STATUS:      axi_rdata <= status_reg;
                     ADDR_CONFIG:      axi_rdata <= config_reg;
@@ -252,10 +253,10 @@ endgenerate
                     ADDR_VERSION:     axi_rdata <= VERSION;
                     default:          axi_rdata <= 32'hDEAD_BEEF;
                 endcase
-                $display("[AXI_REG_DBG %0t] Read addr=0x%0h -> data=0x%08x base_ok=%0b", $time, axi_araddr, axi_rdata, base_read_region);
+                $display("[AXI_REG_DBG %0t] Read addr=0x%0h -> data=0x%08x base_ok=%0b", $time, S_AXI_ARADDR, axi_rdata, base_read_region);
             end else begin
                 axi_rdata <= 32'hDEAD_BEEF;
-                $display("[AXI_REG_DBG %0t] Read addr=0x%0h outside base region -> DEAD_BEEF", $time, axi_araddr);
+                $display("[AXI_REG_DBG %0t] Read addr=0x%0h outside base region -> DEAD_BEEF", $time, S_AXI_ARADDR);
             end
         end
     end

@@ -112,8 +112,90 @@ elif [[ "$TB_TOP" == "tb_simple_lif" ]]; then
         exit 1
     fi
     
+elif [[ "$TB_TOP" == "tb_snn_conv1d" ]]; then
+    print_msg "Compiling SNN Conv1D testbench..."
+    
+    iverilog -g2012 -o sim_exe \
+        "$TB_DIR/tb_snn_conv1d.v" \
+        "$RTL_DIR/layers/snn_conv1d.v" \
+        "$RTL_DIR/neurons/lif_neuron.v" \
+        "$RTL_DIR/common/"*.v 2>&1
+        
+    if [[ $? -eq 0 ]]; then
+        print_msg "Compilation successful! Running simulation..."
+        ./sim_exe
+        print_msg "Simulation completed!"
+    else
+        print_error "Compilation failed"
+        exit 1
+    fi
+
+elif [[ "$TB_TOP" == "tb_top" ]]; then
+    print_msg "Compiling SNN Top-Level testbench..."
+    
+    IP_DIR="$SCRIPT_DIR/../../ip_repo"
+    
+    # Compile all required RTL files
+    iverilog -g2012 -o sim_exe \
+        "$TB_DIR/tb_top.v" \
+        "$RTL_DIR/top/snn_accelerator_top.v" \
+        "$RTL_DIR/interfaces/axi_wrapper.v" \
+        "$RTL_DIR/router/spike_router.v" \
+        "$RTL_DIR/synapses/synapse_array.v" \
+        "$RTL_DIR/synapses/weight_memory.v" \
+        "$RTL_DIR/neurons/lif_neuron.v" \
+        "$RTL_DIR/neurons/lif_neuron_array.v" \
+        "$RTL_DIR/layers/"*.v \
+        "$RTL_DIR/common/"*.v \
+        "$IP_DIR/axi_lite_regs_v1_0/src/axi_lite_regs_v1_0.v" \
+        "$IP_DIR/axi_lite_regs_v1_0/src/axi_lite_regs_v1_0_S00_AXI.v" 2>&1
+        
+    if [[ $? -eq 0 ]]; then
+        print_msg "Compilation successful! Running simulation..."
+        ./sim_exe
+        print_msg "Simulation completed!"
+    else
+        print_error "Compilation failed"
+        exit 1
+    fi
+
+elif [[ "$TB_TOP" == "tb_snn_maxpool1d" ]]; then
+    print_msg "Compiling SNN MaxPool1D testbench..."
+    
+    iverilog -g2012 -o sim_exe \
+        "$TB_DIR/tb_snn_maxpool1d.v" \
+        "$RTL_DIR/layers/snn_maxpool1d.v" \
+        "$RTL_DIR/common/"*.v 2>&1
+        
+    if [[ $? -eq 0 ]]; then
+        print_msg "Compilation successful! Running simulation..."
+        ./sim_exe
+        print_msg "Simulation completed!"
+    else
+        print_error "Compilation failed"
+        exit 1
+    fi
+
+elif [[ "$TB_TOP" == "tb_synapse_array" ]]; then
+    print_msg "Compiling Synapse Array testbench..."
+    
+    iverilog -g2012 -o sim_exe \
+        "$TB_DIR/tb_synapse_array.v" \
+        "$RTL_DIR/synapses/synapse_array.v" \
+        "$RTL_DIR/synapses/weight_memory.v" \
+        "$RTL_DIR/common/"*.v 2>&1
+        
+    if [[ $? -eq 0 ]]; then
+        print_msg "Compilation successful! Running simulation..."
+        ./sim_exe
+        print_msg "Simulation completed!"
+    else
+        print_error "Compilation failed"
+        exit 1
+    fi
+
 else
     print_error "Unsupported testbench: $TB_TOP"
-    print_msg "Supported testbenches: tb_lif_neuron, tb_spike_router, tb_simple_lif"
+    print_msg "Supported testbenches: tb_lif_neuron, tb_spike_router, tb_simple_lif, tb_snn_conv1d, tb_top, tb_snn_maxpool1d, tb_synapse_array"
     exit 1
 fi
