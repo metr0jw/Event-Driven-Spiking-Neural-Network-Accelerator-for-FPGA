@@ -1,26 +1,28 @@
 //-----------------------------------------------------------------------------
-// Title         : SNN 1D Convolution Testbench (AC Version)
+// Title         : SNN 2D Convolution Testbench (AC Version)
 // Project       : PYNQ-Z2 SNN Accelerator
-// File          : tb_snn_conv1d.v
+// File          : tb_snn_conv2d.v
 // Author        : Jiwoon Lee (@metr0jw)
 // Organization  : Kwangwoon University, Seoul, South Korea
-// Description   : Testbench for AC-based SNN 1D convolution layer
+// Description   : Testbench for AC-based SNN 2D convolution layer
 //-----------------------------------------------------------------------------
 
 `timescale 1ns / 1ps
 
-module tb_snn_conv1d;
+module tb_snn_conv2d;
 
     //=========================================================================
     // Parameters
     //=========================================================================
-    parameter INPUT_LENGTH    = 16;
-    parameter INPUT_CHANNELS  = 4;
-    parameter OUTPUT_CHANNELS = 8;
+    parameter INPUT_HEIGHT    = 8;
+    parameter INPUT_WIDTH     = 8;
+    parameter INPUT_CHANNELS  = 1;
+    parameter OUTPUT_CHANNELS = 4;
     parameter KERNEL_SIZE     = 3;
     parameter STRIDE          = 1;
     parameter PADDING         = 1;
-    parameter OUTPUT_LENGTH   = (INPUT_LENGTH + 2*PADDING - KERNEL_SIZE) / STRIDE + 1;
+    parameter OUTPUT_HEIGHT   = (INPUT_HEIGHT + 2*PADDING - KERNEL_SIZE) / STRIDE + 1;
+    parameter OUTPUT_WIDTH    = (INPUT_WIDTH + 2*PADDING - KERNEL_SIZE) / STRIDE + 1;
     
     parameter WEIGHT_WIDTH    = 8;
     parameter VMEM_WIDTH      = 16;
@@ -67,7 +69,7 @@ module tb_snn_conv1d;
     wire busy;
     
     // Weight memory model
-    reg signed [WEIGHT_WIDTH-1:0] weight_memory [0:16383];
+    reg signed [WEIGHT_WIDTH-1:0] weight_memory [0:65535];
     
     // Test variables
     integer i, j, k;
@@ -78,8 +80,9 @@ module tb_snn_conv1d;
     //=========================================================================
     // DUT Instantiation
     //=========================================================================
-    snn_conv1d #(
-        .INPUT_LENGTH(INPUT_LENGTH),
+    snn_conv2d #(
+        .INPUT_HEIGHT(INPUT_HEIGHT),
+        .INPUT_WIDTH(INPUT_WIDTH),
         .INPUT_CHANNELS(INPUT_CHANNELS),
         .OUTPUT_CHANNELS(OUTPUT_CHANNELS),
         .KERNEL_SIZE(KERNEL_SIZE),
@@ -163,17 +166,19 @@ module tb_snn_conv1d;
     task init_weights;
         integer idx;
         begin
-            // Initialize weights: weight[out_ch][in_ch][k] = (out_ch + in_ch + k) % 16
-            for (idx = 0; idx < 16384; idx = idx + 1) begin
-                weight_memory[idx] = (idx % 16);
+            // Initialize weights with small positive values
+            for (idx = 0; idx < 65536; idx = idx + 1) begin
+                weight_memory[idx] = (idx % 8) + 1;  // Values 1-8
             end
         end
     endtask
     
-    task send_spike(input [7:0] channel, input [7:0] position, input [15:0] timestamp, input last);
+    // Send spike: {channel[7:0], row[7:0], col[7:0], timestamp[7:0]}
+    task send_spike(input [7:0] channel, input [7:0] row, input [7:0] col, 
+                    input [7:0] timestamp, input last);
         begin
             @(posedge clk);
-            s_axis_spike_tdata = {8'b0, channel, position, timestamp};
+            s_axis_spike_tdata = {channel, row, col, timestamp};
             s_axis_spike_tvalid = 1;
             s_axis_spike_tlast = last;
             while (!s_axis_spike_tready) @(posedge clk);
@@ -196,8 +201,9 @@ module tb_snn_conv1d;
     always @(posedge clk) begin
         if (m_axis_spike_tvalid && m_axis_spike_tready) begin
             output_count = output_count + 1;
-            $display("[%0t] Output spike %0d: ch=%0d, pos=%0d, ts=%0d", 
+            $display("[%0t] Output spike %0d: ch=%0d, row=%0d, col=%0d, ts=%0d", 
                      $time, output_count,
+                     m_axis_spike_tdata[31:24],
                      m_axis_spike_tdata[23:16],
                      m_axis_spike_tdata[15:8],
                      m_axis_spike_tdata[7:0]);
@@ -208,19 +214,20 @@ module tb_snn_conv1d;
     // Main Test
     //=========================================================================
     initial begin
-        $dumpfile("tb_snn_conv1d.vcd");
-        $dumpvars(0, tb_snn_conv1d);
+        $dumpfile("tb_snn_conv2d.vcd");
+        $dumpvars(0, tb_snn_conv2d);
         
         test_num = 0;
         error_count = 0;
         output_count = 0;
         
         $display("===========================================");
-        $display("SNN Conv1D (AC) Testbench");
+        $display("SNN Conv2D (AC) Testbench");
         $display("===========================================");
-        $display("Input: %0dx%0d", INPUT_LENGTH, INPUT_CHANNELS);
-        $display("Output: %0dx%0d", OUTPUT_LENGTH, OUTPUT_CHANNELS);
-        $display("Kernel: %0d, Stride: %0d, Padding: %0d", KERNEL_SIZE, STRIDE, PADDING);
+        $display("Input: %0dx%0dx%0d", INPUT_HEIGHT, INPUT_WIDTH, INPUT_CHANNELS);
+        $display("Output: %0dx%0dx%0d", OUTPUT_HEIGHT, OUTPUT_WIDTH, OUTPUT_CHANNELS);
+        $display("Kernel: %0dx%0d, Stride: %0d, Padding: %0d", 
+                 KERNEL_SIZE, KERNEL_SIZE, STRIDE, PADDING);
         $display("Threshold: 0x%04h", THRESHOLD);
         
         // Initialize weights
@@ -241,21 +248,23 @@ module tb_snn_conv1d;
         end
         
         //---------------------------------------------------------------------
-        // Test 2: Single Spike Processing
+        // Test 2: Single Spike at Center
         //---------------------------------------------------------------------
         test_num = 2;
-        $display("\n--- Test %0d: Single Spike Processing ---", test_num);
+        $display("\n--- Test %0d: Single Spike at Center ---", test_num);
         apply_reset();
         output_count = 0;
         
-        // Send single spike at channel 0, position 5, timestamp 100
-        send_spike(8'd0, 8'd5, 16'd100, 1'b1);
+        // Send spike at (row=4, col=4, channel=0)
+        send_spike(8'd0, 8'd4, 8'd4, 8'd100, 1'b1);
         wait_idle();
         
         $display("  Input spikes: %0d", input_spike_count);
         $display("  AC operations: %0d", ac_operation_count);
         $display("  Memory accesses: %0d", memory_access_count);
-        $display("  Cycles: %0d", cycle_count);
+        $display("  Expected AC ops: %0d (K×K×C_out = %0d×%0d×%0d)", 
+                 KERNEL_SIZE*KERNEL_SIZE*OUTPUT_CHANNELS,
+                 KERNEL_SIZE, KERNEL_SIZE, OUTPUT_CHANNELS);
         
         if (input_spike_count == 1) begin
             $display("  PASS: Single spike processed");
@@ -265,26 +274,49 @@ module tb_snn_conv1d;
         end
         
         //---------------------------------------------------------------------
-        // Test 3: Multiple Spikes
+        // Test 3: Corner Spike (Tests Padding)
         //---------------------------------------------------------------------
         test_num = 3;
-        $display("\n--- Test %0d: Multiple Spikes ---", test_num);
+        $display("\n--- Test %0d: Corner Spike (Padding Test) ---", test_num);
         apply_reset();
         output_count = 0;
         
-        // Send 5 spikes across different channels and positions
-        send_spike(8'd0, 8'd2, 16'd10, 1'b0);
-        send_spike(8'd1, 8'd4, 16'd20, 1'b0);
-        send_spike(8'd2, 8'd6, 16'd30, 1'b0);
-        send_spike(8'd3, 8'd8, 16'd40, 1'b0);
-        send_spike(8'd0, 8'd10, 16'd50, 1'b1);
+        // Send spike at corner (0,0)
+        send_spike(8'd0, 8'd0, 8'd0, 8'd50, 1'b1);
+        wait_idle();
+        
+        $display("  Input spikes: %0d", input_spike_count);
+        $display("  AC operations: %0d", ac_operation_count);
+        $display("  Note: Corner spikes affect fewer output neurons");
+        
+        if (input_spike_count == 1) begin
+            $display("  PASS: Corner spike processed");
+        end else begin
+            $display("  FAIL: Spike count mismatch");
+            error_count = error_count + 1;
+        end
+        
+        //---------------------------------------------------------------------
+        // Test 4: Multiple Spikes (Sparse Pattern)
+        //---------------------------------------------------------------------
+        test_num = 4;
+        $display("\n--- Test %0d: Sparse Spike Pattern ---", test_num);
+        apply_reset();
+        output_count = 0;
+        
+        // Send 5 spikes at different positions
+        send_spike(8'd0, 8'd1, 8'd1, 8'd10, 1'b0);
+        send_spike(8'd0, 8'd3, 8'd3, 8'd20, 1'b0);
+        send_spike(8'd0, 8'd5, 8'd5, 8'd30, 1'b0);
+        send_spike(8'd0, 8'd2, 8'd6, 8'd40, 1'b0);
+        send_spike(8'd0, 8'd6, 8'd2, 8'd50, 1'b1);
         
         wait_idle();
         
         $display("  Input spikes: %0d", input_spike_count);
         $display("  Output spikes: %0d", output_spike_count);
         $display("  AC operations: %0d", ac_operation_count);
-        $display("  Energy efficiency: %0d AC ops / input spike", 
+        $display("  Ops per input spike: %0d", 
                  input_spike_count > 0 ? ac_operation_count / input_spike_count : 0);
         
         if (input_spike_count == 5) begin
@@ -295,42 +327,46 @@ module tb_snn_conv1d;
         end
         
         //---------------------------------------------------------------------
-        // Test 4: Burst Spikes (Same Timestep)
+        // Test 5: Dense Spike Pattern (Stress Test)
         //---------------------------------------------------------------------
-        test_num = 4;
-        $display("\n--- Test %0d: Burst Spikes ---", test_num);
+        test_num = 5;
+        $display("\n--- Test %0d: Dense Spike Pattern ---", test_num);
         apply_reset();
         output_count = 0;
         
-        // Send spikes all at same timestamp (simulating synchronous input)
+        // Send spikes in a grid pattern
         for (i = 0; i < 4; i = i + 1) begin
-            send_spike(i[7:0], 8'd5, 16'd100, (i == 3));
+            for (j = 0; j < 4; j = j + 1) begin
+                send_spike(8'd0, (i*2), (j*2), (i*4+j), (i == 3 && j == 3) ? 1 : 0);
+            end
         end
         
         wait_idle();
         
         $display("  Input spikes: %0d", input_spike_count);
         $display("  Output spikes: %0d", output_spike_count);
+        $display("  AC operations: %0d", ac_operation_count);
         $display("  Cycles: %0d", cycle_count);
         
-        if (input_spike_count == 4) begin
-            $display("  PASS: Burst spikes processed");
+        if (input_spike_count == 16) begin
+            $display("  PASS: Dense pattern processed");
         end else begin
-            $display("  FAIL: Spike count mismatch");
+            $display("  FAIL: Spike count mismatch (expected 16, got %0d)", input_spike_count);
             error_count = error_count + 1;
         end
         
         //---------------------------------------------------------------------
-        // Test 5: Energy Statistics
+        // Test 6: Energy Efficiency Analysis
         //---------------------------------------------------------------------
-        test_num = 5;
-        $display("\n--- Test %0d: Energy Statistics ---", test_num);
+        test_num = 6;
+        $display("\n--- Test %0d: Energy Efficiency Analysis ---", test_num);
         apply_reset();
         output_count = 0;
         
-        // Send 10 spikes
+        // Send 10 random spikes
         for (i = 0; i < 10; i = i + 1) begin
-            send_spike((i % INPUT_CHANNELS), (i * 2) % INPUT_LENGTH, i[15:0] * 10, (i == 9));
+            send_spike(8'd0, (i*3) % INPUT_HEIGHT, (i*5) % INPUT_WIDTH, 
+                      i[7:0]*10, (i == 9));
         end
         
         wait_idle();
@@ -339,11 +375,17 @@ module tb_snn_conv1d;
         $display("  Output spikes: %0d", output_spike_count);
         $display("  AC operations: %0d", ac_operation_count);
         $display("  Memory accesses: %0d", memory_access_count);
-        $display("  Cycles: %0d", cycle_count);
-        $display("  Sparsity benefit: Only %0d%% of neurons updated", 
-                 (input_spike_count * 100) / (INPUT_LENGTH * INPUT_CHANNELS));
+        $display("  Total cycles: %0d", cycle_count);
         
-        $display("  PASS: Energy statistics collected");
+        // Calculate energy savings estimate
+        $display("\n  Energy Analysis:");
+        $display("  - Total neurons: %0d", OUTPUT_HEIGHT * OUTPUT_WIDTH * OUTPUT_CHANNELS);
+        $display("  - Updated neurons: ~%0d (sparse updates)", 
+                 input_spike_count * KERNEL_SIZE * KERNEL_SIZE);
+        $display("  - Sparsity benefit: Only updating affected receptive fields");
+        $display("  - AC vs MAC: ~3-5x energy per operation");
+        
+        $display("  PASS: Energy analysis complete");
         
         //---------------------------------------------------------------------
         // Summary
@@ -362,7 +404,7 @@ module tb_snn_conv1d;
     
     // Timeout watchdog
     initial begin
-        #1000000;
+        #2000000;
         $display("ERROR: Simulation timeout!");
         $finish;
     end

@@ -139,143 +139,219 @@ module snn_layer_manager #(
         end
     end
     
-    // Layer instantiation with generate blocks
-    // TODO: This needs to be redesigned - generate case statements require compile-time constants
-    // Current implementation has architectural issues mixing runtime and compile-time logic
-    // For now, creating simple pass-through to allow compilation
+    //=========================================================================
+    // Layer Pipeline Architecture
+    //=========================================================================
+    // Design approach: Instead of dynamic layer type selection at runtime,
+    // we use a fixed pipeline with enable signals controlled by layer_enabled.
+    // Each slot can be configured with parameters, but the layer type is
+    // determined by the pipeline position (compile-time).
+    //
+    // For runtime layer type selection, use a crossbar switch architecture
+    // with pre-instantiated layer processors.
+    //=========================================================================
     
-    // Simple pass-through for compilation
-    assign s_axis_input_tready = 1'b1;
-    assign m_axis_output_tdata = s_axis_input_tdata;
-    assign m_axis_output_tvalid = s_axis_input_tvalid;
-    assign m_axis_output_tlast = s_axis_input_tlast;
+    // Internal pipeline signals
+    wire [DATA_WIDTH-1:0] pipe_data [0:MAX_LAYERS];
+    wire pipe_valid [0:MAX_LAYERS];
+    wire pipe_ready [0:MAX_LAYERS];
+    wire pipe_last [0:MAX_LAYERS];
     
-    /* COMMENTED OUT - NEEDS REDESIGN
+    // Connect input to pipeline start
+    assign pipe_data[0] = s_axis_input_tdata;
+    assign pipe_valid[0] = s_axis_input_tvalid;
+    assign pipe_last[0] = s_axis_input_tlast;
+    assign s_axis_input_tready = pipe_ready[0];
+    
+    // Connect pipeline end to output
+    assign m_axis_output_tdata = pipe_data[MAX_LAYERS];
+    assign m_axis_output_tvalid = pipe_valid[MAX_LAYERS];
+    assign m_axis_output_tlast = pipe_last[MAX_LAYERS];
+    assign pipe_ready[MAX_LAYERS] = m_axis_output_tready;
+    
+    //=========================================================================
+    // Layer Pipeline Generation
+    //=========================================================================
+    // Each layer slot acts as a configurable processing element
+    // When layer_enabled[i] is 0, the slot passes data through
+    // When layer_enabled[i] is 1, the slot processes data based on config
+    //=========================================================================
+    
     genvar i;
     generate
-        for (i = 0; i < MAX_LAYERS; i = i + 1) begin : layer_gen
+        for (i = 0; i < MAX_LAYERS; i = i + 1) begin : layer_pipeline
             
-            // Layer instantiation based on type
-            case (layer_types[i])  // Layer type
-                LAYER_CONV1D: begin
-                    // 1D Convolution layer instantiation would go here
-                    // For now, pass through as placeholder
-                    assign layer_outputs[i] = layer_inputs[i];
+            // Per-layer processing registers
+            reg [DATA_WIDTH-1:0] proc_data_out;
+            reg proc_valid_out;
+            reg proc_last_out;
+            reg proc_ready_out;
+            
+            // Layer processing state machine
+            reg [2:0] layer_state;
+            localparam L_IDLE    = 3'd0;
+            localparam L_RECEIVE = 3'd1;
+            localparam L_PROCESS = 3'd2;
+            localparam L_OUTPUT  = 3'd3;
+            localparam L_DONE    = 3'd4;
+            
+            // Processing buffer
+            reg [DATA_WIDTH-1:0] data_buffer;
+            reg data_buffered;
+            reg last_buffered;
+            
+            // Computation done flag for this layer
+            reg layer_done;
+            assign layer_computation_done[i] = layer_done;
+            
+            always @(posedge clk) begin
+                if (reset) begin
+                    layer_state <= L_IDLE;
+                    proc_data_out <= {DATA_WIDTH{1'b0}};
+                    proc_valid_out <= 1'b0;
+                    proc_last_out <= 1'b0;
+                    proc_ready_out <= 1'b1;
+                    data_buffer <= {DATA_WIDTH{1'b0}};
+                    data_buffered <= 1'b0;
+                    last_buffered <= 1'b0;
+                    layer_done <= 1'b0;
+                end else if (!enable) begin
+                    // Pass through when disabled
+                    proc_data_out <= pipe_data[i];
+                    proc_valid_out <= pipe_valid[i];
+                    proc_last_out <= pipe_last[i];
+                    proc_ready_out <= pipe_ready[i+1];
+                    layer_done <= 1'b1;
+                end else if (!layer_enabled[i]) begin
+                    // Pass through when layer not configured
+                    proc_data_out <= pipe_data[i];
+                    proc_valid_out <= pipe_valid[i];
+                    proc_last_out <= pipe_last[i];
+                    proc_ready_out <= pipe_ready[i+1];
+                    layer_done <= 1'b1;
+                end else begin
+                    // Layer is enabled - process based on layer type
+                    layer_done <= 1'b0;
+                    
+                    case (layer_state)
+                        L_IDLE: begin
+                            proc_ready_out <= 1'b1;
+                            proc_valid_out <= 1'b0;
+                            if (pipe_valid[i] && proc_ready_out) begin
+                                data_buffer <= pipe_data[i];
+                                last_buffered <= pipe_last[i];
+                                data_buffered <= 1'b1;
+                                layer_state <= L_PROCESS;
+                            end
+                        end
+                        
+                        L_PROCESS: begin
+                            proc_ready_out <= 1'b0;
+                            // Simple processing based on layer type
+                            // This can be extended with actual computation
+                            case (layer_types[i][3:0])
+                                LAYER_CONV1D, LAYER_CONV2D: begin
+                                    // Placeholder: pass through (actual conv would be here)
+                                    proc_data_out <= data_buffer;
+                                end
+                                LAYER_AVGPOOL2D: begin
+                                    // Placeholder: simple scaling (actual pooling would be here)
+                                    proc_data_out <= data_buffer;
+                                end
+                                LAYER_MAXPOOL2D: begin
+                                    // Placeholder: pass through (actual max pooling would be here)
+                                    proc_data_out <= data_buffer;
+                                end
+                                LAYER_DENSE: begin
+                                    // Placeholder: pass through (actual dense would be here)
+                                    proc_data_out <= data_buffer;
+                                end
+                                default: begin
+                                    proc_data_out <= data_buffer;
+                                end
+                            endcase
+                            proc_last_out <= last_buffered;
+                            layer_state <= L_OUTPUT;
+                        end
+                        
+                        L_OUTPUT: begin
+                            proc_valid_out <= 1'b1;
+                            if (pipe_ready[i+1]) begin
+                                proc_valid_out <= 1'b0;
+                                data_buffered <= 1'b0;
+                                if (last_buffered) begin
+                                    layer_state <= L_DONE;
+                                end else begin
+                                    layer_state <= L_IDLE;
+                                end
+                            end
+                        end
+                        
+                        L_DONE: begin
+                            layer_done <= 1'b1;
+                            proc_ready_out <= 1'b0;
+                            proc_valid_out <= 1'b0;
+                            // Wait for new execution command
+                            if (!execution_active) begin
+                                layer_state <= L_IDLE;
+                            end
+                        end
+                        
+                        default: layer_state <= L_IDLE;
+                    endcase
                 end
-                
-                LAYER_CONV2D: begin
-                    // 2D Convolution layer instantiation would go here
-                    // For now, pass through as placeholder
-                    assign layer_outputs[i] = layer_inputs[i];
+            end
+            
+            // Connect to pipeline
+            assign pipe_data[i+1] = proc_data_out;
+            assign pipe_valid[i+1] = proc_valid_out;
+            assign pipe_last[i+1] = proc_last_out;
+            assign pipe_ready[i] = proc_ready_out;
+            
+            // Statistics tracking
+            reg [31:0] input_count;
+            reg [31:0] output_count;
+            
+            always @(posedge clk) begin
+                if (reset) begin
+                    input_count <= 32'b0;
+                    output_count <= 32'b0;
+                end else begin
+                    if (pipe_valid[i] && pipe_ready[i])
+                        input_count <= input_count + 1;
+                    if (pipe_valid[i+1] && pipe_ready[i+1])
+                        output_count <= output_count + 1;
                 end
-                
-                LAYER_AVGPOOL2D: begin
-                    // Average pooling layer
-                    snn_avgpool2d #(
-                        .INPUT_WIDTH(28),
-                        .INPUT_HEIGHT(28),
-                        .INPUT_CHANNELS(32),
-                        .POOL_SIZE(2),
-                        .STRIDE(2),
-                        .VMEM_WIDTH(VMEM_WIDTH),
-                        .POOL_THRESHOLD(16'h2000)
-                    ) avgpool_layer (
-                        .clk(clk),
-                        .reset(reset),
-                        .enable(enable && (layer_types[i] == LAYER_AVGPOOL2D) && 
-                                (active_layer == i) && execution_active),
-                        
-                        .s_axis_input_tdata(layer_input_tdata[i][31:0]),
-                        .s_axis_input_tvalid(layer_input_tvalid[i] && (layer_types[i] == LAYER_AVGPOOL2D)),
-                        .s_axis_input_tready(layer_input_tready[i]),
-                        .s_axis_input_tlast(layer_input_tlast[i]),
-                        
-                        .m_axis_output_tdata(layer_output_tdata[i][31:0]),
-                        .m_axis_output_tvalid(layer_output_tvalid[i]),
-                        .m_axis_output_tready(layer_output_tready[i]),
-                        .m_axis_output_tlast(layer_output_tlast[i]),
-                        
-                        .threshold_config(layer_configs[i][0][15:0]),
-                        .decay_factor(layer_configs[i][1][7:0]),
-                        .pooling_weight(layer_configs[i][2][7:0]),
-                        
-                        .input_spike_count(layer_input_spike_count[i]),
-                        .output_spike_count(layer_output_spike_count[i]),
-                        .computation_done(layer_computation_done[i])
-                    );
-                end
-                
-                // Max pooling layer
-                LAYER_MAXPOOL2D: begin
-                    snn_maxpool2d #(
-                        .INPUT_WIDTH(28),
-                        .INPUT_HEIGHT(28),
-                        .INPUT_CHANNELS(32),
-                        .POOL_SIZE(2),
-                        .STRIDE(2),
-                        .TIME_WIDTH(16)
-                    ) maxpool_layer (
-                        .clk(clk),
-                        .reset(reset),
-                        .enable(enable && (layer_types[i] == LAYER_MAXPOOL2D) && 
-                                (active_layer == i) && execution_active),
-                        
-                        .s_axis_input_tdata(layer_input_tdata[i]),
-                        .s_axis_input_tvalid(layer_input_tvalid[i] && (layer_types[i] == LAYER_MAXPOOL2D)),
-                        .s_axis_input_tready(layer_input_tready[i]),
-                        .s_axis_input_tlast(layer_input_tlast[i]),
-                        
-                        .m_axis_output_tdata(layer_output_tdata[i]),
-                        .m_axis_output_tvalid(layer_output_tvalid[i]),
-                        .m_axis_output_tready(layer_output_tready[i]),
-                        .m_axis_output_tlast(layer_output_tlast[i]),
-                        
-                        .pooling_window_time(layer_configs[i][0][15:0]),
-                        .winner_take_all_enable(layer_configs[i][1][0]),
-                        
-                        .input_spike_count(layer_input_spike_count[i]),
-                        .output_spike_count(layer_output_spike_count[i]),
-                        .computation_done(layer_computation_done[i])
-                    );
-                end
-                
-            endcase
+            end
+            
+            assign layer_input_spike_count[i] = input_count;
+            assign layer_output_spike_count[i] = output_count;
+            
+            // Unused inter-layer signals - tie off
+            assign layer_input_tdata[i] = pipe_data[i];
+            assign layer_input_tvalid[i] = pipe_valid[i];
+            assign layer_input_tlast[i] = pipe_last[i];
+            assign layer_input_tready[i] = pipe_ready[i];
+            assign layer_output_tdata[i] = pipe_data[i+1];
+            assign layer_output_tvalid[i] = pipe_valid[i+1];
+            assign layer_output_tlast[i] = pipe_last[i+1];
+            assign layer_output_tready[i] = pipe_ready[i+1];
+            
         end
     endgenerate
-    END OF COMMENTED OUT SECTION */
-    
-    // Input routing - connect to active layer (SIMPLIFIED - needs proper implementation)
-    /* COMMENTED OUT - ALL INTERNAL ROUTING
-    assign s_axis_input_tready = (active_layer < MAX_LAYERS) ? 
-                                layer_input_tready[active_layer] : 1'b1;
-    
-    generate
-        for (i = 0; i < MAX_LAYERS; i = i + 1) begin : input_routing
-            assign layer_input_tdata[i] = (active_layer == i) ? s_axis_input_tdata : {DATA_WIDTH{1'b0}};
-            assign layer_input_tvalid[i] = (active_layer == i) ? s_axis_input_tvalid : 1'b0;
-            assign layer_input_tlast[i] = (active_layer == i) ? s_axis_input_tlast : 1'b0;
-        end
-    endgenerate
-    
-    // Output routing - connect from active layer
-    assign m_axis_output_tdata = (active_layer < MAX_LAYERS) ? 
-                                layer_output_tdata[active_layer] : {DATA_WIDTH{1'b0}};
-    assign m_axis_output_tvalid = (active_layer < MAX_LAYERS) ? 
-                                 layer_output_tvalid[active_layer] : 1'b0;
-    assign m_axis_output_tlast = (active_layer < MAX_LAYERS) ? 
-                                layer_output_tlast[active_layer] : 1'b0;
-    
-    generate
-        for (i = 0; i < MAX_LAYERS; i = i + 1) begin : output_routing
-            assign layer_output_tready[i] = (active_layer == i) ? m_axis_output_tready : 1'b0;
-        end
-    endgenerate
-    */
     
     // Status outputs
     assign execute_done = !execution_active;
     assign current_layer_id = active_layer;
     assign total_input_spikes = total_input_count;
     assign total_output_spikes = total_output_count;
+    
+    // Layer active status - generate layer_active_status from layer_enabled array
+    genvar k;
+    generate
+        for (k = 0; k < MAX_LAYERS; k = k + 1) begin : gen_layer_status
+            assign layer_active_status[k] = layer_enabled[k];
+        end
+    endgenerate
 
 endmodule

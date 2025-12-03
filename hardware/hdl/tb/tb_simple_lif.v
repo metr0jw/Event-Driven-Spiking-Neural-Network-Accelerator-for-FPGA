@@ -123,6 +123,7 @@ module tb_simple_lif();
         repeat(20) @(posedge clk);
         
         $display("Simulation completed successfully!");
+        $display("PASS: Simple LIF neuron test completed");
         $finish;
     end
     

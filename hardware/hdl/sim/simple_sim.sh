@@ -194,8 +194,112 @@ elif [[ "$TB_TOP" == "tb_synapse_array" ]]; then
         exit 1
     fi
 
+elif [[ "$TB_TOP" == "tb_snn_conv2d" ]]; then
+    print_msg "Compiling SNN Conv2D testbench..."
+    
+    iverilog -g2012 -o sim_exe \
+        "$TB_DIR/tb_snn_conv2d.v" \
+        "$RTL_DIR/layers/snn_conv2d.v" \
+        "$RTL_DIR/neurons/lif_neuron.v" \
+        "$RTL_DIR/common/"*.v 2>&1
+        
+    if [[ $? -eq 0 ]]; then
+        print_msg "Compilation successful! Running simulation..."
+        ./sim_exe
+        print_msg "Simulation completed!"
+    else
+        print_error "Compilation failed"
+        exit 1
+    fi
+
+elif [[ "$TB_TOP" == "tb_snn_maxpool2d" ]]; then
+    print_msg "Compiling SNN MaxPool2D testbench..."
+    
+    iverilog -g2012 -o sim_exe \
+        "$TB_DIR/tb_snn_maxpool2d.v" \
+        "$RTL_DIR/layers/snn_maxpool2d.v" \
+        "$RTL_DIR/common/"*.v 2>&1
+        
+    if [[ $? -eq 0 ]]; then
+        print_msg "Compilation successful! Running simulation..."
+        ./sim_exe
+        print_msg "Simulation completed!"
+    else
+        print_error "Compilation failed"
+        exit 1
+    fi
+
+elif [[ "$TB_TOP" == "tb_snn_avgpool1d" ]]; then
+    print_msg "Compiling SNN AvgPool1D testbench..."
+    
+    iverilog -g2012 -o sim_exe \
+        "$TB_DIR/tb_snn_avgpool1d.v" \
+        "$RTL_DIR/layers/snn_avgpool1d.v" \
+        "$RTL_DIR/common/"*.v 2>&1
+        
+    if [[ $? -eq 0 ]]; then
+        print_msg "Compilation successful! Running simulation..."
+        ./sim_exe
+        print_msg "Simulation completed!"
+    else
+        print_error "Compilation failed"
+        exit 1
+    fi
+
+elif [[ "$TB_TOP" == "tb_snn_avgpool2d" ]]; then
+    print_msg "Compiling SNN AvgPool2D testbench..."
+    
+    iverilog -g2012 -o sim_exe \
+        "$TB_DIR/tb_snn_avgpool2d.v" \
+        "$RTL_DIR/layers/snn_avgpool2d.v" \
+        "$RTL_DIR/common/"*.v 2>&1
+        
+    if [[ $? -eq 0 ]]; then
+        print_msg "Compilation successful! Running simulation..."
+        ./sim_exe
+        print_msg "Simulation completed!"
+    else
+        print_error "Compilation failed"
+        exit 1
+    fi
+
+elif [[ "$TB_TOP" == "tb_lif_neuron_array" ]]; then
+    print_msg "Compiling LIF Neuron Array testbench..."
+    
+    iverilog -g2012 -o sim_exe \
+        "$TB_DIR/tb_lif_neuron_array.v" \
+        "$RTL_DIR/neurons/lif_neuron_array.v" \
+        "$RTL_DIR/neurons/lif_neuron.v" \
+        "$RTL_DIR/common/"*.v 2>&1
+        
+    if [[ $? -eq 0 ]]; then
+        print_msg "Compilation successful! Running simulation..."
+        ./sim_exe
+        print_msg "Simulation completed!"
+    else
+        print_error "Compilation failed"
+        exit 1
+    fi
+
+elif [[ "$TB_TOP" == "tb_snn_layer_manager" ]]; then
+    print_msg "Compiling SNN Layer Manager testbench..."
+    
+    iverilog -g2012 -o sim_exe \
+        "$TB_DIR/tb_snn_layer_manager.v" \
+        "$RTL_DIR/layers/snn_layer_manager.v" \
+        "$RTL_DIR/common/"*.v 2>&1
+        
+    if [[ $? -eq 0 ]]; then
+        print_msg "Compilation successful! Running simulation..."
+        ./sim_exe
+        print_msg "Simulation completed!"
+    else
+        print_error "Compilation failed"
+        exit 1
+    fi
+
 else
     print_error "Unsupported testbench: $TB_TOP"
-    print_msg "Supported testbenches: tb_lif_neuron, tb_spike_router, tb_simple_lif, tb_snn_conv1d, tb_top, tb_snn_maxpool1d, tb_synapse_array"
+    print_msg "Supported testbenches: tb_lif_neuron, tb_spike_router, tb_simple_lif, tb_snn_conv1d, tb_top, tb_snn_maxpool1d, tb_synapse_array, tb_snn_conv2d, tb_snn_maxpool2d, tb_snn_avgpool1d, tb_snn_avgpool2d, tb_lif_neuron_array, tb_snn_layer_manager"
     exit 1
 fi
