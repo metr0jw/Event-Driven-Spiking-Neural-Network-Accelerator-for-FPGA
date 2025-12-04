@@ -29,9 +29,11 @@ from snn_fpga_accelerator import (
     HWAccurateLIFNeuron, 
     HWAccurateSTDPEngine,
     LIFNeuronParams,
-    STDPConfig,
     PoissonEncoder,
 )
+# Import STDPConfig directly from hw_accurate_simulator to avoid confusion
+# with training.STDPConfig which has different fields
+from snn_fpga_accelerator.hw_accurate_simulator import STDPConfig
 
 
 def load_mnist() -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
@@ -93,21 +95,21 @@ class SNNMNISTClassifier:
         output_size: int = 10,
         time_steps: int = 100,
         threshold: int = 500,
-        leak_rate: int = 5,
+        tau: float = 0.875,  # tau instead of leak_rate
     ):
         self.input_size = input_size
         self.hidden_size = hidden_size
         self.output_size = output_size
         self.time_steps = time_steps
         
-        # Neuron parameters (HW-accurate)
-        self.neuron_params = LIFNeuronParams(
+        # Neuron parameters (HW-accurate with shift-based leak)
+        # Use from_tau() for automatic leak_rate calculation
+        self.neuron_params = LIFNeuronParams.from_tau(
+            tau=tau,
             threshold=threshold,
-            leak_rate=leak_rate,
-            refractory_period=5,
-            reset_potential=0,
-            reset_potential_en=False
+            refractory_period=5
         )
+        # Set reset_potential manually (default is 0, disabled)
         
         # STDP configuration
         self.stdp_config = STDPConfig(
@@ -126,7 +128,9 @@ class SNNMNISTClassifier:
         logger.info(f"SNN Classifier initialized:")
         logger.info(f"  Architecture: {input_size} -> {hidden_size} -> {output_size}")
         logger.info(f"  Time steps: {time_steps}")
-        logger.info(f"  Threshold: {threshold}, Leak: {leak_rate}")
+        logger.info(f"  Threshold: {threshold}")
+        logger.info(f"  Tau: {tau} (leak_rate={self.neuron_params.leak_rate}, "
+                   f"shift1={self.neuron_params.leak_shift1}, shift2={self.neuron_params.leak_shift2})")
     
     def encode_image(self, image: np.ndarray) -> np.ndarray:
         """Convert image to spike train using rate coding."""
@@ -372,7 +376,7 @@ def test_mnist_classification():
         hidden_size=64,
         time_steps=50,
         threshold=400,
-        leak_rate=3
+        tau=0.875  # Uses shift-based leak (shift1=3)
     )
     
     # Evaluate on subset

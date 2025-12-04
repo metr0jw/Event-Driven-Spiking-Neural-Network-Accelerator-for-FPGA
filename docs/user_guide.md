@@ -126,9 +126,9 @@ from snn_fpga_accelerator import SNNAccelerator
 config = {
     'num_neurons': 200,
     'neuron_type': 'LIF',
-    'threshold': 1.0,
-    'leak': 0.9,
-    'refractory_period': 2,  # timesteps
+    'threshold': 1000,         # 16-bit threshold
+    'leak_rate': 3,            # Shift-based: tau=0.875 (shift1=3)
+    'refractory_period': 5,    # timesteps
     'layers': [
         {'type': 'input', 'size': 784},
         {'type': 'hidden', 'size': 200},
@@ -139,6 +139,22 @@ config = {
 accelerator = SNNAccelerator()
 accelerator.configure_network(config)
 ```
+
+**Leak Rate Encoding** (Shift-Based Decay):
+
+The `leak_rate` parameter encodes shift values for power-efficient exponential decay:
+- Bits [3:0]: shift1 (primary leak)
+- Bits [7:4]: shift2 (secondary leak, 0=disabled)
+
+Common values:
+| leak_rate | tau    | Description |
+|-----------|--------|-------------|
+| 3         | 0.875  | shift1=3, moderate decay |
+| 4         | 0.9375 | shift1=4, slow decay |
+| 44        | 0.906  | shift1=4 + shift2=5, fine-tuned |
+| 53        | 0.953  | shift1=5 + shift2=6, very slow |
+
+Formula: `tau = 1 - 2^(-shift1) - 2^(-shift2)`
 
 ### Loading Weights
 

@@ -201,6 +201,79 @@ output = accelerator.infer(input_spikes)
 
 More examples available in the `examples/` directory.
 
+## Python Library (PyTorch-like API)
+
+The `snn_fpga_accelerator` package provides a **PyTorch-like API** for building, training, and deploying SNNs, similar to snnTorch and SpikingJelly.
+
+### Key Features
+- **Surrogate Gradient Training**: Backprop through spiking neurons using FastSigmoid, ATan, SuperSpike, etc.
+- **LIF Neurons as Activations**: Use `snn.LIF()` like `nn.ReLU()`
+- **Hardware-Aware Training**: `hw_mode=True` enforces 8-bit weight constraints during training
+- **FPGA Deployment**: One-line export with quantization
+
+### Quick Example
+```python
+import snn_fpga_accelerator as snn
+import torch
+import torch.nn as nn
+
+# Build model (just like PyTorch!)
+class MySNN(nn.Module):
+    def __init__(self, num_steps=25):
+        super().__init__()
+        self.num_steps = num_steps
+        self.fc1 = nn.Linear(784, 256)
+        self.lif1 = snn.LIF(thresh=1.0, tau=0.9)  # LIF as activation
+        self.fc2 = nn.Linear(256, 10)
+        self.lif2 = snn.LIF(thresh=1.0, tau=0.9)
+    
+    def forward(self, x):
+        x = x.view(x.size(0), -1)
+        self.lif1.reset_state()
+        self.lif2.reset_state()
+        
+        spk_rec = []
+        for t in range(self.num_steps):
+            spk1 = self.lif1(self.fc1(x))
+            spk2 = self.lif2(self.fc2(spk1))
+            spk_rec.append(spk2)
+        return torch.stack(spk_rec).sum(0)
+
+# Train with standard PyTorch!
+model = MySNN()
+optimizer = torch.optim.Adam(model.parameters())
+loss = nn.CrossEntropyLoss()(model(data), labels)
+loss.backward()  # Surrogate gradients flow through spikes!
+optimizer.step()
+```
+
+### Available Neurons
+```python
+snn.LIF(thresh=1.0, tau=0.9)  # Leaky Integrate-and-Fire
+snn.IF(thresh=1.0)            # Integrate-and-Fire (no leak)
+snn.PLIF()                    # Parametric LIF (learnable tau)
+snn.ALIF()                    # Adaptive LIF (adaptive threshold)
+snn.Izhikevich()              # Biologically realistic
+```
+
+### Surrogate Gradient Options
+```python
+snn.LIF(surrogate='fast_sigmoid')  # Default, fastest
+snn.LIF(surrogate='atan')          # Arctangent
+snn.LIF(surrogate='super_spike')   # SuperSpike
+snn.LIF(surrogate='sigmoid')       # Sigmoid
+snn.LIF(surrogate='pwl')           # Piecewise Linear
+```
+
+### FPGA Deployment
+```python
+# Quantize and export
+weights = snn.quantize(model.state_dict(), bits=8)
+snn.deploy.export(model, 'weights.npz')
+```
+
+See `software/python/README.md` for full API documentation.
+
 ## Project Structure
 
 ```

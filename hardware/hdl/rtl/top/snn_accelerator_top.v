@@ -16,9 +16,11 @@ module snn_accelerator_top #(
     parameter C_S_AXI_ADDR_WIDTH    = 32,
     parameter C_AXIS_DATA_WIDTH     = 32,
     
-    // SNN Parameters
-    parameter NUM_NEURONS           = 64,
-    parameter NUM_AXONS             = 64,
+    // SNN Parameters - scaled up for better resource utilization
+    parameter NUM_NEURONS           = 256,
+    parameter NUM_AXONS             = 256,
+    parameter NUM_PARALLEL_UNITS    = 8,     // Parallel processing units
+    parameter SPIKE_BUFFER_DEPTH    = 64,    // Input spike buffer depth
     // Calculate log2 ceiling manually for Verilog-2001 compatibility
     parameter NEURON_ID_WIDTH      = (NUM_NEURONS <= 2) ? 1 :
                                     (NUM_NEURONS <= 4) ? 2 :
@@ -39,7 +41,11 @@ module snn_accelerator_top #(
     parameter LEAK_WIDTH           = 8,
     parameter THRESHOLD_WIDTH      = 16,
     parameter REFRAC_WIDTH         = 8,
-    parameter ROUTER_BUFFER_DEPTH  = 256
+    parameter ROUTER_BUFFER_DEPTH  = 512,   // Increased buffer depth
+    
+    // Resource hints
+    parameter USE_BRAM              = 1,     // Use BRAM for storage
+    parameter USE_DSP               = 1      // Use DSP for arithmetic
 )(
     //-------------------------------------------------------------------------
     // Clock and Reset
@@ -184,9 +190,12 @@ endgenerate
     // Status signals
     wire [31:0]                 neuron_spike_count;
     wire [31:0]                 routed_spike_count;
+    wire [31:0]                 throughput_counter;
+    wire [7:0]                  active_neurons;
     wire                        router_busy;
     wire                        fifo_overflow;
     wire                        array_busy;
+    wire                        synapse_busy;
     
     //-------------------------------------------------------------------------
     // Clock and Reset
@@ -266,13 +275,15 @@ endgenerate
     assign clear_counters = ctrl_reg[2];
     
     //-------------------------------------------------------------------------
-    // Synapse Array
+    // Synapse Array (BRAM-banked parallel access)
     //-------------------------------------------------------------------------
     synapse_array #(
         .NUM_AXONS(NUM_AXONS),
         .NUM_NEURONS(NUM_NEURONS),
         .WEIGHT_WIDTH(WEIGHT_WIDTH),
-        .USE_BRAM(1)
+        .NUM_READ_PORTS(NUM_PARALLEL_UNITS),
+        .USE_BRAM(USE_BRAM),
+        .USE_DSP(USE_DSP)
     ) synapse_array_inst (
         .clk(sys_clk),
         .rst_n(sys_rst_n & ~snn_reset),
@@ -280,6 +291,7 @@ endgenerate
         // Input spike
         .spike_in_valid(input_spike_valid),
         .spike_in_axon_id(input_spike_neuron_id[AXON_ID_WIDTH-1:0]),
+        .spike_in_ready(input_spike_ready),
         
         // Output to neurons
         .spike_out_valid(routed_spike_valid),
@@ -290,24 +302,35 @@ endgenerate
         // Weight configuration
         .weight_we(config_reg[8] && (s_axi_awaddr[15:12] == 4'h1)),
         .weight_addr_axon(s_axi_awaddr[AXON_ID_WIDTH+7:8]),
-    .weight_addr_neuron(s_axi_awaddr[NEURON_ID_WIDTH-1:0]),
+        .weight_addr_neuron(s_axi_awaddr[NEURON_ID_WIDTH-1:0]),
         .weight_data({s_axi_wdata[8], s_axi_wdata[7:0]}),
         
-        .enable(snn_enable)
+        // Batch write interface
+        .batch_we(1'b0),
+        .batch_axon_id({AXON_ID_WIDTH{1'b0}}),
+        .batch_weights({NUM_PARALLEL_UNITS*(WEIGHT_WIDTH+1){1'b0}}),
+        .batch_start_neuron({NEURON_ID_WIDTH{1'b0}}),
+        
+        .enable(snn_enable),
+        .busy(synapse_busy),
+        .spike_count()
     );
     
-    assign input_spike_ready = 1'b1; // Always ready for now
-    
     //-------------------------------------------------------------------------
-    // LIF Neuron Array
+    // LIF Neuron Array (BRAM/DSP optimized with parallel processing)
     //-------------------------------------------------------------------------
     lif_neuron_array #(
         .NUM_NEURONS(NUM_NEURONS),
+        .NUM_AXONS(NUM_AXONS),
         .DATA_WIDTH(DATA_WIDTH),
         .WEIGHT_WIDTH(WEIGHT_WIDTH),
         .THRESHOLD_WIDTH(THRESHOLD_WIDTH),
         .LEAK_WIDTH(LEAK_WIDTH),
-        .REFRAC_WIDTH(REFRAC_WIDTH)
+        .REFRAC_WIDTH(REFRAC_WIDTH),
+        .NUM_PARALLEL_UNITS(NUM_PARALLEL_UNITS),
+        .SPIKE_BUFFER_DEPTH(SPIKE_BUFFER_DEPTH),
+        .USE_BRAM(USE_BRAM),
+        .USE_DSP(USE_DSP)
     ) neuron_array_inst (
         .clk(sys_clk),
         .rst_n(sys_rst_n & ~snn_reset),
@@ -337,7 +360,9 @@ endgenerate
         
         // Status
         .spike_count(neuron_spike_count),
-        .array_busy(array_busy)
+        .array_busy(array_busy),
+        .throughput_counter(throughput_counter),
+        .active_neurons(active_neurons)
     );
     
     //-------------------------------------------------------------------------
@@ -377,15 +402,17 @@ endgenerate
     );
     
     //-------------------------------------------------------------------------
-    // Status Register Assembly
+    // Status Register Assembly (enhanced with new signals)
     //-------------------------------------------------------------------------
     assign status_reg = {
-        16'd0,                    // [31:16] Reserved
-        fifo_overflow,           // [15]    FIFO overflow
-        router_busy,             // [14]    Router busy
-        array_busy,              // [13]    Neuron array busy
-        1'b0,                    // [12]    Reserved
-        4'd0,                    // [11:8]  Reserved
+        active_neurons,          // [31:24] Active neuron count
+        fifo_overflow,           // [23]    FIFO overflow
+        router_busy,             // [22]    Router busy
+        array_busy,              // [21]    Neuron array busy
+        synapse_busy,            // [20]    Synapse array busy
+        3'd0,                    // [19:17] Reserved
+        throughput_counter[16],  // [16]    Throughput MSB
+        throughput_counter[15:8], // [15:8] Throughput indicator
         |neuron_spike_count[7:0], // [7]     Spike activity
         3'd0,                    // [6:4]   Reserved
         output_spike_valid,      // [3]     Output spike present

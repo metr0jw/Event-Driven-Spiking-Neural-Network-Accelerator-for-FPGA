@@ -143,12 +143,88 @@ class LIFNeuronState:
 
 @dataclass
 class LIFNeuronParams:
-    """LIF neuron parameters (matches lif_neuron.v inputs)."""
+    """
+    LIF neuron parameters (matches lif_neuron.v inputs).
+    
+    Shift-based leak configuration:
+        leak_rate[2:0] = primary shift (1-7)
+        leak_rate[7:3] = secondary shift config (0=disabled)
+        
+    Tau calculation:
+        tau = 1 - 2^(-shift1) - 2^(-shift2)  (if shift2 enabled)
+        
+    Example configurations:
+        leak_rate = 0b00000_011 (3) -> tau = 1 - 1/8 = 0.875
+        leak_rate = 0b00000_100 (4) -> tau = 1 - 1/16 = 0.9375
+        leak_rate = 0b00110_011 (51) -> tau = 1 - 1/8 - 1/64 ≈ 0.859
+        leak_rate = 0b00110_100 (52) -> tau = 1 - 1/16 - 1/64 ≈ 0.922
+    """
     threshold: int = 1000       # Threshold value (16-bit)
-    leak_rate: int = 10         # Leak rate (8-bit)
+    leak_rate: int = 3          # Leak config: [2:0]=shift1, [7:3]=shift2 (default: shift=3, tau≈0.875)
     refractory_period: int = 20 # Refractory period (8-bit)
     reset_potential: int = 0    # Reset potential (16-bit)
     reset_potential_en: bool = False
+    
+    @property
+    def leak_shift1(self) -> int:
+        """Primary shift amount (1-7)."""
+        return self.leak_rate & 0x07
+    
+    @property
+    def leak_shift2(self) -> int:
+        """Secondary shift amount (0=disabled, 1-7)."""
+        shift2_cfg = (self.leak_rate >> 3) & 0x1F
+        return shift2_cfg & 0x07 if shift2_cfg != 0 else 0
+    
+    @property
+    def leak_shift2_enabled(self) -> bool:
+        """Whether secondary shift is enabled."""
+        return ((self.leak_rate >> 3) & 0x1F) != 0
+    
+    @property
+    def tau(self) -> float:
+        """Calculate effective tau value from shift configuration."""
+        tau = 1.0
+        if self.leak_shift1 > 0:
+            tau -= 1.0 / (1 << self.leak_shift1)
+        if self.leak_shift2_enabled and self.leak_shift2 > 0:
+            tau -= 1.0 / (1 << self.leak_shift2)
+        return tau
+    
+    @staticmethod
+    def from_tau(tau: float, threshold: int = 1000, refractory_period: int = 20) -> 'LIFNeuronParams':
+        """
+        Create LIFNeuronParams from desired tau value.
+        
+        Finds the best shift configuration to approximate the target tau.
+        """
+        best_error = float('inf')
+        best_config = 3  # Default
+        
+        # Try single shift configurations
+        for shift1 in range(1, 8):
+            approx_tau = 1.0 - 1.0 / (1 << shift1)
+            error = abs(approx_tau - tau)
+            if error < best_error:
+                best_error = error
+                best_config = shift1
+        
+        # Try dual shift configurations
+        for shift1 in range(1, 8):
+            for shift2 in range(1, 8):
+                if shift2 == shift1:
+                    continue
+                approx_tau = 1.0 - 1.0 / (1 << shift1) - 1.0 / (1 << shift2)
+                error = abs(approx_tau - tau)
+                if error < best_error:
+                    best_error = error
+                    best_config = shift1 | (shift2 << 3)
+        
+        return LIFNeuronParams(
+            threshold=threshold,
+            leak_rate=best_config,
+            refractory_period=refractory_period
+        )
 
 
 class HWAccurateLIFNeuron:
@@ -156,12 +232,17 @@ class HWAccurateLIFNeuron:
     Bit-accurate LIF neuron matching lif_neuron.v
     
     Implements exact same logic as Verilog RTL:
+    - Shift-based exponential leak (no multiplier)
     - Saturating arithmetic for membrane potential
     - Clock-cycle accurate leak application
     - Refractory period counter
+    
+    Leak formula: v_mem_next = v_mem - (v_mem >> shift1) - (v_mem >> shift2)
+                            = v_mem * (1 - 2^(-shift1) - 2^(-shift2))
+                            = v_mem * tau
     """
     
-    def __init__(self, neuron_id: int, params: Optional[LIFNeuronParams] = None):
+    def __init__(self, neuron_id: int = 0, params: Optional[LIFNeuronParams] = None):
         self.neuron_id = neuron_id
         self.params = params or LIFNeuronParams()
         self.state = LIFNeuronState()
@@ -170,25 +251,35 @@ class HWAccurateLIFNeuron:
         """Reset neuron state (rst_n = 0)."""
         self.state.reset()
     
-    def _saturate_add(self, a: int, b: int) -> int:
-        """
-        Saturating addition matching Verilog:
-        assign v_mem_saturated = v_mem_next[DATA_WIDTH] ? 0 :
-                                 (|v_mem_next[DATA_WIDTH:DATA_WIDTH-1]) ? MAX : v_mem_next;
-        """
-        result = a + b
-        if result < 0:
-            return 0  # Saturate at 0 for negative
-        elif result > 65535:
-            return 65535  # Saturate at max (16-bit)
-        return result
-    
-    def _saturate_sub(self, a: int, b: int) -> int:
-        """Saturating subtraction."""
-        result = a - b
-        if result < 0:
+    def _saturate_16bit(self, value: int) -> int:
+        """Saturate to 16-bit unsigned range [0, 65535]."""
+        if value < 0:
             return 0
-        return result
+        elif value > 65535:
+            return 65535
+        return value
+    
+    def _calculate_leak(self, v_mem: int) -> int:
+        """
+        Calculate shift-based leak amount matching Verilog.
+        
+        leak_total = (v_mem >> shift1) + (v_mem >> shift2)
+        """
+        shift1 = self.params.leak_shift1
+        shift2 = self.params.leak_shift2
+        
+        # Primary leak
+        leak_primary = (v_mem >> shift1) if shift1 > 0 else 0
+        
+        # Secondary leak (if enabled)
+        leak_secondary = 0
+        if self.params.leak_shift2_enabled and shift2 > 0:
+            leak_secondary = v_mem >> shift2
+        
+        # Total leak (saturate at 16-bit max)
+        leak_total = min(leak_primary + leak_secondary, 65535)
+        
+        return leak_total
     
     def tick(self, syn_valid: bool = False, syn_weight: int = 0, 
              syn_excitatory: bool = True, enable: bool = True) -> bool:
@@ -232,11 +323,12 @@ class HWAccurateLIFNeuron:
                 else:
                     syn_contribution = -syn_weight
                 
-                # Update membrane potential
-                v_mem_next = self._saturate_add(self.state.v_mem, syn_contribution)
+                # Update membrane potential with synaptic input
+                v_mem_next = self._saturate_16bit(self.state.v_mem + syn_contribution)
             else:
-                # Apply leak (every cycle without input)
-                v_mem_next = self._saturate_sub(self.state.v_mem, self.params.leak_rate)
+                # Apply shift-based leak (exponential decay)
+                leak_amount = self._calculate_leak(self.state.v_mem)
+                v_mem_next = self._saturate_16bit(self.state.v_mem - leak_amount)
             
             # Check spike condition
             if v_mem_next >= self.params.threshold:
@@ -256,6 +348,10 @@ class HWAccurateLIFNeuron:
     def is_refractory(self) -> bool:
         """Check if in refractory period."""
         return self.state.refrac_counter > 0
+    
+    def get_tau(self) -> float:
+        """Get effective tau value."""
+        return self.params.tau
 
 
 # =============================================================================

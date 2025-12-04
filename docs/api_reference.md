@@ -165,6 +165,142 @@ Process a complete spike train.
 
 ---
 
+## Hardware-Accurate Simulation
+
+### HWAccurateLIFNeuron
+
+Bit-accurate Python simulation of the Verilog LIF neuron.
+
+**Location**: `software/python/snn_fpga_accelerator/hw_accurate_simulator.py`
+
+```python
+from snn_fpga_accelerator.hw_accurate_simulator import HWAccurateLIFNeuron, LIFNeuronParams
+```
+
+#### LIFNeuronParams
+
+Configuration parameters matching hardware exactly.
+
+```python
+@dataclass
+class LIFNeuronParams:
+    threshold: int = 1000          # 16-bit threshold
+    leak_rate: int = 3             # Encoded shift values (see below)
+    leak_shift1: int = 3           # Primary leak shift
+    leak_shift2: int = 0           # Secondary leak shift (0 = disabled)
+    leak_shift2_enabled: bool = False
+    refractory_period: int = 5     # 8-bit
+    reset_potential: int = 0       # 16-bit
+    reset_potential_en: bool = True
+    tau: float = 0.875             # Effective decay factor
+```
+
+**leak_rate Encoding**:
+- Bits [3:0]: shift1 (primary leak, 1-8)
+- Bits [7:4]: shift2 (secondary leak, 0 = disabled, 1-8 if enabled)
+
+**Tau Formula**: `tau = 1 - 2^(-shift1) - 2^(-shift2)`
+
+##### from_tau() Class Method
+```python
+@classmethod
+def from_tau(cls, tau: float, threshold: int = 1000, ...) -> LIFNeuronParams
+```
+Create parameters from target tau value.
+
+**Example**:
+```python
+# Create parameters for tau=0.875
+params = LIFNeuronParams.from_tau(tau=0.875, threshold=1000)
+print(f"leak_rate={params.leak_rate}, shift1={params.leak_shift1}")
+# Output: leak_rate=3, shift1=3
+```
+
+#### HWAccurateLIFNeuron
+
+```python
+class HWAccurateLIFNeuron:
+    def __init__(self, neuron_id: int, params: LIFNeuronParams)
+```
+
+##### tick()
+```python
+def tick(
+    self,
+    syn_valid: bool = False,
+    syn_weight: int = 0,
+    syn_excitatory: bool = True,
+    enable: bool = True
+) -> bool
+```
+Execute one hardware clock cycle.
+
+**Parameters**:
+- `syn_valid` (bool): Synaptic input present
+- `syn_weight` (int): 8-bit weight value (0-255)
+- `syn_excitatory` (bool): True=excitatory (+weight), False=inhibitory (-weight)
+- `enable` (bool): Neuron enable signal
+
+**Returns**: True if spike generated
+
+**Hardware Behavior**:
+```
+if syn_valid:
+    v_mem_next = saturate_16bit(v_mem + weight)  # +/- based on exc/inh
+else:
+    leak = (v_mem >> shift1) + (v_mem >> shift2)
+    v_mem_next = saturate_16bit(v_mem - leak)
+    
+if v_mem_next >= threshold:
+    spike = True, v_mem = reset_potential
+```
+
+**Example**:
+```python
+params = LIFNeuronParams.from_tau(tau=0.875, threshold=1000)
+neuron = HWAccurateLIFNeuron(neuron_id=0, params=params)
+
+# Apply synaptic input
+spike = neuron.tick(syn_valid=True, syn_weight=500, syn_excitatory=True)
+print(f"v_mem={neuron.state.v_mem}, spike={spike}")
+
+# Leak cycle (no input)
+spike = neuron.tick(syn_valid=False, enable=True)
+print(f"After leak: v_mem={neuron.state.v_mem}")
+```
+
+### Tau Conversion Utilities
+
+```python
+from snn_fpga_accelerator.hw_accurate_simulator import tau_to_hw_leak_rate, hw_leak_rate_to_tau
+```
+
+##### tau_to_hw_leak_rate()
+```python
+def tau_to_hw_leak_rate(tau: float) -> Tuple[int, int, int, bool]
+```
+Convert floating-point tau to hardware shift parameters.
+
+**Returns**: `(leak_rate, shift1, shift2, shift2_enabled)`
+
+##### hw_leak_rate_to_tau()
+```python
+def hw_leak_rate_to_tau(leak_rate: int) -> float
+```
+Convert hardware leak_rate encoding to effective tau.
+
+**Common Tau Values**:
+| tau   | leak_rate | shift1 | shift2 | Error |
+|-------|-----------|--------|--------|-------|
+| 0.500 | 1         | 1      | 0      | 0.000 |
+| 0.750 | 2         | 2      | 0      | 0.000 |
+| 0.875 | 3         | 3      | 0      | 0.000 |
+| 0.900 | 44        | 4      | 5      | 0.006 |
+| 0.9375| 4         | 4      | 0      | 0.000 |
+| 0.950 | 53        | 5      | 6      | 0.003 |
+
+---
+
 ## Core Classes
 
 ### SNNAccelerator
@@ -798,6 +934,96 @@ class SNNModel(nn.Module):
         return spikes2
 
 model = SNNModel()
+```
+
+### LIF (Neuron Class with HW Mode)
+
+PyTorch-compatible LIF neuron with hardware-accurate mode.
+
+**Location**: `software/python/snn_fpga_accelerator/neuron.py`
+
+```python
+from snn_fpga_accelerator.neuron import LIF
+
+class LIF(nn.Module):
+    def __init__(
+        self,
+        thresh: float = 1.0,
+        tau: float = 0.9,
+        reset: str = 'zero',      # 'zero' or 'subtract'
+        hw_mode: bool = False
+    )
+```
+
+**Parameters**:
+- `thresh` (float): Spike threshold
+- `tau` (float): Membrane decay factor (0 < tau < 1)
+- `reset` (str): Reset mechanism ('zero' for hard reset, 'subtract' for soft reset)
+- `hw_mode` (bool): If True, use shift-based leak matching hardware
+
+**Hardware Mode (`hw_mode=True`)**:
+
+When `hw_mode=True`, the neuron uses shift-based exponential decay matching
+the Verilog RTL implementation:
+
+```python
+# Standard mode (float multiplication):
+mem_next = tau * mem + input
+
+# Hardware mode (shift-based leak):
+leak = (mem >> shift1) + (mem >> shift2)
+mem_next = mem - leak + input
+```
+
+##### forward()
+```python
+forward(x: torch.Tensor) -> torch.Tensor
+```
+Forward pass with LIF dynamics.
+
+**Returns**: Spike tensor (same shape as input)
+
+##### get_hw_config()
+```python
+def get_hw_config(self) -> Dict[str, Any]
+```
+Get hardware configuration for deployment.
+
+**Returns**:
+```python
+{
+    'leak_rate': int,        # Encoded shift values
+    'shift1': int,           # Primary leak shift
+    'shift2': int,           # Secondary leak shift
+    'effective_tau': float,  # Actual tau achieved
+    'threshold': int         # 16-bit threshold
+}
+```
+
+##### reset_state()
+```python
+def reset_state(self) -> None
+```
+Reset membrane potential to zero.
+
+**Example**:
+```python
+from snn_fpga_accelerator.neuron import LIF
+import torch
+
+# Standard mode (for training)
+lif = LIF(thresh=1.0, tau=0.9, hw_mode=False)
+
+# Hardware mode (for validation)
+lif_hw = LIF(thresh=1.0, tau=0.875, hw_mode=True)
+config = lif_hw.get_hw_config()
+print(f"HW config: {config}")
+# Output: {'leak_rate': 3, 'shift1': 3, 'shift2': 0, 'effective_tau': 0.875, ...}
+
+# Forward pass
+x = torch.randn(1, 10) * 2
+spikes = lif_hw(x)
+print(f"Membrane: {lif_hw.mem}, Spikes: {spikes}")
 ```
 
 ### STDPLayer

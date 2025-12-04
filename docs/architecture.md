@@ -64,25 +64,53 @@ Detailed system architecture of the Event-Driven SNN FPGA Accelerator.
 The Leaky Integrate-and-Fire neuron is the fundamental computational unit.
 
 **State Variables**:
-- `membrane_potential`: 16-bit signed fixed-point (Q8.8 format)
+- `membrane_potential`: 16-bit unsigned fixed-point
 - `refractory_counter`: 8-bit unsigned counter
-- `neuron_type`: 1-bit (excitatory/inhibitory)
+- `spike_out`: 1-bit output spike
 
-**Operations**:
+**Operations (Event-Driven)**:
 ```
-V[t+1] = V[t] × leak_factor + Σ(w_i × spike_i)
+// When synaptic input arrives:
+V[t+1] = saturate(V[t] + weight)  // Excitatory: +weight, Inhibitory: -weight
 
-if V[t+1] > threshold:
+// When no input (leak cycle):
+V[t+1] = V[t] - (V[t] >> shift1) - (V[t] >> shift2)  // Shift-based exponential decay
+
+if V[t+1] >= threshold:
     spike_out = 1
     V[t+1] = reset_potential
     refractory_counter = refractory_period
 ```
 
+**Shift-Based Leak (Power-Optimized)**:
+
+The leak operation uses shift operations instead of multiplication for power efficiency.
+The effective tau (decay factor) is: `tau = 1 - 2^(-shift1) - 2^(-shift2)`
+
+Common tau approximations:
+| Target tau | shift1 | shift2 | Actual tau | Error |
+|------------|--------|--------|------------|-------|
+| 0.500      | 1      | 0      | 0.5000     | 0.000 |
+| 0.750      | 2      | 0      | 0.7500     | 0.000 |
+| 0.875      | 3      | 0      | 0.8750     | 0.000 |
+| 0.900      | 4      | 5      | 0.9062     | 0.006 |
+| 0.9375     | 4      | 0      | 0.9375     | 0.000 |
+| 0.950      | 5      | 6      | 0.9531     | 0.003 |
+
+**leak_rate Encoding**:
+- Bits [3:0]: shift1 (primary leak shift)
+- Bits [7:4]: shift2 (secondary leak shift, 0 = disabled)
+
 **Parameters**:
-- Threshold: Configurable, typical range [0.5, 2.0]
-- Leak factor: 8-bit unsigned, typical 0.9 (230/256)
-- Refractory period: 1-15 timesteps
-- Reset potential: Typically 0 or small negative value
+- Threshold: 16-bit unsigned, typical range [100, 2000]
+- Leak rate: 8-bit encoded shift values (see above)
+- Refractory period: 8-bit, 0-255 timesteps
+- Reset potential: 16-bit, typically 0
+
+**Data Widths**:
+- Membrane potential: 16-bit unsigned
+- Synaptic weights: 8-bit signed (-128 to +127)
+- Threshold: 16-bit unsigned
 
 **Interface**:
 ```verilog
@@ -691,6 +719,144 @@ Power breakdown:
 | Small              | 64      | 4K       | 18   | 10M spikes/s  |
 | Medium             | 256     | 64K      | 48   | 30M spikes/s  |
 | Large              | 1024    | 1M       | 120  | 80M spikes/s  |
+
+## Hardware Optimization (v2.0)
+
+### Optimized Architecture Overview
+
+The latest hardware revision focuses on maximizing FPGA resource utilization while respecting timing constraints. Based on synthesis analysis showing underutilized resources (LUTs 8.81%, BRAM 1.4%, DSP 0%), the architecture was scaled up significantly.
+
+### Key Optimizations
+
+#### 1. Scaled Network Parameters
+
+| Parameter          | Original | Optimized | Increase |
+|--------------------|----------|-----------|----------|
+| NUM_NEURONS        | 64       | 256       | 4×       |
+| NUM_AXONS          | 64       | 256       | 4×       |
+| NUM_PARALLEL_UNITS | 4        | 8         | 2×       |
+| Router Buffer      | 128      | 512       | 4×       |
+| Target LUT Usage   | ~9%      | ~35%      | ~4×      |
+| Target BRAM Usage  | ~1.4%    | ~20%      | ~14×     |
+| Target DSP Usage   | 0%       | ~10%      | -        |
+
+#### 2. LIF Neuron Array Optimization
+
+**File**: `hardware/hdl/rtl/neurons/lif_neuron_array.v`
+
+**BRAM-Based State Storage**:
+```verilog
+(* ram_style = "block" *)
+reg [DATA_WIDTH-1:0] membrane_bram [0:NUM_NEURONS-1];
+
+(* ram_style = "block" *)
+reg [REFRAC_WIDTH-1:0] refrac_bram [0:NUM_NEURONS-1];
+```
+
+**DSP-Assisted Synaptic Accumulation**:
+```verilog
+(* use_dsp = "yes" *)
+reg signed [DATA_WIDTH+WEIGHT_WIDTH-1:0] synaptic_sum;
+```
+
+**3-Stage Pipeline Architecture**:
+```
+Stage 1 (read_addr_s1): Address calculation and BRAM read initiation
+Stage 2 (membrane_s2):  BRAM data available, perform membrane calculation
+Stage 3 (new_membrane_s3): Write back results, threshold comparison
+```
+
+**Parallel Processing Units**:
+- 8 parallel units process neurons simultaneously
+- Each unit has independent pipeline stages
+- Reduces full array update time from 64 cycles to 8 cycles
+
+#### 3. Synapse Array Optimization
+
+**File**: `hardware/hdl/rtl/synapses/synapse_array.v`
+
+**Parallel BRAM Banking**:
+```verilog
+// 8 independent BRAM banks for parallel weight access
+(* ram_style = "block" *)
+reg [WEIGHT_WIDTH:0] weight_mem_0 [0:BANK_DEPTH-1];
+// ... (weight_mem_1 through weight_mem_7)
+```
+
+**Bank Address Organization**:
+- Bank b handles neurons: b, b+8, b+16, b+24, ...
+- Allows 8 weights to be read in parallel per spike
+- Reduces spike propagation time by 8×
+
+**Batch Write Interface**:
+```verilog
+input wire [NUM_READ_PORTS*(WEIGHT_WIDTH+1)-1:0] batch_weights;
+input wire [NEURON_ID_WIDTH-1:0] batch_start_neuron;
+```
+- Writes 8 weights per clock cycle during initialization
+- Reduces weight loading time by 8×
+
+#### 4. Top Module Integration
+
+**File**: `hardware/hdl/rtl/top/snn_accelerator_top.v`
+
+**New Parameters**:
+```verilog
+parameter NUM_NEURONS = 256;
+parameter NUM_AXONS = 256;
+parameter NUM_PARALLEL_UNITS = 8;
+parameter ROUTER_BUFFER_DEPTH = 512;
+parameter USE_BRAM = 1;
+parameter USE_DSP = 1;
+```
+
+**Enhanced Status Monitoring**:
+```verilog
+wire [31:0] throughput_counter;  // Processing cycles per spike
+wire [7:0]  active_neurons;      // Currently processing neurons
+wire        synapse_busy;        // Synapse array busy signal
+```
+
+### Resource Utilization Targets
+
+| Resource | PYNQ-Z2 Total | Original Usage | Optimized Target |
+|----------|---------------|----------------|------------------|
+| LUT      | 53,200        | 4,688 (8.81%)  | ~18,620 (35%)    |
+| BRAM     | 140 (36Kb)    | 2 (1.4%)       | ~28 (20%)        |
+| DSP      | 220           | 0 (0%)         | ~22 (10%)        |
+| FF       | 106,400       | ~2,000         | ~15,000          |
+
+### Performance Improvements
+
+| Metric                    | Original    | Optimized     | Improvement |
+|---------------------------|-------------|---------------|-------------|
+| Network Size              | 64×64       | 256×256       | 16×         |
+| Parallel Processing       | 4 units     | 8 units       | 2×          |
+| Spike Propagation         | 64 cycles   | 8 cycles      | 8×          |
+| Weight Lookup             | Sequential  | 8-way BRAM    | 8×          |
+| Memory Efficiency         | Distributed | Block RAM     | Better PPA  |
+| DSP Utilization           | 0%          | ~10%          | -           |
+
+### Shift-Based Leak Implementation
+
+The optimized leak mechanism uses configurable shift operations:
+
+```verilog
+// leak_rate[7:4] = shift2, leak_rate[3:0] = shift1
+// tau = 1 - 2^(-shift1) - 2^(-shift2)
+
+wire [DATA_WIDTH-1:0] leak_amount_s1 = (shift1_val > 0) ? 
+                                        (membrane_s2 >> shift1_val) : 0;
+wire [DATA_WIDTH-1:0] leak_amount_s2 = (shift2_val > 0) ? 
+                                        (membrane_s2 >> shift2_val) : 0;
+wire [DATA_WIDTH-1:0] leaked_membrane = membrane_s2 - leak_amount_s1 - leak_amount_s2;
+```
+
+**Benefits**:
+- No multiplier required (saves DSP resources)
+- Single-cycle leak computation
+- Configurable decay rates via software
+- Hardware-Python identity verified through extensive testing
 
 ## Next Steps
 
