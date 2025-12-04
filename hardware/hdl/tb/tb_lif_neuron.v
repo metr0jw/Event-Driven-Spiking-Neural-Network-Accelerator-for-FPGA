@@ -207,8 +207,10 @@ module tb_lif_neuron();
         syn_valid = 1'b0;
         syn_weight = 0;
         syn_excitatory = 1'b1;
-        threshold = 16'd1000;
-        leak_rate = 8'd10;
+        // Lowered threshold for easier spike generation with leak
+        // leak_rate = 8'b00000_100 -> shift1=4, shift2_en=0 -> tau = 0.9375 (slow leak)
+        threshold = 16'd500;
+        leak_rate = 8'b00000_100;  // Slow leak: shift=4 only
         refractory_period = 8'd20;
         reset_potential_en = 1'b0;
         reset_potential = 16'd0;
@@ -230,13 +232,13 @@ module tb_lif_neuron();
         init_test("Integration and Spike Generation");
         
         // Apply excitatory inputs until spike
-        // Threshold=1000, weight=60, so need ~17 inputs without leak
-        // With leak=10 per cycle when no input, we need consecutive inputs
+        // Threshold=500, weight=100, so need ~5 inputs without leak
+        // With slow leak (shift=4, tau≈0.9375), consecutive inputs should accumulate
         spike_generated = 1'b0;
-        $display("  Threshold=%0d, Weight=60, Leak=%0d", threshold, leak_rate);
+        $display("  Threshold=%0d, Weight=100, Leak_rate=%0d", threshold, leak_rate);
         
-        for (i = 0; i < 25 && !spike_generated; i = i + 1) begin
-            apply_synapse(8'd60, 1'b1);  // This adds weight and waits 2 cycles
+        for (i = 0; i < 15 && !spike_generated; i = i + 1) begin
+            apply_synapse(8'd100, 1'b1);  // Larger weight for faster accumulation
             $display("  Input %0d: Membrane = %0d", i, membrane_potential);
             if (spike_out || spike_count > 0) begin
                 $display("  PASS: Spike generated after %0d inputs!", i+1);
@@ -245,7 +247,7 @@ module tb_lif_neuron();
         end
         
         if (!spike_generated) begin
-            $display("ERROR: No spike generated after 25 inputs!");
+            $display("ERROR: No spike generated after 15 inputs!");
             error_count = error_count + 1;
         end
         

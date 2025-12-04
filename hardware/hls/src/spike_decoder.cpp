@@ -53,9 +53,10 @@ void spike_decoder(
             
             // Update spike rate using exponential moving average
             ap_fixed<16,8> alpha = config.rate_alpha;
+            ap_fixed<16,8> one_minus_alpha = ap_fixed<16,8>(1.0) - alpha;
             spike_rates[spike.neuron_id] = 
                 alpha * spike_counts[spike.neuron_id] + 
-                (1.0 - alpha) * spike_rates[spike.neuron_id];
+                one_minus_alpha * spike_rates[spike.neuron_id];
         }
     }
     
@@ -148,7 +149,7 @@ void decode_spike_rate(
     // Find maximum and normalize
     NORM_LOOP: for (int i = 0; i < config.num_outputs; i++) {
         #pragma HLS PIPELINE II=1
-        ap_fixed<16,8> norm_rate = (sum_rates > 0) ? rates[i] / sum_rates : 0;
+        ap_fixed<16,8> norm_rate = (sum_rates > 0) ? ap_fixed<16,8>(rates[i] / sum_rates) : ap_fixed<16,8>(0);
         
         if (norm_rate > max_rate) {
             max_rate = norm_rate;

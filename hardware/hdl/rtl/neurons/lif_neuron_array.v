@@ -52,6 +52,7 @@ module lif_neuron_array #(
     input  wire                         m_axis_spike_ready,
     
     // Configuration interface
+    // Note: config_data[29:16] reserved for future use
     input  wire                         config_we,
     input  wire [NEURON_ID_WIDTH-1:0]   config_addr,
     input  wire [31:0]                  config_data,
@@ -69,19 +70,33 @@ module lif_neuron_array #(
 );
 
     //=========================================================================
-    // BRAM-based State Memory
+    // State Memory using LUT RAM (Distributed RAM)
     //=========================================================================
-    // Xilinx BRAM inference with registered outputs for better timing
-    (* ram_style = "block" *)
-    reg [DATA_WIDTH-1:0] membrane_bram [0:NUM_NEURONS-1];
+    // Combined membrane + refrac for efficient storage (24 bits total)
+    // Format: [23:8] = membrane (16-bit), [7:0] = refractory (8-bit)
+    // Note: Using LUT RAM (not BRAM) to support parallel read/write from
+    // multiple processing units. BRAM would limit to 2 ports only.
+    reg [DATA_WIDTH+REFRAC_WIDTH-1:0] neuron_state [0:NUM_NEURONS-1];
     
-    (* ram_style = "block" *)
-    reg [REFRAC_WIDTH-1:0] refrac_bram [0:NUM_NEURONS-1];
+    // Separate views for compatibility
+    wire [DATA_WIDTH-1:0] membrane_bram [0:NUM_NEURONS-1];
+    wire [REFRAC_WIDTH-1:0] refrac_bram [0:NUM_NEURONS-1];
+    
+    // Generate wires for reading
+    genvar mem_idx;
+    generate
+        for (mem_idx = 0; mem_idx < NUM_NEURONS; mem_idx = mem_idx + 1) begin : gen_mem_view
+            assign membrane_bram[mem_idx] = neuron_state[mem_idx][DATA_WIDTH+REFRAC_WIDTH-1:REFRAC_WIDTH];
+            assign refrac_bram[mem_idx] = neuron_state[mem_idx][REFRAC_WIDTH-1:0];
+        end
+    endgenerate
     
     // Spike flags (distributed RAM - small width)
     reg [NUM_NEURONS-1:0] spike_flags;
     reg [NUM_NEURONS-1:0] spike_processed;
 
+    //=========================================================================
+    // Pipeline Registers for BRAM Access (improves timing)
     //=========================================================================
     // Pipeline Registers for BRAM Access (improves timing)
     //=========================================================================
@@ -100,12 +115,12 @@ module lif_neuron_array #(
     reg [REFRAC_WIDTH-1:0] new_refrac_s3 [0:NUM_PARALLEL_UNITS-1];
     reg [NEURON_ID_WIDTH-1:0] addr_s3 [0:NUM_PARALLEL_UNITS-1];
     reg [NUM_PARALLEL_UNITS-1:0] valid_s3;
-    reg [NUM_PARALLEL_UNITS-1:0] spike_s3;
+    // Note: spike_s3 removed - leak processing doesn't generate spikes directly
 
     //=========================================================================
-    // Input Spike FIFO (using BRAM for deeper buffer)
+    // Input Spike FIFO (using LUT RAM for async read)
     //=========================================================================
-    (* ram_style = "block" *)
+    // Note: Vivado will automatically infer LUTRAM for small arrays
     reg [NEURON_ID_WIDTH+WEIGHT_WIDTH:0] spike_fifo [0:SPIKE_BUFFER_DEPTH-1];
     
     reg [$clog2(SPIKE_BUFFER_DEPTH)-1:0] fifo_wr_ptr;
@@ -259,10 +274,14 @@ module lif_neuron_array #(
             end
             
             // Stage 3: Compute new values with shift-based leak
-            // DSP inference for leak calculation
-            reg [DATA_WIDTH-1:0] leak_primary;
-            reg [DATA_WIDTH-1:0] leak_secondary;
-            reg [DATA_WIDTH-1:0] leak_total;
+            // Using wires for combinational leak calculation (no unused registers)
+            wire [DATA_WIDTH-1:0] leak_primary_w;
+            wire [DATA_WIDTH-1:0] leak_secondary_w;
+            wire [DATA_WIDTH-1:0] leak_total_w;
+            
+            assign leak_primary_w = membrane_s2[pu] >> shift1;
+            assign leak_secondary_w = membrane_s2[pu] >> shift2;
+            assign leak_total_w = leak_primary_w + leak_secondary_w;
             
             always @(posedge clk) begin
                 if (!rst_n) begin
@@ -270,14 +289,9 @@ module lif_neuron_array #(
                     new_membrane_s3[pu] <= 0;
                     new_refrac_s3[pu] <= 0;
                     addr_s3[pu] <= 0;
-                    spike_s3[pu] <= 0;
-                    leak_primary <= 0;
-                    leak_secondary <= 0;
-                    leak_total <= 0;
                 end else begin
                     valid_s3[pu] <= valid_s2[pu];
                     addr_s3[pu] <= addr_s2[pu];
-                    spike_s3[pu] <= 0;
                     
                     if (valid_s2[pu]) begin
                         if (refrac_s2[pu] > 0) begin
@@ -287,12 +301,8 @@ module lif_neuron_array #(
                         end else begin
                             // Shift-based exponential leak (hardware-accurate)
                             // leak = v >> shift1 + v >> shift2
-                            leak_primary = membrane_s2[pu] >> shift1;
-                            leak_secondary = membrane_s2[pu] >> shift2;
-                            leak_total = leak_primary + leak_secondary;
-                            
-                            if (membrane_s2[pu] > leak_total)
-                                new_membrane_s3[pu] <= membrane_s2[pu] - leak_total;
+                            if (membrane_s2[pu] > leak_total_w)
+                                new_membrane_s3[pu] <= membrane_s2[pu] - leak_total_w;
                             else
                                 new_membrane_s3[pu] <= 0;
                                 
@@ -321,9 +331,9 @@ module lif_neuron_array #(
     reg [DATA_WIDTH-1:0] spike_proc_new_mem_s3;
     reg spike_proc_fired_s3;
     
-    // DSP-friendly addition/subtraction
-    (* use_dsp = "yes" *)
-    reg [DATA_WIDTH:0] synaptic_sum;
+    // DSP-friendly addition (using wire for combinational path)
+    wire [DATA_WIDTH:0] synaptic_sum_w;
+    assign synaptic_sum_w = spike_proc_membrane_s2 + spike_proc_weight_s2;
     
     always @(posedge clk) begin
         if (!rst_n) begin
@@ -341,7 +351,6 @@ module lif_neuron_array #(
             spike_proc_refrac_s2 <= 0;
             spike_proc_new_mem_s3 <= 0;
             spike_proc_fired_s3 <= 0;
-            synaptic_sum <= 0;
         end else begin
             // Stage 1: Capture spike info
             spike_proc_valid_s1 <= (state == ST_PROCESS) && !fifo_empty;
@@ -366,17 +375,15 @@ module lif_neuron_array #(
             
             if (spike_proc_valid_s2 && spike_proc_refrac_s2 == 0) begin
                 if (spike_proc_exc_s2) begin
-                    // Excitatory - add weight (DSP)
-                    synaptic_sum = spike_proc_membrane_s2 + spike_proc_weight_s2;
-                    
-                    if (synaptic_sum >= global_threshold) begin
+                    // Excitatory - add weight
+                    if (synaptic_sum_w >= global_threshold) begin
                         spike_proc_new_mem_s3 <= 0;
                         spike_proc_fired_s3 <= 1;
-                    end else if (synaptic_sum[DATA_WIDTH]) begin
+                    end else if (synaptic_sum_w[DATA_WIDTH]) begin
                         // Overflow - saturate
                         spike_proc_new_mem_s3 <= {DATA_WIDTH{1'b1}};
                     end else begin
-                        spike_proc_new_mem_s3 <= synaptic_sum[DATA_WIDTH-1:0];
+                        spike_proc_new_mem_s3 <= synaptic_sum_w[DATA_WIDTH-1:0];
                     end
                 end else begin
                     // Inhibitory - subtract weight
@@ -395,37 +402,39 @@ module lif_neuron_array #(
     //=========================================================================
     // BRAM Write-back (unified write port)
     //=========================================================================
+    //=========================================================================
+    // Neuron State Write-back (unified write port)
+    //=========================================================================
     integer i;
     always @(posedge clk) begin
         if (!rst_n) begin
             for (i = 0; i < NUM_NEURONS; i = i + 1) begin
-                membrane_bram[i] <= 0;
-                refrac_bram[i] <= 0;
+                neuron_state[i] <= 0;
             end
             spike_flags <= 0;
         end else begin
             // Configuration write (highest priority)
             if (config_we && config_addr < NUM_NEURONS) begin
                 case (config_data[31:30])
-                    2'b00: membrane_bram[config_addr] <= config_data[DATA_WIDTH-1:0];
-                    2'b01: refrac_bram[config_addr] <= config_data[REFRAC_WIDTH-1:0];
+                    2'b00: neuron_state[config_addr] <= {config_data[DATA_WIDTH-1:0], neuron_state[config_addr][REFRAC_WIDTH-1:0]};
+                    2'b01: neuron_state[config_addr] <= {neuron_state[config_addr][DATA_WIDTH+REFRAC_WIDTH-1:REFRAC_WIDTH], config_data[REFRAC_WIDTH-1:0]};
                 endcase
             end
             
             // Spike processing write-back (high priority)
             if (spike_proc_valid_s3) begin
-                membrane_bram[spike_proc_addr_s3] <= spike_proc_new_mem_s3;
                 if (spike_proc_fired_s3) begin
-                    refrac_bram[spike_proc_addr_s3] <= global_refrac_period;
+                    neuron_state[spike_proc_addr_s3] <= {spike_proc_new_mem_s3, global_refrac_period};
                     spike_flags[spike_proc_addr_s3] <= 1;
+                end else begin
+                    neuron_state[spike_proc_addr_s3] <= {spike_proc_new_mem_s3, neuron_state[spike_proc_addr_s3][REFRAC_WIDTH-1:0]};
                 end
             end
             
             // Leak write-back (parallel units)
             for (i = 0; i < NUM_PARALLEL_UNITS; i = i + 1) begin
                 if (valid_s3[i] && !spike_proc_valid_s3) begin
-                    membrane_bram[addr_s3[i]] <= new_membrane_s3[i];
-                    refrac_bram[addr_s3[i]] <= new_refrac_s3[i];
+                    neuron_state[addr_s3[i]] <= {new_membrane_s3[i], new_refrac_s3[i]};
                 end
             end
             

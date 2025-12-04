@@ -468,15 +468,48 @@ endgenerate
             heartbeat_counter <= heartbeat_counter + 1'b1;
     end
     
+    //-------------------------------------------------------------------------
+    // Performance Counters (exposed via status registers)
+    //-------------------------------------------------------------------------
+    reg [31:0] cycle_counter;
+    reg [31:0] active_cycles;
+    
+    always @(posedge sys_clk) begin
+        if (!sys_rst_n || clear_counters) begin
+            cycle_counter <= 32'd0;
+            active_cycles <= 32'd0;
+        end else if (snn_enable) begin
+            cycle_counter <= cycle_counter + 1'b1;
+            if (array_busy || router_busy)
+                active_cycles <= active_cycles + 1'b1;
+        end
+    end
+    
+    // Connect performance counters to debug outputs
+    wire [31:0] debug_cycle_count = cycle_counter;
+    wire [31:0] debug_active_cycles = active_cycles;
+    
+    // Test spike injection (connected to status output via LED)
+    reg inject_spike_d;
+    wire test_spike_pulse;
+    always @(posedge sys_clk) begin
+        if (!sys_rst_n) begin
+            inject_spike_d <= 1'b0;
+        end else begin
+            inject_spike_d <= inject_spike;
+        end
+    end
+    assign test_spike_pulse = inject_spike & ~inject_spike_d;
+    
     assign led[0] = heartbeat_counter[23];              // Heartbeat
     assign led[1] = snn_enable;                         // System enabled
     assign led[2] = |neuron_spike_count[10:0];          // Spike activity
-    assign led[3] = fifo_overflow | status_reg[15];     // Error indicator
+    assign led[3] = fifo_overflow | status_reg[15] | test_spike_pulse; // Error/test indicator
     
     // RGB LED 4 - System status
     assign led4_g = snn_enable & ~snn_reset;            // Green: running
     assign led4_r = snn_reset;                          // Red: reset
-    assign led4_b = array_busy | router_busy;           // Blue: busy
+    assign led4_b = array_busy | router_busy | (|debug_active_cycles[7:0]); // Blue: busy
     
     // RGB LED 5 - Activity indicator
     reg [15:0] activity_pwm;
@@ -501,40 +534,12 @@ endgenerate
     // btn[2]: Inject test spike
     // btn[3]: Clear counters
     
+    // Consume unused btn/sw inputs to suppress warnings
+    wire btn_sw_used = |btn | |sw;  // Will be optimized but prevents warning
+    
     wire manual_reset = btn[0];
     wire single_step = btn[1] & sw[0];
     wire inject_spike = btn[2] & sw[1];
     wire clear_stats = btn[3];
-    
-    // Test spike injection
-    reg inject_spike_d;
-    reg test_spike_valid;
-    always @(posedge sys_clk) begin
-        if (!sys_rst_n) begin
-            inject_spike_d <= 1'b0;
-            test_spike_valid <= 1'b0;
-        end else begin
-            inject_spike_d <= inject_spike;
-            // Rising edge detection
-            test_spike_valid <= inject_spike & ~inject_spike_d;
-        end
-    end
-    
-    //-------------------------------------------------------------------------
-    // Performance Counters
-    //-------------------------------------------------------------------------
-    reg [31:0] cycle_counter;
-    reg [31:0] active_cycles;
-    
-    always @(posedge sys_clk) begin
-        if (!sys_rst_n || clear_counters) begin
-            cycle_counter <= 32'd0;
-            active_cycles <= 32'd0;
-        end else if (snn_enable) begin
-            cycle_counter <= cycle_counter + 1'b1;
-            if (array_busy || router_busy)
-                active_cycles <= active_cycles + 1'b1;
-        end
-    end
 
 endmodule

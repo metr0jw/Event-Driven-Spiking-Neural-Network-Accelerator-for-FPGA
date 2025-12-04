@@ -30,27 +30,32 @@ module spike_router #(
     
     // Input spike interface from neurons
     input  wire                         s_spike_valid,
-    input  wire [NEURON_ID_WIDTH-1:0]  s_spike_neuron_id,
+    input  wire [NEURON_ID_WIDTH-1:0]   s_spike_neuron_id,
     output wire                         s_spike_ready,
     
     // Output spike interface to synapses
     output wire                         m_spike_valid,
-    output wire [NEURON_ID_WIDTH-1:0]  m_spike_dest_id,
-    output wire [WEIGHT_WIDTH-1:0]     m_spike_weight,
+    output wire [NEURON_ID_WIDTH-1:0]   m_spike_dest_id,
+    output wire [WEIGHT_WIDTH-1:0]      m_spike_weight,
     output wire                         m_spike_exc_inh,
     input  wire                         m_spike_ready,
     
     // Configuration interface (from AXI)
     input  wire                         config_we,
-    input  wire [31:0]                 config_addr,
-    input  wire [31:0]                 config_data,
-    output reg  [31:0]                 config_readdata,
+    input  wire [31:0]                  config_addr,
+    input  wire [31:0]                  config_data,
+    output reg  [31:0]                  config_readdata,
     
     // Status
-    output wire [31:0]                 routed_spike_count,
-    output wire                        router_busy,
-    output wire                        fifo_overflow
+    output wire [31:0]                  routed_spike_count,
+    output wire                         router_busy,
+    output wire                         fifo_overflow
 );
+
+    // Explicitly consume unused bits to suppress synthesis warnings
+    // Upper bits reserved for future expansion
+    wire unused_addr_bits_valid = |config_addr[23:12];  // Will be optimized away
+    wire unused_data_bits_valid = |config_data[31:24];  // Will be optimized away
 
     // State machine states
     localparam IDLE         = 3'd0;
@@ -64,7 +69,7 @@ module spike_router #(
     
     // Connection memory structure
     // Format: [valid(1), exc/inh(1), weight(8), delay(8), dest_id(6)] = 24 bits
-    (* ram_style = "block" *)
+    // Note: Using register array - Vivado will infer LUTRAM if beneficial
     reg [23:0] conn_memory [0:(NUM_NEURONS * MAX_FANOUT)-1];
     
     // Initialize connection memory to 0 (for simulation)
@@ -104,6 +109,11 @@ module spike_router #(
     //-------------------------------------------------------------------------
     // Input spike FIFO
     //-------------------------------------------------------------------------
+    wire fifo_almost_full;  // Can be used for backpressure
+    wire fifo_almost_empty;
+    wire [$clog2(FIFO_DEPTH):0] fifo_count;
+    wire fifo_underflow;
+    
     fifo #(
         .DATA_WIDTH(NEURON_ID_WIDTH + 32),
         .DEPTH(FIFO_DEPTH)
@@ -113,10 +123,14 @@ module spike_router #(
         .wr_en(s_spike_valid && s_spike_ready),
         .wr_data({current_time, s_spike_neuron_id}),
         .full(fifo_full),
+        .almost_full(fifo_almost_full),
         .rd_en(fifo_rd_en),
         .rd_data({fifo_timestamp, fifo_spike_id}),
         .empty(fifo_empty),
-        .overflow(fifo_overflow)
+        .almost_empty(fifo_almost_empty),
+        .count(fifo_count),
+        .overflow(fifo_overflow),
+        .underflow(fifo_underflow)
     );
     
     assign s_spike_ready = !fifo_full;

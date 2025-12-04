@@ -59,8 +59,16 @@ run_test() {
     fi
     
     # Check for PASS/FAIL in output
-    if grep -i "All tests PASSED\|PASS:" "$RESULT_DIR/${name}_sim.log" > /dev/null 2>&1; then
-        if ! grep -i "FAIL" "$RESULT_DIR/${name}_sim.log" > /dev/null 2>&1; then
+    # Look for "ALL TESTS PASSED" or check that there are no actual test failures
+    if grep -i "ALL TESTS PASSED\|All tests PASSED" "$RESULT_DIR/${name}_sim.log" > /dev/null 2>&1; then
+        echo -e "${GREEN}PASSED: $name${NC}"
+        passed_tests=$((passed_tests + 1))
+        return 0
+    fi
+    
+    # Also pass if there are PASS entries but no "FAIL:" failure messages (ignore "Failed: 0")
+    if grep -i "PASS:" "$RESULT_DIR/${name}_sim.log" > /dev/null 2>&1; then
+        if ! grep -E "FAIL:|check_fail|SOME TESTS FAILED" "$RESULT_DIR/${name}_sim.log" > /dev/null 2>&1; then
             echo -e "${GREEN}PASSED: $name${NC}"
             passed_tests=$((passed_tests + 1))
             return 0

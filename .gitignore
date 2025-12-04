@@ -88,3 +88,21 @@ outputs/*
 # OS
 .DS_Store
 Thumbs.db
+
+# HLS test binaries
+hardware/hls/test/tb_decoder
+hardware/hls/test/tb_encoder
+hardware/hls/test/tb_learning
+hardware/hls/test/tb_snn_top
+hardware/hls/test/tb_weight
+
+# Vitis journal files
+hardware/hls/vitis_journal.py
+*.jou
+*.log
+
+# Build outputs
+build/
+outputs/
+*.bit
+*.hwh

@@ -1,11 +1,10 @@
-//-----------------------------------------------------------------------------
+  //-----------------------------------------------------------------------------
 // Title         : SNN Learning Engine Header
 // Project       : PYNQ-Z2 SNN Accelerator
 // File          : snn_learning_engine.h
 // Author        : Jiwoon Lee (@metr0jw)
 // Organization  : Kwangwoon University, Seoul, South Korea
-// Contact       : jwlee@linux.com
-// Description   : STDP learning algorithm interface
+// Description   : STDP learning with multiple strategies
 //-----------------------------------------------------------------------------
 
 #ifndef SNN_LEARNING_ENGINE_H
@@ -24,7 +23,7 @@ struct learning_config_t {
     ap_fixed<16,8> target_rate;   // Target firing rate for homeostasis
 };
 
-// Function prototypes
+// Learning engine function
 void snn_learning_engine(
     bool enable,
     bool reset,
@@ -35,6 +34,7 @@ void snn_learning_engine(
     ap_uint<32> &status
 );
 
+// STDP calculation functions
 weight_delta_t calculate_ltp(ap_int<32> dt, learning_config_t config);
 weight_delta_t calculate_ltd(ap_int<32> dt, learning_config_t config);
 
