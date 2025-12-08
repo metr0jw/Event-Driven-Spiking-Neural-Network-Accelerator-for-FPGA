@@ -75,6 +75,8 @@ hardware/hls/test/tb_hierarchical
 # Simulation work directories
 hardware/hdl/sim/work/
 hardware/hdl/build/
+hardware/hdl/sim/test_results/
+hardware/hdl/sim/*.dat
 
 # Build outputs
 *.bit
