@@ -112,10 +112,11 @@ find_sources() {
         sources="$sources $(find "$RTL_DIR" -name "*.v" -o -name "*.sv" | sort)"
     fi
 
-    # Add packaged IP RTL (AXI-Lite register bank)
+    # Add packaged IP RTL (HLS exports)
     local ip_src_dir="$PROJECT_ROOT/hardware/ip_repo"
     if [[ -d "$ip_src_dir" ]]; then
-        sources="$sources $(find "$ip_src_dir" -path "*/src/*.v" ! -path "*/.tmp_*/*" | sort)"
+        # Common HLS export locations
+        sources="$sources $(find "$ip_src_dir" -path "*/src/*.v" -o -path "*/hdl/verilog/*.v" ! -path "*/.tmp_*/*" | sort)"
     fi
     
     # Add testbench

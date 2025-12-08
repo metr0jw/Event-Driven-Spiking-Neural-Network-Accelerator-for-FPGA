@@ -18,6 +18,232 @@
 #include "snn_top_hls.h"
 
 //=============================================================================
+// Simple On-Chip Spike Encoder (self contained to avoid header conflicts)
+//=============================================================================
+// Local axis word for encoder stream (avoid ap_axiu on non-port streams)
+typedef struct {
+    ap_uint<32> data;
+    ap_uint<4> keep;
+    ap_uint<4> strb;
+    ap_uint<1> last;
+} encoder_axis_word_t;
+
+static ap_uint<16> encoder_phase_acc[MAX_INPUT_CHANNELS];
+static bool encoder_temporal_fired[MAX_INPUT_CHANNELS];
+static ap_uint<32> encoder_temporal_start[MAX_INPUT_CHANNELS];
+static input_data_t encoder_frame;
+static bool encoder_frame_loaded = false;
+
+static ap_uint<16> encoder_lfsr_random() {
+    #pragma HLS INLINE
+    static ap_uint<16> lfsr = 0xACE1;
+    bool bit = ((lfsr >> 0) ^ (lfsr >> 2) ^ (lfsr >> 3) ^ (lfsr >> 5)) & 1;
+    lfsr = (lfsr >> 1) | (bit << 15);
+    return lfsr;
+}
+
+static void encoder_reset_temporal_state(ap_uint<32> now) {
+    #pragma HLS INLINE off
+    for (int i = 0; i < MAX_INPUT_CHANNELS; i++) {
+        #pragma HLS PIPELINE II=1
+        encoder_temporal_fired[i] = false;
+        encoder_temporal_start[i] = now;
+    }
+}
+
+// Two-neuron encoding: split input into ON/OFF (positive/negative) channels
+// If input > baseline: ON channel gets (input - baseline), OFF gets 0
+// If input < baseline: ON gets 0, OFF channel gets (baseline - input)
+static void encoder_two_neuron_split(
+    pixel_t input,
+    ap_uint<8> baseline,
+    pixel_t &on_value,
+    pixel_t &off_value
+) {
+    #pragma HLS INLINE
+    if (input > baseline) {
+        on_value = input - baseline;
+        off_value = 0;
+    } else {
+        on_value = 0;
+        off_value = baseline - input;
+    }
+}
+
+static void encoder_write_axis_spike(
+    int channel,
+    weight_t weight,
+    ap_uint<32> time,
+    hls::stream<encoder_axis_word_t> &fifo,
+    ap_uint<32> &counter
+) {
+    #pragma HLS INLINE
+    if (fifo.full()) return;
+
+    encoder_axis_word_t pkt;
+    pkt.data = 0;
+    pkt.data(9, 0) = channel;
+    pkt.data(17, 10) = (ap_uint<8>)weight;
+    pkt.data(31, 18) = time(13, 0);
+    pkt.keep = 0xF;
+    pkt.strb = 0xF;
+    pkt.last = 1;
+    fifo.write(pkt);
+    counter++;
+}
+
+static void encoder_rate_poisson(
+    int channel,
+    pixel_t value,
+    ap_uint<32> time,
+    const encoder_config_t &config,
+    hls::stream<encoder_axis_word_t> &fifo,
+    ap_uint<32> &counter
+) {
+    #pragma HLS INLINE
+    // Poisson-like rate coding: higher intensity = higher spike probability
+    // Called once per timestep; config.num_steps determines overall spike rate
+    // Spike probability = (value / 255) * (rate_scale / 256)
+    ap_uint<16> spike_prob = (value * config.rate_scale) >> 8;
+    ap_uint<16> random = encoder_lfsr_random();
+    if (random < spike_prob) {
+        encoder_write_axis_spike(channel, config.default_weight, time, fifo, counter);
+    }
+}
+
+static void encoder_latency(
+    int channel,
+    pixel_t value,
+    ap_uint<32> time,
+    const encoder_config_t &config,
+    hls::stream<encoder_axis_word_t> &fifo,
+    ap_uint<32> &counter
+) {
+    #pragma HLS INLINE
+    // Latency coding: higher intensity = earlier spike (shorter latency)
+    // Uses config.latency_window as the time window for spike timing
+    // Similar to snntorch.spikegen.latency: spike_time inversely proportional to intensity
+    if (time % config.latency_window == 0) {
+        encoder_temporal_fired[channel] = false;
+        encoder_temporal_start[channel] = time;
+    }
+
+    if (!encoder_temporal_fired[channel]) {
+        // Inverse mapping: high value -> short delay, low value -> long delay
+        // spike_delay = (1 - intensity) * latency_window
+        ap_uint<32> spike_delay = ((255 - value) * config.latency_window) >> 8;
+        if (time >= encoder_temporal_start[channel] + spike_delay) {
+            encoder_write_axis_spike(channel, config.default_weight, time, fifo, counter);
+            encoder_temporal_fired[channel] = true;
+        }
+    }
+}
+
+static void encoder_delta_sigma(
+    int channel,
+    pixel_t value,
+    ap_uint<32> time,
+    const encoder_config_t &config,
+    hls::stream<encoder_axis_word_t> &fifo,
+    ap_uint<32> &counter
+) {
+    #pragma HLS INLINE
+    // Delta-sigma modulation: integrate input and spike when threshold exceeded
+    ap_uint<16> increment = value;  // Input contribution
+    encoder_phase_acc[channel] += increment;
+    
+    // Apply decay
+    if (encoder_phase_acc[channel] > config.delta_decay) {
+        encoder_phase_acc[channel] -= config.delta_decay;
+    }
+    
+    // Fire spike if threshold exceeded
+    if (encoder_phase_acc[channel] >= config.delta_threshold) {
+        encoder_write_axis_spike(channel, config.default_weight, time, fifo, counter);
+        encoder_phase_acc[channel] -= config.delta_threshold;  // Reset by threshold amount
+    }
+}
+
+static void run_encoder_once(
+    bool enable,
+    const encoder_config_t &config,
+    ap_uint<32> time,
+    hls::stream<encoder_axis_word_t> &fifo,
+    ap_uint<32> &counter
+) {
+    #pragma HLS INLINE off
+    if (!enable || !encoder_frame_loaded) return;
+
+    ENCODER_LOOP: for (int ch = 0; ch < MAX_INPUT_CHANNELS; ch++) {
+        #pragma HLS UNROLL factor=8
+        if (ch >= config.num_channels) continue;
+        pixel_t pixel_value = encoder_frame.pixels[ch];
+        
+        if (config.two_neuron_enable) {
+            // Two-neuron encoding: split into ON/OFF channels
+            pixel_t on_val, off_val;
+            encoder_two_neuron_split(pixel_value, config.baseline, on_val, off_val);
+            
+            int on_ch = ch * 2;      // Even indices for ON channels
+            int off_ch = ch * 2 + 1; // Odd indices for OFF channels
+            
+            // Process ON channel
+            switch (config.encoding_type) {
+                case ENC_NONE:
+                    break;
+                case ENC_RATE_POISSON:
+                    encoder_rate_poisson(on_ch, on_val, time, config, fifo, counter);
+                    break;
+                case ENC_LATENCY:
+                    encoder_latency(on_ch, on_val, time, config, fifo, counter);
+                    break;
+                case ENC_DELTA_SIGMA:
+                    encoder_delta_sigma(on_ch, on_val, time, config, fifo, counter);
+                    break;
+                default:
+                    break;
+            }
+            
+            // Process OFF channel
+            switch (config.encoding_type) {
+                case ENC_NONE:
+                    break;
+                case ENC_RATE_POISSON:
+                    encoder_rate_poisson(off_ch, off_val, time, config, fifo, counter);
+                    break;
+                case ENC_LATENCY:
+                    encoder_latency(off_ch, off_val, time, config, fifo, counter);
+                    break;
+                case ENC_DELTA_SIGMA:
+                    encoder_delta_sigma(off_ch, off_val, time, config, fifo, counter);
+                    break;
+                default:
+                    break;
+            }
+        } else {
+            // Standard single-neuron encoding
+            switch (config.encoding_type) {
+                case ENC_NONE:
+                    // No encoding - spikes come directly from s_axis_spikes
+                    break;
+                case ENC_RATE_POISSON:
+                    encoder_rate_poisson(ch, pixel_value, time, config, fifo, counter);
+                    break;
+                case ENC_LATENCY:
+                    encoder_latency(ch, pixel_value, time, config, fifo, counter);
+                    break;
+                case ENC_DELTA_SIGMA:
+                    encoder_delta_sigma(ch, pixel_value, time, config, fifo, counter);
+                    break;
+                default:
+                    // Reserved for future encoding methods (4-15)
+                    break;
+            }
+        }
+    }
+}
+
+//=============================================================================
 // Weight Memory (On-Chip BRAM) - O(N x M)
 //=============================================================================
 static weight_t weight_memory[MAX_NEURONS][MAX_NEURONS];
@@ -309,7 +535,10 @@ void snn_top_hls(
     // AXI4-Lite Control Interface
     ap_uint<32> ctrl_reg,
     ap_uint<32> config_reg,
+    ap_uint<32> mode_reg,
+    ap_uint<32> time_steps_reg,
     learning_params_t learning_params,
+    encoder_config_t encoder_config,
     ap_uint<32> &status_reg,
     ap_uint<32> &spike_count_reg,
     ap_uint<32> &weight_sum_reg,
@@ -317,6 +546,9 @@ void snn_top_hls(
     
     // AXI4-Stream Spike Input (from PS)
     hls::stream<axis_spike_t> &s_axis_spikes,
+
+    // AXI4-Stream Raw Data Input (for on-chip encoder)
+    hls::stream<input_data_t> &s_axis_data,
     
     // AXI4-Stream Spike Output (to PS)
     hls::stream<axis_spike_t> &m_axis_spikes,
@@ -355,7 +587,10 @@ void snn_top_hls(
     // AXI4-Lite slave interface
     #pragma HLS INTERFACE s_axilite port=ctrl_reg bundle=ctrl
     #pragma HLS INTERFACE s_axilite port=config_reg bundle=ctrl
+    #pragma HLS INTERFACE s_axilite port=mode_reg bundle=ctrl
+    #pragma HLS INTERFACE s_axilite port=time_steps_reg bundle=ctrl
     #pragma HLS INTERFACE s_axilite port=learning_params bundle=ctrl
+    #pragma HLS INTERFACE s_axilite port=encoder_config bundle=ctrl
     #pragma HLS INTERFACE s_axilite port=status_reg bundle=ctrl
     #pragma HLS INTERFACE s_axilite port=spike_count_reg bundle=ctrl
     #pragma HLS INTERFACE s_axilite port=weight_sum_reg bundle=ctrl
@@ -365,6 +600,7 @@ void snn_top_hls(
     
     // AXI4-Stream interfaces
     #pragma HLS INTERFACE axis port=s_axis_spikes
+    #pragma HLS INTERFACE axis port=s_axis_data
     #pragma HLS INTERFACE axis port=m_axis_spikes
     #pragma HLS INTERFACE axis port=m_axis_weights
     
@@ -402,6 +638,14 @@ void snn_top_hls(
     #pragma HLS ARRAY_PARTITION variable=pre_traces cyclic factor=8
     #pragma HLS BIND_STORAGE variable=post_traces type=RAM_2P impl=BRAM
     #pragma HLS ARRAY_PARTITION variable=post_traces cyclic factor=8
+
+    // Encoder state
+    #pragma HLS BIND_STORAGE variable=encoder_phase_acc type=RAM_2P impl=BRAM
+    #pragma HLS ARRAY_PARTITION variable=encoder_phase_acc cyclic factor=8
+    #pragma HLS BIND_STORAGE variable=encoder_temporal_fired type=RAM_2P impl=BRAM
+    #pragma HLS ARRAY_PARTITION variable=encoder_temporal_fired cyclic factor=8
+    #pragma HLS BIND_STORAGE variable=encoder_temporal_start type=RAM_2P impl=BRAM
+    #pragma HLS ARRAY_PARTITION variable=encoder_temporal_start cyclic factor=8
     
     //=========================================================================
     // Internal State
@@ -410,6 +654,10 @@ void snn_top_hls(
     static ap_uint<32> spike_counter = 0;
     static ap_uint<32> update_counter = 0;
     static bool initialized = false;
+    static ap_uint<2> last_mode = MODE_INFERENCE;
+    static ap_uint<8> checkpoint_row = 0;
+    static ap_uint<8> checkpoint_col = 0;
+    static ap_uint<32> encoder_spike_counter = 0;
     
     //=========================================================================
     // Control Signal Extraction
@@ -420,6 +668,12 @@ void snn_top_hls(
     bool learning_enable = ctrl_reg[3];
     bool weight_read_mode = ctrl_reg[4];
     bool apply_reward = ctrl_reg[5];
+    ap_uint<2> op_mode = mode_reg(1, 0);
+    bool encoder_enable = mode_reg[8];
+    bool checkpoint_mode = (op_mode == MODE_CHECKPOINT);
+    bool stdp_mode = (op_mode == MODE_TRAIN_STDP);
+    bool stdp_active = learning_enable && stdp_mode;
+    ap_uint<16> time_steps = (time_steps_reg == 0) ? (ap_uint<16>)1 : (ap_uint<16>)time_steps_reg;
     
     ap_uint<16> threshold = config_reg(15, 0);
     ap_uint<16> leak_rate = config_reg(31, 16);
@@ -431,6 +685,12 @@ void snn_top_hls(
         timestamp = 0;
         spike_counter = 0;
         update_counter = 0;
+        encoder_spike_counter = 0;
+        last_mode = MODE_INFERENCE;
+        checkpoint_row = 0;
+        checkpoint_col = 0;
+        encoder_frame_loaded = false;
+        encoder_reset_temporal_state(0);
         
         // Clear Per-Neuron eligibility traces (O(N+M) - much faster than O(N*M)!)
         RESET_ELIG: for (int i = 0; i < MAX_NEURONS; i++) {
@@ -447,12 +707,22 @@ void snn_top_hls(
             post_traces[i].trace = 0;
             post_traces[i].last_spike_time = 0;
         }
+
+        RESET_ENCODER: for (int i = 0; i < MAX_INPUT_CHANNELS; i++) {
+            #pragma HLS PIPELINE II=1
+            encoder_phase_acc[i] = 0;
+        }
         
-        // Initialize weights (optional: set to small random or zero)
+        // Initialize weights
+        // NOTE: Weight loading from DDR/PS can be done via checkpoint mode in reverse:
+        //       Host streams weights via m_axis_weights interface, this writes to weight_memory
+        //       For now, initialize to zero on first reset
         if (!initialized) {
             INIT_WEIGHT_OUTER: for (int i = 0; i < MAX_NEURONS; i++) {
                 INIT_WEIGHT_INNER: for (int j = 0; j < MAX_NEURONS; j++) {
                     #pragma HLS PIPELINE II=1
+                    // Initialize to zero; actual weights loaded via Python API
+                    // using checkpoint streaming in future updates
                     weight_memory[i][j] = 0;
                 }
             }
@@ -463,6 +733,7 @@ void snn_top_hls(
     if (clear_counters) {
         spike_counter = 0;
         update_counter = 0;
+        encoder_spike_counter = 0;
     }
     
     //=========================================================================
@@ -473,107 +744,140 @@ void snn_top_hls(
     threshold_out = threshold;
     leak_rate_out = leak_rate;
     
+    // Preload encoder frame if requested
+    if (encoder_enable && !encoder_frame_loaded && !s_axis_data.empty()) {
+        encoder_frame = s_axis_data.read();
+        encoder_frame_loaded = true;
+        encoder_reset_temporal_state(timestamp);
+    }
+
+    // Reset checkpoint iterator on mode transition into checkpoint
+    if (op_mode != last_mode && checkpoint_mode) {
+        checkpoint_row = 0;
+        checkpoint_col = 0;
+    }
+
+    hls::stream<encoder_axis_word_t> encoder_spikes("encoder_spikes");
+    #pragma HLS STREAM variable=encoder_spikes depth=32
+
     //=========================================================================
-    // Input Spike Processing
+    // Time-Stepped Processing Loop
     //=========================================================================
-    spike_in_valid = 0;
-    spike_in_neuron_id = 0;
-    spike_in_weight = 0;
-    
-    if (enable && spike_in_ready && !s_axis_spikes.empty()) {
-        axis_spike_t in_pkt = s_axis_spikes.read();
-        
-        neuron_id_t pre_id = in_pkt.data(7, 0);
-        weight_t weight = in_pkt.data(15, 8);
-        
-        // Forward to Verilog core
-        spike_in_valid = 1;
-        spike_in_neuron_id = pre_id;
-        spike_in_weight = weight;
-        
-        // Per-Neuron STDP: Update pre-trace and process LTD
-        if (learning_enable) {
-            process_pre_spike_aer(pre_id, timestamp, learning_params);
-            update_eligibility_on_pre_spike(pre_id);
+    TIME_LOOP: for (ap_uint<16> t = 0; t < time_steps; t++) {
+        #pragma HLS LOOP_FLATTEN off
+
+        if (encoder_enable && encoder_frame_loaded) {
+            run_encoder_once(true, encoder_config, timestamp, encoder_spikes, encoder_spike_counter);
         }
-        
-        spike_counter++;
-    }
-    
-    //=========================================================================
-    // Output Spike Processing
-    //=========================================================================
-    spike_out_ready = !m_axis_spikes.full();
-    
-    if (spike_out_valid && !m_axis_spikes.full()) {
-        neuron_id_t post_id = spike_out_neuron_id;
-        weight_t weight = spike_out_weight;
-        
-        // Forward to PS
-        axis_spike_t out_pkt;
-        out_pkt.data = 0;
-        out_pkt.data(7, 0) = post_id;
-        out_pkt.data(15, 8) = weight;
-        out_pkt.data(31, 16) = timestamp(15, 0);
-        out_pkt.keep = 0xF;
-        out_pkt.strb = 0xF;
-        out_pkt.last = 1;
-        out_pkt.id = 0;
-        out_pkt.dest = 0;
-        out_pkt.user = 0;
-        m_axis_spikes.write(out_pkt);
-        
-        // Per-Neuron STDP: Update post-trace and process LTP
-        if (learning_enable) {
-            process_post_spike_aer(post_id, timestamp, learning_params);
-            update_eligibility_on_post_spike(post_id);
-        }
-    }
-    
-    //=========================================================================
-    // R-STDP Reward Application (uses Per-Neuron Eligibility Traces)
-    //=========================================================================
-    if (apply_reward && learning_params.rstdp_enable) {
-        apply_rstdp_reward(reward_signal, learning_params, timestamp);
-        decay_eligibility_traces(learning_params);
-    }
-    
-    //=========================================================================
-    // Weight Read Mode (for debugging/monitoring)
-    //=========================================================================
-    if (weight_read_mode && !m_axis_weights.full()) {
-        static ap_uint<8> read_row = 0;
-        static ap_uint<8> read_col = 0;
-        
-        axis_weight_t w_pkt;
-        w_pkt.data = 0;
-        w_pkt.data(7, 0) = read_row;
-        w_pkt.data(15, 8) = read_col;
-        w_pkt.data(23, 16) = weight_memory[read_row][read_col];
-        w_pkt.keep = 0xF;
-        w_pkt.strb = 0xF;
-        w_pkt.last = (read_row == MAX_NEURONS-1 && read_col == MAX_NEURONS-1) ? 1 : 0;
-        w_pkt.id = 0;
-        w_pkt.dest = 0;
-        w_pkt.user = 0;
-        m_axis_weights.write(w_pkt);
-        
-        read_col++;
-        if (read_col >= MAX_NEURONS) {
-            read_col = 0;
-            read_row++;
-            if (read_row >= MAX_NEURONS) {
-                read_row = 0;
+
+        // Input Spike Processing (encoder has priority when enabled)
+        spike_in_valid = 0;
+        spike_in_neuron_id = 0;
+        spike_in_weight = 0;
+
+        if (enable && spike_in_ready) {
+            axis_spike_t in_pkt;
+            bool have_pkt = false;
+
+            if (encoder_enable && !encoder_spikes.empty()) {
+                encoder_axis_word_t enc_word = encoder_spikes.read();
+                in_pkt.data = enc_word.data;
+                in_pkt.keep = enc_word.keep;
+                in_pkt.strb = enc_word.strb;
+                in_pkt.last = enc_word.last;
+                in_pkt.id = 0;
+                in_pkt.dest = 0;
+                in_pkt.user = 0;
+                have_pkt = true;
+            } else if (!s_axis_spikes.empty()) {
+                in_pkt = s_axis_spikes.read();
+                have_pkt = true;
+            }
+
+            if (have_pkt) {
+                neuron_id_t pre_id = in_pkt.data(9, 0);
+                weight_t weight = (weight_t)in_pkt.data(17, 10);
+
+                spike_in_valid = 1;
+                spike_in_neuron_id = pre_id;
+                spike_in_weight = weight;
+
+                if (stdp_active) {
+                    process_pre_spike_aer(pre_id, timestamp, learning_params);
+                    update_eligibility_on_pre_spike(pre_id);
+                }
+
+                spike_counter++;
             }
         }
+
+        // Output Spike Processing
+        spike_out_ready = !m_axis_spikes.full();
+
+        if (spike_out_valid && !m_axis_spikes.full()) {
+            neuron_id_t post_id = spike_out_neuron_id;
+            weight_t weight = spike_out_weight;
+
+            axis_spike_t out_pkt;
+            out_pkt.data = 0;
+            out_pkt.data(9, 0) = post_id;
+            out_pkt.data(17, 10) = (ap_uint<8>)weight;
+            out_pkt.data(31, 18) = timestamp(13, 0);
+            out_pkt.keep = 0xF;
+            out_pkt.strb = 0xF;
+            out_pkt.last = 1;
+            out_pkt.id = 0;
+            out_pkt.dest = 0;
+            out_pkt.user = 0;
+            m_axis_spikes.write(out_pkt);
+
+            if (stdp_active) {
+                process_post_spike_aer(post_id, timestamp, learning_params);
+                update_eligibility_on_post_spike(post_id);
+            }
+        }
+
+        // R-STDP Reward Application (uses Per-Neuron Eligibility Traces)
+        if (apply_reward && stdp_active && learning_params.rstdp_enable) {
+            apply_rstdp_reward(reward_signal, learning_params, timestamp);
+            decay_eligibility_traces(learning_params);
+        }
+
+        // Weight Read / Checkpoint Mode (stream weights to PS/DDR)
+        if ((weight_read_mode || checkpoint_mode) && !m_axis_weights.full()) {
+            axis_weight_t w_pkt;
+            w_pkt.data = 0;
+            w_pkt.data(7, 0) = checkpoint_row;
+            w_pkt.data(15, 8) = checkpoint_col;
+            w_pkt.data(23, 16) = weight_memory[checkpoint_row][checkpoint_col];
+            w_pkt.keep = 0xF;
+            w_pkt.strb = 0xF;
+            w_pkt.last = (checkpoint_row == MAX_NEURONS-1 && checkpoint_col == MAX_NEURONS-1) ? 1 : 0;
+            w_pkt.id = 0;
+            w_pkt.dest = 0;
+            w_pkt.user = 0;
+            m_axis_weights.write(w_pkt);
+
+            checkpoint_col++;
+            if (checkpoint_col >= MAX_NEURONS) {
+                checkpoint_col = 0;
+                checkpoint_row++;
+                if (checkpoint_row >= MAX_NEURONS) {
+                    checkpoint_row = 0;
+                }
+            }
+        }
+
+        if (enable) {
+            timestamp++;
+        }
     }
-    
-    //=========================================================================
-    // Timestamp Update
-    //=========================================================================
-    if (enable) {
-        timestamp++;
+
+    // Release encoder frame after programmed time steps
+    if (encoder_frame_loaded) {
+        encoder_frame_loaded = false;
     }
+    last_mode = op_mode;
     
     //=========================================================================
     // Status Register Assembly
@@ -581,9 +885,11 @@ void snn_top_hls(
     ap_uint<32> status = 0;
     status[0] = snn_ready;
     status[1] = snn_busy;
-    status[2] = learning_enable;
+    status[2] = stdp_active;
     status[3] = 0;  // Reserved
     status[4] = learning_params.rstdp_enable;
+    status[5] = encoder_enable;
+    status(7, 6) = op_mode;
     status(15, 8) = update_counter(7, 0);
     
     status_reg = status;

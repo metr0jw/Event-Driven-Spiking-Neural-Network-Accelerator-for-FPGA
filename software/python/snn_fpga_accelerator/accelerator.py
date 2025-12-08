@@ -33,6 +33,13 @@ except ImportError:  # pragma: no cover - optional dependency
     Overlay = None   # type: ignore
     allocate = None  # type: ignore
 
+# Optional XRT backend (pyxrt)
+try:  # pragma: no cover - optional dependency
+    from .xrt_backend import XRTBackend, RegisterMap
+except Exception:  # pragma: no cover - keep import optional
+    XRTBackend = None  # type: ignore
+    RegisterMap = None  # type: ignore
+
 from .learning import RSTDPLearning, STDPLearning
 from .pytorch_interface import SNNModel, simulate_snn_inference
 from .spike_encoding import SpikeEvent
@@ -145,7 +152,7 @@ class SNNAccelerator:
     
     This class provides the main interface between PyTorch/Python and the
     FPGA-based SNN accelerator hardware while also supporting a pure software
-    simulation environment.  Developers can therefore target Icarus Verilog or
+    simulation environment. Developers can therefore target Icarus Verilog or
     other open-source tools before moving to Vivado/Vitis.
     """
     
@@ -182,6 +189,7 @@ class SNNAccelerator:
         self.simulation_backend = simulation_backend.lower()
         self.icarus_binary = icarus_binary
         self.vvp_binary = vvp_binary
+        self.use_xrt = False
 
         self._software_backend = _SoftwareBackend()
         self._hardware_backend: Optional[_HardwareBackend] = None
@@ -207,17 +215,20 @@ class SNNAccelerator:
         self.last_spike_time = 0.0
         self.profiling_enabled = True
         
-        # Step mode configuration
-        self.step_mode: str = "multi"  # "multi" or "single"
+        # Timestep tracking
         self.current_timestep: int = 0
         self.timestep_dt: float = 0.001  # 1ms default timestep
         self.membrane_state: Optional[np.ndarray] = None
         self.spike_history: List[List[SpikeEvent]] = []  # History for multi-step
+
+        # XRT backend handle (optional)
+        self._xrt_backend: Optional[XRTBackend] = None
+        self._xrt_regmap: Optional[RegisterMap] = None
         
     def load_bitstream(self, bitstream_path: Optional[str] = None) -> None:
-        """Load the FPGA bitstream and initialize hardware."""
-        if self.simulation_mode:
-            logger.info("Simulation mode active – skipping bitstream load")
+        """Load the FPGA bitstream and initialize hardware (PYNQ path)."""
+        if self.simulation_mode or self.use_xrt:
+            logger.info("Simulation/XRT mode – skipping PYNQ bitstream load")
             return
 
         if bitstream_path:
@@ -226,6 +237,101 @@ class SNNAccelerator:
         if self._hardware_backend is None:
             self._hardware_backend = _HardwareBackend(self.bitstream_path, self.fpga_ip)
         self._hardware_backend.connect()
+
+    def configure_xrt(self, xclbin_path: str, device_index: int = 0, reg_map: Optional[RegisterMap] = None) -> None:
+        """Configure XRT backend for register writes (mode/time_steps/etc.)."""
+        if XRTBackend is None:
+            raise RuntimeError("XRT backend not available; install pyxrt/XRT runtime")
+        self.use_xrt = True
+        self._xrt_backend = XRTBackend(xclbin_path, device_index, reg_map)
+        self._xrt_regmap = reg_map or RegisterMap()
+        logger.info("XRT backend configured with xclbin %s", xclbin_path)
+    
+    def _run_simulation_xrt(self, duration: float, input_spikes: List[SpikeEvent],
+                           encoding_type: int = 0, two_neuron_enable: bool = False,
+                           baseline: int = 128, encoder_params: Optional[dict] = None) -> List[SpikeEvent]:
+        """Run simulation using XRT backend with time_steps loop on FPGA.
+        
+        Args:
+            duration: Simulation duration in seconds
+            input_spikes: List of input spike events
+            encoding_type: 0=NONE, 1=RATE_POISSON, 2=LATENCY, 3=DELTA_SIGMA
+            two_neuron_enable: Enable ON/OFF neuron polarity split
+            baseline: Baseline value for two-neuron encoding (default 128)
+            encoder_params: Optional dict with rate_scale, latency_window, delta_threshold, etc.
+        """
+        if self._xrt_backend is None:
+            raise RuntimeError("XRT backend not configured")
+        
+        # Calculate time steps from duration
+        time_steps = int(duration / self.timestep_dt)
+        logger.info("Running XRT simulation: duration=%.3fs, time_steps=%d, encoding=%d, two_neuron=%s",
+                   duration, time_steps, encoding_type, two_neuron_enable)
+        
+        # Set control registers
+        encoder_enable = (encoding_type != 0)  # Enable encoder for non-NONE types
+        self._xrt_backend.set_mode(mode=0, encoder_enable=encoder_enable)  # MODE_INFERENCE
+        self._xrt_backend.set_time_steps(time_steps)
+        
+        # Configure encoder if enabled
+        if encoder_enable:
+            params = encoder_params or {}
+            self._xrt_backend.set_encoder_config(
+                encoding_type=encoding_type,
+                two_neuron_enable=two_neuron_enable,
+                baseline=baseline,
+                num_steps=time_steps,  # Pass total timesteps to encoder
+                rate_scale=params.get('rate_scale', 256),
+                latency_window=params.get('latency_window', 100),
+                delta_threshold=params.get('delta_threshold', 1000),
+                delta_decay=params.get('delta_decay', 10),
+                num_channels=params.get('num_channels', 784),
+                default_weight=params.get('default_weight', 127)
+            )
+        
+        # Pack input spikes to bytes (32-bit AER format)
+        spike_data = self._pack_spike_events(input_spikes)
+        
+        # Send spike stream and trigger kernel
+        self._xrt_backend.send_spike_stream(spike_data, run_kernel=True)
+        
+        # Receive output spikes
+        output_data = self._xrt_backend.receive_spike_stream(max_size=4096)
+        
+        # Unpack output spikes
+        output_spikes = self._unpack_spike_events(output_data)
+        
+        logger.info("XRT simulation completed: %d input, %d output spikes", 
+                   len(input_spikes), len(output_spikes))
+        return output_spikes
+    
+    def _pack_spike_events(self, spikes: List[SpikeEvent]) -> bytes:
+        """Pack spike events to 32-bit AER format bytes."""
+        packed = bytearray()
+        for spike in spikes:
+            # AER format: [31:18] timestamp(14b), [17:10] weight(8b), [9:0] neuron_id
+            timestamp_14b = int(spike.timestamp * 1000) & 0x3FFF  # 14-bit timestamp
+            weight_8b = int(spike.weight * 127) & 0xFF  # 8-bit weight
+            neuron_id_10b = int(spike.neuron_id) & 0x3FF  # 10-bit neuron ID
+            
+            word = (timestamp_14b << 18) | (weight_8b << 10) | neuron_id_10b
+            packed.extend(struct.pack('<I', word))  # Little-endian 32-bit
+        return bytes(packed)
+    
+    def _unpack_spike_events(self, data: bytes) -> List[SpikeEvent]:
+        """Unpack 32-bit AER format bytes to spike events."""
+        spikes = []
+        for i in range(0, len(data), 4):
+            if i + 4 > len(data):
+                break
+            word = struct.unpack('<I', data[i:i+4])[0]
+            
+            neuron_id = word & 0x3FF
+            weight = ((word >> 10) & 0xFF) / 127.0
+            timestamp = ((word >> 18) & 0x3FFF) / 1000.0
+            
+            spikes.append(SpikeEvent(neuron_id=neuron_id, timestamp=timestamp, weight=weight))
+        return spikes
     
     def _initialize_hardware(self) -> None:
         """Initialize the SNN hardware IP."""
@@ -411,6 +517,7 @@ class SNNAccelerator:
         Returns:
             List of output spike events
         """
+        # Software simulation path
         if self.simulation_mode:
             normalized = self._normalize_spike_events(input_spikes)
             result = self._software_backend.run(normalized, duration)
@@ -420,7 +527,12 @@ class SNNAccelerator:
                 len(result.events),
             )
             return result.events
+        
+        # XRT hardware path
+        if self.use_xrt and self._xrt_backend is not None:
+            return self._run_simulation_xrt(duration, input_spikes)
 
+        # PYNQ hardware path
         while not self.spike_queue.empty():
             self.spike_queue.get()
         while not self.output_queue.empty():
@@ -477,7 +589,7 @@ class SNNAccelerator:
         duration: Optional[float] = None,
         return_events: bool = False,
     ) -> Union[List[SpikeEvent], np.ndarray]:
-        """Run inference and return spike rates or events (multi-step mode).
+        """Run inference and return spike rates or events.
 
         Parameters
         ----------
@@ -491,8 +603,8 @@ class SNNAccelerator:
             When true the raw spike events are returned instead of firing rates.
             
         Note:
-            This method operates in multi-step mode, processing the entire simulation
-            duration at once and returning all output spikes/rates.
+            Processes the entire simulation duration at once. For encoder-based
+            workflows, use num_steps to specify the temporal resolution.
         """
 
         spikes_list = self._normalize_spike_events(input_spikes)
@@ -505,76 +617,8 @@ class SNNAccelerator:
 
         rates = self._spike_events_to_rates(output_events, duration)
         return rates
-    
-    def single_step(
-        self,
-        input_spikes: Union[List[SpikeEvent], Sequence[SpikeEvent], np.ndarray],
-        return_events: bool = False,
-    ) -> Union[List[SpikeEvent], np.ndarray]:
-        """Process a single timestep and return output for that timestep only.
-        
-        This method maintains internal state (membrane potentials) between calls,
-        allowing for step-by-step simulation. Call reset() to clear state.
-        
-        Parameters
-        ----------
-        input_spikes:
-            Spike events for the current timestep. All events should have timestamps
-            within the current timestep window [t, t+dt).
-        return_events:
-            When true, return raw spike events. Otherwise return firing rates.
-            
-        Returns
-        -------
-        output:
-            Either a list of SpikeEvent objects (if return_events=True) or
-            an array of spike counts for this timestep (if return_events=False).
-            
-        Example
-        -------
-        >>> accelerator.reset()  # Clear state
-        >>> for t in range(num_timesteps):
-        ...     spikes_t = get_spikes_for_timestep(t)
-        ...     output_t = accelerator.single_step(spikes_t)
-        ...     process_output(output_t)
-        """
-        spikes_list = self._normalize_spike_events(input_spikes)
-        
-        # Adjust spike timestamps to current timestep
-        current_time = self.current_timestep * self.timestep_dt
-        adjusted_spikes = [
-            SpikeEvent(
-                neuron_id=spike.neuron_id,
-                timestamp=current_time + (spike.timestamp % self.timestep_dt),
-                weight=spike.weight
-            )
-            for spike in spikes_list
-        ]
-        
-        # Run simulation for one timestep
-        output_events = self.run_simulation(self.timestep_dt, adjusted_spikes)
-        
-        # Store output in history
-        self.spike_history.append(output_events)
-        
-        # Increment timestep counter
-        self.current_timestep += 1
-        
-        if return_events:
-            return output_events
-        
-        # Convert to spike counts for this timestep
-        if not output_events:
-            return np.zeros(self.num_neurons, dtype=np.float32)
-        
-        max_neuron = max(event.neuron_id for event in output_events)
-        counts = np.zeros(max(max_neuron + 1, self.num_neurons), dtype=np.float32)
-        for event in output_events:
-            counts[event.neuron_id] += 1
-        
-        return counts
-    
-    def set_step_mode(self, mode: str, timestep_dt: Optional[float] = None) -> None:
+
+    def reset_state(self) -> None:
         """Set the step mode for inference.
         
         Parameters
@@ -587,56 +631,34 @@ class SNNAccelerator:
             
         Example
         -------
-        >>> # Multi-step mode (default)
-        >>> accelerator.set_step_mode("multi")
         >>> output = accelerator.infer(all_spikes, duration=0.1)
         
-        >>> # Single-step mode
-        >>> accelerator.set_step_mode("single", timestep_dt=0.001)
-        >>> accelerator.reset()
-        >>> for t in range(100):
-        ...     output_t = accelerator.single_step(spikes_t)
         """
-        if mode not in ["multi", "single"]:
-            raise ValueError(f"Invalid step mode: {mode}. Must be 'multi' or 'single'")
-        
-        self.step_mode = mode
-        if timestep_dt is not None:
-            self.timestep_dt = timestep_dt
-        
-        logger.info(
-            "Step mode set to '%s'%s",
-            mode,
-            f" with timestep {self.timestep_dt*1000:.2f}ms" if mode == "single" else ""
-        )
-    
-    def get_step_mode(self) -> str:
-        """Get the current step mode.
-        
-        Returns
-        -------
-        mode : str
-            Current step mode ("multi" or "single").
-        """
-        return self.step_mode
+        self.spike_history.clear()
+        self.current_timestep = 0
+        logger.info("Simulation state reset")
+
+    def set_mode(self, mode: int, encoder_enable: bool = False) -> None:
+        """Set hardware mode register (0=infer,1=STDP,2=checkpoint)."""
+        if self.use_xrt and self._xrt_backend is not None:
+            self._xrt_backend.set_mode(mode, encoder_enable)
+
+    def set_simulation_steps(self, steps: int) -> None:
+        """Explicitly program time_steps register when using XRT backend."""
+        if self.use_xrt and self._xrt_backend is not None:
+            self._xrt_backend.set_time_steps(steps)
+
+    def set_reward_signal(self, reward: int) -> None:
+        if self.use_xrt and self._xrt_backend is not None:
+            self._xrt_backend.set_reward(reward)
     
     def get_spike_history(self) -> List[List[SpikeEvent]]:
-        """Get the complete spike history from single-step mode.
+        """Get the complete spike history.
         
         Returns
         -------
         history : List[List[SpikeEvent]]
             List where each element contains the spike events for that timestep.
-            Only populated when using single_step() method.
-            
-        Example
-        -------
-        >>> accelerator.set_step_mode("single")
-        >>> accelerator.reset()
-        >>> for t in range(100):
-        ...     output = accelerator.single_step(spikes[t])
-        >>> history = accelerator.get_spike_history()
-        >>> print(f"Total timesteps: {len(history)}")
         """
         return self.spike_history
 

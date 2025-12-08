@@ -41,8 +41,34 @@
           "direction": "in"
         }]
     },
-    "learning_params": {
+    "mode_reg": {
       "index": "2",
+      "direction": "in",
+      "srcType": "ap_uint<32>",
+      "srcSize": "32",
+      "hwRefs": [{
+          "type": "register",
+          "interface": "s_axi_ctrl",
+          "name": "mode_reg",
+          "usage": "data",
+          "direction": "in"
+        }]
+    },
+    "time_steps_reg": {
+      "index": "3",
+      "direction": "in",
+      "srcType": "ap_uint<32>",
+      "srcSize": "32",
+      "hwRefs": [{
+          "type": "register",
+          "interface": "s_axi_ctrl",
+          "name": "time_steps_reg",
+          "usage": "data",
+          "direction": "in"
+        }]
+    },
+    "learning_params": {
+      "index": "4",
       "direction": "in",
       "srcType": "learning_params_t",
       "srcSize": "144",
@@ -84,8 +110,44 @@
         }
       ]
     },
+    "encoder_config": {
+      "index": "5",
+      "direction": "in",
+      "srcType": "encoder_config_t",
+      "srcSize": "128",
+      "hwRefs": [
+        {
+          "type": "register",
+          "interface": "s_axi_ctrl",
+          "name": "encoder_config_1",
+          "usage": "data",
+          "direction": "in"
+        },
+        {
+          "type": "register",
+          "interface": "s_axi_ctrl",
+          "name": "encoder_config_2",
+          "usage": "data",
+          "direction": "in"
+        },
+        {
+          "type": "register",
+          "interface": "s_axi_ctrl",
+          "name": "encoder_config_3",
+          "usage": "data",
+          "direction": "in"
+        },
+        {
+          "type": "register",
+          "interface": "s_axi_ctrl",
+          "name": "encoder_config_4",
+          "usage": "data",
+          "direction": "in"
+        }
+      ]
+    },
     "status_reg": {
-      "index": "3",
+      "index": "6",
       "direction": "out",
       "srcType": "ap_uint<32>&",
       "srcSize": "32",
@@ -107,7 +169,7 @@
       ]
     },
     "spike_count_reg": {
-      "index": "4",
+      "index": "7",
       "direction": "out",
       "srcType": "ap_uint<32>&",
       "srcSize": "32",
@@ -129,7 +191,7 @@
       ]
     },
     "weight_sum_reg": {
-      "index": "5",
+      "index": "8",
       "direction": "out",
       "srcType": "ap_uint<32>&",
       "srcSize": "32",
@@ -151,7 +213,7 @@
       ]
     },
     "version_reg": {
-      "index": "6",
+      "index": "9",
       "direction": "out",
       "srcType": "ap_uint<32>&",
       "srcSize": "32",
@@ -173,7 +235,7 @@
       ]
     },
     "s_axis_spikes": {
-      "index": "7",
+      "index": "10",
       "direction": "in",
       "srcType": "stream<hls::axis<ap_uint<32>, 1UL, 1UL, 1UL, (unsigned char)'8', false>, 0>&",
       "srcSize": "96",
@@ -185,8 +247,21 @@
           "direction": "in"
         }]
     },
+    "s_axis_data": {
+      "index": "11",
+      "direction": "in",
+      "srcType": "stream<input_data_t, 0>&",
+      "srcSize": "576",
+      "hwRefs": [{
+          "type": "interface",
+          "interface": "s_axis_data",
+          "name": "",
+          "usage": "data",
+          "direction": "in"
+        }]
+    },
     "m_axis_spikes": {
-      "index": "8",
+      "index": "12",
       "direction": "out",
       "srcType": "stream<hls::axis<ap_uint<32>, 1UL, 1UL, 1UL, (unsigned char)'8', false>, 0>&",
       "srcSize": "96",
@@ -199,7 +274,7 @@
         }]
     },
     "m_axis_weights": {
-      "index": "9",
+      "index": "13",
       "direction": "out",
       "srcType": "stream<hls::axis<ap_uint<32>, 1UL, 1UL, 1UL, (unsigned char)'8', false>, 0>&",
       "srcSize": "96",
@@ -212,7 +287,7 @@
         }]
     },
     "reward_signal": {
-      "index": "10",
+      "index": "14",
       "direction": "in",
       "srcType": "ap_int<8>",
       "srcSize": "8",
@@ -225,7 +300,7 @@
         }]
     },
     "spike_in_valid": {
-      "index": "11",
+      "index": "15",
       "direction": "out",
       "srcType": "ap_uint<1>&",
       "srcSize": "8",
@@ -238,7 +313,7 @@
         }]
     },
     "spike_in_neuron_id": {
-      "index": "12",
+      "index": "16",
       "direction": "out",
       "srcType": "ap_uint<8>&",
       "srcSize": "8",
@@ -251,7 +326,7 @@
         }]
     },
     "spike_in_weight": {
-      "index": "13",
+      "index": "17",
       "direction": "out",
       "srcType": "ap_int<8>&",
       "srcSize": "8",
@@ -264,7 +339,7 @@
         }]
     },
     "spike_in_ready": {
-      "index": "14",
+      "index": "18",
       "direction": "in",
       "srcType": "ap_uint<1>",
       "srcSize": "8",
@@ -277,7 +352,7 @@
         }]
     },
     "spike_out_valid": {
-      "index": "15",
+      "index": "19",
       "direction": "in",
       "srcType": "ap_uint<1>",
       "srcSize": "8",
@@ -290,7 +365,7 @@
         }]
     },
     "spike_out_neuron_id": {
-      "index": "16",
+      "index": "20",
       "direction": "in",
       "srcType": "ap_uint<8>",
       "srcSize": "8",
@@ -303,7 +378,7 @@
         }]
     },
     "spike_out_weight": {
-      "index": "17",
+      "index": "21",
       "direction": "in",
       "srcType": "ap_int<8>",
       "srcSize": "8",
@@ -316,7 +391,7 @@
         }]
     },
     "spike_out_ready": {
-      "index": "18",
+      "index": "22",
       "direction": "out",
       "srcType": "ap_uint<1>&",
       "srcSize": "8",
@@ -329,7 +404,7 @@
         }]
     },
     "snn_enable": {
-      "index": "19",
+      "index": "23",
       "direction": "out",
       "srcType": "ap_uint<1>&",
       "srcSize": "8",
@@ -342,7 +417,7 @@
         }]
     },
     "snn_reset": {
-      "index": "20",
+      "index": "24",
       "direction": "out",
       "srcType": "ap_uint<1>&",
       "srcSize": "8",
@@ -355,7 +430,7 @@
         }]
     },
     "threshold_out": {
-      "index": "21",
+      "index": "25",
       "direction": "out",
       "srcType": "ap_uint<16>&",
       "srcSize": "16",
@@ -368,7 +443,7 @@
         }]
     },
     "leak_rate_out": {
-      "index": "22",
+      "index": "26",
       "direction": "out",
       "srcType": "ap_uint<16>&",
       "srcSize": "16",
@@ -381,7 +456,7 @@
         }]
     },
     "snn_ready": {
-      "index": "23",
+      "index": "27",
       "direction": "in",
       "srcType": "ap_uint<1>",
       "srcSize": "8",
@@ -394,7 +469,7 @@
         }]
     },
     "snn_busy": {
-      "index": "24",
+      "index": "28",
       "direction": "in",
       "srcType": "ap_uint<1>",
       "srcSize": "8",
@@ -422,8 +497,8 @@
     "ClockPeriod": "10",
     "Uncertainty": "2.7",
     "IsCombinational": "0",
-    "II": "19 ~ 6925",
-    "Latency": "18"
+    "II": "30 ~ 187041182",
+    "Latency": "29"
   },
   "Xdc": {"OocClocks": ["create_clock -name ap_clk -period 10.000 [get_ports ap_clk]"]},
   "Ipx": {
@@ -432,7 +507,7 @@
     "Name": "snn_top_hls",
     "Version": "1.0",
     "DisplayName": "Snn_top_hls",
-    "Revision": "2114382889",
+    "Revision": "2114383016",
     "Description": "An IP generated by Vitis HLS",
     "Taxonomy": "\/VITIS_HLS_IP",
     "AutoFamilySupport": "",
@@ -447,11 +522,18 @@
       "impl\/vhdl\/snn_top_hls_decay_eligibility_traces.vhd",
       "impl\/vhdl\/snn_top_hls_decay_eligibility_traces_Pipeline_DECAY_POST.vhd",
       "impl\/vhdl\/snn_top_hls_decay_eligibility_traces_Pipeline_DECAY_PRE.vhd",
+      "impl\/vhdl\/snn_top_hls_encoder_frame_pixels_RAM_AUTO_1R1W.vhd",
+      "impl\/vhdl\/snn_top_hls_encoder_reset_temporal_state.vhd",
+      "impl\/vhdl\/snn_top_hls_fifo_w41_d32_A.vhd",
       "impl\/vhdl\/snn_top_hls_flow_control_loop_pipe_sequential_init.vhd",
       "impl\/vhdl\/snn_top_hls_mul_8ns_8ns_16_1_1.vhd",
+      "impl\/vhdl\/snn_top_hls_mul_8ns_16ns_24_1_1.vhd",
       "impl\/vhdl\/snn_top_hls_mul_8s_8s_16_1_1.vhd",
+      "impl\/vhdl\/snn_top_hls_mul_16ns_8ns_20_1_1.vhd",
       "impl\/vhdl\/snn_top_hls_p_ZL13weight_memory_0_0_RAM_2P_BRAM_1R1W.vhd",
       "impl\/vhdl\/snn_top_hls_p_ZL15pre_eligibility_0_RAM_2P_BRAM_1R1W.vhd",
+      "impl\/vhdl\/snn_top_hls_p_ZL22encoder_temporal_fired_0_RAM_2P_BRAM_1R1W.vhd",
+      "impl\/vhdl\/snn_top_hls_p_ZL22encoder_temporal_start_0_RAM_2P_BRAM_1R1W.vhd",
       "impl\/vhdl\/snn_top_hls_pre_traces_last_spike_time_0_RAM_2P_BRAM_1R1W.vhd",
       "impl\/vhdl\/snn_top_hls_process_post_spike_aer.vhd",
       "impl\/vhdl\/snn_top_hls_process_post_spike_aer_Pipeline_LTP_LOOP.vhd",
@@ -459,8 +541,11 @@
       "impl\/vhdl\/snn_top_hls_process_pre_spike_aer_Pipeline_LTD_LOOP.vhd",
       "impl\/vhdl\/snn_top_hls_process_pre_spike_aer_Pipeline_LTD_LOOP_EXP_DECAY_LUT_ROM_AUTO_1R.vhd",
       "impl\/vhdl\/snn_top_hls_regslice_both.vhd",
+      "impl\/vhdl\/snn_top_hls_run_encoder_once.vhd",
+      "impl\/vhdl\/snn_top_hls_run_encoder_once_Pipeline_ENCODER_LOOP.vhd",
       "impl\/vhdl\/snn_top_hls_snn_top_hls_Pipeline_INIT_WEIGHT_OUTER_INIT_WEIGHT_INNER.vhd",
       "impl\/vhdl\/snn_top_hls_snn_top_hls_Pipeline_RESET_ELIG.vhd",
+      "impl\/vhdl\/snn_top_hls_snn_top_hls_Pipeline_RESET_ENCODER.vhd",
       "impl\/vhdl\/snn_top_hls_snn_top_hls_Pipeline_RESET_TRACES.vhd",
       "impl\/vhdl\/snn_top_hls_snn_top_hls_Pipeline_WEIGHT_SUM.vhd",
       "impl\/vhdl\/snn_top_hls_sparsemux_7_2_2_1_1.vhd",
@@ -468,6 +553,7 @@
       "impl\/vhdl\/snn_top_hls_sparsemux_9_3_7_1_1.vhd",
       "impl\/vhdl\/snn_top_hls_sparsemux_17_3_8_1_1.vhd",
       "impl\/vhdl\/snn_top_hls_sparsemux_17_3_16_1_1.vhd",
+      "impl\/vhdl\/snn_top_hls_urem_32ns_16ns_16_36_1.vhd",
       "impl\/vhdl\/snn_top_hls.vhd"
     ],
     "Verilog": [
@@ -477,15 +563,25 @@
       "impl\/verilog\/snn_top_hls_decay_eligibility_traces.v",
       "impl\/verilog\/snn_top_hls_decay_eligibility_traces_Pipeline_DECAY_POST.v",
       "impl\/verilog\/snn_top_hls_decay_eligibility_traces_Pipeline_DECAY_PRE.v",
+      "impl\/verilog\/snn_top_hls_encoder_frame_pixels_RAM_AUTO_1R1W.dat",
+      "impl\/verilog\/snn_top_hls_encoder_frame_pixels_RAM_AUTO_1R1W.v",
+      "impl\/verilog\/snn_top_hls_encoder_reset_temporal_state.v",
+      "impl\/verilog\/snn_top_hls_fifo_w41_d32_A.v",
       "impl\/verilog\/snn_top_hls_flow_control_loop_pipe_sequential_init.v",
       "impl\/verilog\/snn_top_hls_hls_deadlock_idx0_monitor.v",
       "impl\/verilog\/snn_top_hls_hls_deadlock_kernel_monitor_top.vh",
       "impl\/verilog\/snn_top_hls_mul_8ns_8ns_16_1_1.v",
+      "impl\/verilog\/snn_top_hls_mul_8ns_16ns_24_1_1.v",
       "impl\/verilog\/snn_top_hls_mul_8s_8s_16_1_1.v",
+      "impl\/verilog\/snn_top_hls_mul_16ns_8ns_20_1_1.v",
       "impl\/verilog\/snn_top_hls_p_ZL13weight_memory_0_0_RAM_2P_BRAM_1R1W.dat",
       "impl\/verilog\/snn_top_hls_p_ZL13weight_memory_0_0_RAM_2P_BRAM_1R1W.v",
       "impl\/verilog\/snn_top_hls_p_ZL15pre_eligibility_0_RAM_2P_BRAM_1R1W.dat",
       "impl\/verilog\/snn_top_hls_p_ZL15pre_eligibility_0_RAM_2P_BRAM_1R1W.v",
+      "impl\/verilog\/snn_top_hls_p_ZL22encoder_temporal_fired_0_RAM_2P_BRAM_1R1W.dat",
+      "impl\/verilog\/snn_top_hls_p_ZL22encoder_temporal_fired_0_RAM_2P_BRAM_1R1W.v",
+      "impl\/verilog\/snn_top_hls_p_ZL22encoder_temporal_start_0_RAM_2P_BRAM_1R1W.dat",
+      "impl\/verilog\/snn_top_hls_p_ZL22encoder_temporal_start_0_RAM_2P_BRAM_1R1W.v",
       "impl\/verilog\/snn_top_hls_pre_traces_last_spike_time_0_RAM_2P_BRAM_1R1W.dat",
       "impl\/verilog\/snn_top_hls_pre_traces_last_spike_time_0_RAM_2P_BRAM_1R1W.v",
       "impl\/verilog\/snn_top_hls_process_post_spike_aer.v",
@@ -495,8 +591,11 @@
       "impl\/verilog\/snn_top_hls_process_pre_spike_aer_Pipeline_LTD_LOOP_EXP_DECAY_LUT_ROM_AUTO_1R.dat",
       "impl\/verilog\/snn_top_hls_process_pre_spike_aer_Pipeline_LTD_LOOP_EXP_DECAY_LUT_ROM_AUTO_1R.v",
       "impl\/verilog\/snn_top_hls_regslice_both.v",
+      "impl\/verilog\/snn_top_hls_run_encoder_once.v",
+      "impl\/verilog\/snn_top_hls_run_encoder_once_Pipeline_ENCODER_LOOP.v",
       "impl\/verilog\/snn_top_hls_snn_top_hls_Pipeline_INIT_WEIGHT_OUTER_INIT_WEIGHT_INNER.v",
       "impl\/verilog\/snn_top_hls_snn_top_hls_Pipeline_RESET_ELIG.v",
+      "impl\/verilog\/snn_top_hls_snn_top_hls_Pipeline_RESET_ENCODER.v",
       "impl\/verilog\/snn_top_hls_snn_top_hls_Pipeline_RESET_TRACES.v",
       "impl\/verilog\/snn_top_hls_snn_top_hls_Pipeline_WEIGHT_SUM.v",
       "impl\/verilog\/snn_top_hls_sparsemux_7_2_2_1_1.v",
@@ -504,6 +603,7 @@
       "impl\/verilog\/snn_top_hls_sparsemux_9_3_7_1_1.v",
       "impl\/verilog\/snn_top_hls_sparsemux_17_3_8_1_1.v",
       "impl\/verilog\/snn_top_hls_sparsemux_17_3_16_1_1.v",
+      "impl\/verilog\/snn_top_hls_urem_32ns_16ns_16_36_1.v",
       "impl\/verilog\/snn_top_hls.v"
     ],
     "SwDriver": [
@@ -539,7 +639,7 @@
       "busTypeName": "aximm",
       "mode": "slave",
       "dataWidth": "32",
-      "addrWidth": "7",
+      "addrWidth": "8",
       "portPrefix": "s_axi_ctrl_",
       "paramPrefix": "C_S_AXI_CTRL_",
       "ports": [
@@ -747,6 +847,34 @@
         },
         {
           "offset": "0x20",
+          "name": "mode_reg",
+          "access": "W",
+          "description": "Data signal of mode_reg",
+          "range": "32",
+          "fields": [{
+              "offset": "0",
+              "width": "32",
+              "name": "mode_reg",
+              "access": "W",
+              "description": "Bit 31 to 0 of mode_reg"
+            }]
+        },
+        {
+          "offset": "0x28",
+          "name": "time_steps_reg",
+          "access": "W",
+          "description": "Data signal of time_steps_reg",
+          "range": "32",
+          "fields": [{
+              "offset": "0",
+              "width": "32",
+              "name": "time_steps_reg",
+              "access": "W",
+              "description": "Bit 31 to 0 of time_steps_reg"
+            }]
+        },
+        {
+          "offset": "0x30",
           "name": "learning_params_1",
           "access": "W",
           "description": "Data signal of learning_params",
@@ -760,7 +888,7 @@
             }]
         },
         {
-          "offset": "0x24",
+          "offset": "0x34",
           "name": "learning_params_2",
           "access": "W",
           "description": "Data signal of learning_params",
@@ -774,7 +902,7 @@
             }]
         },
         {
-          "offset": "0x28",
+          "offset": "0x38",
           "name": "learning_params_3",
           "access": "W",
           "description": "Data signal of learning_params",
@@ -788,7 +916,7 @@
             }]
         },
         {
-          "offset": "0x2c",
+          "offset": "0x3c",
           "name": "learning_params_4",
           "access": "W",
           "description": "Data signal of learning_params",
@@ -802,7 +930,7 @@
             }]
         },
         {
-          "offset": "0x30",
+          "offset": "0x40",
           "name": "learning_params_5",
           "access": "W",
           "description": "Data signal of learning_params",
@@ -825,7 +953,63 @@
           ]
         },
         {
-          "offset": "0x38",
+          "offset": "0x48",
+          "name": "encoder_config_1",
+          "access": "W",
+          "description": "Data signal of encoder_config",
+          "range": "32",
+          "fields": [{
+              "offset": "0",
+              "width": "32",
+              "name": "encoder_config",
+              "access": "W",
+              "description": "Bit 31 to 0 of encoder_config"
+            }]
+        },
+        {
+          "offset": "0x4c",
+          "name": "encoder_config_2",
+          "access": "W",
+          "description": "Data signal of encoder_config",
+          "range": "32",
+          "fields": [{
+              "offset": "0",
+              "width": "32",
+              "name": "encoder_config",
+              "access": "W",
+              "description": "Bit 63 to 32 of encoder_config"
+            }]
+        },
+        {
+          "offset": "0x50",
+          "name": "encoder_config_3",
+          "access": "W",
+          "description": "Data signal of encoder_config",
+          "range": "32",
+          "fields": [{
+              "offset": "0",
+              "width": "32",
+              "name": "encoder_config",
+              "access": "W",
+              "description": "Bit 95 to 64 of encoder_config"
+            }]
+        },
+        {
+          "offset": "0x54",
+          "name": "encoder_config_4",
+          "access": "W",
+          "description": "Data signal of encoder_config",
+          "range": "32",
+          "fields": [{
+              "offset": "0",
+              "width": "32",
+              "name": "encoder_config",
+              "access": "W",
+              "description": "Bit 127 to 96 of encoder_config"
+            }]
+        },
+        {
+          "offset": "0x5c",
           "name": "status_reg",
           "access": "R",
           "description": "Data signal of status_reg",
@@ -839,7 +1023,7 @@
             }]
         },
         {
-          "offset": "0x3c",
+          "offset": "0x60",
           "name": "status_reg_ctrl",
           "access": "R",
           "description": "Control signal of status_reg",
@@ -862,7 +1046,7 @@
           ]
         },
         {
-          "offset": "0x48",
+          "offset": "0x6c",
           "name": "spike_count_reg",
           "access": "R",
           "description": "Data signal of spike_count_reg",
@@ -876,7 +1060,7 @@
             }]
         },
         {
-          "offset": "0x4c",
+          "offset": "0x70",
           "name": "spike_count_reg_ctrl",
           "access": "R",
           "description": "Control signal of spike_count_reg",
@@ -899,7 +1083,7 @@
           ]
         },
         {
-          "offset": "0x58",
+          "offset": "0x7c",
           "name": "weight_sum_reg",
           "access": "R",
           "description": "Data signal of weight_sum_reg",
@@ -913,7 +1097,7 @@
             }]
         },
         {
-          "offset": "0x5c",
+          "offset": "0x80",
           "name": "weight_sum_reg_ctrl",
           "access": "R",
           "description": "Control signal of weight_sum_reg",
@@ -936,7 +1120,7 @@
           ]
         },
         {
-          "offset": "0x68",
+          "offset": "0x8c",
           "name": "version_reg",
           "access": "R",
           "description": "Data signal of version_reg",
@@ -950,7 +1134,7 @@
             }]
         },
         {
-          "offset": "0x6c",
+          "offset": "0x90",
           "name": "version_reg_ctrl",
           "access": "R",
           "description": "Control signal of version_reg",
@@ -973,7 +1157,7 @@
           ]
         },
         {
-          "offset": "0x78",
+          "offset": "0x9c",
           "name": "reward_signal",
           "access": "W",
           "description": "Data signal of reward_signal",
@@ -1016,41 +1200,62 @@
           "mode": "s_axilite",
           "register_option": "0",
           "offset": "32",
+          "argName": "mode_reg"
+        },
+        {
+          "constraint_type": "pragma interface",
+          "mode": "s_axilite",
+          "register_option": "0",
+          "offset": "40",
+          "argName": "time_steps_reg"
+        },
+        {
+          "constraint_type": "pragma interface",
+          "mode": "s_axilite",
+          "register_option": "0",
+          "offset": "48",
           "argName": "learning_params"
         },
         {
           "constraint_type": "pragma interface",
           "mode": "s_axilite",
           "register_option": "0",
-          "offset": "56",
+          "offset": "72",
+          "argName": "encoder_config"
+        },
+        {
+          "constraint_type": "pragma interface",
+          "mode": "s_axilite",
+          "register_option": "0",
+          "offset": "92",
           "argName": "status_reg"
         },
         {
           "constraint_type": "pragma interface",
           "mode": "s_axilite",
           "register_option": "0",
-          "offset": "72",
+          "offset": "108",
           "argName": "spike_count_reg"
         },
         {
           "constraint_type": "pragma interface",
           "mode": "s_axilite",
           "register_option": "0",
-          "offset": "88",
+          "offset": "124",
           "argName": "weight_sum_reg"
         },
         {
           "constraint_type": "pragma interface",
           "mode": "s_axilite",
           "register_option": "0",
-          "offset": "104",
+          "offset": "140",
           "argName": "version_reg"
         },
         {
           "constraint_type": "pragma interface",
           "mode": "s_axilite",
           "register_option": "0",
-          "offset": "120",
+          "offset": "156",
           "argName": "reward_signal"
         }
       ]
@@ -1060,7 +1265,7 @@
       "busTypeName": "clock",
       "mode": "slave",
       "busParams": {
-        "ASSOCIATED_BUSIF": "s_axi_ctrl:s_axis_spikes:m_axis_spikes:m_axis_weights",
+        "ASSOCIATED_BUSIF": "s_axi_ctrl:s_axis_spikes:s_axis_data:m_axis_spikes:m_axis_weights",
         "ASSOCIATED_RESET": "ap_rst_n"
       },
       "portMap": {"ap_clk": "CLK"},
@@ -1107,6 +1312,26 @@
           "register_option": "1",
           "register_mode": "both",
           "argName": "s_axis_spikes"
+        }]
+    },
+    "s_axis_data": {
+      "type": "axi4stream",
+      "busTypeName": "axis",
+      "mode": "slave",
+      "direction": "in",
+      "dataWidth": "576",
+      "portPrefix": "s_axis_data_",
+      "ports": [
+        "s_axis_data_TDATA",
+        "s_axis_data_TREADY",
+        "s_axis_data_TVALID"
+      ],
+      "constraints": [{
+          "constraint_type": "pragma interface",
+          "mode": "axis",
+          "register_option": "1",
+          "register_mode": "both",
+          "argName": "s_axis_data"
         }]
     },
     "m_axis_spikes": {
@@ -1383,7 +1608,7 @@
     },
     "s_axi_ctrl_AWADDR": {
       "dir": "in",
-      "width": "7"
+      "width": "8"
     },
     "s_axi_ctrl_WVALID": {
       "dir": "in",
@@ -1411,7 +1636,7 @@
     },
     "s_axi_ctrl_ARADDR": {
       "dir": "in",
-      "width": "7"
+      "width": "8"
     },
     "s_axi_ctrl_RVALID": {
       "dir": "out",
@@ -1492,6 +1717,18 @@
       "dir": "in",
       "width": "1",
       "isVector": "true"
+    },
+    "s_axis_data_TDATA": {
+      "dir": "in",
+      "width": "576"
+    },
+    "s_axis_data_TVALID": {
+      "dir": "in",
+      "width": "1"
+    },
+    "s_axis_data_TREADY": {
+      "dir": "out",
+      "width": "1"
     },
     "m_axis_spikes_TDATA": {
       "dir": "out",
@@ -1641,77 +1878,103 @@
   "ModuleInfo": {
     "Hierarchy": {
       "ModuleName": "snn_top_hls",
-      "BindInstances": "xor_ln430_fu_1695_p2 or_ln430_fu_1701_p2 or_ln463_fu_1713_p2 select_ln463_fu_1718_p3 and_ln483_fu_1725_p2 sparsemux_17_3_8_1_1_U322 new_elig_fu_1822_p2 icmp_ln295_fu_1838_p2 select_ln295_fu_1848_p3 add_ln500_fu_1873_p2 sparsemux_17_3_8_1_1_U323 new_elig_1_fu_1965_p2 icmp_ln302_fu_1981_p2 select_ln302_fu_1991_p3 and_ln536_fu_2016_p2 tmp_s_fu_2104_p2 tmp_s_fu_2104_p4 tmp_s_fu_2104_p6 tmp_s_fu_2104_p8 sparsemux_9_2_8_1_1_U324 icmp_ln555_fu_2147_p2 icmp_ln555_1_fu_2152_p2 m_axis_weights_TLAST_int_regslice add_ln561_fu_2170_p2 add_ln564_fu_2189_p2 select_ln565_fu_2207_p3 add_ln575_fu_2227_p2 or_ln574_fu_2233_p2 select_ln574_fu_2238_p3 p_ZL15pre_eligibility_0_U p_ZL16post_eligibility_0_U p_ZL15pre_eligibility_1_U p_ZL16post_eligibility_1_U p_ZL15pre_eligibility_2_U p_ZL16post_eligibility_2_U p_ZL15pre_eligibility_3_U p_ZL16post_eligibility_3_U p_ZL15pre_eligibility_4_U p_ZL16post_eligibility_4_U p_ZL15pre_eligibility_5_U p_ZL16post_eligibility_5_U p_ZL15pre_eligibility_6_U p_ZL16post_eligibility_6_U p_ZL15pre_eligibility_7_U p_ZL16post_eligibility_7_U pre_traces_trace_0_U pre_traces_last_spike_time_0_U post_traces_trace_0_U post_traces_last_spike_time_0_U pre_traces_trace_1_U pre_traces_last_spike_time_1_U post_traces_trace_1_U post_traces_last_spike_time_1_U pre_traces_trace_2_U pre_traces_last_spike_time_2_U post_traces_trace_2_U post_traces_last_spike_time_2_U pre_traces_trace_3_U pre_traces_last_spike_time_3_U post_traces_trace_3_U post_traces_last_spike_time_3_U pre_traces_trace_4_U pre_traces_last_spike_time_4_U post_traces_trace_4_U post_traces_last_spike_time_4_U pre_traces_trace_5_U pre_traces_last_spike_time_5_U post_traces_trace_5_U post_traces_last_spike_time_5_U pre_traces_trace_6_U pre_traces_last_spike_time_6_U post_traces_trace_6_U post_traces_last_spike_time_6_U pre_traces_trace_7_U pre_traces_last_spike_time_7_U post_traces_trace_7_U post_traces_last_spike_time_7_U p_ZL13weight_memory_0_0_U p_ZL13weight_memory_0_1_U p_ZL13weight_memory_1_0_U p_ZL13weight_memory_1_1_U p_ZL13weight_memory_2_0_U p_ZL13weight_memory_2_1_U p_ZL13weight_memory_3_0_U p_ZL13weight_memory_3_1_U EXP_DECAY_LUT_U ctrl_s_axi_U",
+      "BindInstances": "encoder_spikes_fifo_U checkpoint_mode_fu_2352_p2 stdp_mode_fu_2358_p2 stdp_active_fu_2364_p2 icmp_ln592_fu_2370_p2 time_steps_1_fu_2380_p3 xor_ln600_fu_2408_p2 or_ln600_fu_2414_p2 icmp_ln666_fu_2990_p2 and_ln666_fu_2995_p2 and_ln689_fu_3039_p2 and_ln752_fu_3043_p2 xor_ln752_fu_3047_p2 or_ln758_fu_3053_p2 xor_ln752_1_fu_3057_p2 or_ln752_fu_3062_p2 icmp_ln677_fu_3080_p2 t_2_fu_3085_p2 sparsemux_17_3_8_1_1_U449 new_elig_fu_3222_p2 icmp_ln437_fu_3238_p2 select_ln437_fu_3248_p3 add_ln721_fu_3273_p2 sparsemux_17_3_8_1_1_U450 new_elig_1_fu_3355_p2 icmp_ln444_1_fu_3371_p2 select_ln444_fu_3381_p3 and_ln752_1_fu_3406_p2 add_ln763_fu_3469_p2 tmp_71_fu_3515_p2 tmp_71_fu_3515_p4 tmp_71_fu_3515_p6 tmp_71_fu_3515_p8 sparsemux_9_2_8_1_1_U451 icmp_ln766_fu_3554_p2 icmp_ln766_1_fu_3559_p2 m_axis_weights_TLAST_int_regslice add_ln772_fu_3571_p2 icmp_ln773_fu_3592_p2 add_ln775_fu_3607_p2 select_ln776_fu_3625_p3 add_ln783_fu_3639_p2 icmp_ln677_1_fu_3091_p2 p_ZL22encoder_temporal_fired_0_U p_ZL22encoder_temporal_start_0_U p_ZL22encoder_temporal_fired_1_U p_ZL22encoder_temporal_start_1_U p_ZL22encoder_temporal_fired_2_U p_ZL22encoder_temporal_start_2_U p_ZL22encoder_temporal_fired_3_U p_ZL22encoder_temporal_start_3_U p_ZL22encoder_temporal_fired_4_U p_ZL22encoder_temporal_start_4_U p_ZL22encoder_temporal_fired_5_U p_ZL22encoder_temporal_start_5_U p_ZL22encoder_temporal_fired_6_U p_ZL22encoder_temporal_start_6_U p_ZL22encoder_temporal_fired_7_U p_ZL22encoder_temporal_start_7_U p_ZL15pre_eligibility_0_U p_ZL16post_eligibility_0_U p_ZL15pre_eligibility_1_U p_ZL16post_eligibility_1_U p_ZL15pre_eligibility_2_U p_ZL16post_eligibility_2_U p_ZL15pre_eligibility_3_U p_ZL16post_eligibility_3_U p_ZL15pre_eligibility_4_U p_ZL16post_eligibility_4_U p_ZL15pre_eligibility_5_U p_ZL16post_eligibility_5_U p_ZL15pre_eligibility_6_U p_ZL16post_eligibility_6_U p_ZL15pre_eligibility_7_U p_ZL16post_eligibility_7_U pre_traces_trace_0_U pre_traces_last_spike_time_0_U post_traces_trace_0_U post_traces_last_spike_time_0_U pre_traces_trace_1_U pre_traces_last_spike_time_1_U post_traces_trace_1_U post_traces_last_spike_time_1_U pre_traces_trace_2_U pre_traces_last_spike_time_2_U post_traces_trace_2_U post_traces_last_spike_time_2_U pre_traces_trace_3_U pre_traces_last_spike_time_3_U post_traces_trace_3_U post_traces_last_spike_time_3_U pre_traces_trace_4_U pre_traces_last_spike_time_4_U post_traces_trace_4_U post_traces_last_spike_time_4_U pre_traces_trace_5_U pre_traces_last_spike_time_5_U post_traces_trace_5_U post_traces_last_spike_time_5_U pre_traces_trace_6_U pre_traces_last_spike_time_6_U post_traces_trace_6_U post_traces_last_spike_time_6_U pre_traces_trace_7_U pre_traces_last_spike_time_7_U post_traces_trace_7_U post_traces_last_spike_time_7_U p_ZL17encoder_phase_acc_0_U p_ZL17encoder_phase_acc_1_U p_ZL17encoder_phase_acc_2_U p_ZL17encoder_phase_acc_3_U p_ZL17encoder_phase_acc_4_U p_ZL17encoder_phase_acc_5_U p_ZL17encoder_phase_acc_6_U p_ZL17encoder_phase_acc_7_U p_ZL13weight_memory_0_0_U p_ZL13weight_memory_0_1_U p_ZL13weight_memory_1_0_U p_ZL13weight_memory_1_1_U p_ZL13weight_memory_2_0_U p_ZL13weight_memory_2_1_U p_ZL13weight_memory_3_0_U p_ZL13weight_memory_3_1_U encoder_frame_pixels_U EXP_DECAY_LUT_U ctrl_s_axi_U",
       "Instances": [
         {
+          "ModuleName": "encoder_reset_temporal_state",
+          "InstanceName": "grp_encoder_reset_temporal_state_fu_1674",
+          "BindInstances": "icmp_ln47_fu_398_p2 add_ln47_fu_404_p2"
+        },
+        {
           "ModuleName": "snn_top_hls_Pipeline_RESET_ELIG",
-          "InstanceName": "grp_snn_top_hls_Pipeline_RESET_ELIG_fu_1209",
-          "BindInstances": "icmp_ln436_fu_390_p2 add_ln436_fu_396_p2"
+          "InstanceName": "grp_snn_top_hls_Pipeline_RESET_ELIG_fu_1712",
+          "BindInstances": "icmp_ln612_fu_390_p2 add_ln612_fu_396_p2"
         },
         {
           "ModuleName": "snn_top_hls_Pipeline_RESET_TRACES",
-          "InstanceName": "grp_snn_top_hls_Pipeline_RESET_TRACES_fu_1245",
-          "BindInstances": "icmp_ln443_fu_712_p2 add_ln443_fu_718_p2"
+          "InstanceName": "grp_snn_top_hls_Pipeline_RESET_TRACES_fu_1748",
+          "BindInstances": "icmp_ln619_fu_712_p2 add_ln619_fu_718_p2"
+        },
+        {
+          "ModuleName": "snn_top_hls_Pipeline_RESET_ENCODER",
+          "InstanceName": "grp_snn_top_hls_Pipeline_RESET_ENCODER_fu_1816",
+          "BindInstances": "icmp_ln627_fu_230_p2 add_ln627_fu_236_p2"
         },
         {
           "ModuleName": "snn_top_hls_Pipeline_INIT_WEIGHT_OUTER_INIT_WEIGHT_INNER",
-          "InstanceName": "grp_snn_top_hls_Pipeline_INIT_WEIGHT_OUTER_INIT_WEIGHT_INNER_fu_1313",
-          "BindInstances": "icmp_ln453_fu_250_p2 add_ln453_1_fu_256_p2 add_ln453_fu_322_p2 icmp_ln454_fu_270_p2 select_ln453_fu_276_p3 select_ln453_1_fu_328_p3 add_ln454_fu_308_p2"
+          "InstanceName": "grp_snn_top_hls_Pipeline_INIT_WEIGHT_OUTER_INIT_WEIGHT_INNER_fu_1836",
+          "BindInstances": "icmp_ln634_fu_250_p2 add_ln634_1_fu_256_p2 add_ln634_fu_322_p2 icmp_ln635_fu_270_p2 select_ln634_fu_276_p3 select_ln634_1_fu_328_p3 add_ln635_fu_308_p2"
+        },
+        {
+          "ModuleName": "run_encoder_once",
+          "InstanceName": "grp_run_encoder_once_fu_1856",
+          "Instances": [{
+              "ModuleName": "run_encoder_once_Pipeline_ENCODER_LOOP",
+              "InstanceName": "grp_run_encoder_once_Pipeline_ENCODER_LOOP_fu_150",
+              "BindInstances": "icmp_ln144_fu_913_p2 mul_16ns_8ns_20_1_1_U84 add_ln125_fu_1388_p2 icmp_ln126_fu_1558_p2 grp_fu_840_p2 sub_ln128_fu_1562_p2 urem_32ns_16ns_16_36_1_U83 icmp_ln101_fu_2311_p2 xor_ln107_fu_2317_p2 mul_8ns_16ns_24_1_1_U101 add_ln108_fu_2392_p2 icmp_ln108_fu_2432_p2 grp_fu_840_p2 xor_ln85_fu_1254_p2 mul_8ns_16ns_24_1_1_U85 xor_ln41_8_fu_1196_p2 xor_ln41_9_fu_1202_p2 xor_ln41_fu_1208_p2 icmp_ln87_fu_1393_p2 grp_fu_840_p2 icmp_ln144_1_fu_962_p2 mul_16ns_8ns_20_1_1_U86 add_ln125_1_fu_1397_p2 icmp_ln126_1_fu_1567_p2 grp_fu_840_p2 sub_ln128_1_fu_1571_p2 urem_32ns_16ns_16_36_1_U82 icmp_ln101_1_fu_2345_p2 xor_ln107_1_fu_2351_p2 mul_8ns_16ns_24_1_1_U102 add_ln108_1_fu_2443_p2 icmp_ln108_1_fu_2191_p2 grp_fu_840_p2 xor_ln85_1_fu_1296_p2 mul_8ns_16ns_24_1_1_U87 xor_ln41_10_fu_1348_p2 xor_ln41_11_fu_1354_p2 xor_ln41_1_fu_1360_p2 icmp_ln87_1_fu_1402_p2 grp_fu_840_p2 icmp_ln144_2_fu_1000_p2 mul_16ns_8ns_20_1_1_U88 add_ln125_2_fu_1576_p2 icmp_ln126_2_fu_1739_p2 grp_fu_840_p2 sub_ln128_2_fu_1743_p2 urem_32ns_16ns_16_36_1_U82 icmp_ln101_2_fu_2379_p2 xor_ln107_2_fu_2398_p2 mul_8ns_16ns_24_1_1_U103 add_ln108_2_fu_2202_p2 icmp_ln108_2_fu_2567_p2 grp_fu_840_p2 xor_ln85_2_fu_1424_p2 mul_8ns_16ns_24_1_1_U89 xor_ln41_12_fu_1476_p2 xor_ln41_13_fu_1482_p2 xor_ln41_2_fu_1488_p2 icmp_ln87_2_fu_1581_p2 grp_fu_840_p2 icmp_ln144_3_fu_1028_p2 mul_16ns_8ns_20_1_1_U90 add_ln125_3_fu_1585_p2 icmp_ln126_3_fu_1748_p2 grp_fu_840_p2 sub_ln128_3_fu_1752_p2 urem_32ns_16ns_16_36_1_U82 icmp_ln101_3_fu_2426_p2 xor_ln107_3_fu_2449_p2 mul_8ns_16ns_24_1_1_U104 add_ln108_3_fu_2578_p2 icmp_ln108_3_fu_2702_p2 grp_fu_840_p2 xor_ln85_3_fu_1526_p2 mul_8ns_16ns_24_1_1_U91 xor_ln41_14_fu_1618_p2 xor_ln41_15_fu_1624_p2 xor_ln41_3_fu_1630_p2 icmp_ln87_3_fu_1650_p2 grp_fu_840_p2 icmp_ln144_4_fu_1056_p2 mul_16ns_8ns_20_1_1_U92 add_ln125_4_fu_1757_p2 icmp_ln126_4_fu_1916_p2 grp_fu_840_p2 sub_ln128_4_fu_1920_p2 urem_32ns_16ns_16_36_1_U82 icmp_ln101_4_fu_2477_p2 xor_ln107_4_fu_2208_p2 mul_8ns_16ns_24_1_1_U100 add_ln108_4_fu_2713_p2 icmp_ln108_4_fu_2837_p2 grp_fu_840_p2 xor_ln85_4_fu_1673_p2 mul_8ns_16ns_24_1_1_U93 xor_ln41_16_fu_1790_p2 xor_ln41_17_fu_1796_p2 xor_ln41_4_fu_1802_p2 icmp_ln87_4_fu_1822_p2 grp_fu_840_p2 icmp_ln144_5_fu_1096_p2 mul_16ns_8ns_20_1_1_U94 add_ln125_5_fu_1827_p2 icmp_ln126_5_fu_1925_p2 grp_fu_840_p2 sub_ln128_5_fu_1929_p2 urem_32ns_16ns_16_36_1_U82 icmp_ln101_5_fu_2236_p2 xor_ln107_5_fu_2584_p2 mul_8ns_16ns_24_1_1_U105 add_ln108_5_fu_2848_p2 icmp_ln108_5_fu_2962_p2 grp_fu_840_p2 xor_ln85_5_fu_1715_p2 mul_8ns_16ns_24_1_1_U95 xor_ln41_18_fu_1962_p2 xor_ln41_19_fu_1968_p2 xor_ln41_5_fu_1974_p2 icmp_ln87_5_fu_1994_p2 grp_fu_840_p2 icmp_ln144_6_fu_1124_p2 mul_16ns_8ns_20_1_1_U96 add_ln125_6_fu_1999_p2 icmp_ln126_6_fu_2004_p2 grp_fu_840_p2 sub_ln128_6_fu_2009_p2 urem_32ns_16ns_16_36_1_U82 icmp_ln101_6_fu_2612_p2 xor_ln107_6_fu_2719_p2 mul_8ns_16ns_24_1_1_U106 add_ln108_6_fu_2973_p2 icmp_ln108_6_fu_3063_p2 grp_fu_840_p2 xor_ln85_6_fu_1850_p2 mul_8ns_16ns_24_1_1_U97 xor_ln41_20_fu_2060_p2 xor_ln41_21_fu_2066_p2 xor_ln41_6_fu_2072_p2 icmp_ln87_6_fu_2092_p2 grp_fu_840_p2 icmp_ln144_7_fu_1152_p2 mul_16ns_8ns_20_1_1_U98 add_ln125_7_fu_2014_p2 icmp_ln126_7_fu_2019_p2 grp_fu_840_p2 sub_ln128_7_fu_2024_p2 urem_32ns_16ns_16_36_1_U82 icmp_ln101_7_fu_2747_p2 xor_ln107_7_fu_2854_p2 mul_8ns_16ns_24_1_1_U107 add_ln108_7_fu_3074_p2 icmp_ln108_7_fu_3164_p2 grp_fu_840_p2 xor_ln85_7_fu_1892_p2 mul_8ns_16ns_24_1_1_U99 xor_ln41_22_fu_2270_p2 xor_ln41_23_fu_2276_p2 xor_ln41_7_fu_2282_p2 icmp_ln87_7_fu_2302_p2 grp_fu_840_p2 ch_3_fu_2097_p2"
+            }]
+        },
+        {
+          "ModuleName": "snn_top_hls_Pipeline_WEIGHT_SUM",
+          "InstanceName": "grp_snn_top_hls_Pipeline_WEIGHT_SUM_fu_1925",
+          "BindInstances": "icmp_ln812_fu_292_p2 add_ln812_fu_298_p2 select_ln815_fu_363_p3 select_ln815_1_fu_374_p3 select_ln815_2_fu_385_p3 select_ln815_3_fu_396_p3 select_ln815_4_fu_407_p3 select_ln815_5_fu_418_p3 select_ln815_6_fu_429_p3 select_ln815_7_fu_440_p3 add_ln815_fu_451_p2 add_ln815_1_fu_457_p2 add_ln815_2_fu_484_p2 add_ln815_3_fu_463_p2 add_ln815_4_fu_469_p2 add_ln815_5_fu_500_p2 add_ln815_6_fu_510_p2 weight_sum_1_fu_520_p2"
         },
         {
           "ModuleName": "process_pre_spike_aer",
-          "InstanceName": "grp_process_pre_spike_aer_fu_1333",
-          "BindInstances": "sparsemux_17_3_8_1_1_U91 sparsemux_17_3_16_1_1_U90 icmp_ln74_fu_642_p2 dt_fu_577_p2 icmp_ln80_fu_592_p2 mul_8ns_8ns_16_1_1_U92 or_ln80_fu_669_p2 decayed_pre_1_fu_674_p3 new_trace_fu_686_p2 select_ln119_fu_704_p3",
+          "InstanceName": "grp_process_pre_spike_aer_fu_1946",
+          "BindInstances": "sparsemux_17_3_8_1_1_U217 sparsemux_17_3_16_1_1_U216 icmp_ln216_fu_642_p2 dt_fu_577_p2 icmp_ln222_fu_592_p2 mul_8ns_8ns_16_1_1_U218 or_ln222_fu_669_p2 decayed_pre_1_fu_674_p3 new_trace_fu_686_p2 select_ln261_fu_704_p3",
           "Instances": [{
               "ModuleName": "process_pre_spike_aer_Pipeline_LTD_LOOP",
               "InstanceName": "grp_process_pre_spike_aer_Pipeline_LTD_LOOP_fu_443",
-              "BindInstances": "icmp_ln129_fu_597_p2 post_t_trace_3_fu_614_p3 post_t_last_spike_time_3_fu_621_p3 icmp_ln74_fu_746_p2 dt_fu_656_p2 icmp_ln80_fu_670_p2 mul_8ns_8ns_16_1_1_U57 or_ln80_fu_841_p2 post_trace_val_1_fu_845_p3 icmp_ln133_fu_853_p2 current_w_fu_945_p3 w_fu_956_p2 icmp_ln95_fu_1064_p2 select_ln94_fu_1069_p3 post_t_trace_2_fu_628_p3 post_t_last_spike_time_2_fu_635_p3 icmp_ln74_1_fu_764_p2 dt_1_fu_681_p2 icmp_ln80_1_fu_695_p2 mul_8ns_8ns_16_1_1_U58 or_ln80_1_fu_878_p2 post_trace_val_3_fu_882_p3 icmp_ln133_1_fu_890_p2 current_w_1_fu_969_p3 w_1_fu_980_p2 icmp_ln95_1_fu_1078_p2 select_ln94_1_fu_1083_p3 post_t_trace_1_fu_782_p3 post_t_last_spike_time_1_fu_642_p3 icmp_ln74_2_fu_906_p2 dt_2_fu_706_p2 icmp_ln80_2_fu_720_p2 mul_8ns_8ns_16_1_1_U59 or_ln80_2_fu_999_p2 post_trace_val_5_fu_1003_p3 icmp_ln133_2_fu_1011_p2 current_w_2_fu_1095_p3 w_2_fu_1106_p2 icmp_ln95_2_fu_1140_p2 select_ln94_2_fu_1145_p3 post_t_trace_fu_793_p3 post_t_last_spike_time_fu_649_p3 icmp_ln74_3_fu_924_p2 dt_3_fu_726_p2 icmp_ln80_3_fu_740_p2 mul_8ns_8ns_16_1_1_U60 or_ln80_3_fu_1036_p2 post_trace_val_7_fu_1040_p3 icmp_ln133_3_fu_1048_p2 current_w_3_fu_1119_p3 w_3_fu_1130_p2 icmp_ln95_3_fu_1154_p2 select_ln94_3_fu_1159_p3 add_ln124_fu_603_p2 EXP_DECAY_LUT_U"
+              "BindInstances": "icmp_ln271_fu_597_p2 post_t_trace_3_fu_614_p3 post_t_last_spike_time_3_fu_621_p3 icmp_ln216_fu_746_p2 dt_fu_656_p2 icmp_ln222_fu_670_p2 mul_8ns_8ns_16_1_1_U183 or_ln222_fu_841_p2 post_trace_val_1_fu_845_p3 icmp_ln275_fu_853_p2 current_w_fu_945_p3 w_fu_956_p2 icmp_ln237_fu_1064_p2 select_ln236_fu_1069_p3 post_t_trace_2_fu_628_p3 post_t_last_spike_time_2_fu_635_p3 icmp_ln216_1_fu_764_p2 dt_1_fu_681_p2 icmp_ln222_1_fu_695_p2 mul_8ns_8ns_16_1_1_U184 or_ln222_1_fu_878_p2 post_trace_val_3_fu_882_p3 icmp_ln275_1_fu_890_p2 current_w_1_fu_969_p3 w_1_fu_980_p2 icmp_ln237_1_fu_1078_p2 select_ln236_1_fu_1083_p3 post_t_trace_1_fu_782_p3 post_t_last_spike_time_1_fu_642_p3 icmp_ln216_2_fu_906_p2 dt_2_fu_706_p2 icmp_ln222_2_fu_720_p2 mul_8ns_8ns_16_1_1_U185 or_ln222_2_fu_999_p2 post_trace_val_5_fu_1003_p3 icmp_ln275_2_fu_1011_p2 current_w_2_fu_1095_p3 w_2_fu_1106_p2 icmp_ln237_2_fu_1140_p2 select_ln236_2_fu_1145_p3 post_t_trace_fu_793_p3 post_t_last_spike_time_fu_649_p3 icmp_ln216_3_fu_924_p2 dt_3_fu_726_p2 icmp_ln222_3_fu_740_p2 mul_8ns_8ns_16_1_1_U186 or_ln222_3_fu_1036_p2 post_trace_val_7_fu_1040_p3 icmp_ln275_3_fu_1048_p2 current_w_3_fu_1119_p3 w_3_fu_1130_p2 icmp_ln237_3_fu_1154_p2 select_ln236_3_fu_1159_p3 add_ln266_fu_603_p2 EXP_DECAY_LUT_U"
             }]
         },
         {
           "ModuleName": "process_post_spike_aer",
-          "InstanceName": "grp_process_post_spike_aer_fu_1421",
-          "BindInstances": "sparsemux_17_3_8_1_1_U175 sparsemux_17_3_16_1_1_U174 icmp_ln74_fu_658_p2 dt_fu_593_p2 icmp_ln80_fu_608_p2 mul_8ns_8ns_16_1_1_U176 or_ln80_fu_685_p2 decayed_post_1_fu_690_p3 new_trace_fu_702_p2 select_ln167_fu_720_p3",
+          "InstanceName": "grp_process_post_spike_aer_fu_2034",
+          "BindInstances": "sparsemux_17_3_8_1_1_U301 sparsemux_17_3_16_1_1_U300 icmp_ln216_fu_658_p2 dt_fu_593_p2 icmp_ln222_fu_608_p2 mul_8ns_8ns_16_1_1_U302 or_ln222_fu_685_p2 decayed_post_1_fu_690_p3 new_trace_fu_702_p2 select_ln309_fu_720_p3",
           "Instances": [{
               "ModuleName": "process_post_spike_aer_Pipeline_LTP_LOOP",
               "InstanceName": "grp_process_post_spike_aer_Pipeline_LTP_LOOP_fu_449",
-              "BindInstances": "add_ln188_fu_924_p2 icmp_ln177_fu_705_p2 pre_t_trace_3_fu_711_p3 pre_t_last_spike_time_3_fu_719_p3 icmp_ln74_fu_849_p2 dt_fu_759_p2 icmp_ln80_fu_773_p2 mul_8ns_8ns_16_1_1_U138 or_ln80_fu_950_p2 pre_trace_val_1_fu_954_p3 icmp_ln181_fu_962_p2 sparsemux_9_2_8_1_1_U142 add_ln191_fu_1093_p2 w_fu_1099_p2 icmp_ln94_fu_1268_p2 select_ln94_fu_1273_p3 pre_t_trace_2_fu_727_p3 pre_t_last_spike_time_2_fu_735_p3 icmp_ln74_4_fu_867_p2 dt_4_fu_784_p2 icmp_ln80_4_fu_798_p2 mul_8ns_8ns_16_1_1_U139 or_ln80_4_fu_987_p2 pre_trace_val_3_fu_991_p3 icmp_ln181_1_fu_999_p2 sparsemux_9_2_8_1_1_U143 add_ln191_2_fu_1148_p2 w_4_fu_1154_p2 icmp_ln94_1_fu_1284_p2 select_ln94_4_fu_1289_p3 add_ln188_1_fu_1177_p2 pre_t_trace_1_fu_885_p3 pre_t_last_spike_time_1_fu_743_p3 icmp_ln74_5_fu_1024_p2 dt_5_fu_809_p2 icmp_ln80_5_fu_823_p2 mul_8ns_8ns_16_1_1_U140 or_ln80_5_fu_1203_p2 pre_trace_val_5_fu_1207_p3 icmp_ln181_2_fu_1215_p2 sparsemux_9_2_8_1_1_U144 add_ln191_4_fu_1333_p2 w_5_fu_1339_p2 icmp_ln94_2_fu_1410_p2 select_ln94_5_fu_1415_p3 pre_t_trace_fu_896_p3 pre_t_last_spike_time_fu_751_p3 icmp_ln74_6_fu_1042_p2 dt_6_fu_829_p2 icmp_ln80_6_fu_843_p2 mul_8ns_8ns_16_1_1_U141 or_ln80_6_fu_1240_p2 pre_trace_val_7_fu_1244_p3 icmp_ln181_3_fu_1252_p2 sparsemux_9_2_8_1_1_U145 add_ln191_6_fu_1388_p2 w_6_fu_1394_p2 icmp_ln94_3_fu_1426_p2 select_ln94_6_fu_1431_p3 add_ln172_fu_691_p2 EXP_DECAY_LUT_U"
+              "BindInstances": "add_ln330_fu_924_p2 icmp_ln319_fu_705_p2 pre_t_trace_3_fu_711_p3 pre_t_last_spike_time_3_fu_719_p3 icmp_ln216_fu_849_p2 dt_fu_759_p2 icmp_ln222_fu_773_p2 mul_8ns_8ns_16_1_1_U264 or_ln222_fu_950_p2 pre_trace_val_1_fu_954_p3 icmp_ln323_fu_962_p2 sparsemux_9_2_8_1_1_U268 add_ln333_fu_1093_p2 w_fu_1099_p2 icmp_ln236_fu_1268_p2 select_ln236_fu_1273_p3 pre_t_trace_2_fu_727_p3 pre_t_last_spike_time_2_fu_735_p3 icmp_ln216_4_fu_867_p2 dt_4_fu_784_p2 icmp_ln222_4_fu_798_p2 mul_8ns_8ns_16_1_1_U265 or_ln222_4_fu_987_p2 pre_trace_val_3_fu_991_p3 icmp_ln323_1_fu_999_p2 sparsemux_9_2_8_1_1_U269 add_ln333_2_fu_1148_p2 w_4_fu_1154_p2 icmp_ln236_1_fu_1284_p2 select_ln236_4_fu_1289_p3 add_ln330_1_fu_1177_p2 pre_t_trace_1_fu_885_p3 pre_t_last_spike_time_1_fu_743_p3 icmp_ln216_5_fu_1024_p2 dt_5_fu_809_p2 icmp_ln222_5_fu_823_p2 mul_8ns_8ns_16_1_1_U266 or_ln222_5_fu_1203_p2 pre_trace_val_5_fu_1207_p3 icmp_ln323_2_fu_1215_p2 sparsemux_9_2_8_1_1_U270 add_ln333_4_fu_1333_p2 w_5_fu_1339_p2 icmp_ln236_2_fu_1410_p2 select_ln236_5_fu_1415_p3 pre_t_trace_fu_896_p3 pre_t_last_spike_time_fu_751_p3 icmp_ln216_6_fu_1042_p2 dt_6_fu_829_p2 icmp_ln222_6_fu_843_p2 mul_8ns_8ns_16_1_1_U267 or_ln222_6_fu_1240_p2 pre_trace_val_7_fu_1244_p3 icmp_ln323_3_fu_1252_p2 sparsemux_9_2_8_1_1_U271 add_ln333_6_fu_1388_p2 w_6_fu_1394_p2 icmp_ln236_3_fu_1426_p2 select_ln236_6_fu_1431_p3 add_ln314_fu_691_p2 EXP_DECAY_LUT_U"
             }]
         },
         {
           "ModuleName": "apply_rstdp_reward",
-          "InstanceName": "grp_apply_rstdp_reward_fu_1509",
-          "BindInstances": "icmp_ln211_fu_299_p2 reward_mag_fu_313_p2 reward_mag_1_fu_319_p3 icmp_ln218_fu_337_p2 icmp_ln219_fu_353_p2 icmp_ln220_fu_369_p2 shift_sel_fu_403_p6 xor_ln218_fu_383_p2 and_ln219_fu_389_p2 sparsemux_7_2_2_1_1_U253 icmp_ln243_fu_428_p2 icmp_ln243_1_fu_433_p2 icmp_ln243_2_fu_438_p2 icmp_ln225_fu_446_p2 add_ln225_fu_452_p2 sparsemux_17_3_8_1_1_U254 icmp_ln229_fu_531_p2",
+          "InstanceName": "grp_apply_rstdp_reward_fu_2122",
+          "BindInstances": "icmp_ln353_fu_309_p2 and_ln353_fu_315_p2 reward_mag_fu_329_p2 reward_mag_1_fu_335_p3 icmp_ln360_fu_353_p2 icmp_ln361_fu_369_p2 icmp_ln362_fu_385_p2 shift_sel_fu_419_p6 xor_ln360_fu_399_p2 and_ln361_fu_405_p2 sparsemux_7_2_2_1_1_U379 icmp_ln385_fu_444_p2 icmp_ln385_1_fu_449_p2 icmp_ln385_2_fu_454_p2 icmp_ln367_fu_462_p2 add_ln367_fu_468_p2 sparsemux_17_3_8_1_1_U380 icmp_ln371_fu_547_p2",
           "Instances": [{
               "ModuleName": "apply_rstdp_reward_Pipeline_RSTDP_INNER",
-              "InstanceName": "grp_apply_rstdp_reward_Pipeline_RSTDP_INNER_fu_256",
-              "BindInstances": "icmp_ln235_fu_490_p2 post_elig_fu_535_p3 icmp_ln236_fu_542_p2 mul_8s_8s_16_1_1_U220 sparsemux_9_3_7_1_1_U221 delta_fu_786_p2 delta_4_fu_792_p3 current_w_fu_678_p3 add_ln255_fu_806_p2 w_fu_811_p2 icmp_ln94_fu_827_p2 icmp_ln95_fu_833_p2 select_ln94_10_fu_1077_p3 or_ln94_fu_1084_p2 select_ln94_fu_1088_p3 post_elig_1_fu_548_p3 icmp_ln236_1_fu_555_p2 mul_8s_8s_16_1_1_U222 sparsemux_9_3_7_1_1_U223 delta_5_fu_842_p2 delta_6_fu_848_p3 current_w_7_fu_776_p3 add_ln255_2_fu_862_p2 w_7_fu_867_p2 icmp_ln94_4_fu_883_p2 icmp_ln95_4_fu_889_p2 select_ln94_11_fu_1097_p3 or_ln94_1_fu_1104_p2 select_ln94_7_fu_1108_p3 post_elig_2_fu_561_p3 icmp_ln236_2_fu_568_p2 mul_8s_8s_16_1_1_U224 sparsemux_9_3_7_1_1_U225 delta_7_fu_1120_p2 delta_8_fu_1126_p3 current_w_8_fu_1137_p3 add_ln255_4_fu_1148_p2 w_8_fu_1154_p2 icmp_ln94_5_fu_1223_p2 icmp_ln95_5_fu_1228_p2 select_ln94_12_fu_1233_p3 or_ln94_2_fu_1241_p2 select_ln94_8_fu_1247_p3 post_elig_3_fu_574_p3 icmp_ln236_3_fu_581_p2 mul_8s_8s_16_1_1_U226 sparsemux_9_3_7_1_1_U227 delta_9_fu_1173_p2 delta_10_fu_1179_p3 current_w_9_fu_1190_p3 add_ln255_6_fu_1201_p2 w_9_fu_1207_p2 icmp_ln94_6_fu_1256_p2 icmp_ln95_6_fu_1261_p2 select_ln94_13_fu_1266_p3 or_ln94_3_fu_1274_p2 select_ln94_9_fu_1280_p3 add_ln231_fu_496_p2"
+              "InstanceName": "grp_apply_rstdp_reward_Pipeline_RSTDP_INNER_fu_266",
+              "BindInstances": "icmp_ln377_fu_490_p2 post_elig_fu_535_p3 icmp_ln378_fu_542_p2 mul_8s_8s_16_1_1_U346 sparsemux_9_3_7_1_1_U347 delta_fu_786_p2 delta_4_fu_792_p3 current_w_fu_678_p3 add_ln397_fu_806_p2 w_fu_811_p2 icmp_ln236_fu_827_p2 icmp_ln237_fu_833_p2 select_ln236_10_fu_1077_p3 or_ln236_fu_1084_p2 select_ln236_fu_1088_p3 post_elig_1_fu_548_p3 icmp_ln378_1_fu_555_p2 mul_8s_8s_16_1_1_U348 sparsemux_9_3_7_1_1_U349 delta_5_fu_842_p2 delta_6_fu_848_p3 current_w_7_fu_776_p3 add_ln397_2_fu_862_p2 w_7_fu_867_p2 icmp_ln236_4_fu_883_p2 icmp_ln237_4_fu_889_p2 select_ln236_11_fu_1097_p3 or_ln236_1_fu_1104_p2 select_ln236_7_fu_1108_p3 post_elig_2_fu_561_p3 icmp_ln378_2_fu_568_p2 mul_8s_8s_16_1_1_U350 sparsemux_9_3_7_1_1_U351 delta_7_fu_1120_p2 delta_8_fu_1126_p3 current_w_8_fu_1137_p3 add_ln397_4_fu_1148_p2 w_8_fu_1154_p2 icmp_ln236_5_fu_1223_p2 icmp_ln237_5_fu_1228_p2 select_ln236_12_fu_1233_p3 or_ln236_2_fu_1241_p2 select_ln236_8_fu_1247_p3 post_elig_3_fu_574_p3 icmp_ln378_3_fu_581_p2 mul_8s_8s_16_1_1_U352 sparsemux_9_3_7_1_1_U353 delta_9_fu_1173_p2 delta_10_fu_1179_p3 current_w_9_fu_1190_p3 add_ln397_6_fu_1201_p2 w_9_fu_1207_p2 icmp_ln236_6_fu_1256_p2 icmp_ln237_6_fu_1261_p2 select_ln236_13_fu_1266_p3 or_ln236_3_fu_1274_p2 select_ln236_9_fu_1280_p3 add_ln373_fu_496_p2"
             }]
         },
         {
           "ModuleName": "decay_eligibility_traces",
-          "InstanceName": "grp_decay_eligibility_traces_fu_1562",
+          "InstanceName": "grp_decay_eligibility_traces_fu_2176",
           "Instances": [
             {
               "ModuleName": "decay_eligibility_traces_Pipeline_DECAY_PRE",
               "InstanceName": "grp_decay_eligibility_traces_Pipeline_DECAY_PRE_fu_46",
-              "BindInstances": "sub_ln274_fu_267_p2 sub_ln274_1_fu_287_p2 sub_ln274_2_fu_307_p2 sub_ln274_3_fu_327_p2 sub_ln274_4_fu_347_p2 sub_ln274_5_fu_367_p2 sub_ln274_6_fu_387_p2 sub_ln274_7_fu_407_p2 add_ln268_fu_242_p2"
+              "BindInstances": "sub_ln416_fu_267_p2 sub_ln416_1_fu_287_p2 sub_ln416_2_fu_307_p2 sub_ln416_3_fu_327_p2 sub_ln416_4_fu_347_p2 sub_ln416_5_fu_367_p2 sub_ln416_6_fu_387_p2 sub_ln416_7_fu_407_p2 add_ln410_fu_242_p2"
             },
             {
               "ModuleName": "decay_eligibility_traces_Pipeline_DECAY_POST",
               "InstanceName": "grp_decay_eligibility_traces_Pipeline_DECAY_POST_fu_66",
-              "BindInstances": "sub_ln283_fu_267_p2 sub_ln283_1_fu_287_p2 sub_ln283_2_fu_307_p2 sub_ln283_3_fu_327_p2 sub_ln283_4_fu_347_p2 sub_ln283_5_fu_367_p2 sub_ln283_6_fu_387_p2 sub_ln283_7_fu_407_p2 add_ln278_fu_242_p2"
+              "BindInstances": "sub_ln425_fu_267_p2 sub_ln425_1_fu_287_p2 sub_ln425_2_fu_307_p2 sub_ln425_3_fu_327_p2 sub_ln425_4_fu_347_p2 sub_ln425_5_fu_367_p2 sub_ln425_6_fu_387_p2 sub_ln425_7_fu_407_p2 add_ln420_fu_242_p2"
             }
           ]
-        },
-        {
-          "ModuleName": "snn_top_hls_Pipeline_WEIGHT_SUM",
-          "InstanceName": "grp_snn_top_hls_Pipeline_WEIGHT_SUM_fu_1598",
-          "BindInstances": "icmp_ln595_fu_292_p2 add_ln595_fu_298_p2 select_ln598_fu_363_p3 select_ln598_1_fu_374_p3 select_ln598_2_fu_385_p3 select_ln598_3_fu_396_p3 select_ln598_4_fu_407_p3 select_ln598_5_fu_418_p3 select_ln598_6_fu_429_p3 select_ln598_7_fu_440_p3 add_ln598_fu_451_p2 add_ln598_1_fu_457_p2 add_ln598_2_fu_484_p2 add_ln598_3_fu_463_p2 add_ln598_4_fu_469_p2 add_ln598_5_fu_500_p2 add_ln598_6_fu_510_p2 weight_sum_1_fu_520_p2"
         }
       ]
     },
     "Info": {
+      "encoder_reset_temporal_state": {
+        "FunctionProtocol": "ap_ctrl_hs",
+        "isTaskLevelControl": "0",
+        "isPipelined": "1",
+        "isCombinational": "0",
+        "isOneStateSeq": "0"
+      },
       "snn_top_hls_Pipeline_RESET_ELIG": {
         "FunctionProtocol": "ap_ctrl_hs",
         "isTaskLevelControl": "0",
@@ -1726,10 +1989,31 @@
         "isCombinational": "0",
         "isOneStateSeq": "0"
       },
+      "snn_top_hls_Pipeline_RESET_ENCODER": {
+        "FunctionProtocol": "ap_ctrl_hs",
+        "isTaskLevelControl": "0",
+        "isPipelined": "1",
+        "isCombinational": "0",
+        "isOneStateSeq": "0"
+      },
       "snn_top_hls_Pipeline_INIT_WEIGHT_OUTER_INIT_WEIGHT_INNER": {
         "FunctionProtocol": "ap_ctrl_hs",
         "isTaskLevelControl": "0",
         "isPipelined": "1",
+        "isCombinational": "0",
+        "isOneStateSeq": "0"
+      },
+      "run_encoder_once_Pipeline_ENCODER_LOOP": {
+        "FunctionProtocol": "ap_ctrl_hs",
+        "isTaskLevelControl": "0",
+        "isPipelined": "1",
+        "isCombinational": "0",
+        "isOneStateSeq": "0"
+      },
+      "run_encoder_once": {
+        "FunctionProtocol": "ap_ctrl_hs",
+        "isTaskLevelControl": "0",
+        "isPipelined": "0",
         "isCombinational": "0",
         "isOneStateSeq": "0"
       },
@@ -1812,6 +2096,50 @@
       }
     },
     "Metrics": {
+      "encoder_reset_temporal_state": {
+        "Latency": {
+          "LatencyBest": "66",
+          "LatencyAvg": "66",
+          "LatencyWorst": "66",
+          "PipelineII": "65",
+          "PipelineDepth": "",
+          "PipelineType": "loop pipeline stpstp (delay=0 clock cycles(s))"
+        },
+        "Timing": {
+          "Target": "10.00",
+          "Uncertainty": "2.70",
+          "Estimate": "6.712"
+        },
+        "Loops": [{
+            "Name": "VITIS_LOOP_47_1",
+            "TripCount": "64",
+            "Latency": "64",
+            "PipelineII": "1",
+            "PipelineDepth": "1",
+            "PipelineType": "yes",
+            "TargetTI": "",
+            "RealTI": "",
+            "isPerfectNested": "0",
+            "SourceLocation": ""
+          }],
+        "Area": {
+          "FF": "9",
+          "AVAIL_FF": "106400",
+          "UTIL_FF": "~0",
+          "LUT": "56",
+          "AVAIL_LUT": "53200",
+          "UTIL_LUT": "~0",
+          "BRAM_18K": "0",
+          "AVAIL_BRAM": "280",
+          "UTIL_BRAM": "0",
+          "DSP": "0",
+          "AVAIL_DSP": "220",
+          "UTIL_DSP": "0",
+          "URAM": "0",
+          "AVAIL_URAM": "0",
+          "UTIL_URAM": "0"
+        }
+      },
       "snn_top_hls_Pipeline_RESET_ELIG": {
         "Latency": {
           "LatencyBest": "66",
@@ -1900,6 +2228,50 @@
           "UTIL_URAM": "0"
         }
       },
+      "snn_top_hls_Pipeline_RESET_ENCODER": {
+        "Latency": {
+          "LatencyBest": "66",
+          "LatencyAvg": "66",
+          "LatencyWorst": "66",
+          "PipelineII": "65",
+          "PipelineDepth": "",
+          "PipelineType": "loop pipeline stpstp (delay=0 clock cycles(s))"
+        },
+        "Timing": {
+          "Target": "10.00",
+          "Uncertainty": "2.70",
+          "Estimate": "6.712"
+        },
+        "Loops": [{
+            "Name": "RESET_ENCODER",
+            "TripCount": "64",
+            "Latency": "64",
+            "PipelineII": "1",
+            "PipelineDepth": "1",
+            "PipelineType": "yes",
+            "TargetTI": "",
+            "RealTI": "",
+            "isPerfectNested": "0",
+            "SourceLocation": ""
+          }],
+        "Area": {
+          "FF": "9",
+          "AVAIL_FF": "106400",
+          "UTIL_FF": "~0",
+          "LUT": "56",
+          "AVAIL_LUT": "53200",
+          "UTIL_LUT": "~0",
+          "BRAM_18K": "0",
+          "AVAIL_BRAM": "280",
+          "UTIL_BRAM": "0",
+          "DSP": "0",
+          "AVAIL_DSP": "220",
+          "UTIL_DSP": "0",
+          "URAM": "0",
+          "AVAIL_URAM": "0",
+          "UTIL_URAM": "0"
+        }
+      },
       "snn_top_hls_Pipeline_INIT_WEIGHT_OUTER_INIT_WEIGHT_INNER": {
         "Latency": {
           "LatencyBest": "4099",
@@ -1939,6 +2311,86 @@
           "DSP": "0",
           "AVAIL_DSP": "220",
           "UTIL_DSP": "0",
+          "URAM": "0",
+          "AVAIL_URAM": "0",
+          "UTIL_URAM": "0"
+        }
+      },
+      "run_encoder_once_Pipeline_ENCODER_LOOP": {
+        "Latency": {
+          "LatencyBest": "105",
+          "LatencyAvg": "105",
+          "LatencyWorst": "105",
+          "PipelineII": "72",
+          "PipelineDepth": "",
+          "PipelineType": "loop pipeline stpstp (delay=0 clock cycles(s))"
+        },
+        "Timing": {
+          "Target": "10.00",
+          "Uncertainty": "2.70",
+          "Estimate": "6.570"
+        },
+        "Loops": [{
+            "Name": "ENCODER_LOOP",
+            "TripCount": "8",
+            "Latency": "103",
+            "PipelineII": "8",
+            "PipelineDepth": "48",
+            "PipelineType": "yes",
+            "TargetTI": "",
+            "RealTI": "",
+            "isPerfectNested": "0",
+            "SourceLocation": "",
+            "IssueType": "II Violation",
+            "ViolationType": "Memory Dependency"
+          }],
+        "Area": {
+          "DSP": "24",
+          "AVAIL_DSP": "220",
+          "UTIL_DSP": "10",
+          "FF": "8531",
+          "AVAIL_FF": "106400",
+          "UTIL_FF": "8",
+          "LUT": "7639",
+          "AVAIL_LUT": "53200",
+          "UTIL_LUT": "14",
+          "BRAM_18K": "0",
+          "AVAIL_BRAM": "280",
+          "UTIL_BRAM": "0",
+          "URAM": "0",
+          "AVAIL_URAM": "0",
+          "UTIL_URAM": "0"
+        }
+      },
+      "run_encoder_once": {
+        "Latency": {
+          "LatencyBest": "1",
+          "LatencyAvg": "54",
+          "LatencyWorst": "106",
+          "PipelineIIMin": "1",
+          "PipelineIIMax": "106",
+          "PipelineII": "1 ~ 106",
+          "PipelineDepth": "",
+          "PipelineType": "no"
+        },
+        "Timing": {
+          "Target": "10.00",
+          "Uncertainty": "2.70",
+          "Estimate": "6.570"
+        },
+        "Area": {
+          "DSP": "24",
+          "AVAIL_DSP": "220",
+          "UTIL_DSP": "10",
+          "FF": "8566",
+          "AVAIL_FF": "106400",
+          "UTIL_FF": "8",
+          "LUT": "7664",
+          "AVAIL_LUT": "53200",
+          "UTIL_LUT": "14",
+          "BRAM_18K": "0",
+          "AVAIL_BRAM": "280",
+          "UTIL_BRAM": "0",
           "URAM": "0",
           "AVAIL_URAM": "0",
           "UTIL_URAM": "0"
@@ -2179,9 +2631,9 @@
           "FF": "366",
           "AVAIL_FF": "106400",
           "UTIL_FF": "~0",
-          "LUT": "1063",
+          "LUT": "1065",
           "AVAIL_LUT": "53200",
-          "UTIL_LUT": "1",
+          "UTIL_LUT": "2",
           "BRAM_18K": "0",
           "AVAIL_BRAM": "280",
           "UTIL_BRAM": "0",
@@ -2356,12 +2808,12 @@
       },
       "snn_top_hls": {
         "Latency": {
-          "LatencyBest": "18",
-          "LatencyAvg": "1471",
-          "LatencyWorst": "6924",
-          "PipelineIIMin": "19",
-          "PipelineIIMax": "6925",
-          "PipelineII": "19 ~ 6925",
+          "LatencyBest": "29",
+          "LatencyAvg": "13730485",
+          "LatencyWorst": "187041181",
+          "PipelineIIMin": "30",
+          "PipelineIIMax": "187041182",
+          "PipelineII": "30 ~ 187041182",
           "PipelineDepth": "",
           "PipelineType": "no"
         },
@@ -2370,19 +2822,35 @@
           "Uncertainty": "2.70",
           "Estimate": "7.241"
         },
+        "Loops": [{
+            "Name": "TIME_LOOP",
+            "TripCount": "",
+            "LatencyMin": "0",
+            "LatencyMax": "187036890",
+            "Latency": "0 ~ 187036890",
+            "PipelineII": "",
+            "PipelineDepthMin": "6",
+            "PipelineDepthMax": "2854",
+            "PipelineDepth": "6 ~ 2854",
+            "PipelineType": "no",
+            "TargetTI": "",
+            "RealTI": "",
+            "isPerfectNested": "0",
+            "SourceLocation": ""
+          }],
         "Area": {
-          "BRAM_18K": "56",
+          "BRAM_18K": "83",
           "AVAIL_BRAM": "280",
-          "UTIL_BRAM": "20",
-          "DSP": "0",
+          "UTIL_BRAM": "29",
+          "DSP": "24",
           "AVAIL_DSP": "220",
-          "UTIL_DSP": "0",
-          "FF": "2850",
+          "UTIL_DSP": "10",
+          "FF": "12492",
           "AVAIL_FF": "106400",
-          "UTIL_FF": "2",
-          "LUT": "11503",
+          "UTIL_FF": "11",
+          "LUT": "22299",
           "AVAIL_LUT": "53200",
-          "UTIL_LUT": "21",
+          "UTIL_LUT": "41",
           "URAM": "0",
           "AVAIL_URAM": "0",
           "UTIL_URAM": "0"
@@ -2393,7 +2861,7 @@
   "GenerateBdFiles": "0",
   "GenData": {
     "DataVersion": "0.2",
-    "Time": "2025-12-08 20:49:15 KST",
+    "Time": "2025-12-08 22:56:19 KST",
     "ToolName": "vitis_hls",
     "ToolVersion": "2025.2"
   }

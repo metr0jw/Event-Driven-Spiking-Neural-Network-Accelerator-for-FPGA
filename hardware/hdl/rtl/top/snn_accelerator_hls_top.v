@@ -19,11 +19,11 @@ module snn_accelerator_hls_top #(
     
     // SNN Parameters
     parameter NUM_NEURONS           = 256,
-    parameter NUM_AXONS             = 256,
+    parameter NUM_AXONS             = 1024,
     parameter NUM_PARALLEL_UNITS    = 8,
     parameter SPIKE_BUFFER_DEPTH    = 64,
-    parameter NEURON_ID_WIDTH       = 8,
-    parameter AXON_ID_WIDTH         = 8,
+    parameter NEURON_ID_WIDTH       = $clog2(NUM_NEURONS),
+    parameter AXON_ID_WIDTH         = 10,
     parameter DATA_WIDTH            = 16,
     parameter WEIGHT_WIDTH          = 8,
     parameter LEAK_WIDTH            = 8,
@@ -43,6 +43,7 @@ module snn_accelerator_hls_top #(
     // AXI4-Lite Slave Interface (Configuration) - To HLS wrapper
     //-------------------------------------------------------------------------
     input  wire [C_S_AXI_ADDR_WIDTH-1:0] s_axi_awaddr,
+    input  wire [2:0]                    s_axi_awprot,
     input  wire                          s_axi_awvalid,
     output wire                          s_axi_awready,
     input  wire [C_S_AXI_DATA_WIDTH-1:0] s_axi_wdata,
@@ -53,6 +54,7 @@ module snn_accelerator_hls_top #(
     output wire                          s_axi_bvalid,
     input  wire                          s_axi_bready,
     input  wire [C_S_AXI_ADDR_WIDTH-1:0] s_axi_araddr,
+    input  wire [2:0]                    s_axi_arprot,
     input  wire                          s_axi_arvalid,
     output wire                          s_axi_arready,
     output wire [C_S_AXI_DATA_WIDTH-1:0] s_axi_rdata,
@@ -110,6 +112,17 @@ module snn_accelerator_hls_top #(
     //-------------------------------------------------------------------------
     wire                         sys_clk;
     wire                         sys_rst_n;
+
+    // Optional raw data stream for on-chip encoder (tied off by default)
+    wire [559:0]                 s_axis_data_tdata  = {560{1'b0}};
+    wire                         s_axis_data_tvalid = 1'b0;
+    wire [69:0]                  s_axis_data_tkeep  = {70{1'b0}};
+    wire [69:0]                  s_axis_data_tstrb  = {70{1'b0}};
+    wire                         s_axis_data_tuser  = 1'b0;
+    wire                         s_axis_data_tlast  = 1'b0;
+    wire                         s_axis_data_tid    = 1'b0;
+    wire                         s_axis_data_tdest  = 1'b0;
+    wire                         s_axis_data_tready;
     
     // HLS wrapper outputs (control signals to SNN core)
     wire                         snn_enable;
@@ -125,16 +138,19 @@ module snn_accelerator_hls_top #(
     wire                         snn_error;
     wire [31:0]                  snn_spike_count;
     
-    // Spike interfaces from HLS wrapper to SNN core
+    // Spike interfaces between HLS wrapper and core
+    localparam integer HLS_NEURON_ID_WIDTH = 10;
+
     wire                         spike_in_valid;
-    wire [NEURON_ID_WIDTH-1:0]   spike_in_neuron_id;
-    wire signed [WEIGHT_WIDTH-1:0] spike_in_weight;
+    wire [HLS_NEURON_ID_WIDTH-1:0]   spike_in_neuron_id_hls;
+    wire [NEURON_ID_WIDTH-1:0]      spike_in_neuron_id_core;
+    wire signed [WEIGHT_WIDTH-1:0]  spike_in_weight;
     wire                         spike_in_ready;
     
-    // Spike interfaces from SNN core to HLS wrapper
     wire                         spike_out_valid;
-    wire [NEURON_ID_WIDTH-1:0]   spike_out_neuron_id;
-    wire signed [WEIGHT_WIDTH-1:0] spike_out_weight;
+    wire [NEURON_ID_WIDTH-1:0]      spike_out_neuron_id_core;
+    wire [HLS_NEURON_ID_WIDTH-1:0]  spike_out_neuron_id_hls;
+    wire signed [WEIGHT_WIDTH-1:0]  spike_out_weight;
     wire                         spike_out_ready;
     
     // Internal spike routing
@@ -179,14 +195,14 @@ module snn_accelerator_hls_top #(
         // AXI4-Lite Control Interface
         .s_axi_ctrl_AWVALID(s_axi_awvalid),
         .s_axi_ctrl_AWREADY(s_axi_awready),
-        .s_axi_ctrl_AWADDR(s_axi_awaddr),
+        .s_axi_ctrl_AWADDR(s_axi_awaddr[6:0]),
         .s_axi_ctrl_WVALID(s_axi_wvalid),
         .s_axi_ctrl_WREADY(s_axi_wready),
         .s_axi_ctrl_WDATA(s_axi_wdata),
         .s_axi_ctrl_WSTRB(s_axi_wstrb),
         .s_axi_ctrl_ARVALID(s_axi_arvalid),
         .s_axi_ctrl_ARREADY(s_axi_arready),
-        .s_axi_ctrl_ARADDR(s_axi_araddr),
+        .s_axi_ctrl_ARADDR(s_axi_araddr[6:0]),
         .s_axi_ctrl_RVALID(s_axi_rvalid),
         .s_axi_ctrl_RREADY(s_axi_rready),
         .s_axi_ctrl_RDATA(s_axi_rdata),
@@ -205,6 +221,16 @@ module snn_accelerator_hls_top #(
         .s_axis_spikes_TLAST(s_axis_tlast),
         .s_axis_spikes_TID(s_axis_tid),
         .s_axis_spikes_TDEST(s_axis_tdest),
+        // Raw data stream (tied off here; PS can drive via AXI DMA when enabled)
+        .s_axis_data_TDATA(s_axis_data_tdata),
+        .s_axis_data_TVALID(s_axis_data_tvalid),
+        .s_axis_data_TREADY(s_axis_data_tready),
+        .s_axis_data_TKEEP(s_axis_data_tkeep),
+        .s_axis_data_TSTRB(s_axis_data_tstrb),
+        .s_axis_data_TUSER(s_axis_data_tuser),
+        .s_axis_data_TLAST(s_axis_data_tlast),
+        .s_axis_data_TID(s_axis_data_tid),
+        .s_axis_data_TDEST(s_axis_data_tdest),
         
         // AXI4-Stream Spike Output
         .m_axis_spikes_TREADY(m_axis_tready),
@@ -219,12 +245,12 @@ module snn_accelerator_hls_top #(
         
         // Direct wire interface to Verilog SNN core
         .spike_in_valid(spike_in_valid),
-        .spike_in_neuron_id(spike_in_neuron_id),
+        .spike_in_neuron_id(spike_in_neuron_id_hls),
         .spike_in_weight(spike_in_weight),
         .spike_in_ready(spike_in_ready),
         
         .spike_out_valid(spike_out_valid),
-        .spike_out_neuron_id(spike_out_neuron_id),
+        .spike_out_neuron_id(spike_out_neuron_id_hls),
         .spike_out_weight(spike_out_weight),
         .spike_out_ready(spike_out_ready),
         
@@ -245,6 +271,16 @@ module snn_accelerator_hls_top #(
         // Interrupt
         .interrupt(interrupt)
     );
+
+    // Bridge HLS (10-bit) and core neuron ID widths
+    localparam integer HLS_TO_CORE_ID_WIDTH = (NEURON_ID_WIDTH < HLS_NEURON_ID_WIDTH) ? NEURON_ID_WIDTH : HLS_NEURON_ID_WIDTH;
+    assign spike_in_neuron_id_core  = spike_in_neuron_id_hls[HLS_TO_CORE_ID_WIDTH-1:0];
+    assign spike_out_neuron_id_hls = { {(HLS_NEURON_ID_WIDTH-NEURON_ID_WIDTH){1'b0}}, spike_out_neuron_id_core };
+
+    // Safely map incoming HLS axon IDs into AXON_ID_WIDTH domain
+    localparam integer AXON_ID_SLICE_WIDTH = (NEURON_ID_WIDTH < AXON_ID_WIDTH) ? NEURON_ID_WIDTH : AXON_ID_WIDTH;
+    wire [AXON_ID_SLICE_WIDTH-1:0] spike_in_axon_id_slice = spike_in_neuron_id_core[AXON_ID_SLICE_WIDTH-1:0];
+    wire [AXON_ID_WIDTH-1:0]       spike_in_axon_id_padded = { {(AXON_ID_WIDTH-AXON_ID_SLICE_WIDTH){1'b0}}, spike_in_axon_id_slice };
     
     //-------------------------------------------------------------------------
     // Status Signal Assembly
@@ -269,7 +305,7 @@ module snn_accelerator_hls_top #(
         .rst_n(sys_rst_n & ~snn_reset),
         
         .spike_in_valid(spike_in_valid),
-        .spike_in_axon_id(spike_in_neuron_id[AXON_ID_WIDTH-1:0]),
+        .spike_in_axon_id(spike_in_axon_id_padded),
         .spike_in_ready(spike_in_ready),
         
         .spike_out_valid(routed_spike_valid),
@@ -353,7 +389,7 @@ module snn_accelerator_hls_top #(
         .s_spike_ready(neuron_spike_ready),
         
         .m_spike_valid(spike_out_valid),
-        .m_spike_dest_id(spike_out_neuron_id),
+        .m_spike_dest_id(spike_out_neuron_id_core),
         .m_spike_weight(spike_out_weight),
         .m_spike_exc_inh(),
         .m_spike_ready(spike_out_ready),

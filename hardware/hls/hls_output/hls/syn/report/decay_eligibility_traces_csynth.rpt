@@ -3,7 +3,7 @@
 ================================================================
 == Vitis HLS Report for 'decay_eligibility_traces'
 ================================================================
-* Date:           Mon Dec  8 20:49:13 2025
+* Date:           Mon Dec  8 23:23:01 2025
 
 * Version:        2025.2 (Build 6295257 on Nov 14 2025)
 * Project:        hls_output
@@ -29,7 +29,7 @@
     |  Latency (cycles) |  Latency (absolute) |  Interval | Pipeline|
     |   min   |   max   |    min   |    max   | min | max |   Type  |
     +---------+---------+----------+----------+-----+-----+---------+
-    |       12|       12|  0.120 us|  0.120 us|   12|   12|       no|
+    |       36|       36|  0.360 us|  0.360 us|   36|   36|       no|
     +---------+---------+----------+----------+-----+-----+---------+
 
     + Detail: 
@@ -38,8 +38,8 @@
         |                                                        |                                              |  Latency (cycles) |  Latency (absolute) |  Interval |      Pipeline     |
         |                        Instance                        |                    Module                    |   min   |   max   |    min   |    max   | min | max |        Type       |
         +--------------------------------------------------------+----------------------------------------------+---------+---------+----------+----------+-----+-----+-------------------+
-        |grp_decay_eligibility_traces_Pipeline_DECAY_PRE_fu_46   |decay_eligibility_traces_Pipeline_DECAY_PRE   |       11|       11|  0.110 us|  0.110 us|    0|    0|  loop pipeline stp|
-        |grp_decay_eligibility_traces_Pipeline_DECAY_POST_fu_66  |decay_eligibility_traces_Pipeline_DECAY_POST  |       11|       11|  0.110 us|  0.110 us|    0|    0|  loop pipeline stp|
+        |grp_decay_eligibility_traces_Pipeline_DECAY_PRE_fu_46   |decay_eligibility_traces_Pipeline_DECAY_PRE   |       35|       35|  0.350 us|  0.350 us|    0|    0|  loop pipeline stp|
+        |grp_decay_eligibility_traces_Pipeline_DECAY_POST_fu_66  |decay_eligibility_traces_Pipeline_DECAY_POST  |       35|       35|  0.350 us|  0.350 us|    0|    0|  loop pipeline stp|
         +--------------------------------------------------------+----------------------------------------------+---------+---------+----------+----------+-----+-----+-------------------+
 
         * Loop: 
@@ -57,12 +57,12 @@
 |DSP              |        -|    -|       -|      -|    -|
 |Expression       |        -|    -|       0|      2|    -|
 |FIFO             |        -|    -|       -|      -|    -|
-|Instance         |        -|    -|     248|    344|    -|
+|Instance         |        -|    -|     316|    344|    -|
 |Memory           |        -|    -|       -|      -|    -|
 |Multiplexer      |        -|    -|       0|     14|    -|
 |Register         |        -|    -|       4|      -|    -|
 +-----------------+---------+-----+--------+-------+-----+
-|Total            |        0|    0|     252|    360|    0|
+|Total            |        0|    0|     320|    360|    0|
 +-----------------+---------+-----+--------+-------+-----+
 |Available        |      280|  220|  106400|  53200|    0|
 +-----------------+---------+-----+--------+-------+-----+
@@ -74,10 +74,10 @@
     +--------------------------------------------------------+----------------------------------------------+---------+----+-----+-----+-----+
     |                        Instance                        |                    Module                    | BRAM_18K| DSP|  FF | LUT | URAM|
     +--------------------------------------------------------+----------------------------------------------+---------+----+-----+-----+-----+
-    |grp_decay_eligibility_traces_Pipeline_DECAY_POST_fu_66  |decay_eligibility_traces_Pipeline_DECAY_POST  |        0|   0|  124|  172|    0|
-    |grp_decay_eligibility_traces_Pipeline_DECAY_PRE_fu_46   |decay_eligibility_traces_Pipeline_DECAY_PRE   |        0|   0|  124|  172|    0|
+    |grp_decay_eligibility_traces_Pipeline_DECAY_POST_fu_66  |decay_eligibility_traces_Pipeline_DECAY_POST  |        0|   0|  158|  172|    0|
+    |grp_decay_eligibility_traces_Pipeline_DECAY_PRE_fu_46   |decay_eligibility_traces_Pipeline_DECAY_PRE   |        0|   0|  158|  172|    0|
     +--------------------------------------------------------+----------------------------------------------+---------+----+-----+-----+-----+
-    |Total                                                   |                                              |        0|   0|  248|  344|    0|
+    |Total                                                   |                                              |        0|   0|  316|  344|    0|
     +--------------------------------------------------------+----------------------------------------------+---------+----+-----+-----+-----+
 
     * DSP: 
@@ -133,115 +133,115 @@
 |ap_done                            |  out|    1|  ap_ctrl_hs|  decay_eligibility_traces|  return value|
 |ap_idle                            |  out|    1|  ap_ctrl_hs|  decay_eligibility_traces|  return value|
 |ap_ready                           |  out|    1|  ap_ctrl_hs|  decay_eligibility_traces|  return value|
-|p_ZL15pre_eligibility_0_address0   |  out|    3|   ap_memory|   p_ZL15pre_eligibility_0|         array|
+|p_ZL15pre_eligibility_0_address0   |  out|    5|   ap_memory|   p_ZL15pre_eligibility_0|         array|
 |p_ZL15pre_eligibility_0_ce0        |  out|    1|   ap_memory|   p_ZL15pre_eligibility_0|         array|
 |p_ZL15pre_eligibility_0_q0         |   in|    8|   ap_memory|   p_ZL15pre_eligibility_0|         array|
-|p_ZL15pre_eligibility_0_address1   |  out|    3|   ap_memory|   p_ZL15pre_eligibility_0|         array|
+|p_ZL15pre_eligibility_0_address1   |  out|    5|   ap_memory|   p_ZL15pre_eligibility_0|         array|
 |p_ZL15pre_eligibility_0_ce1        |  out|    1|   ap_memory|   p_ZL15pre_eligibility_0|         array|
 |p_ZL15pre_eligibility_0_we1        |  out|    1|   ap_memory|   p_ZL15pre_eligibility_0|         array|
 |p_ZL15pre_eligibility_0_d1         |  out|    8|   ap_memory|   p_ZL15pre_eligibility_0|         array|
-|p_ZL15pre_eligibility_1_address0   |  out|    3|   ap_memory|   p_ZL15pre_eligibility_1|         array|
+|p_ZL15pre_eligibility_1_address0   |  out|    5|   ap_memory|   p_ZL15pre_eligibility_1|         array|
 |p_ZL15pre_eligibility_1_ce0        |  out|    1|   ap_memory|   p_ZL15pre_eligibility_1|         array|
 |p_ZL15pre_eligibility_1_q0         |   in|    8|   ap_memory|   p_ZL15pre_eligibility_1|         array|
-|p_ZL15pre_eligibility_1_address1   |  out|    3|   ap_memory|   p_ZL15pre_eligibility_1|         array|
+|p_ZL15pre_eligibility_1_address1   |  out|    5|   ap_memory|   p_ZL15pre_eligibility_1|         array|
 |p_ZL15pre_eligibility_1_ce1        |  out|    1|   ap_memory|   p_ZL15pre_eligibility_1|         array|
 |p_ZL15pre_eligibility_1_we1        |  out|    1|   ap_memory|   p_ZL15pre_eligibility_1|         array|
 |p_ZL15pre_eligibility_1_d1         |  out|    8|   ap_memory|   p_ZL15pre_eligibility_1|         array|
-|p_ZL15pre_eligibility_2_address0   |  out|    3|   ap_memory|   p_ZL15pre_eligibility_2|         array|
+|p_ZL15pre_eligibility_2_address0   |  out|    5|   ap_memory|   p_ZL15pre_eligibility_2|         array|
 |p_ZL15pre_eligibility_2_ce0        |  out|    1|   ap_memory|   p_ZL15pre_eligibility_2|         array|
 |p_ZL15pre_eligibility_2_q0         |   in|    8|   ap_memory|   p_ZL15pre_eligibility_2|         array|
-|p_ZL15pre_eligibility_2_address1   |  out|    3|   ap_memory|   p_ZL15pre_eligibility_2|         array|
+|p_ZL15pre_eligibility_2_address1   |  out|    5|   ap_memory|   p_ZL15pre_eligibility_2|         array|
 |p_ZL15pre_eligibility_2_ce1        |  out|    1|   ap_memory|   p_ZL15pre_eligibility_2|         array|
 |p_ZL15pre_eligibility_2_we1        |  out|    1|   ap_memory|   p_ZL15pre_eligibility_2|         array|
 |p_ZL15pre_eligibility_2_d1         |  out|    8|   ap_memory|   p_ZL15pre_eligibility_2|         array|
-|p_ZL15pre_eligibility_3_address0   |  out|    3|   ap_memory|   p_ZL15pre_eligibility_3|         array|
+|p_ZL15pre_eligibility_3_address0   |  out|    5|   ap_memory|   p_ZL15pre_eligibility_3|         array|
 |p_ZL15pre_eligibility_3_ce0        |  out|    1|   ap_memory|   p_ZL15pre_eligibility_3|         array|
 |p_ZL15pre_eligibility_3_q0         |   in|    8|   ap_memory|   p_ZL15pre_eligibility_3|         array|
-|p_ZL15pre_eligibility_3_address1   |  out|    3|   ap_memory|   p_ZL15pre_eligibility_3|         array|
+|p_ZL15pre_eligibility_3_address1   |  out|    5|   ap_memory|   p_ZL15pre_eligibility_3|         array|
 |p_ZL15pre_eligibility_3_ce1        |  out|    1|   ap_memory|   p_ZL15pre_eligibility_3|         array|
 |p_ZL15pre_eligibility_3_we1        |  out|    1|   ap_memory|   p_ZL15pre_eligibility_3|         array|
 |p_ZL15pre_eligibility_3_d1         |  out|    8|   ap_memory|   p_ZL15pre_eligibility_3|         array|
-|p_ZL15pre_eligibility_4_address0   |  out|    3|   ap_memory|   p_ZL15pre_eligibility_4|         array|
+|p_ZL15pre_eligibility_4_address0   |  out|    5|   ap_memory|   p_ZL15pre_eligibility_4|         array|
 |p_ZL15pre_eligibility_4_ce0        |  out|    1|   ap_memory|   p_ZL15pre_eligibility_4|         array|
 |p_ZL15pre_eligibility_4_q0         |   in|    8|   ap_memory|   p_ZL15pre_eligibility_4|         array|
-|p_ZL15pre_eligibility_4_address1   |  out|    3|   ap_memory|   p_ZL15pre_eligibility_4|         array|
+|p_ZL15pre_eligibility_4_address1   |  out|    5|   ap_memory|   p_ZL15pre_eligibility_4|         array|
 |p_ZL15pre_eligibility_4_ce1        |  out|    1|   ap_memory|   p_ZL15pre_eligibility_4|         array|
 |p_ZL15pre_eligibility_4_we1        |  out|    1|   ap_memory|   p_ZL15pre_eligibility_4|         array|
 |p_ZL15pre_eligibility_4_d1         |  out|    8|   ap_memory|   p_ZL15pre_eligibility_4|         array|
-|p_ZL15pre_eligibility_5_address0   |  out|    3|   ap_memory|   p_ZL15pre_eligibility_5|         array|
+|p_ZL15pre_eligibility_5_address0   |  out|    5|   ap_memory|   p_ZL15pre_eligibility_5|         array|
 |p_ZL15pre_eligibility_5_ce0        |  out|    1|   ap_memory|   p_ZL15pre_eligibility_5|         array|
 |p_ZL15pre_eligibility_5_q0         |   in|    8|   ap_memory|   p_ZL15pre_eligibility_5|         array|
-|p_ZL15pre_eligibility_5_address1   |  out|    3|   ap_memory|   p_ZL15pre_eligibility_5|         array|
+|p_ZL15pre_eligibility_5_address1   |  out|    5|   ap_memory|   p_ZL15pre_eligibility_5|         array|
 |p_ZL15pre_eligibility_5_ce1        |  out|    1|   ap_memory|   p_ZL15pre_eligibility_5|         array|
 |p_ZL15pre_eligibility_5_we1        |  out|    1|   ap_memory|   p_ZL15pre_eligibility_5|         array|
 |p_ZL15pre_eligibility_5_d1         |  out|    8|   ap_memory|   p_ZL15pre_eligibility_5|         array|
-|p_ZL15pre_eligibility_6_address0   |  out|    3|   ap_memory|   p_ZL15pre_eligibility_6|         array|
+|p_ZL15pre_eligibility_6_address0   |  out|    5|   ap_memory|   p_ZL15pre_eligibility_6|         array|
 |p_ZL15pre_eligibility_6_ce0        |  out|    1|   ap_memory|   p_ZL15pre_eligibility_6|         array|
 |p_ZL15pre_eligibility_6_q0         |   in|    8|   ap_memory|   p_ZL15pre_eligibility_6|         array|
-|p_ZL15pre_eligibility_6_address1   |  out|    3|   ap_memory|   p_ZL15pre_eligibility_6|         array|
+|p_ZL15pre_eligibility_6_address1   |  out|    5|   ap_memory|   p_ZL15pre_eligibility_6|         array|
 |p_ZL15pre_eligibility_6_ce1        |  out|    1|   ap_memory|   p_ZL15pre_eligibility_6|         array|
 |p_ZL15pre_eligibility_6_we1        |  out|    1|   ap_memory|   p_ZL15pre_eligibility_6|         array|
 |p_ZL15pre_eligibility_6_d1         |  out|    8|   ap_memory|   p_ZL15pre_eligibility_6|         array|
-|p_ZL15pre_eligibility_7_address0   |  out|    3|   ap_memory|   p_ZL15pre_eligibility_7|         array|
+|p_ZL15pre_eligibility_7_address0   |  out|    5|   ap_memory|   p_ZL15pre_eligibility_7|         array|
 |p_ZL15pre_eligibility_7_ce0        |  out|    1|   ap_memory|   p_ZL15pre_eligibility_7|         array|
 |p_ZL15pre_eligibility_7_q0         |   in|    8|   ap_memory|   p_ZL15pre_eligibility_7|         array|
-|p_ZL15pre_eligibility_7_address1   |  out|    3|   ap_memory|   p_ZL15pre_eligibility_7|         array|
+|p_ZL15pre_eligibility_7_address1   |  out|    5|   ap_memory|   p_ZL15pre_eligibility_7|         array|
 |p_ZL15pre_eligibility_7_ce1        |  out|    1|   ap_memory|   p_ZL15pre_eligibility_7|         array|
 |p_ZL15pre_eligibility_7_we1        |  out|    1|   ap_memory|   p_ZL15pre_eligibility_7|         array|
 |p_ZL15pre_eligibility_7_d1         |  out|    8|   ap_memory|   p_ZL15pre_eligibility_7|         array|
-|p_ZL16post_eligibility_0_address0  |  out|    3|   ap_memory|  p_ZL16post_eligibility_0|         array|
+|p_ZL16post_eligibility_0_address0  |  out|    5|   ap_memory|  p_ZL16post_eligibility_0|         array|
 |p_ZL16post_eligibility_0_ce0       |  out|    1|   ap_memory|  p_ZL16post_eligibility_0|         array|
 |p_ZL16post_eligibility_0_q0        |   in|    8|   ap_memory|  p_ZL16post_eligibility_0|         array|
-|p_ZL16post_eligibility_0_address1  |  out|    3|   ap_memory|  p_ZL16post_eligibility_0|         array|
+|p_ZL16post_eligibility_0_address1  |  out|    5|   ap_memory|  p_ZL16post_eligibility_0|         array|
 |p_ZL16post_eligibility_0_ce1       |  out|    1|   ap_memory|  p_ZL16post_eligibility_0|         array|
 |p_ZL16post_eligibility_0_we1       |  out|    1|   ap_memory|  p_ZL16post_eligibility_0|         array|
 |p_ZL16post_eligibility_0_d1        |  out|    8|   ap_memory|  p_ZL16post_eligibility_0|         array|
-|p_ZL16post_eligibility_1_address0  |  out|    3|   ap_memory|  p_ZL16post_eligibility_1|         array|
+|p_ZL16post_eligibility_1_address0  |  out|    5|   ap_memory|  p_ZL16post_eligibility_1|         array|
 |p_ZL16post_eligibility_1_ce0       |  out|    1|   ap_memory|  p_ZL16post_eligibility_1|         array|
 |p_ZL16post_eligibility_1_q0        |   in|    8|   ap_memory|  p_ZL16post_eligibility_1|         array|
-|p_ZL16post_eligibility_1_address1  |  out|    3|   ap_memory|  p_ZL16post_eligibility_1|         array|
+|p_ZL16post_eligibility_1_address1  |  out|    5|   ap_memory|  p_ZL16post_eligibility_1|         array|
 |p_ZL16post_eligibility_1_ce1       |  out|    1|   ap_memory|  p_ZL16post_eligibility_1|         array|
 |p_ZL16post_eligibility_1_we1       |  out|    1|   ap_memory|  p_ZL16post_eligibility_1|         array|
 |p_ZL16post_eligibility_1_d1        |  out|    8|   ap_memory|  p_ZL16post_eligibility_1|         array|
-|p_ZL16post_eligibility_2_address0  |  out|    3|   ap_memory|  p_ZL16post_eligibility_2|         array|
+|p_ZL16post_eligibility_2_address0  |  out|    5|   ap_memory|  p_ZL16post_eligibility_2|         array|
 |p_ZL16post_eligibility_2_ce0       |  out|    1|   ap_memory|  p_ZL16post_eligibility_2|         array|
 |p_ZL16post_eligibility_2_q0        |   in|    8|   ap_memory|  p_ZL16post_eligibility_2|         array|
-|p_ZL16post_eligibility_2_address1  |  out|    3|   ap_memory|  p_ZL16post_eligibility_2|         array|
+|p_ZL16post_eligibility_2_address1  |  out|    5|   ap_memory|  p_ZL16post_eligibility_2|         array|
 |p_ZL16post_eligibility_2_ce1       |  out|    1|   ap_memory|  p_ZL16post_eligibility_2|         array|
 |p_ZL16post_eligibility_2_we1       |  out|    1|   ap_memory|  p_ZL16post_eligibility_2|         array|
 |p_ZL16post_eligibility_2_d1        |  out|    8|   ap_memory|  p_ZL16post_eligibility_2|         array|
-|p_ZL16post_eligibility_3_address0  |  out|    3|   ap_memory|  p_ZL16post_eligibility_3|         array|
+|p_ZL16post_eligibility_3_address0  |  out|    5|   ap_memory|  p_ZL16post_eligibility_3|         array|
 |p_ZL16post_eligibility_3_ce0       |  out|    1|   ap_memory|  p_ZL16post_eligibility_3|         array|
 |p_ZL16post_eligibility_3_q0        |   in|    8|   ap_memory|  p_ZL16post_eligibility_3|         array|
-|p_ZL16post_eligibility_3_address1  |  out|    3|   ap_memory|  p_ZL16post_eligibility_3|         array|
+|p_ZL16post_eligibility_3_address1  |  out|    5|   ap_memory|  p_ZL16post_eligibility_3|         array|
 |p_ZL16post_eligibility_3_ce1       |  out|    1|   ap_memory|  p_ZL16post_eligibility_3|         array|
 |p_ZL16post_eligibility_3_we1       |  out|    1|   ap_memory|  p_ZL16post_eligibility_3|         array|
 |p_ZL16post_eligibility_3_d1        |  out|    8|   ap_memory|  p_ZL16post_eligibility_3|         array|
-|p_ZL16post_eligibility_4_address0  |  out|    3|   ap_memory|  p_ZL16post_eligibility_4|         array|
+|p_ZL16post_eligibility_4_address0  |  out|    5|   ap_memory|  p_ZL16post_eligibility_4|         array|
 |p_ZL16post_eligibility_4_ce0       |  out|    1|   ap_memory|  p_ZL16post_eligibility_4|         array|
 |p_ZL16post_eligibility_4_q0        |   in|    8|   ap_memory|  p_ZL16post_eligibility_4|         array|
-|p_ZL16post_eligibility_4_address1  |  out|    3|   ap_memory|  p_ZL16post_eligibility_4|         array|
+|p_ZL16post_eligibility_4_address1  |  out|    5|   ap_memory|  p_ZL16post_eligibility_4|         array|
 |p_ZL16post_eligibility_4_ce1       |  out|    1|   ap_memory|  p_ZL16post_eligibility_4|         array|
 |p_ZL16post_eligibility_4_we1       |  out|    1|   ap_memory|  p_ZL16post_eligibility_4|         array|
 |p_ZL16post_eligibility_4_d1        |  out|    8|   ap_memory|  p_ZL16post_eligibility_4|         array|
-|p_ZL16post_eligibility_5_address0  |  out|    3|   ap_memory|  p_ZL16post_eligibility_5|         array|
+|p_ZL16post_eligibility_5_address0  |  out|    5|   ap_memory|  p_ZL16post_eligibility_5|         array|
 |p_ZL16post_eligibility_5_ce0       |  out|    1|   ap_memory|  p_ZL16post_eligibility_5|         array|
 |p_ZL16post_eligibility_5_q0        |   in|    8|   ap_memory|  p_ZL16post_eligibility_5|         array|
-|p_ZL16post_eligibility_5_address1  |  out|    3|   ap_memory|  p_ZL16post_eligibility_5|         array|
+|p_ZL16post_eligibility_5_address1  |  out|    5|   ap_memory|  p_ZL16post_eligibility_5|         array|
 |p_ZL16post_eligibility_5_ce1       |  out|    1|   ap_memory|  p_ZL16post_eligibility_5|         array|
 |p_ZL16post_eligibility_5_we1       |  out|    1|   ap_memory|  p_ZL16post_eligibility_5|         array|
 |p_ZL16post_eligibility_5_d1        |  out|    8|   ap_memory|  p_ZL16post_eligibility_5|         array|
-|p_ZL16post_eligibility_6_address0  |  out|    3|   ap_memory|  p_ZL16post_eligibility_6|         array|
+|p_ZL16post_eligibility_6_address0  |  out|    5|   ap_memory|  p_ZL16post_eligibility_6|         array|
 |p_ZL16post_eligibility_6_ce0       |  out|    1|   ap_memory|  p_ZL16post_eligibility_6|         array|
 |p_ZL16post_eligibility_6_q0        |   in|    8|   ap_memory|  p_ZL16post_eligibility_6|         array|
-|p_ZL16post_eligibility_6_address1  |  out|    3|   ap_memory|  p_ZL16post_eligibility_6|         array|
+|p_ZL16post_eligibility_6_address1  |  out|    5|   ap_memory|  p_ZL16post_eligibility_6|         array|
 |p_ZL16post_eligibility_6_ce1       |  out|    1|   ap_memory|  p_ZL16post_eligibility_6|         array|
 |p_ZL16post_eligibility_6_we1       |  out|    1|   ap_memory|  p_ZL16post_eligibility_6|         array|
 |p_ZL16post_eligibility_6_d1        |  out|    8|   ap_memory|  p_ZL16post_eligibility_6|         array|
-|p_ZL16post_eligibility_7_address0  |  out|    3|   ap_memory|  p_ZL16post_eligibility_7|         array|
+|p_ZL16post_eligibility_7_address0  |  out|    5|   ap_memory|  p_ZL16post_eligibility_7|         array|
 |p_ZL16post_eligibility_7_ce0       |  out|    1|   ap_memory|  p_ZL16post_eligibility_7|         array|
 |p_ZL16post_eligibility_7_q0        |   in|    8|   ap_memory|  p_ZL16post_eligibility_7|         array|
-|p_ZL16post_eligibility_7_address1  |  out|    3|   ap_memory|  p_ZL16post_eligibility_7|         array|
+|p_ZL16post_eligibility_7_address1  |  out|    5|   ap_memory|  p_ZL16post_eligibility_7|         array|
 |p_ZL16post_eligibility_7_ce1       |  out|    1|   ap_memory|  p_ZL16post_eligibility_7|         array|
 |p_ZL16post_eligibility_7_we1       |  out|    1|   ap_memory|  p_ZL16post_eligibility_7|         array|
 |p_ZL16post_eligibility_7_d1        |  out|    8|   ap_memory|  p_ZL16post_eligibility_7|         array|

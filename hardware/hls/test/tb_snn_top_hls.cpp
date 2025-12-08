@@ -58,6 +58,18 @@ learning_params_t get_default_params() {
     return params;
 }
 
+encoder_config_t get_default_encoder_config() {
+    encoder_config_t cfg;
+    cfg.encoding_type = RATE_CODING;
+    cfg.num_channels = 0;
+    cfg.time_window = 32;
+    cfg.rate_scale = 128;
+    cfg.phase_scale = 1;
+    cfg.phase_threshold = 1024;
+    cfg.default_weight = 1;
+    return cfg;
+}
+
 //=============================================================================
 // Test 1: Basic Control Register Operations
 //=============================================================================
@@ -66,12 +78,16 @@ void test_control_registers() {
     
     // Streams
     hls::stream<axis_spike_t> s_axis_spikes;
+    hls::stream<input_data_t> s_axis_data;
     hls::stream<axis_spike_t> m_axis_spikes;
     hls::stream<axis_weight_t> m_axis_weights;
     
     // Control/Status
     ap_uint<32> ctrl_reg = 0;
     ap_uint<32> config_reg = 0;
+    ap_uint<32> mode_reg = 0;
+    ap_uint<32> time_steps_reg = 1;
+    encoder_config_t encoder_cfg = get_default_encoder_config();
     learning_params_t params = get_default_params();
     ap_uint<32> status_reg, spike_count_reg, weight_sum_reg, version_reg;
     ap_int<8> reward_signal = 0;
@@ -93,9 +109,10 @@ void test_control_registers() {
     ctrl_reg = 0x02;  // Reset bit
     config_reg = (100 << 16) | 51;  // leak_rate=100, threshold=51
     
-    snn_top_hls(ctrl_reg, config_reg, params, status_reg, spike_count_reg,
-                weight_sum_reg, version_reg, s_axis_spikes, m_axis_spikes,
-                m_axis_weights, reward_signal,
+        snn_top_hls(ctrl_reg, config_reg, mode_reg, time_steps_reg, params, encoder_cfg,
+                    status_reg, spike_count_reg,
+                    weight_sum_reg, version_reg, s_axis_spikes, s_axis_data, m_axis_spikes,
+                    m_axis_weights, reward_signal,
                 spike_in_valid, spike_in_neuron_id, spike_in_weight, spike_in_ready,
                 spike_out_valid, spike_out_neuron_id, spike_out_weight, spike_out_ready,
                 snn_enable, snn_reset, threshold_out, leak_rate_out,
@@ -109,9 +126,10 @@ void test_control_registers() {
     // Test enable
     ctrl_reg = 0x01;  // Enable bit
     
-    snn_top_hls(ctrl_reg, config_reg, params, status_reg, spike_count_reg,
-                weight_sum_reg, version_reg, s_axis_spikes, m_axis_spikes,
-                m_axis_weights, reward_signal,
+        snn_top_hls(ctrl_reg, config_reg, mode_reg, time_steps_reg, params, encoder_cfg,
+                    status_reg, spike_count_reg,
+                    weight_sum_reg, version_reg, s_axis_spikes, s_axis_data, m_axis_spikes,
+                    m_axis_weights, reward_signal,
                 spike_in_valid, spike_in_neuron_id, spike_in_weight, spike_in_ready,
                 spike_out_valid, spike_out_neuron_id, spike_out_weight, spike_out_ready,
                 snn_enable, snn_reset, threshold_out, leak_rate_out,
@@ -127,11 +145,15 @@ void test_spike_input() {
     std::cout << "\n=== Test 2: Spike Input Path ===" << std::endl;
     
     hls::stream<axis_spike_t> s_axis_spikes;
+    hls::stream<input_data_t> s_axis_data;
     hls::stream<axis_spike_t> m_axis_spikes;
     hls::stream<axis_weight_t> m_axis_weights;
     
     ap_uint<32> ctrl_reg = 0x01;  // Enable
     ap_uint<32> config_reg = (100 << 16) | 51;
+    ap_uint<32> mode_reg = 0;
+    ap_uint<32> time_steps_reg = 1;
+    encoder_config_t encoder_cfg = get_default_encoder_config();
     learning_params_t params = get_default_params();
     ap_uint<32> status_reg, spike_count_reg, weight_sum_reg, version_reg;
     ap_int<8> reward_signal = 0;
@@ -155,9 +177,10 @@ void test_spike_input() {
     
     int spikes_received = 0;
     for (int t = 0; t < 10; t++) {
-        snn_top_hls(ctrl_reg, config_reg, params, status_reg, spike_count_reg,
-                    weight_sum_reg, version_reg, s_axis_spikes, m_axis_spikes,
-                    m_axis_weights, reward_signal,
+        snn_top_hls(ctrl_reg, config_reg, mode_reg, time_steps_reg, params, encoder_cfg,
+                status_reg, spike_count_reg,
+                weight_sum_reg, version_reg, s_axis_spikes, s_axis_data, m_axis_spikes,
+                m_axis_weights, reward_signal,
                     spike_in_valid, spike_in_neuron_id, spike_in_weight, spike_in_ready,
                     spike_out_valid, spike_out_neuron_id, spike_out_weight, spike_out_ready,
                     snn_enable, snn_reset, threshold_out, leak_rate_out,
@@ -183,11 +206,15 @@ void test_spike_output() {
     std::cout << "\n=== Test 3: Spike Output Path ===" << std::endl;
     
     hls::stream<axis_spike_t> s_axis_spikes;
+    hls::stream<input_data_t> s_axis_data;
     hls::stream<axis_spike_t> m_axis_spikes;
     hls::stream<axis_weight_t> m_axis_weights;
     
     ap_uint<32> ctrl_reg = 0x01;
     ap_uint<32> config_reg = (100 << 16) | 51;
+    ap_uint<32> mode_reg = 0;
+    ap_uint<32> time_steps_reg = 1;
+    encoder_config_t encoder_cfg = get_default_encoder_config();
     learning_params_t params = get_default_params();
     ap_uint<32> status_reg, spike_count_reg, weight_sum_reg, version_reg;
     ap_int<8> reward_signal = 0;
@@ -216,9 +243,10 @@ void test_spike_output() {
             spike_out_valid = 0;
         }
         
-        snn_top_hls(ctrl_reg, config_reg, params, status_reg, spike_count_reg,
-                    weight_sum_reg, version_reg, s_axis_spikes, m_axis_spikes,
-                    m_axis_weights, reward_signal,
+        snn_top_hls(ctrl_reg, config_reg, mode_reg, time_steps_reg, params, encoder_cfg,
+                status_reg, spike_count_reg,
+                weight_sum_reg, version_reg, s_axis_spikes, s_axis_data, m_axis_spikes,
+                m_axis_weights, reward_signal,
                     spike_in_valid, spike_in_neuron_id, spike_in_weight, spike_in_ready,
                     spike_out_valid, spike_out_neuron_id, spike_out_weight, spike_out_ready,
                     snn_enable, snn_reset, threshold_out, leak_rate_out,
@@ -245,11 +273,15 @@ void test_stdp_learning() {
     std::cout << "\n=== Test 4: STDP Learning ===" << std::endl;
     
     hls::stream<axis_spike_t> s_axis_spikes;
+    hls::stream<input_data_t> s_axis_data;
     hls::stream<axis_spike_t> m_axis_spikes;
     hls::stream<axis_weight_t> m_axis_weights;
     
     ap_uint<32> ctrl_reg = 0x09;  // Enable + Learning enable (bit 0 and bit 3)
     ap_uint<32> config_reg = (100 << 16) | 51;
+    ap_uint<32> mode_reg = MODE_TRAIN_STDP;
+    ap_uint<32> time_steps_reg = 1;
+    encoder_config_t encoder_cfg = get_default_encoder_config();
     learning_params_t params = get_default_params();
     params.a_plus = 0.5;
     params.a_minus = 0.5;
@@ -272,8 +304,9 @@ void test_stdp_learning() {
     
     // First, reset to initialize
     ctrl_reg = 0x02;
-    snn_top_hls(ctrl_reg, config_reg, params, status_reg, spike_count_reg,
-                weight_sum_reg, version_reg, s_axis_spikes, m_axis_spikes,
+    snn_top_hls(ctrl_reg, config_reg, mode_reg, time_steps_reg, params, encoder_cfg,
+                status_reg, spike_count_reg,
+                weight_sum_reg, version_reg, s_axis_spikes, s_axis_data, m_axis_spikes,
                 m_axis_weights, reward_signal,
                 spike_in_valid, spike_in_neuron_id, spike_in_weight, spike_in_ready,
                 spike_out_valid, spike_out_neuron_id, spike_out_weight, spike_out_ready,
@@ -288,9 +321,10 @@ void test_stdp_learning() {
     s_axis_spikes.write(create_spike(0, 10, 5));
     
     for (int t = 0; t < 5; t++) {
-        snn_top_hls(ctrl_reg, config_reg, params, status_reg, spike_count_reg,
-                    weight_sum_reg, version_reg, s_axis_spikes, m_axis_spikes,
-                    m_axis_weights, reward_signal,
+        snn_top_hls(ctrl_reg, config_reg, mode_reg, time_steps_reg, params, encoder_cfg,
+                status_reg, spike_count_reg,
+                weight_sum_reg, version_reg, s_axis_spikes, s_axis_data, m_axis_spikes,
+                m_axis_weights, reward_signal,
                     spike_in_valid, spike_in_neuron_id, spike_in_weight, spike_in_ready,
                     spike_out_valid, spike_out_neuron_id, spike_out_weight, spike_out_ready,
                     snn_enable, snn_reset, threshold_out, leak_rate_out,
@@ -307,9 +341,10 @@ void test_stdp_learning() {
             spike_out_valid = 0;
         }
         
-        snn_top_hls(ctrl_reg, config_reg, params, status_reg, spike_count_reg,
-                    weight_sum_reg, version_reg, s_axis_spikes, m_axis_spikes,
-                    m_axis_weights, reward_signal,
+        snn_top_hls(ctrl_reg, config_reg, mode_reg, time_steps_reg, params, encoder_cfg,
+                status_reg, spike_count_reg,
+                weight_sum_reg, version_reg, s_axis_spikes, s_axis_data, m_axis_spikes,
+                m_axis_weights, reward_signal,
                     spike_in_valid, spike_in_neuron_id, spike_in_weight, spike_in_ready,
                     spike_out_valid, spike_out_neuron_id, spike_out_weight, spike_out_ready,
                     snn_enable, snn_reset, threshold_out, leak_rate_out,
@@ -330,11 +365,15 @@ void test_rstdp_learning() {
     std::cout << "\n=== Test 5: R-STDP Learning ===" << std::endl;
     
     hls::stream<axis_spike_t> s_axis_spikes;
+    hls::stream<input_data_t> s_axis_data;
     hls::stream<axis_spike_t> m_axis_spikes;
     hls::stream<axis_weight_t> m_axis_weights;
     
     ap_uint<32> ctrl_reg = 0x09;
     ap_uint<32> config_reg = (100 << 16) | 51;
+    ap_uint<32> mode_reg = MODE_TRAIN_STDP;
+    ap_uint<32> time_steps_reg = 1;
+    encoder_config_t encoder_cfg = get_default_encoder_config();
     learning_params_t params = get_default_params();
     params.rstdp_enable = true;
     params.trace_decay = 0.95;
@@ -357,8 +396,9 @@ void test_rstdp_learning() {
     
     // Reset
     ctrl_reg = 0x02;
-    snn_top_hls(ctrl_reg, config_reg, params, status_reg, spike_count_reg,
-                weight_sum_reg, version_reg, s_axis_spikes, m_axis_spikes,
+    snn_top_hls(ctrl_reg, config_reg, mode_reg, time_steps_reg, params, encoder_cfg,
+                status_reg, spike_count_reg,
+                weight_sum_reg, version_reg, s_axis_spikes, s_axis_data, m_axis_spikes,
                 m_axis_weights, reward_signal,
                 spike_in_valid, spike_in_neuron_id, spike_in_weight, spike_in_ready,
                 spike_out_valid, spike_out_neuron_id, spike_out_weight, spike_out_ready,
@@ -380,9 +420,10 @@ void test_rstdp_learning() {
             spike_out_valid = 0;
         }
         
-        snn_top_hls(ctrl_reg, config_reg, params, status_reg, spike_count_reg,
-                    weight_sum_reg, version_reg, s_axis_spikes, m_axis_spikes,
-                    m_axis_weights, reward_signal,
+        snn_top_hls(ctrl_reg, config_reg, mode_reg, time_steps_reg, params, encoder_cfg,
+                status_reg, spike_count_reg,
+                weight_sum_reg, version_reg, s_axis_spikes, s_axis_data, m_axis_spikes,
+                m_axis_weights, reward_signal,
                     spike_in_valid, spike_in_neuron_id, spike_in_weight, spike_in_ready,
                     spike_out_valid, spike_out_neuron_id, spike_out_weight, spike_out_ready,
                     snn_enable, snn_reset, threshold_out, leak_rate_out,

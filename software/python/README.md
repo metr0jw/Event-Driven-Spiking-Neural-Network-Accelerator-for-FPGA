@@ -57,6 +57,25 @@ output = model(torch.randn(32, 1, 28, 28))
 loss = loss_fn(output, torch.randint(10, (32,)))
 loss.backward()  # Surrogate gradients flow through!
 optimizer.step()
+
+## XRT Backend (optional)
+
+When targeting a Vitis/XRT flow (e.g., Alveo), you can drive the new mode/time-step
+registers directly via pyxrt:
+
+```python
+from snn_fpga_accelerator import SNNAccelerator
+
+accel = SNNAccelerator(simulation_mode=True)  # skip PYNQ
+accel.configure_xrt("snn_top_hls.xclbin")
+
+# Set mode: 0=infer, 1=STDP train, 2=checkpoint; enable encoder with encoder_enable=True
+accel.set_mode(1, encoder_enable=True)
+accel.set_simulation_steps(25)
+accel.set_reward_signal(16)
+
+# TODO: add DMA streaming once spike/raw stream names are finalised
+```
 ```
 
 ## Features

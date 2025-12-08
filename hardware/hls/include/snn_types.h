@@ -16,10 +16,10 @@
 #include <hls_stream.h>
 
 // System parameters
-const int MAX_NEURONS = 64;
-const int MAX_SYNAPSES = 4096;  // 64x64
-const int MAX_INPUT_CHANNELS = 784;  // For MNIST 28x28
-const int MAX_OUTPUT_NEURONS = 10;   // For 10 classes
+const int MAX_NEURONS = 256;              // Expanded neuron count
+const int MAX_SYNAPSES = 65536;           // 256x256
+const int MAX_INPUT_CHANNELS = 1024;      // Up to 1K input channels for on-chip encoder
+const int MAX_OUTPUT_NEURONS = 64;        // More output classes
 
 // Basic data types
 typedef ap_uint<8> neuron_id_t;

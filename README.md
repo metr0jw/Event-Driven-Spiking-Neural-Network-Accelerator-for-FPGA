@@ -41,7 +41,7 @@ This project implements a complete event-driven spiking neural network (SNN) acc
 - **Per-Neuron STDP/R-STDP Learning**: Memory-efficient O(N+M) trace storage (vs O(N×M) per-synapse)
 - **Lazy Update with LUT**: Exponential decay computed on-demand using 16-entry lookup table
 - **PyTorch Integration**: Direct model conversion and weight loading
-- **Multiple Spike Encoders**: Poisson, temporal, rate-based encoding
+- **Multiple Spike Encoders**: Rate (Poisson), Latency (intensity-to-latency), Delta-Sigma modulation, or direct spike input (4-bit encoding type)
 
 ---
 
@@ -531,6 +531,7 @@ python examples/complete_integration_example.py --simulation-mode
 - [User Guide](docs/user_guide.md): Comprehensive usage instructions
 - [API Reference](docs/api_reference.md): Complete API documentation
 - [Developer Guide](docs/developer_guide.md): Development setup and guidelines
+- **[HLS IP Integration Guide](docs/HLS_IP_INTEGRATION_GUIDE.md)**: CLI workflow for updating Vivado IP and register maps
 
 ---
 

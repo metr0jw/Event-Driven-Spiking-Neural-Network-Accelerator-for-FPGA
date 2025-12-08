@@ -18,27 +18,27 @@
 <PipelineType>loop pipeline stp</PipelineType>
 <SummaryOfTimingAnalysis>
 <unit>ns</unit>
-<EstimatedClockPeriod>6.321</EstimatedClockPeriod>
+<EstimatedClockPeriod>6.202</EstimatedClockPeriod>
 </SummaryOfTimingAnalysis>
 <SummaryOfOverallLatency>
 <unit>clock cycles</unit>
-<Best-caseLatency>4099</Best-caseLatency>
-<Average-caseLatency>4099</Average-caseLatency>
-<Worst-caseLatency>4099</Worst-caseLatency>
-<Best-caseRealTimeLatency>40.990 us</Best-caseRealTimeLatency>
-<Average-caseRealTimeLatency>40.990 us</Average-caseRealTimeLatency>
-<Worst-caseRealTimeLatency>40.990 us</Worst-caseRealTimeLatency>
-<Interval-min>4097</Interval-min>
-<Interval-max>4097</Interval-max>
+<Best-caseLatency>65539</Best-caseLatency>
+<Average-caseLatency>65539</Average-caseLatency>
+<Worst-caseLatency>65539</Worst-caseLatency>
+<Best-caseRealTimeLatency>0.655 ms</Best-caseRealTimeLatency>
+<Average-caseRealTimeLatency>0.655 ms</Average-caseRealTimeLatency>
+<Worst-caseRealTimeLatency>0.655 ms</Worst-caseRealTimeLatency>
+<Interval-min>65537</Interval-min>
+<Interval-max>65537</Interval-max>
 <PerformancePragma>-</PerformancePragma>
 </SummaryOfOverallLatency>
 <SummaryOfLoopLatency>
 <INIT_WEIGHT_OUTER_INIT_WEIGHT_INNER>
 <Slack>7.30</Slack>
-<TripCount>4096</TripCount>
+<TripCount>65536</TripCount>
 <isPerfectNested>0</isPerfectNested>
-<Latency>4097</Latency>
-<AbsoluteTimeLatency>40970</AbsoluteTimeLatency>
+<Latency>65537</Latency>
+<AbsoluteTimeLatency>655370</AbsoluteTimeLatency>
 <PipelineII>1</PipelineII>
 <PipelineDepth>3</PipelineDepth>
 <PerformancePragma>-</PerformancePragma>
@@ -49,13 +49,13 @@
 <SummaryOfViolations>
 <IssueType>-</IssueType>
 <ViolationType>-</ViolationType>
-<SourceLocation>src/snn_top_hls.cpp:454</SourceLocation>
+<SourceLocation>src/snn_top_hls.cpp:638</SourceLocation>
 <SummaryOfLoopViolations>
 <INIT_WEIGHT_OUTER_INIT_WEIGHT_INNER>
 <Name>INIT_WEIGHT_OUTER_INIT_WEIGHT_INNER</Name>
 <IssueType>-</IssueType>
 <ViolationType>-</ViolationType>
-<SourceLocation>src/snn_top_hls.cpp:453</SourceLocation>
+<SourceLocation>src/snn_top_hls.cpp:637</SourceLocation>
 </INIT_WEIGHT_OUTER_INIT_WEIGHT_INNER>
 </SummaryOfLoopViolations>
 </SummaryOfViolations>
@@ -63,8 +63,8 @@
 
 <AreaEstimates>
 <Resources>
-<FF>39</FF>
-<LUT>144</LUT>
+<FF>49</FF>
+<LUT>164</LUT>
 <BRAM_18K>0</BRAM_18K>
 <DSP>0</DSP>
 <URAM>0</URAM>
@@ -153,7 +153,7 @@
 <IOProtocol>ap_memory</IOProtocol>
 <IOConfig></IOConfig>
 <Dir>out</Dir>
-<Bits>9</Bits>
+<Bits>13</Bits>
 <Attribute>address</Attribute>
 </RtlPorts>
 <RtlPorts>
@@ -197,7 +197,7 @@
 <IOProtocol>ap_memory</IOProtocol>
 <IOConfig></IOConfig>
 <Dir>out</Dir>
-<Bits>9</Bits>
+<Bits>13</Bits>
 <Attribute>address</Attribute>
 </RtlPorts>
 <RtlPorts>
@@ -241,7 +241,7 @@
 <IOProtocol>ap_memory</IOProtocol>
 <IOConfig></IOConfig>
 <Dir>out</Dir>
-<Bits>9</Bits>
+<Bits>13</Bits>
 <Attribute>address</Attribute>
 </RtlPorts>
 <RtlPorts>
@@ -285,7 +285,7 @@
 <IOProtocol>ap_memory</IOProtocol>
 <IOConfig></IOConfig>
 <Dir>out</Dir>
-<Bits>9</Bits>
+<Bits>13</Bits>
 <Attribute>address</Attribute>
 </RtlPorts>
 <RtlPorts>
@@ -329,7 +329,7 @@
 <IOProtocol>ap_memory</IOProtocol>
 <IOConfig></IOConfig>
 <Dir>out</Dir>
-<Bits>9</Bits>
+<Bits>13</Bits>
 <Attribute>address</Attribute>
 </RtlPorts>
 <RtlPorts>
@@ -373,7 +373,7 @@
 <IOProtocol>ap_memory</IOProtocol>
 <IOConfig></IOConfig>
 <Dir>out</Dir>
-<Bits>9</Bits>
+<Bits>13</Bits>
 <Attribute>address</Attribute>
 </RtlPorts>
 <RtlPorts>
@@ -417,7 +417,7 @@
 <IOProtocol>ap_memory</IOProtocol>
 <IOConfig></IOConfig>
 <Dir>out</Dir>
-<Bits>9</Bits>
+<Bits>13</Bits>
 <Attribute>address</Attribute>
 </RtlPorts>
 <RtlPorts>
@@ -461,7 +461,7 @@
 <IOProtocol>ap_memory</IOProtocol>
 <IOConfig></IOConfig>
 <Dir>out</Dir>
-<Bits>9</Bits>
+<Bits>13</Bits>
 <Attribute>address</Attribute>
 </RtlPorts>
 <RtlPorts>

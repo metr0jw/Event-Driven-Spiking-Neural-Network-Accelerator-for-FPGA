@@ -11,6 +11,7 @@ This module provides 1:1 mapping with:
 Author: Jiwoon Lee (@metr0jw)
 """
 
+import math
 import numpy as np
 from typing import List, Dict, Optional, Tuple, NamedTuple
 from dataclasses import dataclass, field
@@ -25,13 +26,17 @@ from .utils import logger
 # Hardware Constants (must match Verilog/HLS)
 # =============================================================================
 
-# From snn_types.h
-MAX_NEURONS = 64
+# From snn_types.h / RTL top defaults
+MAX_NEURONS = 256          # Matches snn_accelerator_hls_top NUM_NEURONS default
 MAX_SYNAPSES = 4096
 WEIGHT_SCALE = 128
 MAX_WEIGHT = 127
 MIN_WEIGHT = -128
 MAX_WEIGHT_DELTA = 127
+
+# ID widths (HLS wrapper uses 10-bit IDs; core width is clog2(NUM_NEURONS))
+HLS_NEURON_ID_WIDTH = 10
+NEURON_ID_WIDTH = int(math.ceil(math.log2(MAX_NEURONS)))
 
 # Bit widths from lif_neuron.v
 DATA_WIDTH = 16          # Membrane potential width
@@ -161,7 +166,7 @@ class LIFNeuronParams:
     """
     threshold: int = 1000       # Threshold value (16-bit)
     leak_rate: int = 3          # Leak config: [2:0]=shift1, [7:3]=shift2 (default: shift=3, tau≈0.875)
-    refractory_period: int = 20 # Refractory period (8-bit)
+    refractory_period: int = 0  # Refractory period (8-bit). HLS wrapper ties off refractory_out.
     reset_potential: int = 0    # Reset potential (16-bit)
     reset_potential_en: bool = False
     
@@ -399,8 +404,13 @@ class HWAccurateSTDPEngine:
     - LTD: -A- * exp(-dt/τ-) when post before pre
     """
     
-    def __init__(self, config: Optional[STDPConfig] = None):
+    def __init__(self, config: Optional[STDPConfig] = None, max_neurons: int = MAX_NEURONS,
+                 id_mask: Optional[int] = None):
         self.config = config or STDPConfig()
+        self.max_neurons = max_neurons
+        # Mask models the HLS wrapper (10 bits) to core width min(NEURON_ID_WIDTH, HLS_NEURON_ID_WIDTH)
+        default_mask_bits = max(1, int(math.ceil(math.log2(max_neurons)))) if max_neurons > 0 else 1
+        self.id_mask = id_mask if id_mask is not None else ((1 << default_mask_bits) - 1)
         
         # Spike time arrays (matching HLS static arrays)
         self.pre_spike_times: Dict[int, int] = {}
@@ -426,6 +436,10 @@ class HWAccurateSTDPEngine:
     
     def add_synapse(self, pre_id: int, post_id: int):
         """Register a synapse for STDP tracking."""
+        pre_id &= self.id_mask
+        post_id &= self.id_mask
+        if pre_id >= self.max_neurons or post_id >= self.max_neurons:
+            return
         if pre_id not in self.synapses:
             self.synapses[pre_id] = []
         if post_id not in self.synapses[pre_id]:
@@ -491,7 +505,10 @@ class HWAccurateSTDPEngine:
         connected_post_ids : list, optional
             List of connected post-synaptic neuron IDs
         """
-        if not self.enabled or neuron_id >= MAX_NEURONS:
+        neuron_id &= self.id_mask
+        if connected_post_ids is not None:
+            connected_post_ids = [nid & self.id_mask for nid in connected_post_ids]
+        if not self.enabled or neuron_id >= self.max_neurons:
             return []
         
         updates = []
@@ -540,7 +557,10 @@ class HWAccurateSTDPEngine:
         connected_pre_ids : list, optional
             List of connected pre-synaptic neuron IDs
         """
-        if not self.enabled or neuron_id >= MAX_NEURONS:
+        neuron_id &= self.id_mask
+        if connected_pre_ids is not None:
+            connected_pre_ids = [nid & self.id_mask for nid in connected_pre_ids]
+        if not self.enabled or neuron_id >= self.max_neurons:
             return []
         
         updates = []
@@ -605,6 +625,8 @@ class HWAccurateSNNSimulator:
     ):
         self.num_neurons = min(num_neurons, MAX_NEURONS)
         self.clock_period_ns = clock_period_ns
+        self.neuron_id_width = max(1, int(math.ceil(math.log2(self.num_neurons))))
+        self._hls_core_id_mask = (1 << min(self.neuron_id_width, HLS_NEURON_ID_WIDTH)) - 1
         
         # Initialize neurons
         self.neurons = [
@@ -613,7 +635,8 @@ class HWAccurateSNNSimulator:
         ]
         
         # Initialize STDP engine
-        self.stdp = HWAccurateSTDPEngine(stdp_config)
+        self.stdp = HWAccurateSTDPEngine(stdp_config, max_neurons=self.num_neurons,
+                                         id_mask=self._hls_core_id_mask)
         
         # Synaptic weight matrix (8-bit signed)
         self.weights = np.zeros((self.num_neurons, self.num_neurons), dtype=np.int8)
@@ -639,9 +662,10 @@ class HWAccurateSNNSimulator:
         self.weights = np.clip(weights, MIN_WEIGHT, MAX_WEIGHT).astype(np.int8)
     
     def inject_spike(self, neuron_id: int, weight: int = 60):
-        """Inject external spike to a neuron."""
-        if 0 <= neuron_id < self.num_neurons:
-            self.neurons[neuron_id].tick(
+        """Inject external spike to a neuron (mirrors HLS->core ID truncation)."""
+        core_id = self._map_hls_id_to_core(neuron_id)
+        if 0 <= core_id < self.num_neurons:
+            self.neurons[core_id].tick(
                 syn_valid=True,
                 syn_weight=abs(weight),
                 syn_excitatory=(weight >= 0)
@@ -666,18 +690,19 @@ class HWAccurateSNNSimulator:
         # Process external spikes
         if external_spikes:
             for neuron_id, weight in external_spikes:
-                if 0 <= neuron_id < self.num_neurons:
-                    spike = self.neurons[neuron_id].tick(
+                core_id = self._map_hls_id_to_core(neuron_id)
+                if 0 <= core_id < self.num_neurons:
+                    spike = self.neurons[core_id].tick(
                         syn_valid=True,
                         syn_weight=abs(weight),
                         syn_excitatory=(weight >= 0)
                     )
                     if spike:
-                        fired_neurons.append(neuron_id)
-                        self.spike_history.append((self.current_cycle, neuron_id))
+                        fired_neurons.append(core_id)
+                        self.spike_history.append((self.current_cycle, core_id))
         
         # Process internal dynamics (leak) for neurons without external input
-        external_ids = set(s[0] for s in external_spikes) if external_spikes else set()
+        external_ids = set(self._map_hls_id_to_core(s[0]) for s in external_spikes) if external_spikes else set()
         
         for i, neuron in enumerate(self.neurons):
             if i not in external_ids:
@@ -744,6 +769,10 @@ class HWAccurateSNNSimulator:
             'stdp_updates': stdp_updates,
             'final_membrane_potentials': [n.get_membrane_potential() for n in self.neurons]
         }
+
+    def _map_hls_id_to_core(self, neuron_id: int) -> int:
+        """Apply HLS (10-bit) to core ID truncation used in RTL wrapper."""
+        return neuron_id & self._hls_core_id_mask
     
     def get_neuron_state(self, neuron_id: int) -> Dict:
         """Get detailed state of a neuron."""

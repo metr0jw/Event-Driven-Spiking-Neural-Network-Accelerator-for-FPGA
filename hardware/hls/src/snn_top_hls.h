@@ -19,15 +19,22 @@
 //=============================================================================
 // Configuration
 //=============================================================================
-const int MAX_NEURONS = 64;
-const int MAX_SYNAPSES = 4096;  // 64x64
+const int MAX_NEURONS = 256;
+const int MAX_SYNAPSES = 65536;  // 256x256
 
 const int WEIGHT_WIDTH = 8;
-const int NEURON_ID_WIDTH = 8;
+const int NEURON_ID_WIDTH = 10;  // Supports up to 1024 encoded channels
 const int TIMESTAMP_WIDTH = 32;
 
 const int WEIGHT_SCALE = 128;
 const int VERSION_ID = 0x20251205;
+
+//=============================================================================
+// Operation Modes (use #define for switch-case compatibility)
+//=============================================================================
+#define MODE_INFERENCE 0       // Forward inference only
+#define MODE_TRAIN_STDP 1      // On-chip STDP learning
+#define MODE_CHECKPOINT 2      // Stream weights to DDR/PS
 
 //=============================================================================
 // Basic Data Types
@@ -43,7 +50,8 @@ const weight_t MIN_WEIGHT = -128;
 //=============================================================================
 // AXI4-Stream Types
 //=============================================================================
-// Spike packet: [31:16] timestamp, [15:8] weight, [7:0] neuron_id
+// Spike packet (AER over AXIS32):
+// [31:18] timestamp(14b), [17:10] weight(8b, two's complement), [9:0] neuron_id
 typedef ap_axiu<32, 1, 1, 1> axis_spike_t;
 
 // Weight packet: [31:24] reserved, [23:16] weight, [15:8] post_id, [7:0] pre_id
@@ -75,6 +83,37 @@ struct weight_update_t {
     neuron_id_t post_id;
     weight_delta_t delta;
     spike_time_t timestamp;
+};
+
+//=============================================================================
+// Encoder Configuration
+//=============================================================================
+const int MAX_INPUT_CHANNELS = 784;  // 28x28 MNIST default
+
+typedef ap_uint<8> pixel_t;          // Single pixel value (0-255)
+
+struct input_data_t {
+    pixel_t pixels[MAX_INPUT_CHANNELS];  // Complete input frame
+};
+
+// Encoding types (4-bit allocation for future expansion)
+#define ENC_NONE           0  // No encoding - direct spike input
+#define ENC_RATE_POISSON   1  // Rate coding (Poisson-like)
+#define ENC_LATENCY        2  // Latency coding (intensity to latency)
+#define ENC_DELTA_SIGMA    3  // Delta-sigma modulation
+// Reserved: 4-15 for future encoding methods
+
+struct encoder_config_t {
+    ap_uint<4> encoding_type;        // 4-bit: 0=none, 1=rate, 2=latency, 3=delta-sigma
+    bool two_neuron_enable;          // Enable two-neuron encoding (pos/neg split)
+    ap_uint<8> baseline;             // Baseline for two-neuron (default: 128 for unsigned)
+    ap_uint<16> num_steps;           // Total simulation time steps (for rate/latency normalization)
+    ap_uint<16> rate_scale;          // Rate coding: threshold scale
+    ap_uint<16> latency_window;      // Latency coding: time window (timesteps)
+    ap_uint<16> delta_threshold;     // Delta-sigma: threshold for integration
+    ap_uint<16> delta_decay;         // Delta-sigma: decay rate
+    ap_uint<16> num_channels;        // Number of input channels (will be doubled if two_neuron_enable)
+    weight_t default_weight;         // Default spike weight
 };
 
 //=============================================================================

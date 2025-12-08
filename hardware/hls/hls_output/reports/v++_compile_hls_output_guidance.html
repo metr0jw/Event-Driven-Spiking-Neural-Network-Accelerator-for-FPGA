@@ -3407,7 +3407,7 @@ window.onload = function () { addSorting(); }
 <center><h1>Design Guidance Report</h1></center><center><table class="header" border="0">
 <tr><td><b>Copyright</b></td><td>Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2025 Advanced Micro Devices, Inc. All Rights Reserved.</td></tr>
 <tr><td><b>Tool Version</b></td><td>xcd v.2025.2 (lin64) Build 0 </td></tr>
-<tr><td><b>Date</b></td><td>Mon Dec  8 20:49:27 2025</td></tr>
+<tr><td><b>Date</b></td><td>Mon Dec  8 23:23:10 2025</td></tr>
 <tr><td><b>Host</b></td><td>jwlee-BCML running 64-bit Ubuntu 24.04.3 LTS</td></tr>
 <tr><td><b>Command</b></td><td>/home/jwlee/tools/2025.2/Vitis/bin/unwrapped/lnx64.o/v++  -c --mode hls --part xc7z020clg400-1 --work_dir ./hls_output --hls.clock 10ns --hls.syn.top snn_top_hls --hls.syn.file src/snn_top_hls.cpp --hls.flow_target vivado </td></tr>
 </table></center><br>
@@ -3416,9 +3416,9 @@ window.onload = function () { addSorting(); }
 <tr><td><a href="#VIOLATION DETAILS">2 VIOLATION DETAILS</a></tr></td>
 </table>
 <a name="REPORT SUMMARY"></a><h1>1 REPORT SUMMARY</h1>
-<pre>Violations found: 11
+<pre>Violations found: 16
 </pre>
-<pre>Rule Specs Violated: 2
+<pre>Rule Specs Violated: 1
 </pre>
 <a name="VIOLATION DETAILS"></a><h1>2 VIOLATION DETAILS</h1>
 <table border="1">
@@ -3434,16 +3434,6 @@ window.onload = function () { addSorting(); }
 <th align="left" width="380">Resolution</th>
 </tr>
 <tr>
-<td align="left">9</td>
-<td align="left">Throughput</td>
-<td align="left">ADVISORY</td>
-<td align="left"><undefined></td>
-<td align="left">HLS Throughput Related</td>
-<td align="left">Accelerator.snn_top_hls.Throughput</td>
-<td align="left">%s</td>
-<td align="left"><a href="http:///docs.amd.com/access/sources/dita/map?Doc_Version=2025.2%20English&url=ug1399-vitis-hls">Vitis HLS User Guide (UG1399)</a></td>
-</tr>
-<tr>
 <td align="left">2</td>
 <td align="left">Throughput</td>
 <td align="left">ADVISORY</td>
@@ -3454,27 +3444,18 @@ window.onload = function () { addSorting(); }
 <td align="left"><a href="http:///docs.amd.com/access/sources/dita/map?Doc_Version=2025.2%20English&url=ug1399-vitis-hls">Vitis HLS User Guide (UG1399)</a></td>
 </tr>
 <tr>
-<td align="left">5</td>
+<td align="left">7</td>
 <td align="left">Throughput</td>
-<td align="left">ADVISORY</td>
+<td align="left">WARNING</td>
 <td align="left"><undefined></td>
 <td align="left">HLS Throughput Related</td>
 <td align="left">Accelerator.snn_top_hls.Throughput</td>
-<td align="left">%s</td>
+<td align="left">The II Violation in module 'run_encoder_once_Pipeline_ENCODER_LOOP' (loop 'ENCODER_LOOP'): Unable to enforce a carried dependence constraint (II = 5, distance = 1, offset = 1) between 'add' operation 32 bit ('add_ln73_16', <a href="file:///mnt/wsl/workspace/Event-Driven-Spiking-Neural-Network-Accelerator-for-FPGA/hardware/hls/src/snn_top_hls.cpp#line=73">snn_top_hls.cpp</a>-><a href="file:///mnt/wsl/workspace/Event-Driven-Spiking-Neural-Network-Accelerator-for-FPGA/hardware/hls/src/snn_top_hls.cpp#line=127">snn_top_hls.cpp</a>-><a href="file:///mnt/wsl/workspace/Event-Driven-Spiking-Neural-Network-Accelerator-for-FPGA/hardware/hls/src/snn_top_hls.cpp#line=154">snn_top_hls.cpp</a>) and 'add' operation 32 bit ('add_ln73_1', <a href="file:///mnt/wsl/workspace/Event-Driven-Spiking-Neural-Network-Accelerator-for-FPGA/hardware/hls/src/snn_top_hls.cpp#line=73">snn_top_hls.cpp</a>-><a href="file:///mnt/wsl/workspace/Event-Driven-Spiking-Neural-Network-Accelerator-for-FPGA/hardware/hls/src/snn_top_hls.cpp#line=127">snn_top_hls.cpp</a>-><a href="file:///mnt/wsl/workspace/Event-Driven-Spiking-Neural-Network-Accelerator-for-FPGA/hardware/hls/src/snn_top_hls.cpp#line=154">snn_top_hls.cpp</a>).
+</td>
 <td align="left"><a href="http:///docs.amd.com/access/sources/dita/map?Doc_Version=2025.2%20English&url=ug1399-vitis-hls">Vitis HLS User Guide (UG1399)</a></td>
 </tr>
 <tr>
-<td align="left">10</td>
-<td align="left">Kernel</td>
-<td align="left">ADVISORY</td>
-<td align="left"><undefined></td>
-<td align="left">HLS Kernel Related</td>
-<td align="left">Accelerator.snn_top_hls.Kernel</td>
-<td align="left">%s</td>
-<td align="left"><a href="http:///docs.amd.com/access/sources/dita/map?Doc_Version=2025.2%20English&url=ug1399-vitis-hls">Vitis HLS User Guide (UG1399)</a></td>
-</tr>
-<tr>
-<td align="left">6</td>
+<td align="left">13</td>
 <td align="left">Throughput</td>
 <td align="left">ADVISORY</td>
 <td align="left"><undefined></td>
@@ -3486,11 +3467,12 @@ window.onload = function () { addSorting(); }
 <tr>
 <td align="left">8</td>
 <td align="left">Throughput</td>
-<td align="left">ADVISORY</td>
+<td align="left">WARNING</td>
 <td align="left"><undefined></td>
 <td align="left">HLS Throughput Related</td>
 <td align="left">Accelerator.snn_top_hls.Throughput</td>
-<td align="left">%s</td>
+<td align="left">The II Violation in module 'run_encoder_once_Pipeline_ENCODER_LOOP' (loop 'ENCODER_LOOP'): Unable to enforce a carried dependence constraint (II = 6, distance = 1, offset = 1) between 'add' operation 32 bit ('add_ln73_19', <a href="file:///mnt/wsl/workspace/Event-Driven-Spiking-Neural-Network-Accelerator-for-FPGA/hardware/hls/src/snn_top_hls.cpp#line=73">snn_top_hls.cpp</a>-><a href="file:///mnt/wsl/workspace/Event-Driven-Spiking-Neural-Network-Accelerator-for-FPGA/hardware/hls/src/snn_top_hls.cpp#line=127">snn_top_hls.cpp</a>-><a href="file:///mnt/wsl/workspace/Event-Driven-Spiking-Neural-Network-Accelerator-for-FPGA/hardware/hls/src/snn_top_hls.cpp#line=154">snn_top_hls.cpp</a>) and 'add' operation 32 bit ('add_ln73_1', <a href="file:///mnt/wsl/workspace/Event-Driven-Spiking-Neural-Network-Accelerator-for-FPGA/hardware/hls/src/snn_top_hls.cpp#line=73">snn_top_hls.cpp</a>-><a href="file:///mnt/wsl/workspace/Event-Driven-Spiking-Neural-Network-Accelerator-for-FPGA/hardware/hls/src/snn_top_hls.cpp#line=127">snn_top_hls.cpp</a>-><a href="file:///mnt/wsl/workspace/Event-Driven-Spiking-Neural-Network-Accelerator-for-FPGA/hardware/hls/src/snn_top_hls.cpp#line=154">snn_top_hls.cpp</a>).
+</td>
 <td align="left"><a href="http:///docs.amd.com/access/sources/dita/map?Doc_Version=2025.2%20English&url=ug1399-vitis-hls">Vitis HLS User Guide (UG1399)</a></td>
 </tr>
 <tr>
@@ -3514,6 +3496,37 @@ window.onload = function () { addSorting(); }
 <td align="left"><a href="http:///docs.amd.com/access/sources/dita/map?Doc_Version=2025.2%20English&url=ug1399-vitis-hls">Vitis HLS User Guide (UG1399)</a></td>
 </tr>
 <tr>
+<td align="left">9</td>
+<td align="left">Throughput</td>
+<td align="left">WARNING</td>
+<td align="left"><undefined></td>
+<td align="left">HLS Throughput Related</td>
+<td align="left">Accelerator.snn_top_hls.Throughput</td>
+<td align="left">The II Violation in module 'run_encoder_once_Pipeline_ENCODER_LOOP' (loop 'ENCODER_LOOP'): Unable to enforce a carried dependence constraint (II = 7, distance = 1, offset = 1) between 'add' operation 32 bit ('add_ln73_22', <a href="file:///mnt/wsl/workspace/Event-Driven-Spiking-Neural-Network-Accelerator-for-FPGA/hardware/hls/src/snn_top_hls.cpp#line=73">snn_top_hls.cpp</a>-><a href="file:///mnt/wsl/workspace/Event-Driven-Spiking-Neural-Network-Accelerator-for-FPGA/hardware/hls/src/snn_top_hls.cpp#line=127">snn_top_hls.cpp</a>-><a href="file:///mnt/wsl/workspace/Event-Driven-Spiking-Neural-Network-Accelerator-for-FPGA/hardware/hls/src/snn_top_hls.cpp#line=154">snn_top_hls.cpp</a>) and 'add' operation 32 bit ('add_ln73_1', <a href="file:///mnt/wsl/workspace/Event-Driven-Spiking-Neural-Network-Accelerator-for-FPGA/hardware/hls/src/snn_top_hls.cpp#line=73">snn_top_hls.cpp</a>-><a href="file:///mnt/wsl/workspace/Event-Driven-Spiking-Neural-Network-Accelerator-for-FPGA/hardware/hls/src/snn_top_hls.cpp#line=127">snn_top_hls.cpp</a>-><a href="file:///mnt/wsl/workspace/Event-Driven-Spiking-Neural-Network-Accelerator-for-FPGA/hardware/hls/src/snn_top_hls.cpp#line=154">snn_top_hls.cpp</a>).
+</td>
+<td align="left"><a href="http:///docs.amd.com/access/sources/dita/map?Doc_Version=2025.2%20English&url=ug1399-vitis-hls">Vitis HLS User Guide (UG1399)</a></td>
+</tr>
+<tr>
+<td align="left">5</td>
+<td align="left">Throughput</td>
+<td align="left">ADVISORY</td>
+<td align="left"><undefined></td>
+<td align="left">HLS Throughput Related</td>
+<td align="left">Accelerator.snn_top_hls.Throughput</td>
+<td align="left">%s</td>
+<td align="left"><a href="http:///docs.amd.com/access/sources/dita/map?Doc_Version=2025.2%20English&url=ug1399-vitis-hls">Vitis HLS User Guide (UG1399)</a></td>
+</tr>
+<tr>
+<td align="left">14</td>
+<td align="left">Throughput</td>
+<td align="left">ADVISORY</td>
+<td align="left"><undefined></td>
+<td align="left">HLS Throughput Related</td>
+<td align="left">Accelerator.snn_top_hls.Throughput</td>
+<td align="left">%s</td>
+<td align="left"><a href="http:///docs.amd.com/access/sources/dita/map?Doc_Version=2025.2%20English&url=ug1399-vitis-hls">Vitis HLS User Guide (UG1399)</a></td>
+</tr>
+<tr>
 <td align="left">1</td>
 <td align="left">Throughput</td>
 <td align="left">ADVISORY</td>
@@ -3524,17 +3537,58 @@ window.onload = function () { addSorting(); }
 <td align="left"><a href="http:///docs.amd.com/access/sources/dita/map?Doc_Version=2025.2%20English&url=ug1399-vitis-hls">Vitis HLS User Guide (UG1399)</a></td>
 </tr>
 <tr>
-<td align="left">11</td>
-<td align="left">Kernel</td>
+<td align="left">15</td>
+<td align="left">Throughput</td>
 <td align="left">ADVISORY</td>
 <td align="left"><undefined></td>
-<td align="left">HLS Kernel Related</td>
-<td align="left">Accelerator.snn_top_hls.Kernel</td>
+<td align="left">HLS Throughput Related</td>
+<td align="left">Accelerator.snn_top_hls.Throughput</td>
 <td align="left">%s</td>
 <td align="left"><a href="http:///docs.amd.com/access/sources/dita/map?Doc_Version=2025.2%20English&url=ug1399-vitis-hls">Vitis HLS User Guide (UG1399)</a></td>
 </tr>
 <tr>
-<td align="left">7</td>
+<td align="left">10</td>
+<td align="left">Throughput</td>
+<td align="left">ADVISORY</td>
+<td align="left"><undefined></td>
+<td align="left">HLS Throughput Related</td>
+<td align="left">Accelerator.snn_top_hls.Throughput</td>
+<td align="left">%s</td>
+<td align="left"><a href="http:///docs.amd.com/access/sources/dita/map?Doc_Version=2025.2%20English&url=ug1399-vitis-hls">Vitis HLS User Guide (UG1399)</a></td>
+</tr>
+<tr>
+<td align="left">16</td>
+<td align="left">Throughput</td>
+<td align="left">ADVISORY</td>
+<td align="left"><undefined></td>
+<td align="left">HLS Throughput Related</td>
+<td align="left">Accelerator.snn_top_hls.Throughput</td>
+<td align="left">%s</td>
+<td align="left"><a href="http:///docs.amd.com/access/sources/dita/map?Doc_Version=2025.2%20English&url=ug1399-vitis-hls">Vitis HLS User Guide (UG1399)</a></td>
+</tr>
+<tr>
+<td align="left">6</td>
+<td align="left">Throughput</td>
+<td align="left">WARNING</td>
+<td align="left"><undefined></td>
+<td align="left">HLS Throughput Related</td>
+<td align="left">Accelerator.snn_top_hls.Throughput</td>
+<td align="left">The II Violation in module 'run_encoder_once_Pipeline_ENCODER_LOOP' (loop 'ENCODER_LOOP'): Unable to enforce a carried dependence constraint (II = 4, distance = 1, offset = 1) between 'add' operation 32 bit ('add_ln73_13', <a href="file:///mnt/wsl/workspace/Event-Driven-Spiking-Neural-Network-Accelerator-for-FPGA/hardware/hls/src/snn_top_hls.cpp#line=73">snn_top_hls.cpp</a>-><a href="file:///mnt/wsl/workspace/Event-Driven-Spiking-Neural-Network-Accelerator-for-FPGA/hardware/hls/src/snn_top_hls.cpp#line=127">snn_top_hls.cpp</a>-><a href="file:///mnt/wsl/workspace/Event-Driven-Spiking-Neural-Network-Accelerator-for-FPGA/hardware/hls/src/snn_top_hls.cpp#line=154">snn_top_hls.cpp</a>) and 'add' operation 32 bit ('add_ln73_1', <a href="file:///mnt/wsl/workspace/Event-Driven-Spiking-Neural-Network-Accelerator-for-FPGA/hardware/hls/src/snn_top_hls.cpp#line=73">snn_top_hls.cpp</a>-><a href="file:///mnt/wsl/workspace/Event-Driven-Spiking-Neural-Network-Accelerator-for-FPGA/hardware/hls/src/snn_top_hls.cpp#line=127">snn_top_hls.cpp</a>-><a href="file:///mnt/wsl/workspace/Event-Driven-Spiking-Neural-Network-Accelerator-for-FPGA/hardware/hls/src/snn_top_hls.cpp#line=154">snn_top_hls.cpp</a>).
+</td>
+<td align="left"><a href="http:///docs.amd.com/access/sources/dita/map?Doc_Version=2025.2%20English&url=ug1399-vitis-hls">Vitis HLS User Guide (UG1399)</a></td>
+</tr>
+<tr>
+<td align="left">11</td>
+<td align="left">Throughput</td>
+<td align="left">ADVISORY</td>
+<td align="left"><undefined></td>
+<td align="left">HLS Throughput Related</td>
+<td align="left">Accelerator.snn_top_hls.Throughput</td>
+<td align="left">%s</td>
+<td align="left"><a href="http:///docs.amd.com/access/sources/dita/map?Doc_Version=2025.2%20English&url=ug1399-vitis-hls">Vitis HLS User Guide (UG1399)</a></td>
+</tr>
+<tr>
+<td align="left">12</td>
 <td align="left">Throughput</td>
 <td align="left">ADVISORY</td>
 <td align="left"><undefined></td>

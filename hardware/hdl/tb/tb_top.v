@@ -16,7 +16,7 @@ module tb_top();
     // Parameters
     //-------------------------------------------------------------------------
     localparam C_S_AXI_DATA_WIDTH = 32;
-    localparam C_S_AXI_ADDR_WIDTH = 32;
+    localparam C_S_AXI_ADDR_WIDTH = 32;  // keep 32-bit addressing in TB, slice to 7 bits for DUT
     localparam C_AXIS_DATA_WIDTH = 32;
     localparam NUM_NEURONS = 64;
     
@@ -65,13 +65,23 @@ module tb_top();
     reg [C_AXIS_DATA_WIDTH-1:0]    s_axis_tdata;
     reg                             s_axis_tvalid;
     wire                            s_axis_tready;
+    reg [3:0]                       s_axis_tkeep;
+    reg [3:0]                       s_axis_tstrb;
+    reg                             s_axis_tuser;
     reg                             s_axis_tlast;
+    reg                             s_axis_tid;
+    reg                             s_axis_tdest;
     
     // AXI4-Stream master (output spikes)
     wire [C_AXIS_DATA_WIDTH-1:0]   m_axis_tdata;
     wire                            m_axis_tvalid;
     reg                             m_axis_tready;
+    wire [3:0]                      m_axis_tkeep;
+    wire [3:0]                      m_axis_tstrb;
+    wire                            m_axis_tuser;
     wire                            m_axis_tlast;
+    wire                            m_axis_tid;
+    wire                            m_axis_tdest;
     
     // Other signals
     wire                            interrupt;
@@ -89,13 +99,14 @@ module tb_top();
     reg [255:0]                     test_name;
     reg [31:0]                      read_data;
     integer                         i, j;
+    reg [13:0]                      tb_timestamp;
     
     //-------------------------------------------------------------------------
     // DUT Instantiation
     //-------------------------------------------------------------------------
-    snn_accelerator_top #(
+    snn_accelerator_hls_top #(
         .C_S_AXI_DATA_WIDTH(C_S_AXI_DATA_WIDTH),
-        .C_S_AXI_ADDR_WIDTH(C_S_AXI_ADDR_WIDTH),
+        .C_S_AXI_ADDR_WIDTH(7),
         .C_AXIS_DATA_WIDTH(C_AXIS_DATA_WIDTH),
         .NUM_NEURONS(NUM_NEURONS)
     ) DUT (
@@ -104,7 +115,7 @@ module tb_top();
         .aresetn(aresetn),
         
         // AXI4-Lite
-        .s_axi_awaddr(s_axi_awaddr),
+        .s_axi_awaddr(s_axi_awaddr[6:0]),
         .s_axi_awprot(s_axi_awprot),
         .s_axi_awvalid(s_axi_awvalid),
         .s_axi_awready(s_axi_awready),
@@ -115,7 +126,7 @@ module tb_top();
         .s_axi_bresp(s_axi_bresp),
         .s_axi_bvalid(s_axi_bvalid),
         .s_axi_bready(s_axi_bready),
-        .s_axi_araddr(s_axi_araddr),
+        .s_axi_araddr(s_axi_araddr[6:0]),
         .s_axi_arprot(s_axi_arprot),
         .s_axi_arvalid(s_axi_arvalid),
         .s_axi_arready(s_axi_arready),
@@ -128,11 +139,21 @@ module tb_top();
         .s_axis_tdata(s_axis_tdata),
         .s_axis_tvalid(s_axis_tvalid),
         .s_axis_tready(s_axis_tready),
+        .s_axis_tkeep(s_axis_tkeep),
+        .s_axis_tstrb(s_axis_tstrb),
+        .s_axis_tuser(s_axis_tuser),
         .s_axis_tlast(s_axis_tlast),
+        .s_axis_tid(s_axis_tid),
+        .s_axis_tdest(s_axis_tdest),
         .m_axis_tdata(m_axis_tdata),
         .m_axis_tvalid(m_axis_tvalid),
         .m_axis_tready(m_axis_tready),
+        .m_axis_tkeep(m_axis_tkeep),
+        .m_axis_tstrb(m_axis_tstrb),
+        .m_axis_tuser(m_axis_tuser),
         .m_axis_tlast(m_axis_tlast),
+        .m_axis_tid(m_axis_tid),
+        .m_axis_tdest(m_axis_tdest),
         
         // Other I/O
         .interrupt(interrupt),
@@ -254,11 +275,17 @@ module tb_top();
     endtask
 
     // Send spike via AXI-Stream
-    task send_spike(input [7:0] neuron_id, input [7:0] weight);
+    task send_spike(input [9:0] neuron_id, input [7:0] weight);
         begin
             @(posedge aclk);
             wait(s_axis_tready);
-            s_axis_tdata = {16'd0, weight, neuron_id};
+            s_axis_tdata = {tb_timestamp, weight, neuron_id};
+            s_axis_tkeep = 4'hF;
+            s_axis_tstrb = 4'hF;
+            s_axis_tuser = 1'b0;
+            s_axis_tid   = 1'b0;
+            s_axis_tdest = 1'b0;
+            tb_timestamp = tb_timestamp + 1'b1;
             s_axis_tvalid = 1'b1;
             s_axis_tlast = 1'b1;
             @(posedge aclk);
@@ -269,7 +296,7 @@ module tb_top();
     endtask
     
     // Send spike burst
-    task send_spike_burst(input [7:0] start_id, input [7:0] count, input [7:0] weight);
+    task send_spike_burst(input [9:0] start_id, input [7:0] count, input [7:0] weight);
         integer k;
         begin
             for (k = 0; k < count; k = k + 1) begin
@@ -280,8 +307,8 @@ module tb_top();
     
     // Configure synapse connection
     task configure_connection(
-        input [7:0] source,
-        input [7:0] target,
+        input [9:0] source,
+        input [9:0] target,
         input [7:0] weight,
         input [15:0] index
     );
@@ -292,7 +319,7 @@ module tb_top();
     endtask
     
     // Configure neuron connection count
-    task configure_neuron_count(input [7:0] neuron_id, input [7:0] count);
+    task configure_neuron_count(input [9:0] neuron_id, input [7:0] count);
         begin
             axi_write(32'h31000000 | (neuron_id << 2), {24'd0, count});
         end
@@ -340,12 +367,18 @@ module tb_top();
         s_axi_rready = 0;
         s_axis_tdata = 0;
         s_axis_tvalid = 0;
+        s_axis_tkeep = 4'hF;
+        s_axis_tstrb = 4'hF;
+        s_axis_tuser = 1'b0;
         s_axis_tlast = 0;
+        s_axis_tid = 1'b0;
+        s_axis_tdest = 1'b0;
         m_axis_tready = 1;
         sw = 2'b00;
         btn = 4'b0000;
         test_num = 1;
         error_count = 0;
+        tb_timestamp = 14'd0;
         
         // Create waveform dump
         $dumpfile("tb_top.vcd");
@@ -693,8 +726,10 @@ module tb_top();
     //-------------------------------------------------------------------------
     // Timeout Watchdog
     //-------------------------------------------------------------------------
+    localparam integer TIMEOUT_CYCLES = 5_000_000; // 50ms at 100MHz, avoids premature timeout during HLS integration
+
     initial begin
-        #(CLK_PERIOD * 1_000_000);  // 10ms timeout
+        #(CLK_PERIOD * TIMEOUT_CYCLES);
         $display("\n*** ERROR: Testbench timeout! ***");
         $finish;
     end

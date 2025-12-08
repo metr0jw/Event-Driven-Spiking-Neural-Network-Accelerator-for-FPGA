@@ -65,11 +65,21 @@ module snn_pl_wrapper (
     wire [31:0] s_axis_tdata;
     wire        s_axis_tvalid;
     wire        s_axis_tready;
+    wire [3:0]  s_axis_tkeep;
+    wire [3:0]  s_axis_tstrb;
+    wire        s_axis_tuser;
     wire        s_axis_tlast;
+    wire        s_axis_tid;
+    wire        s_axis_tdest;
     wire [31:0] m_axis_tdata;
     wire        m_axis_tvalid;
     wire        m_axis_tready;
+    wire [3:0]  m_axis_tkeep;
+    wire [3:0]  m_axis_tstrb;
+    wire        m_axis_tuser;
     wire        m_axis_tlast;
+    wire        m_axis_tid;
+    wire        m_axis_tdest;
     
     wire        interrupt;
 
@@ -246,7 +256,7 @@ module snn_pl_wrapper (
     reg [31:0] spike_gen_counter;
     reg        spike_gen_valid;
     reg [31:0] spike_gen_data;
-    reg [7:0]  spike_neuron_id;
+    reg [9:0]  spike_neuron_id;
     
     always @(posedge clk_100mhz or negedge sys_rst_n) begin
         if (!sys_rst_n) begin
@@ -261,8 +271,8 @@ module snn_pl_wrapper (
             if (sw[1] && spike_gen_counter[19:0] == 20'hFFFFF) begin
                 spike_gen_valid <= 1'b1;
                 spike_neuron_id <= spike_neuron_id + 1'b1;
-                // Format: [31:24]=neuron_id, [23:16]=weight, [15:0]=timestamp
-                spike_gen_data  <= {spike_neuron_id, 8'd50, spike_gen_counter[15:0]};
+                // Format: [31:18]=timestamp(14b), [17:10]=weight(8b), [9:0]=neuron_id(10b)
+                spike_gen_data  <= {spike_gen_counter[27:14], 8'd50, spike_neuron_id};
             end else if (s_axis_tready) begin
                 spike_gen_valid <= 1'b0;
             end
@@ -271,20 +281,25 @@ module snn_pl_wrapper (
     
     assign s_axis_tdata  = spike_gen_data;
     assign s_axis_tvalid = spike_gen_valid;
+    assign s_axis_tkeep  = 4'hF;
+    assign s_axis_tstrb  = 4'hF;
+    assign s_axis_tuser  = 1'b0;
     assign s_axis_tlast  = spike_gen_valid;  // Each spike is a complete packet
-    
+    assign s_axis_tid    = 1'b0;
+    assign s_axis_tdest  = 1'b0;
+
     // Output stream - just accept
     assign m_axis_tready = 1'b1;
 
     //-------------------------------------------------------------------------
     // SNN Accelerator Instance
     //-------------------------------------------------------------------------
-    snn_accelerator_top #(
+    snn_accelerator_hls_top #(
         .C_S_AXI_DATA_WIDTH(32),
-        .C_S_AXI_ADDR_WIDTH(32),
+        .C_S_AXI_ADDR_WIDTH(7),
         .C_AXIS_DATA_WIDTH(32),
         .NUM_NEURONS(256),
-        .NUM_AXONS(256),
+        .NUM_AXONS(1024),
         .NUM_PARALLEL_UNITS(8)
     ) u_snn_accelerator (
         // Clock and Reset
@@ -316,13 +331,23 @@ module snn_pl_wrapper (
         .s_axis_tdata   (s_axis_tdata),
         .s_axis_tvalid  (s_axis_tvalid),
         .s_axis_tready  (s_axis_tready),
+        .s_axis_tkeep   (s_axis_tkeep),
+        .s_axis_tstrb   (s_axis_tstrb),
+        .s_axis_tuser   (s_axis_tuser),
         .s_axis_tlast   (s_axis_tlast),
+        .s_axis_tid     (s_axis_tid),
+        .s_axis_tdest   (s_axis_tdest),
         
         // AXI4-Stream Master (Output Spikes)
         .m_axis_tdata   (m_axis_tdata),
         .m_axis_tvalid  (m_axis_tvalid),
         .m_axis_tready  (m_axis_tready),
+        .m_axis_tkeep   (m_axis_tkeep),
+        .m_axis_tstrb   (m_axis_tstrb),
+        .m_axis_tuser   (m_axis_tuser),
         .m_axis_tlast   (m_axis_tlast),
+        .m_axis_tid     (m_axis_tid),
+        .m_axis_tdest   (m_axis_tdest),
         
         // Interrupt
         .interrupt      (interrupt),

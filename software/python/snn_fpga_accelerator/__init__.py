@@ -182,6 +182,7 @@ from .hw_accurate_simulator import (
 # Legacy/Compatibility (will be deprecated)
 # =============================================================================
 from .accelerator import SNNAccelerator
+from .xrt_backend import XRTBackend, RegisterMap  # Optional pyxrt path
 from .pytorch_interface import pytorch_to_snn, SNNLayer, SNNModel
 from .spike_encoding import SpikeEvent
 from .learning import STDPLearning, RSTDPLearning, LearningConfig

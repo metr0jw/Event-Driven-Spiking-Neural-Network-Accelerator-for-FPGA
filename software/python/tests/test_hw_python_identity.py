@@ -94,7 +94,7 @@ def test_shift_based_leak():
         print(f"    Expected: {expected_next:5d}, Actual: {actual_next:5d} [{status}]")
     
     print(f"\nTest 1 Result: {'PASSED' if all_passed else 'FAILED'}")
-    return all_passed
+    assert all_passed
 
 
 def test_synaptic_integration():
@@ -166,7 +166,7 @@ def test_synaptic_integration():
     all_passed = all_passed and overflow_pass and underflow_pass
     
     print(f"\nTest 2 Result: {'PASSED' if all_passed else 'FAILED'}")
-    return all_passed
+    assert all_passed
 
 
 def test_spike_generation():
@@ -218,7 +218,7 @@ def test_spike_generation():
         print(f"    Expected spike: {expected_spike}, Actual: {actual_spike} [{status}]")
     
     print(f"\nTest 3 Result: {'PASSED' if all_passed else 'FAILED'}")
-    return all_passed
+    assert all_passed
 
 
 def test_refractory_period():
@@ -269,7 +269,7 @@ def test_refractory_period():
     all_passed = all_passed and (spike == True)
     
     print(f"\nTest 4 Result: {'PASSED' if all_passed else 'FAILED'}")
-    return all_passed
+    assert all_passed
 
 
 def test_tau_conversion():
@@ -301,7 +301,7 @@ def test_tau_conversion():
         print(f"    Actual tau={actual_tau:.4f}, error={error:.4f} [{status}]")
     
     print(f"\nTest 5 Result: {'PASSED' if all_passed else 'FAILED'}")
-    return all_passed
+    assert all_passed
 
 
 def test_pytorch_hw_mode():
@@ -390,7 +390,7 @@ def test_pytorch_hw_mode():
         print(f"    initial={initial_mem:5d} -> PyTorch={mem_torch:5d}, HW={mem_hw:5d}, expected={expected_next:5d} [{status}]")
     
     print(f"\nTest 6 Result: {'PASSED' if all_passed else 'FAILED'}")
-    return all_passed
+    assert all_passed
 
 
 def main():

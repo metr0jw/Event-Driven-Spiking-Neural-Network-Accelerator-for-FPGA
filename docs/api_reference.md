@@ -394,8 +394,6 @@ infer(
 ```
 Run inference on input spike trains.
 
-**Note**: In multi-step mode (default), processes entire simulation. In single-step mode, this method is not recommended; use `single_step()` instead.
-
 **Parameters**:
 - `input_spikes` (np.ndarray): Input spikes, shape `(num_neurons, num_timesteps)`
 - `duration` (float, optional): Simulation duration in seconds
@@ -408,103 +406,11 @@ Run inference on input spike trains.
 
 **Example**:
 ```python
-# Basic inference (multi-step mode)
+# Basic inference
 output = accelerator.infer(input_spikes)
 
 # With membrane potentials
 output, membrane = accelerator.infer(input_spikes, return_membrane=True)
-```
-
-##### single_step()
-```python
-single_step(
-    input_spikes: List[SpikeEvent],
-    return_events: bool = False
-) -> Union[np.ndarray, List[SpikeEvent]]
-```
-Process one timestep in single-step mode.
-
-**Note**: Must call `set_step_mode("single")` before using this method.
-
-**Parameters**:
-- `input_spikes` (List[SpikeEvent]): Input spikes for this timestep
-- `return_events` (bool): If True, return spike events; if False, return firing rates
-
-**Returns**:
-- If `return_events=False`: np.ndarray of firing rates for output neurons
-- If `return_events=True`: List[SpikeEvent] of output spikes
-
-**Example**:
-```python
-# Configure for single-step mode
-accelerator.set_step_mode("single", timestep_dt=0.001)
-accelerator.reset()
-
-# Process timestep by timestep
-for t in range(100):
-    timestep_spikes = get_spikes_for_timestep(t)
-    output = accelerator.single_step(timestep_spikes)
-    print(f"Timestep {t}: {output}")
-
-# Get complete history
-history = accelerator.get_spike_history()
-```
-
-##### set_step_mode()
-```python
-set_step_mode(mode: str, timestep_dt: Optional[float] = None) -> None
-```
-Set simulation step mode (multi-step or single-step).
-
-**Parameters**:
-- `mode` (str): "multi" for multi-step mode, "single" for single-step mode
-- `timestep_dt` (float, optional): Timestep duration in seconds (only for single-step mode)
-
-**Raises**:
-- `ValueError`: If mode is not "multi" or "single"
-
-**Example**:
-```python
-# Multi-step mode (process entire simulation at once)
-accelerator.set_step_mode("multi")
-
-# Single-step mode (iterate timestep by timestep)
-accelerator.set_step_mode("single", timestep_dt=0.001)  # 1ms timesteps
-```
-
-##### get_step_mode()
-```python
-get_step_mode() -> str
-```
-Get current step mode.
-
-**Returns**:
-- `mode` (str): Current mode ("multi" or "single")
-
-**Example**:
-```python
-mode = accelerator.get_step_mode()
-print(f"Current mode: {mode}")
-```
-
-##### get_spike_history()
-```python
-get_spike_history() -> List[List[SpikeEvent]]
-```
-Get complete spike history from single-step mode.
-
-**Returns**:
-- `history` (List[List[SpikeEvent]]): List of spike events for each timestep
-
-**Note**: Only available in single-step mode. Returns empty list in multi-step mode.
-
-**Example**:
-```python
-# After running single-step simulation
-history = accelerator.get_spike_history()
-print(f"Total timesteps: {len(history)}")
-for t, spikes in enumerate(history):
-    print(f"Timestep {t}: {len(spikes)} spikes")
 ```
 
 ##### infer_with_learning()

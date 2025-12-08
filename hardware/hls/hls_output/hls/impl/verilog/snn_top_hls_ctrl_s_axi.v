@@ -8,7 +8,7 @@
 `timescale 1ns/1ps
 (* DowngradeIPIdentifiedWarnings="yes" *) module snn_top_hls_ctrl_s_axi
 #(parameter
-    C_S_AXI_ADDR_WIDTH = 7,
+    C_S_AXI_ADDR_WIDTH = 8,
     C_S_AXI_DATA_WIDTH = 32
 )(
     input  wire                          ACLK,
@@ -34,7 +34,10 @@
     output wire                          interrupt,
     output wire [31:0]                   ctrl_reg,
     output wire [31:0]                   config_reg,
+    output wire [31:0]                   mode_reg,
+    output wire [31:0]                   time_steps_reg,
     output wire [143:0]                  learning_params,
+    output wire [111:0]                  encoder_config,
     input  wire [31:0]                   status_reg,
     input  wire                          status_reg_ap_vld,
     input  wire [31:0]                   spike_count_reg,
@@ -77,70 +80,95 @@
 // 0x18 : Data signal of config_reg
 //        bit 31~0 - config_reg[31:0] (Read/Write)
 // 0x1c : reserved
-// 0x20 : Data signal of learning_params
-//        bit 31~0 - learning_params[31:0] (Read/Write)
-// 0x24 : Data signal of learning_params
-//        bit 31~0 - learning_params[63:32] (Read/Write)
-// 0x28 : Data signal of learning_params
-//        bit 31~0 - learning_params[95:64] (Read/Write)
-// 0x2c : Data signal of learning_params
-//        bit 31~0 - learning_params[127:96] (Read/Write)
+// 0x20 : Data signal of mode_reg
+//        bit 31~0 - mode_reg[31:0] (Read/Write)
+// 0x24 : reserved
+// 0x28 : Data signal of time_steps_reg
+//        bit 31~0 - time_steps_reg[31:0] (Read/Write)
+// 0x2c : reserved
 // 0x30 : Data signal of learning_params
+//        bit 31~0 - learning_params[31:0] (Read/Write)
+// 0x34 : Data signal of learning_params
+//        bit 31~0 - learning_params[63:32] (Read/Write)
+// 0x38 : Data signal of learning_params
+//        bit 31~0 - learning_params[95:64] (Read/Write)
+// 0x3c : Data signal of learning_params
+//        bit 31~0 - learning_params[127:96] (Read/Write)
+// 0x40 : Data signal of learning_params
 //        bit 15~0 - learning_params[143:128] (Read/Write)
 //        others   - reserved
-// 0x34 : reserved
-// 0x38 : Data signal of status_reg
+// 0x44 : reserved
+// 0x48 : Data signal of encoder_config
+//        bit 31~0 - encoder_config[31:0] (Read/Write)
+// 0x4c : Data signal of encoder_config
+//        bit 31~0 - encoder_config[63:32] (Read/Write)
+// 0x50 : Data signal of encoder_config
+//        bit 31~0 - encoder_config[95:64] (Read/Write)
+// 0x54 : Data signal of encoder_config
+//        bit 15~0 - encoder_config[111:96] (Read/Write)
+//        others   - reserved
+// 0x58 : reserved
+// 0x5c : Data signal of status_reg
 //        bit 31~0 - status_reg[31:0] (Read)
-// 0x3c : Control signal of status_reg
+// 0x60 : Control signal of status_reg
 //        bit 0  - status_reg_ap_vld (Read/COR)
 //        others - reserved
-// 0x48 : Data signal of spike_count_reg
+// 0x6c : Data signal of spike_count_reg
 //        bit 31~0 - spike_count_reg[31:0] (Read)
-// 0x4c : Control signal of spike_count_reg
+// 0x70 : Control signal of spike_count_reg
 //        bit 0  - spike_count_reg_ap_vld (Read/COR)
 //        others - reserved
-// 0x58 : Data signal of weight_sum_reg
+// 0x7c : Data signal of weight_sum_reg
 //        bit 31~0 - weight_sum_reg[31:0] (Read)
-// 0x5c : Control signal of weight_sum_reg
+// 0x80 : Control signal of weight_sum_reg
 //        bit 0  - weight_sum_reg_ap_vld (Read/COR)
 //        others - reserved
-// 0x68 : Data signal of version_reg
+// 0x8c : Data signal of version_reg
 //        bit 31~0 - version_reg[31:0] (Read)
-// 0x6c : Control signal of version_reg
+// 0x90 : Control signal of version_reg
 //        bit 0  - version_reg_ap_vld (Read/COR)
 //        others - reserved
-// 0x78 : Data signal of reward_signal
+// 0x9c : Data signal of reward_signal
 //        bit 7~0 - reward_signal[7:0] (Read/Write)
 //        others  - reserved
-// 0x7c : reserved
+// 0xa0 : reserved
 // (SC = Self Clear, COR = Clear on Read, TOW = Toggle on Write, COH = Clear on Handshake)
 
 //------------------------Parameter----------------------
 localparam
-    ADDR_AP_CTRL                = 7'h00,
-    ADDR_GIE                    = 7'h04,
-    ADDR_IER                    = 7'h08,
-    ADDR_ISR                    = 7'h0c,
-    ADDR_CTRL_REG_DATA_0        = 7'h10,
-    ADDR_CTRL_REG_CTRL          = 7'h14,
-    ADDR_CONFIG_REG_DATA_0      = 7'h18,
-    ADDR_CONFIG_REG_CTRL        = 7'h1c,
-    ADDR_LEARNING_PARAMS_DATA_0 = 7'h20,
-    ADDR_LEARNING_PARAMS_DATA_1 = 7'h24,
-    ADDR_LEARNING_PARAMS_DATA_2 = 7'h28,
-    ADDR_LEARNING_PARAMS_DATA_3 = 7'h2c,
-    ADDR_LEARNING_PARAMS_DATA_4 = 7'h30,
-    ADDR_LEARNING_PARAMS_CTRL   = 7'h34,
-    ADDR_STATUS_REG_DATA_0      = 7'h38,
-    ADDR_STATUS_REG_CTRL        = 7'h3c,
-    ADDR_SPIKE_COUNT_REG_DATA_0 = 7'h48,
-    ADDR_SPIKE_COUNT_REG_CTRL   = 7'h4c,
-    ADDR_WEIGHT_SUM_REG_DATA_0  = 7'h58,
-    ADDR_WEIGHT_SUM_REG_CTRL    = 7'h5c,
-    ADDR_VERSION_REG_DATA_0     = 7'h68,
-    ADDR_VERSION_REG_CTRL       = 7'h6c,
-    ADDR_REWARD_SIGNAL_DATA_0   = 7'h78,
-    ADDR_REWARD_SIGNAL_CTRL     = 7'h7c,
+    ADDR_AP_CTRL                = 8'h00,
+    ADDR_GIE                    = 8'h04,
+    ADDR_IER                    = 8'h08,
+    ADDR_ISR                    = 8'h0c,
+    ADDR_CTRL_REG_DATA_0        = 8'h10,
+    ADDR_CTRL_REG_CTRL          = 8'h14,
+    ADDR_CONFIG_REG_DATA_0      = 8'h18,
+    ADDR_CONFIG_REG_CTRL        = 8'h1c,
+    ADDR_MODE_REG_DATA_0        = 8'h20,
+    ADDR_MODE_REG_CTRL          = 8'h24,
+    ADDR_TIME_STEPS_REG_DATA_0  = 8'h28,
+    ADDR_TIME_STEPS_REG_CTRL    = 8'h2c,
+    ADDR_LEARNING_PARAMS_DATA_0 = 8'h30,
+    ADDR_LEARNING_PARAMS_DATA_1 = 8'h34,
+    ADDR_LEARNING_PARAMS_DATA_2 = 8'h38,
+    ADDR_LEARNING_PARAMS_DATA_3 = 8'h3c,
+    ADDR_LEARNING_PARAMS_DATA_4 = 8'h40,
+    ADDR_LEARNING_PARAMS_CTRL   = 8'h44,
+    ADDR_ENCODER_CONFIG_DATA_0  = 8'h48,
+    ADDR_ENCODER_CONFIG_DATA_1  = 8'h4c,
+    ADDR_ENCODER_CONFIG_DATA_2  = 8'h50,
+    ADDR_ENCODER_CONFIG_DATA_3  = 8'h54,
+    ADDR_ENCODER_CONFIG_CTRL    = 8'h58,
+    ADDR_STATUS_REG_DATA_0      = 8'h5c,
+    ADDR_STATUS_REG_CTRL        = 8'h60,
+    ADDR_SPIKE_COUNT_REG_DATA_0 = 8'h6c,
+    ADDR_SPIKE_COUNT_REG_CTRL   = 8'h70,
+    ADDR_WEIGHT_SUM_REG_DATA_0  = 8'h7c,
+    ADDR_WEIGHT_SUM_REG_CTRL    = 8'h80,
+    ADDR_VERSION_REG_DATA_0     = 8'h8c,
+    ADDR_VERSION_REG_CTRL       = 8'h90,
+    ADDR_REWARD_SIGNAL_DATA_0   = 8'h9c,
+    ADDR_REWARD_SIGNAL_CTRL     = 8'ha0,
     WRIDLE                      = 2'd0,
     WRDATA                      = 2'd1,
     WRRESP                      = 2'd2,
@@ -148,7 +176,7 @@ localparam
     RDIDLE                      = 2'd0,
     RDDATA                      = 2'd1,
     RDRESET                     = 2'd2,
-    ADDR_BITS                = 7;
+    ADDR_BITS                = 8;
 
 //------------------------Local signal-------------------
     reg  [1:0]                    wstate = WRRESET;
@@ -179,7 +207,10 @@ localparam
     reg  [1:0]                    int_isr = 2'b0;
     reg  [31:0]                   int_ctrl_reg = 'b0;
     reg  [31:0]                   int_config_reg = 'b0;
+    reg  [31:0]                   int_mode_reg = 'b0;
+    reg  [31:0]                   int_time_steps_reg = 'b0;
     reg  [143:0]                  int_learning_params = 'b0;
+    reg  [111:0]                  int_encoder_config = 'b0;
     reg                           int_status_reg_ap_vld;
     reg  [31:0]                   int_status_reg = 'b0;
     reg                           int_spike_count_reg_ap_vld;
@@ -304,6 +335,12 @@ always @(posedge ACLK) begin
                 ADDR_CONFIG_REG_DATA_0: begin
                     rdata <= int_config_reg[31:0];
                 end
+                ADDR_MODE_REG_DATA_0: begin
+                    rdata <= int_mode_reg[31:0];
+                end
+                ADDR_TIME_STEPS_REG_DATA_0: begin
+                    rdata <= int_time_steps_reg[31:0];
+                end
                 ADDR_LEARNING_PARAMS_DATA_0: begin
                     rdata <= int_learning_params[31:0];
                 end
@@ -318,6 +355,18 @@ always @(posedge ACLK) begin
                 end
                 ADDR_LEARNING_PARAMS_DATA_4: begin
                     rdata <= int_learning_params[143:128];
+                end
+                ADDR_ENCODER_CONFIG_DATA_0: begin
+                    rdata <= int_encoder_config[31:0];
+                end
+                ADDR_ENCODER_CONFIG_DATA_1: begin
+                    rdata <= int_encoder_config[63:32];
+                end
+                ADDR_ENCODER_CONFIG_DATA_2: begin
+                    rdata <= int_encoder_config[95:64];
+                end
+                ADDR_ENCODER_CONFIG_DATA_3: begin
+                    rdata <= int_encoder_config[111:96];
                 end
                 ADDR_STATUS_REG_DATA_0: begin
                     rdata <= int_status_reg[31:0];
@@ -360,7 +409,10 @@ assign task_ap_ready     = ap_ready && !int_auto_restart;
 assign auto_restart_done = auto_restart_status && (ap_idle && !int_ap_idle);
 assign ctrl_reg          = int_ctrl_reg;
 assign config_reg        = int_config_reg;
+assign mode_reg          = int_mode_reg;
+assign time_steps_reg    = int_time_steps_reg;
 assign learning_params   = int_learning_params;
+assign encoder_config    = int_encoder_config;
 assign reward_signal     = int_reward_signal;
 // int_interrupt
 always @(posedge ACLK) begin
@@ -514,6 +566,26 @@ always @(posedge ACLK) begin
     end
 end
 
+// int_mode_reg[31:0]
+always @(posedge ACLK) begin
+    if (ARESET)
+        int_mode_reg[31:0] <= 0;
+    else if (ACLK_EN) begin
+        if (w_hs && waddr == ADDR_MODE_REG_DATA_0)
+            int_mode_reg[31:0] <= (WDATA[31:0] & wmask) | (int_mode_reg[31:0] & ~wmask);
+    end
+end
+
+// int_time_steps_reg[31:0]
+always @(posedge ACLK) begin
+    if (ARESET)
+        int_time_steps_reg[31:0] <= 0;
+    else if (ACLK_EN) begin
+        if (w_hs && waddr == ADDR_TIME_STEPS_REG_DATA_0)
+            int_time_steps_reg[31:0] <= (WDATA[31:0] & wmask) | (int_time_steps_reg[31:0] & ~wmask);
+    end
+end
+
 // int_learning_params[31:0]
 always @(posedge ACLK) begin
     if (ARESET)
@@ -561,6 +633,46 @@ always @(posedge ACLK) begin
     else if (ACLK_EN) begin
         if (w_hs && waddr == ADDR_LEARNING_PARAMS_DATA_4)
             int_learning_params[143:128] <= (WDATA[31:0] & wmask) | (int_learning_params[143:128] & ~wmask);
+    end
+end
+
+// int_encoder_config[31:0]
+always @(posedge ACLK) begin
+    if (ARESET)
+        int_encoder_config[31:0] <= 0;
+    else if (ACLK_EN) begin
+        if (w_hs && waddr == ADDR_ENCODER_CONFIG_DATA_0)
+            int_encoder_config[31:0] <= (WDATA[31:0] & wmask) | (int_encoder_config[31:0] & ~wmask);
+    end
+end
+
+// int_encoder_config[63:32]
+always @(posedge ACLK) begin
+    if (ARESET)
+        int_encoder_config[63:32] <= 0;
+    else if (ACLK_EN) begin
+        if (w_hs && waddr == ADDR_ENCODER_CONFIG_DATA_1)
+            int_encoder_config[63:32] <= (WDATA[31:0] & wmask) | (int_encoder_config[63:32] & ~wmask);
+    end
+end
+
+// int_encoder_config[95:64]
+always @(posedge ACLK) begin
+    if (ARESET)
+        int_encoder_config[95:64] <= 0;
+    else if (ACLK_EN) begin
+        if (w_hs && waddr == ADDR_ENCODER_CONFIG_DATA_2)
+            int_encoder_config[95:64] <= (WDATA[31:0] & wmask) | (int_encoder_config[95:64] & ~wmask);
+    end
+end
+
+// int_encoder_config[111:96]
+always @(posedge ACLK) begin
+    if (ARESET)
+        int_encoder_config[111:96] <= 0;
+    else if (ACLK_EN) begin
+        if (w_hs && waddr == ADDR_ENCODER_CONFIG_DATA_3)
+            int_encoder_config[111:96] <= (WDATA[31:0] & wmask) | (int_encoder_config[111:96] & ~wmask);
     end
 end
 

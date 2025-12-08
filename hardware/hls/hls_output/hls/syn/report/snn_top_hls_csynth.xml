@@ -22,29 +22,70 @@
 </SummaryOfTimingAnalysis>
 <SummaryOfOverallLatency>
 <unit>clock cycles</unit>
-<Best-caseLatency>18</Best-caseLatency>
-<Average-caseLatency>1471</Average-caseLatency>
-<Worst-caseLatency>6924</Worst-caseLatency>
-<Best-caseRealTimeLatency>0.180 us</Best-caseRealTimeLatency>
-<Average-caseRealTimeLatency>14.710 us</Average-caseRealTimeLatency>
-<Worst-caseRealTimeLatency>69.240 us</Worst-caseRealTimeLatency>
-<Interval-min>19</Interval-min>
-<Interval-max>6925</Interval-max>
+<Best-caseLatency>29</Best-caseLatency>
+<Average-caseLatency>155922488</Average-caseLatency>
+<Worst-caseLatency>2374859326</Worst-caseLatency>
+<Best-caseRealTimeLatency>0.290 us</Best-caseRealTimeLatency>
+<Average-caseRealTimeLatency>1.559 sec</Average-caseRealTimeLatency>
+<Worst-caseRealTimeLatency>23.749 sec</Worst-caseRealTimeLatency>
+<Interval-min>30</Interval-min>
+<Interval-max>2374859327</Interval-max>
 <PerformancePragma>-</PerformancePragma>
 </SummaryOfOverallLatency>
+<SummaryOfLoopLatency>
+<TIME_LOOP>
+<Slack>7.30</Slack>
+<TripCount>
+<range>
+<min>0</min>
+<max>65535</max>
+</range>
+</TripCount>
+<isPerfectNested>0</isPerfectNested>
+<Latency>
+<range>
+<min>0</min>
+<max>2374791795</max>
+</range>
+</Latency>
+<AbsoluteTimeLatency>
+<range>
+<min>0</min>
+<max>23747917950</max>
+</range>
+</AbsoluteTimeLatency>
+<IterationLatency>
+<range>
+<min>6</min>
+<max>36237</max>
+</range>
+</IterationLatency>
+<PerformancePragma>-</PerformancePragma>
+<InstanceList>
+</InstanceList>
+</TIME_LOOP>
+</SummaryOfLoopLatency>
 <SummaryOfViolations>
 <IssueType>-</IssueType>
 <ViolationType>-</ViolationType>
-<SourceLocation>src/snn_top_hls.cpp:308</SourceLocation>
+<SourceLocation>src/snn_top_hls.cpp:450</SourceLocation>
+<SummaryOfLoopViolations>
+<TIME_LOOP>
+<Name>TIME_LOOP</Name>
+<IssueType>-</IssueType>
+<ViolationType>-</ViolationType>
+<SourceLocation>src/snn_top_hls.cpp:682</SourceLocation>
+</TIME_LOOP>
+</SummaryOfLoopViolations>
 </SummaryOfViolations>
 </PerformanceEstimates>
 
 <AreaEstimates>
 <Resources>
-<BRAM_18K>56</BRAM_18K>
-<DSP>0</DSP>
-<FF>2850</FF>
-<LUT>11503</LUT>
+<BRAM_18K>108</BRAM_18K>
+<DSP>24</DSP>
+<FF>18795</FF>
+<LUT>31639</LUT>
 <URAM>0</URAM>
 </Resources>
 <AvailableResources>
@@ -85,7 +126,7 @@
 <Type>scalar</Type>
 <IOProtocol>s_axi</IOProtocol>
 <Dir>in</Dir>
-<Bits>7</Bits>
+<Bits>8</Bits>
 <Attribute>unknown</Attribute>
 <CType>int</CType>
 <HasCtrl>1</HasCtrl>
@@ -162,7 +203,7 @@
 <Type>scalar</Type>
 <IOProtocol>s_axi</IOProtocol>
 <Dir>in</Dir>
-<Bits>7</Bits>
+<Bits>8</Bits>
 <Attribute>unknown</Attribute>
 <CType>int</CType>
 <HasCtrl>1</HasCtrl>
@@ -383,6 +424,42 @@
 <Dir>in</Dir>
 <Bits>1</Bits>
 <Attribute>data</Attribute>
+<CType>int</CType>
+</RtlPorts>
+<RtlPorts>
+<name>s_axis_data_TDATA</name>
+<Object>s_axis_data</Object>
+<Type>pointer</Type>
+<Scope></Scope>
+<IOProtocol>axis</IOProtocol>
+<IOConfig>register, both mode</IOConfig>
+<Dir>in</Dir>
+<Bits>6272</Bits>
+<Attribute>data</Attribute>
+<CType>int</CType>
+</RtlPorts>
+<RtlPorts>
+<name>s_axis_data_TVALID</name>
+<Object>s_axis_data</Object>
+<Type>pointer</Type>
+<Scope></Scope>
+<IOProtocol>axis</IOProtocol>
+<IOConfig>register, both mode</IOConfig>
+<Dir>in</Dir>
+<Bits>1</Bits>
+<Attribute>control</Attribute>
+<CType>int</CType>
+</RtlPorts>
+<RtlPorts>
+<name>s_axis_data_TREADY</name>
+<Object>s_axis_data</Object>
+<Type>pointer</Type>
+<Scope></Scope>
+<IOProtocol>axis</IOProtocol>
+<IOConfig>register, both mode</IOConfig>
+<Dir>out</Dir>
+<Bits>1</Bits>
+<Attribute>control</Attribute>
 <CType>int</CType>
 </RtlPorts>
 <RtlPorts>

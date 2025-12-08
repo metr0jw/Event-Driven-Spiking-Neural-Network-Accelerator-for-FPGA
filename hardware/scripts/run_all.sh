@@ -17,7 +17,7 @@ YELLOW='\033[1;33m'
 NC='\033[0m'
 
 # Default Vivado path
-VIVADO_PATH="/tools/Xilinx/Vivado/2023.1/bin/vivado"
+VIVADO_PATH="/tools/Xilinx/Vivado/2025.2/bin/vivado"
 
 # Script options
 CREATE_PROJECT=1

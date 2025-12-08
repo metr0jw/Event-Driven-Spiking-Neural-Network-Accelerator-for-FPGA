@@ -545,55 +545,91 @@ class PYNQ:
         input: Union[Tensor, np.ndarray],
         T: int = 100,
         return_spikes: bool = False,
+        encoding: str = "rate",
+        weight: int = 1,
     ) -> Union[Tensor, np.ndarray]:
         """
         Run inference on FPGA.
         
         Args:
-            input: Input data (will be spike encoded)
-            T: Number of timesteps
+            input: Input data (float tensor/ndarray), expected in [0,1] or normalized range
+            T: Number of timesteps (1..1024)
             return_spikes: Return spike train or final counts
+            encoding: 'rate' | 'temporal' | 'phase' (aligned with on-chip encoder semantics)
+            weight: spike weight (8-bit signed)
             
         Returns:
-            Output predictions
+            Output predictions or spikes
         """
         if isinstance(input, Tensor):
             input = input.detach().cpu().numpy()
         
         batch_size = input.shape[0]
-        
-        # Configure timesteps
         self.axi.write(self.REG_TIMESTEPS, T)
         
         outputs = []
         
         for b in range(batch_size):
             sample = input[b].flatten()
+            # Prepare AER packet list for this sample
+            aer_packets = self._encode_sample_to_aer(sample, T, encoding=encoding, weight=weight)
             
             # Start inference
-            self.axi.write(self.REG_CONTROL, 0x01)  # Start
+            self.axi.write(self.REG_CONTROL, 0x01)
             
-            # Feed input spikes
-            for t in range(T):
-                # Rate encode
-                spikes = (np.random.rand(len(sample)) < sample).astype(np.uint8)
-                
-                # Write spikes (packed)
-                for i in range(0, len(spikes), 32):
-                    packed = 0
-                    for j in range(min(32, len(spikes) - i)):
-                        packed |= (int(spikes[i + j]) << j)
-                    self.axi.write(self.REG_SPIKE_IN, packed)
+            # Feed AER stream to FPGA
+            for pkt in aer_packets:
+                self.axi.write(self.REG_SPIKE_IN, pkt)
             
-            # Wait for completion
+            # Wait for completion (status bit0 asserted when done)
             while self.axi.read(self.REG_STATUS) & 0x01 == 0:
                 pass
             
-            # Read output
+            # Read output (placeholder; real design may need burst read)
             output = self.axi.read(self.REG_SPIKE_OUT)
             outputs.append(output)
         
         return np.array(outputs)
+
+    # ------------------------------------------------------------------
+    # Host-side AER encoder (mirrors HLS encoder packing)
+    # Packet: [31:18]=timestamp(14b), [17:10]=weight(8b, two's complement), [9:0]=neuron_id
+    # ------------------------------------------------------------------
+    def _encode_sample_to_aer(self, sample: np.ndarray, T: int, encoding: str = "rate", weight: int = 1):
+        encoding = encoding.lower()
+        num_channels = min(len(sample), 1024)
+        weight_u8 = np.int8(weight).view(np.uint8)
+        packets = []
+        
+        if encoding == "rate":
+            for t in range(T):
+                rnd = np.random.rand(num_channels)
+                fires = rnd < sample[:num_channels]
+                ids = np.nonzero(fires)[0]
+                for nid in ids:
+                    pkt = ((t & 0x3FFF) << 18) | (int(weight_u8) << 10) | (nid & 0x3FF)
+                    packets.append(pkt)
+        elif encoding == "temporal":
+            # time-to-first-spike: earlier spike for larger value
+            spike_times = ((1.0 - sample[:num_channels].clip(0, 1)) * (T - 1)).astype(np.int32)
+            for nid, st in enumerate(spike_times):
+                pkt = ((int(st) & 0x3FFF) << 18) | (int(weight_u8) << 10) | (nid & 0x3FF)
+                packets.append(pkt)
+        elif encoding == "phase":
+            phase_acc = np.zeros(num_channels, dtype=np.int32)
+            phase_threshold = 1 << 16
+            phase_scale = (sample[:num_channels].clip(0, 1) * (1 << 12)).astype(np.int32)
+            for t in range(T):
+                phase_acc += phase_scale
+                firing = phase_acc >= phase_threshold
+                ids = np.nonzero(firing)[0]
+                for nid in ids:
+                    pkt = ((t & 0x3FFF) << 18) | (int(weight_u8) << 10) | (nid & 0x3FF)
+                    packets.append(pkt)
+                phase_acc[firing] -= phase_threshold
+        else:
+            raise ValueError(f"Unsupported encoding mode: {encoding}")
+        return packets
     
     def close(self):
         """Release FPGA resources."""
