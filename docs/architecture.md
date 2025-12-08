@@ -602,83 +602,121 @@ Bit  | Field            | Description
 
 ## Learning Engine
 
-### STDP Implementation
+### Per-Neuron Trace Architecture (v2.0)
 
-**Trace Update (Hardware)**:
-```verilog
-// Pre-synaptic trace
-if (pre_spike)
-    pre_trace <= MAX_TRACE;
-else
-    pre_trace <= (pre_trace * decay_factor) >> 8;
+The learning engine uses a **Per-Neuron Trace** architecture, optimized for FPGA resource efficiency. This approach reduces memory complexity from O(N×M) to O(N+M), making it feasible for resource-constrained devices like PYNQ-Z2.
 
-// Post-synaptic trace
-if (post_spike)
-    post_trace <= MAX_TRACE;
-else
-    post_trace <= (post_trace * decay_factor) >> 8;
+**Memory Complexity Comparison**:
 
-// Weight update
-if (pre_spike && post_trace > 0)
-    weight_delta <= (a_plus * post_trace) >>> 8;  // LTP
-else if (post_spike && pre_trace > 0)
-    weight_delta <= -(a_minus * pre_trace) >>> 8;  // LTD
+| Architecture | Trace Memory | Example (256 pre × 64 post) |
+|--------------|--------------|----------------------------|
+| Per-Synapse  | O(N×M)      | 16,384 traces (512 KB)     |
+| Per-Neuron   | O(N+M)      | 320 traces (1.25 KB)       |
+| **Savings**  | **~400x**   | **~400x less memory**      |
+
+This architecture is based on academic best practices from Intel Loihi and SpiNNaker.
+
+### STDP with Per-Neuron Traces
+
+**Lazy Trace Update**:
+```c
+// Decay LUT for efficient computation (4-bit index → decay factor)
+static const trace_t EXP_DECAY_LUT[16] = {
+    256, 240, 225, 211, 198, 186, 174, 163,  // 0-7 timesteps
+    153, 143, 134, 126, 118, 111, 104, 97    // 8-15 timesteps
+};
+
+// Lazy update: compute trace value at current time
+trace_value = trace.value * EXP_DECAY_LUT[time_diff] >> 8;
+
+// On spike: reset to maximum
+if (spike) {
+    trace.value = MAX_TRACE_VALUE;
+    trace.last_spike_time = current_time;
+}
 ```
 
-**Parameters**:
-- `tau_plus`: 20ms (default)
-- `tau_minus`: 20ms (default)
-- `a_plus`: 0.1 (LTP magnitude)
-- `a_minus`: 0.12 (LTD magnitude, typically > a_plus)
-- `decay_factor`: exp(-dt/tau) ≈ 230/256 for dt=1ms, tau=20ms
+**Weight Update Rule**:
+```c
+// Pre-synaptic spike arrives: check post-trace (LTD)
+if (pre_spike) {
+    post_trace = get_trace_lazy(post_traces[post_id], current_time);
+    delta_w = -(A_MINUS * post_trace) >> 8;  // LTD
+}
 
-### R-STDP Extension
-
-**Eligibility Traces**:
+// Post-synaptic spike occurs: check pre-trace (LTP)
+if (post_spike) {
+    pre_trace = get_trace_lazy(pre_traces[pre_id], current_time);
+    delta_w = (A_PLUS * pre_trace) >> 8;     // LTP
+}
 ```
-e[t+1] = e[t] × decay + Δw_STDP[t]
 
-where:
-- e[t]: eligibility trace
-- decay: 0.95 (typical)
-- Δw_STDP[t]: standard STDP weight change
+### R-STDP Extension (Reward-Modulated STDP)
+
+R-STDP extends STDP with eligibility traces for reinforcement learning.
+
+**Per-Neuron Eligibility Traces**:
+```c
+// Eligibility trace structure (per neuron, not per synapse)
+typedef struct {
+    int32_t accumulated_stdp;  // Accumulated STDP delta
+    uint16_t last_update_time; // For lazy decay
+} eligibility_trace_t;
+
+// Accumulate STDP changes
+eligibility[neuron_id].accumulated_stdp += delta_w_stdp;
+
+// On reward signal: apply modulated weight update
+delta_w_final = (reward * eligibility[neuron_id].accumulated_stdp) >> 8;
 ```
 
 **Reward Modulation**:
-```
-Δw_final[t] = learning_rate × reward[t] × e[t]
-```
+- Eligibility traces decay over time (τ_eligibility ~ 100-1000ms)
+- Reward signal modulates all accumulated eligibility traces
+- Weight update: `Δw = learning_rate × reward × eligibility`
 
-Applied when reward signal arrives (potentially delayed).
+### Hardware Learning Engine (HLS)
 
-### Hardware Learning Engine
+**File**: `hardware/hls/src/snn_top_hls.cpp`
 
-**File**: `hardware/hls/src/snn_learning_engine.cpp`
+HLS-based learning engine with Per-Neuron Trace optimization.
 
-HLS-based learning engine for complex algorithms.
-
-**Interface**:
+**Key Data Structures**:
 ```cpp
-void snn_learning_engine(
-    // Spike streams
-    hls::stream<spike_t> &pre_spikes,
-    hls::stream<spike_t> &post_spikes,
-    
-    // Weight memory
-    weight_t *weight_mem,
-    
+// Per-neuron trace (not per-synapse)
+typedef struct {
+    trace_t value;           // 8-bit trace value
+    timestamp_t last_spike;  // Last spike timestamp
+} neuron_trace_t;
+
+// Separate arrays for pre and post neurons
+neuron_trace_t pre_traces[MAX_NEURONS];   // Pre-synaptic traces
+neuron_trace_t post_traces[MAX_NEURONS];  // Post-synaptic traces
+```
+
+**Top-Level Interface**:
+```cpp
+void snn_top_hls(
+    // DMA Streams
+    hls::stream<input_packet_t> &input_stream,
+    hls::stream<output_packet_t> &output_stream,
     // Configuration
-    learning_config_t *config,
-    
-    // Reward signal (R-STDP)
-    hls::stream<reward_t> &reward_stream
+    config_reg_t config,
+    // Memory Interfaces
+    weight_t *weight_mem,
+    potential_t *membrane_mem
 );
 ```
 
-**Pipelining**:
-- Initiation Interval (II): 1 cycle
-- Latency: 10-15 cycles
-- Throughput: ~10 million weight updates/second @ 100 MHz
+**Performance (Vitis HLS 2025.2)**:
+- **Target Frequency**: 100 MHz
+- **Achieved Fmax**: 138.10 MHz (+38% margin)
+- **Initiation Interval**: II=1 for inner loops
+- **Resource Utilization**:
+  - BRAM: 56 (20%)
+  - LUT: 11,503 (21%)
+  - FF: 2,850 (2%)
+  - DSP: 0 (0%)
 
 ## Performance Characteristics
 
@@ -702,15 +740,15 @@ void snn_learning_engine(
 ### Power Consumption
 
 Measured on PYNQ-Z2:
-- Idle: ~0.5 W
-- Inference (low activity): ~1.5 W
-- Inference (high activity): ~2.5 W
-- With learning: ~3.0 W
+- Idle: TBD
+- Inference (low activity): TBD
+- Inference (high activity): TBD
+- With learning: TBD
 
 Power breakdown:
-- PS (ARM): ~40%
-- PL (FPGA fabric): ~50%
-- Memory I/O: ~10%
+- PS (ARM): TBD
+- PL (FPGA fabric): TBD
+- Memory I/O: TBD
 
 ### Scalability
 
@@ -728,19 +766,7 @@ The latest hardware revision focuses on maximizing FPGA resource utilization whi
 
 ### Key Optimizations
 
-#### 1. Scaled Network Parameters
-
-| Parameter          | Original | Optimized | Increase |
-|--------------------|----------|-----------|----------|
-| NUM_NEURONS        | 64       | 256       | 4×       |
-| NUM_AXONS          | 64       | 256       | 4×       |
-| NUM_PARALLEL_UNITS | 4        | 8         | 2×       |
-| Router Buffer      | 128      | 512       | 4×       |
-| Target LUT Usage   | ~9%      | ~35%      | ~4×      |
-| Target BRAM Usage  | ~1.4%    | ~20%      | ~14×     |
-| Target DSP Usage   | 0%       | ~10%      | -        |
-
-#### 2. LIF Neuron Array Optimization
+#### 1. LIF Neuron Array Optimization
 
 **File**: `hardware/hdl/rtl/neurons/lif_neuron_array.v`
 
@@ -771,7 +797,7 @@ Stage 3 (new_membrane_s3): Write back results, threshold comparison
 - Each unit has independent pipeline stages
 - Reduces full array update time from 64 cycles to 8 cycles
 
-#### 3. Synapse Array Optimization
+#### 2. Synapse Array Optimization
 
 **File**: `hardware/hdl/rtl/synapses/synapse_array.v`
 
@@ -796,7 +822,7 @@ input wire [NEURON_ID_WIDTH-1:0] batch_start_neuron;
 - Writes 8 weights per clock cycle during initialization
 - Reduces weight loading time by 8×
 
-#### 4. Top Module Integration
+#### 33. Top Module Integration
 
 **File**: `hardware/hdl/rtl/top/snn_accelerator_top.v`
 

@@ -26,7 +26,7 @@ EXAMPLES_DIR = examples
 
 # Tools
 VIVADO = vivado
-VITIS_HLS = vitis_hls
+VPP = v++
 PYTHON = python3
 PIP = pip3
 
@@ -96,14 +96,13 @@ clean:
 # Hardware build targets
 .PHONY: hls
 hls:
-	@echo "$(YELLOW)Building HLS IP cores...$(RESET)"
-	@if command -v $(VITIS_HLS) >/dev/null 2>&1; then \
-		cd $(HARDWARE_DIR)/hls/scripts && \
-		chmod +x run_hls.sh && \
-		./run_hls.sh; \
+	@echo "$(YELLOW)Building HLS IP cores with v++ compiler...$(RESET)"
+	@if command -v $(VPP) >/dev/null 2>&1; then \
+		cd $(HARDWARE_DIR)/hls && \
+		./scripts/build_hls.sh --clean; \
 		echo "$(GREEN)✅ HLS build completed$(RESET)"; \
 	else \
-		echo "$(RED)❌ Vitis HLS not found$(RESET)"; \
+		echo "$(RED)❌ v++ compiler not found. Source Vitis settings first.$(RESET)"; \
 		exit 1; \
 	fi
 

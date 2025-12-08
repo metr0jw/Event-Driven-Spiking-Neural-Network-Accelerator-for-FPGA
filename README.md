@@ -8,7 +8,7 @@ Energy-efficient Event-driven Spiking Neural Network accelerator for FPGA with P
 
 | Component | Version/Specification |
 |-----------|----------------------|
-| FPGA Tools | Vivado 2025.2, Vitis HLS 2025.2 |
+| FPGA Tools | Vivado 2025.2, Vitis 2025.2 (v++ compiler) |
 | Target FPGA | Xilinx Zynq-7000 (xc7z020clg400-1) |
 | Target Board | PYNQ-Z2 |
 | Software | Python 3.13, PyTorch 2.9.0, PYNQ 2.7 |
@@ -31,42 +31,51 @@ This project implements a complete event-driven spiking neural network (SNN) acc
   AXI4-Lite (Ctrl)         LIF Neuron Arrays
   AXI4-Stream (Data)       AC-Based Synapses
                            Spike Router
+                           Per-Neuron STDP/R-STDP
 ```
 
 ### Key Features
 
-- Leaky Integrate-and-Fire (LIF) Neurons: Hardware-optimized fixed-point arithmetic with configurable membrane dynamics
-- AC-Based Architecture: Accumulate-only operations (~5x energy reduction per synaptic operation)
-- Sparse Processing: 90-99% operations skipped when spike=0
-- STDP/R-STDP Learning: HLS-implemented learning algorithms
-- PyTorch Integration: Direct model conversion and weight loading
-- Multiple Spike Encoders: Poisson, temporal, rate-based encoding
+- **Leaky Integrate-and-Fire (LIF) Neurons**: Hardware-optimized fixed-point arithmetic with configurable membrane dynamics
+- **AC-Based Architecture**: Accumulate-only operations (~5x energy reduction per synaptic operation)
+- **Per-Neuron STDP/R-STDP Learning**: Memory-efficient O(N+M) trace storage (vs O(N×M) per-synapse)
+- **Lazy Update with LUT**: Exponential decay computed on-demand using 16-entry lookup table
+- **PyTorch Integration**: Direct model conversion and weight loading
+- **Multiple Spike Encoders**: Poisson, temporal, rate-based encoding
 
 ---
 
 ## Build Status
 
-### Verified Hardware Synthesis Results
+### HLS Synthesis Results (Per-Neuron Trace Architecture)
 
 | Metric | Value | Notes |
 |--------|-------|-------|
-| Target Clock | 100 MHz | PYNQ-Z2 system clock |
-| WNS (Setup Slack) | +0.159 ns | All timing constraints met |
-| WHS (Hold Slack) | +0.057 ns | All timing constraints met |
-| LUT Utilization | 4,689 / 53,200 (8.81%) | Including distributed RAM |
-| FF Utilization | 3,212 / 106,400 (3.02%) | Synchronous registers |
-| Slice Utilization | 1,620 / 13,300 (12.18%) | |
-| BRAM | ~15% | Weight memory + state storage |
-| Bitstream Size | 4.0 MB | outputs/snn_accelerator.bit |
+| **Estimated Fmax** | **138.10 MHz** | Exceeds 100MHz target |
+| Target Clock | 100 MHz (10ns) | PYNQ-Z2 system clock |
+| Timing Slack | +0.06 ns | All timing constraints met |
+| BRAM | 56 (20%) | Weight memory + Per-Neuron traces |
+| FF | 2,850 (2%) | Synchronous registers |
+| LUT | 11,503 (21%) | Combinational logic |
+| DSP | 0 | Shift-based arithmetic (no DSP) |
+
+### Memory Architecture
+
+| Storage | Size | Complexity | Description |
+|---------|------|------------|-------------|
+| Weight Memory | 64×64×8bit | O(N×M) | Synaptic weights |
+| Pre-Neuron Traces | 64×(8+16)bit | O(N) | Trace + timestamp |
+| Post-Neuron Traces | 64×(8+16)bit | O(M) | Trace + timestamp |
+| Eligibility Traces | 64×2×8bit | O(N+M) | Pre/Post eligibility |
 
 ### Verified Simulation Results
 
 | Test Suite | Tests | Status |
 |------------|-------|--------|
-| Verilog Testbenches | 17 | All Pass |
-| Python Unit Tests | 6+ | All Pass |
-| HW-Python Identity | 6 | All Pass |
-| HLS C-Simulation | 5 | All Pass |
+| Verilog Testbenches | 17 | All Pass ✅ |
+| Python Unit Tests | 6+ | All Pass ✅ |
+| HW-Python Identity | 6 | All Pass ✅ |
+| HLS Synthesis | 1 | All Pass ✅ |
 
 ---
 
@@ -84,11 +93,14 @@ hardware/
       top/              # Top-level integration
     tb/                 # 17 Verilog testbenches
   hls/
-    src/                # STDP/R-STDP learning (Vitis HLS)
-    include/            # HLS headers
-    test/               # HLS testbenches
-  ip_repo/              # Generated IP cores
-  scripts/              # Build automation
+    src/                # STDP/R-STDP learning (v++ HLS)
+      snn_top_hls.cpp   # Per-Neuron Trace implementation
+      snn_top_hls.h     # HLS headers
+    scripts/
+      build_hls.sh      # v++ build script (Vitis 2025.2+)
+    hls_output/         # Generated IP (after synthesis)
+  ip_repo/              # Packaged IP cores
+  scripts/              # Vivado build automation
 
 software/python/
   snn_fpga_accelerator/
@@ -104,8 +116,6 @@ examples/
 outputs/
   snn_accelerator.bit   # FPGA bitstream
   snn_accelerator.hwh   # Hardware handoff for PYNQ
-  utilization.txt       # Resource utilization report
-  timing.txt            # Timing analysis report
 ```
 
 ---
@@ -259,16 +269,38 @@ cd hardware/hdl/sim
 ./run_sim.sh tb_lif_neuron
 ```
 
-### 6. Building Bitstream
+### 6. Building HLS IP (v++ Compiler - Vitis 2025.2+)
 
 ```bash
-# Step 1: Build HLS IP
-source /tools/Xilinx/Vitis_HLS/2025.2/settings64.sh
-cd hardware/hls/scripts
-vitis_hls -f run_snn_top_hls.tcl
+# Source Vitis environment
+source /tools/Xilinx/2025.2/Vitis/settings64.sh
 
-# Step 2: Build bitstream
-source /tools/Xilinx/Vivado/2025.2/settings64.sh
+# Build HLS IP using v++ (recommended)
+cd hardware/hls
+./scripts/build_hls.sh --clean
+
+# Or run v++ directly
+v++ -c --mode hls \
+    --part xc7z020clg400-1 \
+    --work_dir ./hls_output \
+    --hls.clock 10ns \
+    --hls.syn.top snn_top_hls \
+    --hls.syn.file "src/snn_top_hls.cpp" \
+    --hls.flow_target vivado
+
+# Output: hls_output/hls/impl/ip/
+```
+
+> **Note**: The legacy `vitis_hls -f script.tcl` workflow is deprecated in Vitis 2025.2+.
+> Use the `v++` compiler instead.
+
+### 7. Building Vivado Bitstream
+
+```bash
+# Source Vivado environment
+source /tools/Xilinx/2025.2/Vivado/settings64.sh
+
+# Build bitstream
 cd hardware/scripts
 vivado -mode batch -source build_pynq_with_hls.tcl
 
@@ -395,15 +427,19 @@ learning_params = {
 ### Building HLS IP
 
 ```bash
-# Set up Vitis HLS environment
-source /tools/Xilinx/Vitis_HLS/2025.2/settings64.sh
+# Set up Vitis environment
+source /tools/Xilinx/Vitis/2025.2/settings64.sh
 
-# Run synthesis
+# Run synthesis with v++ CLI (recommended)
 cd hardware/hls/scripts
-vitis_hls -f run_snn_top_hls.tcl
+./build_hls.sh           # Full build
+./build_hls.sh syn       # Synthesis only
+./build_hls.sh csim      # C-simulation only
 
-# Output IP: hardware/ip_repo/snn_top_hls_1_0/
+# Output IP: hardware/hls/hls_output/
 ```
+
+> **Note**: The legacy `vitis_hls -f script.tcl` workflow is deprecated in Vitis 2025.2+.
 
 ---
 

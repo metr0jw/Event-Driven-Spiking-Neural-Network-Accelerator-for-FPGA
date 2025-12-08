@@ -262,7 +262,7 @@ for t in range(100):
 
 ## License
 
-Apache 2.0
+MIT License
 
 ## Author
 

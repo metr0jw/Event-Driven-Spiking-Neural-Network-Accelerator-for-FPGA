@@ -18,33 +18,33 @@
 <PipelineType>no</PipelineType>
 <SummaryOfTimingAnalysis>
 <unit>ns</unit>
-<EstimatedClockPeriod>7.906</EstimatedClockPeriod>
+<EstimatedClockPeriod>7.241</EstimatedClockPeriod>
 </SummaryOfTimingAnalysis>
 <SummaryOfOverallLatency>
 <unit>clock cycles</unit>
-<Best-caseLatency>undef</Best-caseLatency>
-<Average-caseLatency>undef</Average-caseLatency>
-<Worst-caseLatency>undef</Worst-caseLatency>
-<Best-caseRealTimeLatency>undef</Best-caseRealTimeLatency>
-<Average-caseRealTimeLatency>undef</Average-caseRealTimeLatency>
-<Worst-caseRealTimeLatency>undef</Worst-caseRealTimeLatency>
-<Interval-min>undef</Interval-min>
-<Interval-max>undef</Interval-max>
+<Best-caseLatency>18</Best-caseLatency>
+<Average-caseLatency>1471</Average-caseLatency>
+<Worst-caseLatency>6924</Worst-caseLatency>
+<Best-caseRealTimeLatency>0.180 us</Best-caseRealTimeLatency>
+<Average-caseRealTimeLatency>14.710 us</Average-caseRealTimeLatency>
+<Worst-caseRealTimeLatency>69.240 us</Worst-caseRealTimeLatency>
+<Interval-min>19</Interval-min>
+<Interval-max>6925</Interval-max>
 <PerformancePragma>-</PerformancePragma>
 </SummaryOfOverallLatency>
 <SummaryOfViolations>
 <IssueType>-</IssueType>
 <ViolationType>-</ViolationType>
-<SourceLocation>src/snn_top_hls.cpp:240</SourceLocation>
+<SourceLocation>src/snn_top_hls.cpp:308</SourceLocation>
 </SummaryOfViolations>
 </PerformanceEstimates>
 
 <AreaEstimates>
 <Resources>
-<BRAM_18K>32</BRAM_18K>
-<DSP>39</DSP>
-<FF>58184</FF>
-<LUT>56644</LUT>
+<BRAM_18K>56</BRAM_18K>
+<DSP>0</DSP>
+<FF>2850</FF>
+<LUT>11503</LUT>
 <URAM>0</URAM>
 </Resources>
 <AvailableResources>

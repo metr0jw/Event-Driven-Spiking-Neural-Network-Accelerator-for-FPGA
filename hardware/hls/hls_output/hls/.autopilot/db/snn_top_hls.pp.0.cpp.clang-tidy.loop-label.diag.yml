@@ -51,26 +51,14 @@ Diagnostics:
     BuildDirectory:  '/home/jwlee/workspace/Event-Driven-Spiking-Neural-Network-Accelerator-for-FPGA/hardware/hls'
   - DiagnosticName:  xilinx-label-all-loops
     DiagnosticMessage:
-      Message:         'Added loop label VITIS_LOOP_167_1:  '
+      Message:         'Added loop label VITIS_LOOP_597_1:  '
       FilePath:        '/mnt/wsl/workspace/Event-Driven-Spiking-Neural-Network-Accelerator-for-FPGA/hardware/hls/src/snn_top_hls.cpp'
-      FileOffset:      167
+      FileOffset:      597
       Replacements:
         - FilePath:        '/mnt/wsl/workspace/Event-Driven-Spiking-Neural-Network-Accelerator-for-FPGA/hardware/hls/hls_output/hls/.autopilot/db/snn_top_hls.pp.0.cpp'
-          Offset:          2366409
+          Offset:          2376220
           Length:          0
-          ReplacementText: 'VITIS_LOOP_167_1: '
-    Level:           Remark
-    BuildDirectory:  '/home/jwlee/workspace/Event-Driven-Spiking-Neural-Network-Accelerator-for-FPGA/hardware/hls'
-  - DiagnosticName:  xilinx-label-all-loops
-    DiagnosticMessage:
-      Message:         'Added loop label VITIS_LOOP_529_1:  '
-      FilePath:        '/mnt/wsl/workspace/Event-Driven-Spiking-Neural-Network-Accelerator-for-FPGA/hardware/hls/src/snn_top_hls.cpp'
-      FileOffset:      529
-      Replacements:
-        - FilePath:        '/mnt/wsl/workspace/Event-Driven-Spiking-Neural-Network-Accelerator-for-FPGA/hardware/hls/hls_output/hls/.autopilot/db/snn_top_hls.pp.0.cpp'
-          Offset:          2375806
-          Length:          0
-          ReplacementText: 'VITIS_LOOP_529_1: '
+          ReplacementText: 'VITIS_LOOP_597_1: '
     Level:           Remark
     BuildDirectory:  '/home/jwlee/workspace/Event-Driven-Spiking-Neural-Network-Accelerator-for-FPGA/hardware/hls'
 ...

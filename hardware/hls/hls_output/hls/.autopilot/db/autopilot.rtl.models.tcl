@@ -1,60 +1,49 @@
 set SynModuleInfo {
-  {SRCNAME snn_top_hls_Pipeline_RESET_PRE MODELNAME snn_top_hls_Pipeline_RESET_PRE RTLNAME snn_top_hls_snn_top_hls_Pipeline_RESET_PRE
+  {SRCNAME snn_top_hls_Pipeline_RESET_ELIG MODELNAME snn_top_hls_Pipeline_RESET_ELIG RTLNAME snn_top_hls_snn_top_hls_Pipeline_RESET_ELIG
     SUBMODULES {
       {MODELNAME snn_top_hls_flow_control_loop_pipe_sequential_init RTLNAME snn_top_hls_flow_control_loop_pipe_sequential_init BINDTYPE interface TYPE internal_upc_flow_control INSTNAME snn_top_hls_flow_control_loop_pipe_sequential_init_U}
     }
   }
-  {SRCNAME snn_top_hls_Pipeline_RESET_TRACE_OUTER_RESET_TRACE_INNER MODELNAME snn_top_hls_Pipeline_RESET_TRACE_OUTER_RESET_TRACE_INNER RTLNAME snn_top_hls_snn_top_hls_Pipeline_RESET_TRACE_OUTER_RESET_TRACE_INNER}
+  {SRCNAME snn_top_hls_Pipeline_RESET_TRACES MODELNAME snn_top_hls_Pipeline_RESET_TRACES RTLNAME snn_top_hls_snn_top_hls_Pipeline_RESET_TRACES}
   {SRCNAME snn_top_hls_Pipeline_INIT_WEIGHT_OUTER_INIT_WEIGHT_INNER MODELNAME snn_top_hls_Pipeline_INIT_WEIGHT_OUTER_INIT_WEIGHT_INNER RTLNAME snn_top_hls_snn_top_hls_Pipeline_INIT_WEIGHT_OUTER_INIT_WEIGHT_INNER}
-  {SRCNAME process_pre_spike_Pipeline_STDP_LTD_LOOP MODELNAME process_pre_spike_Pipeline_STDP_LTD_LOOP RTLNAME snn_top_hls_process_pre_spike_Pipeline_STDP_LTD_LOOP
+  {SRCNAME process_pre_spike_aer_Pipeline_LTD_LOOP MODELNAME process_pre_spike_aer_Pipeline_LTD_LOOP RTLNAME snn_top_hls_process_pre_spike_aer_Pipeline_LTD_LOOP
     SUBMODULES {
-      {MODELNAME snn_top_hls_sdiv_24ns_16s_16_28_1 RTLNAME snn_top_hls_sdiv_24ns_16s_16_28_1 BINDTYPE op TYPE sdiv IMPL auto LATENCY 27 ALLOW_PRAGMA 1}
-      {MODELNAME snn_top_hls_mul_16ns_16s_31_1_1 RTLNAME snn_top_hls_mul_16ns_16s_31_1_1 BINDTYPE op TYPE mul IMPL auto LATENCY 0 ALLOW_PRAGMA 1}
-      {MODELNAME snn_top_hls_mac_mulsub_16s_16ns_1ns_31_4_1 RTLNAME snn_top_hls_mac_mulsub_16s_16ns_1ns_31_4_1 BINDTYPE op TYPE all IMPL dsp_slice LATENCY 3}
+      {MODELNAME snn_top_hls_mul_8ns_8ns_16_1_1 RTLNAME snn_top_hls_mul_8ns_8ns_16_1_1 BINDTYPE op TYPE mul IMPL auto LATENCY 0 ALLOW_PRAGMA 1}
+      {MODELNAME snn_top_hls_process_pre_spike_aer_Pipeline_LTD_LOOP_EXP_DECAY_LUT_ROM_AUTO_1R RTLNAME snn_top_hls_process_pre_spike_aer_Pipeline_LTD_LOOP_EXP_DECAY_LUT_ROM_AUTO_1R BINDTYPE storage TYPE rom IMPL auto LATENCY 2 ALLOW_PRAGMA 1}
     }
   }
-  {SRCNAME process_pre_spike MODELNAME process_pre_spike RTLNAME snn_top_hls_process_pre_spike}
-  {SRCNAME process_post_spike_Pipeline_STDP_LTP_LOOP MODELNAME process_post_spike_Pipeline_STDP_LTP_LOOP RTLNAME snn_top_hls_process_post_spike_Pipeline_STDP_LTP_LOOP}
-  {SRCNAME process_post_spike MODELNAME process_post_spike RTLNAME snn_top_hls_process_post_spike}
-  {SRCNAME apply_weight_updates_Pipeline_VITIS_LOOP_167_1 MODELNAME apply_weight_updates_Pipeline_VITIS_LOOP_167_1 RTLNAME snn_top_hls_apply_weight_updates_Pipeline_VITIS_LOOP_167_1
+  {SRCNAME process_pre_spike_aer MODELNAME process_pre_spike_aer RTLNAME snn_top_hls_process_pre_spike_aer
     SUBMODULES {
-      {MODELNAME snn_top_hls_mul_16s_10s_26_1_1 RTLNAME snn_top_hls_mul_16s_10s_26_1_1 BINDTYPE op TYPE mul IMPL auto LATENCY 0 ALLOW_PRAGMA 1}
-      {MODELNAME snn_top_hls_sparsemux_9_2_16_1_1 RTLNAME snn_top_hls_sparsemux_9_2_16_1_1 BINDTYPE op TYPE sparsemux IMPL compactencoding_dontcare}
+      {MODELNAME snn_top_hls_sparsemux_17_3_16_1_1 RTLNAME snn_top_hls_sparsemux_17_3_16_1_1 BINDTYPE op TYPE sparsemux IMPL compactencoding_dontcare}
       {MODELNAME snn_top_hls_sparsemux_17_3_8_1_1 RTLNAME snn_top_hls_sparsemux_17_3_8_1_1 BINDTYPE op TYPE sparsemux IMPL compactencoding_dontcare}
-      {MODELNAME snn_top_hls_mul_16s_16s_32_1_1 RTLNAME snn_top_hls_mul_16s_16s_32_1_1 BINDTYPE op TYPE mul IMPL auto LATENCY 0 ALLOW_PRAGMA 1}
-      {MODELNAME snn_top_hls_mac_muladd_16s_16s_24s_32_4_1 RTLNAME snn_top_hls_mac_muladd_16s_16s_24s_32_4_1 BINDTYPE op TYPE all IMPL dsp_slice LATENCY 3}
     }
   }
-  {SRCNAME apply_weight_updates MODELNAME apply_weight_updates RTLNAME snn_top_hls_apply_weight_updates}
-  {SRCNAME apply_reward_signal_Pipeline_REWARD_OUTER_REWARD_INNER MODELNAME apply_reward_signal_Pipeline_REWARD_OUTER_REWARD_INNER RTLNAME snn_top_hls_apply_reward_signal_Pipeline_REWARD_OUTER_REWARD_INNER
+  {SRCNAME process_post_spike_aer_Pipeline_LTP_LOOP MODELNAME process_post_spike_aer_Pipeline_LTP_LOOP RTLNAME snn_top_hls_process_post_spike_aer_Pipeline_LTP_LOOP
     SUBMODULES {
-      {MODELNAME snn_top_hls_mul_26s_16s_40_1_1 RTLNAME snn_top_hls_mul_26s_16s_40_1_1 BINDTYPE op TYPE mul IMPL auto LATENCY 0 ALLOW_PRAGMA 1}
+      {MODELNAME snn_top_hls_sparsemux_9_2_8_1_1 RTLNAME snn_top_hls_sparsemux_9_2_8_1_1 BINDTYPE op TYPE sparsemux IMPL compactencoding_dontcare}
     }
   }
-  {SRCNAME apply_reward_signal MODELNAME apply_reward_signal RTLNAME snn_top_hls_apply_reward_signal}
+  {SRCNAME process_post_spike_aer MODELNAME process_post_spike_aer RTLNAME snn_top_hls_process_post_spike_aer}
+  {SRCNAME apply_rstdp_reward_Pipeline_RSTDP_INNER MODELNAME apply_rstdp_reward_Pipeline_RSTDP_INNER RTLNAME snn_top_hls_apply_rstdp_reward_Pipeline_RSTDP_INNER
+    SUBMODULES {
+      {MODELNAME snn_top_hls_mul_8s_8s_16_1_1 RTLNAME snn_top_hls_mul_8s_8s_16_1_1 BINDTYPE op TYPE mul IMPL auto LATENCY 0 ALLOW_PRAGMA 1}
+      {MODELNAME snn_top_hls_sparsemux_9_3_7_1_1 RTLNAME snn_top_hls_sparsemux_9_3_7_1_1 BINDTYPE op TYPE sparsemux IMPL onehotencoding_realdef}
+    }
+  }
+  {SRCNAME apply_rstdp_reward MODELNAME apply_rstdp_reward RTLNAME snn_top_hls_apply_rstdp_reward
+    SUBMODULES {
+      {MODELNAME snn_top_hls_sparsemux_7_2_2_1_1 RTLNAME snn_top_hls_sparsemux_7_2_2_1_1 BINDTYPE op TYPE sparsemux IMPL onehotencoding_realdef}
+    }
+  }
+  {SRCNAME decay_eligibility_traces_Pipeline_DECAY_PRE MODELNAME decay_eligibility_traces_Pipeline_DECAY_PRE RTLNAME snn_top_hls_decay_eligibility_traces_Pipeline_DECAY_PRE}
+  {SRCNAME decay_eligibility_traces_Pipeline_DECAY_POST MODELNAME decay_eligibility_traces_Pipeline_DECAY_POST RTLNAME snn_top_hls_decay_eligibility_traces_Pipeline_DECAY_POST}
   {SRCNAME decay_eligibility_traces MODELNAME decay_eligibility_traces RTLNAME snn_top_hls_decay_eligibility_traces}
-  {SRCNAME snn_top_hls_Pipeline_VITIS_LOOP_529_1 MODELNAME snn_top_hls_Pipeline_VITIS_LOOP_529_1 RTLNAME snn_top_hls_snn_top_hls_Pipeline_VITIS_LOOP_529_1}
-  {SRCNAME snn_top_hls_Pipeline_VITIS_LOOP_529_11 MODELNAME snn_top_hls_Pipeline_VITIS_LOOP_529_11 RTLNAME snn_top_hls_snn_top_hls_Pipeline_VITIS_LOOP_529_11}
-  {SRCNAME snn_top_hls_Pipeline_VITIS_LOOP_529_12 MODELNAME snn_top_hls_Pipeline_VITIS_LOOP_529_12 RTLNAME snn_top_hls_snn_top_hls_Pipeline_VITIS_LOOP_529_12}
-  {SRCNAME snn_top_hls_Pipeline_VITIS_LOOP_529_13 MODELNAME snn_top_hls_Pipeline_VITIS_LOOP_529_13 RTLNAME snn_top_hls_snn_top_hls_Pipeline_VITIS_LOOP_529_13}
-  {SRCNAME snn_top_hls_Pipeline_VITIS_LOOP_529_14 MODELNAME snn_top_hls_Pipeline_VITIS_LOOP_529_14 RTLNAME snn_top_hls_snn_top_hls_Pipeline_VITIS_LOOP_529_14}
-  {SRCNAME snn_top_hls_Pipeline_VITIS_LOOP_529_15 MODELNAME snn_top_hls_Pipeline_VITIS_LOOP_529_15 RTLNAME snn_top_hls_snn_top_hls_Pipeline_VITIS_LOOP_529_15}
-  {SRCNAME snn_top_hls_Pipeline_VITIS_LOOP_529_16 MODELNAME snn_top_hls_Pipeline_VITIS_LOOP_529_16 RTLNAME snn_top_hls_snn_top_hls_Pipeline_VITIS_LOOP_529_16}
-  {SRCNAME snn_top_hls_Pipeline_VITIS_LOOP_529_17 MODELNAME snn_top_hls_Pipeline_VITIS_LOOP_529_17 RTLNAME snn_top_hls_snn_top_hls_Pipeline_VITIS_LOOP_529_17}
-  {SRCNAME snn_top_hls_Pipeline_VITIS_LOOP_529_18 MODELNAME snn_top_hls_Pipeline_VITIS_LOOP_529_18 RTLNAME snn_top_hls_snn_top_hls_Pipeline_VITIS_LOOP_529_18}
-  {SRCNAME snn_top_hls_Pipeline_VITIS_LOOP_529_19 MODELNAME snn_top_hls_Pipeline_VITIS_LOOP_529_19 RTLNAME snn_top_hls_snn_top_hls_Pipeline_VITIS_LOOP_529_19}
-  {SRCNAME snn_top_hls_Pipeline_VITIS_LOOP_529_110 MODELNAME snn_top_hls_Pipeline_VITIS_LOOP_529_110 RTLNAME snn_top_hls_snn_top_hls_Pipeline_VITIS_LOOP_529_110}
-  {SRCNAME snn_top_hls_Pipeline_VITIS_LOOP_529_111 MODELNAME snn_top_hls_Pipeline_VITIS_LOOP_529_111 RTLNAME snn_top_hls_snn_top_hls_Pipeline_VITIS_LOOP_529_111}
-  {SRCNAME snn_top_hls_Pipeline_VITIS_LOOP_529_112 MODELNAME snn_top_hls_Pipeline_VITIS_LOOP_529_112 RTLNAME snn_top_hls_snn_top_hls_Pipeline_VITIS_LOOP_529_112}
-  {SRCNAME snn_top_hls_Pipeline_VITIS_LOOP_529_113 MODELNAME snn_top_hls_Pipeline_VITIS_LOOP_529_113 RTLNAME snn_top_hls_snn_top_hls_Pipeline_VITIS_LOOP_529_113}
-  {SRCNAME snn_top_hls_Pipeline_VITIS_LOOP_529_114 MODELNAME snn_top_hls_Pipeline_VITIS_LOOP_529_114 RTLNAME snn_top_hls_snn_top_hls_Pipeline_VITIS_LOOP_529_114}
-  {SRCNAME snn_top_hls_Pipeline_VITIS_LOOP_529_115 MODELNAME snn_top_hls_Pipeline_VITIS_LOOP_529_115 RTLNAME snn_top_hls_snn_top_hls_Pipeline_VITIS_LOOP_529_115}
+  {SRCNAME snn_top_hls_Pipeline_WEIGHT_SUM MODELNAME snn_top_hls_Pipeline_WEIGHT_SUM RTLNAME snn_top_hls_snn_top_hls_Pipeline_WEIGHT_SUM}
   {SRCNAME snn_top_hls MODELNAME snn_top_hls RTLNAME snn_top_hls IS_TOP 1
     SUBMODULES {
-      {MODELNAME snn_top_hls_p_ZL15pre_spike_times_0_RAM_1P_BRAM_1R1W RTLNAME snn_top_hls_p_ZL15pre_spike_times_0_RAM_1P_BRAM_1R1W BINDTYPE storage TYPE ram_1p IMPL bram LATENCY 2 ALLOW_PRAGMA 1}
-      {MODELNAME snn_top_hls_p_ZL18eligibility_traces_0_RAM_2P_BRAM_1R1W RTLNAME snn_top_hls_p_ZL18eligibility_traces_0_RAM_2P_BRAM_1R1W BINDTYPE storage TYPE ram_2p IMPL bram LATENCY 2 ALLOW_PRAGMA 1}
-      {MODELNAME snn_top_hls_p_ZL13weight_memory_0_RAM_2P_BRAM_1R1W RTLNAME snn_top_hls_p_ZL13weight_memory_0_RAM_2P_BRAM_1R1W BINDTYPE storage TYPE ram_2p IMPL bram LATENCY 2 ALLOW_PRAGMA 1}
-      {MODELNAME snn_top_hls_fifo_w64_d64_A RTLNAME snn_top_hls_fifo_w64_d64_A BINDTYPE storage TYPE fifo IMPL memory ALLOW_PRAGMA 1 INSTNAME weight_update_fifo_U}
+      {MODELNAME snn_top_hls_p_ZL15pre_eligibility_0_RAM_2P_BRAM_1R1W RTLNAME snn_top_hls_p_ZL15pre_eligibility_0_RAM_2P_BRAM_1R1W BINDTYPE storage TYPE ram_2p IMPL bram LATENCY 2 ALLOW_PRAGMA 1}
+      {MODELNAME snn_top_hls_pre_traces_last_spike_time_0_RAM_2P_BRAM_1R1W RTLNAME snn_top_hls_pre_traces_last_spike_time_0_RAM_2P_BRAM_1R1W BINDTYPE storage TYPE ram_2p IMPL bram LATENCY 2 ALLOW_PRAGMA 1}
+      {MODELNAME snn_top_hls_p_ZL13weight_memory_0_0_RAM_2P_BRAM_1R1W RTLNAME snn_top_hls_p_ZL13weight_memory_0_0_RAM_2P_BRAM_1R1W BINDTYPE storage TYPE ram_2p IMPL bram LATENCY 2 ALLOW_PRAGMA 1}
       {MODELNAME snn_top_hls_ctrl_s_axi RTLNAME snn_top_hls_ctrl_s_axi BINDTYPE interface TYPE interface_s_axilite}
       {MODELNAME snn_top_hls_regslice_both RTLNAME snn_top_hls_regslice_both BINDTYPE interface TYPE adapter IMPL reg_slice}
     }

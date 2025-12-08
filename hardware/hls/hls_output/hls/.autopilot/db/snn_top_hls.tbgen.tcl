@@ -15,7 +15,7 @@ set hasInterrupt 0
 set DLRegFirstOffset 0
 set DLRegItemOffset 0
 set svuvm_can_support 1
-set cdfgNum 31
+set cdfgNum 16
 set C_modelName {snn_top_hls}
 set C_modelType { void 0 }
 set ap_memory_interface_dict [dict create]
@@ -244,40 +244,40 @@ set ArgLastReadFirstWriteLatency {
 		ctrl_reg {Type I LastRead 0 FirstWrite -1}
 		config_reg {Type I LastRead 0 FirstWrite -1}
 		learning_params {Type I LastRead 0 FirstWrite -1}
-		status_reg {Type O LastRead -1 FirstWrite 14}
-		spike_count_reg {Type O LastRead -1 FirstWrite 14}
-		weight_sum_reg {Type O LastRead -1 FirstWrite 46}
-		version_reg {Type O LastRead -1 FirstWrite 14}
-		s_axis_spikes_V_data_V {Type I LastRead 3 FirstWrite -1}
-		s_axis_spikes_V_keep_V {Type I LastRead 3 FirstWrite -1}
-		s_axis_spikes_V_strb_V {Type I LastRead 3 FirstWrite -1}
-		s_axis_spikes_V_user_V {Type I LastRead 3 FirstWrite -1}
-		s_axis_spikes_V_last_V {Type I LastRead 3 FirstWrite -1}
-		s_axis_spikes_V_id_V {Type I LastRead 3 FirstWrite -1}
-		s_axis_spikes_V_dest_V {Type I LastRead 3 FirstWrite -1}
-		m_axis_spikes_V_data_V {Type O LastRead 4 FirstWrite 4}
-		m_axis_spikes_V_keep_V {Type O LastRead 4 FirstWrite 4}
-		m_axis_spikes_V_strb_V {Type O LastRead 4 FirstWrite 4}
-		m_axis_spikes_V_user_V {Type O LastRead 4 FirstWrite 4}
-		m_axis_spikes_V_last_V {Type O LastRead 4 FirstWrite 4}
-		m_axis_spikes_V_id_V {Type O LastRead 4 FirstWrite 4}
-		m_axis_spikes_V_dest_V {Type O LastRead 4 FirstWrite 4}
-		m_axis_weights_V_data_V {Type O LastRead 12 FirstWrite 13}
-		m_axis_weights_V_keep_V {Type O LastRead 12 FirstWrite 13}
-		m_axis_weights_V_strb_V {Type O LastRead 12 FirstWrite 13}
-		m_axis_weights_V_user_V {Type O LastRead 12 FirstWrite 13}
-		m_axis_weights_V_last_V {Type O LastRead 12 FirstWrite 13}
-		m_axis_weights_V_id_V {Type O LastRead 12 FirstWrite 13}
-		m_axis_weights_V_dest_V {Type O LastRead 12 FirstWrite 13}
+		status_reg {Type O LastRead -1 FirstWrite 16}
+		spike_count_reg {Type O LastRead -1 FirstWrite 16}
+		weight_sum_reg {Type O LastRead -1 FirstWrite 18}
+		version_reg {Type O LastRead -1 FirstWrite 16}
+		s_axis_spikes_V_data_V {Type I LastRead 2 FirstWrite -1}
+		s_axis_spikes_V_keep_V {Type I LastRead 2 FirstWrite -1}
+		s_axis_spikes_V_strb_V {Type I LastRead 2 FirstWrite -1}
+		s_axis_spikes_V_user_V {Type I LastRead 2 FirstWrite -1}
+		s_axis_spikes_V_last_V {Type I LastRead 2 FirstWrite -1}
+		s_axis_spikes_V_id_V {Type I LastRead 2 FirstWrite -1}
+		s_axis_spikes_V_dest_V {Type I LastRead 2 FirstWrite -1}
+		m_axis_spikes_V_data_V {Type O LastRead 5 FirstWrite 5}
+		m_axis_spikes_V_keep_V {Type O LastRead 5 FirstWrite 5}
+		m_axis_spikes_V_strb_V {Type O LastRead 5 FirstWrite 5}
+		m_axis_spikes_V_user_V {Type O LastRead 5 FirstWrite 5}
+		m_axis_spikes_V_last_V {Type O LastRead 5 FirstWrite 5}
+		m_axis_spikes_V_id_V {Type O LastRead 5 FirstWrite 5}
+		m_axis_spikes_V_dest_V {Type O LastRead 5 FirstWrite 5}
+		m_axis_weights_V_data_V {Type O LastRead 13 FirstWrite 15}
+		m_axis_weights_V_keep_V {Type O LastRead 13 FirstWrite 15}
+		m_axis_weights_V_strb_V {Type O LastRead 13 FirstWrite 15}
+		m_axis_weights_V_user_V {Type O LastRead 13 FirstWrite 15}
+		m_axis_weights_V_last_V {Type O LastRead 13 FirstWrite 15}
+		m_axis_weights_V_id_V {Type O LastRead 13 FirstWrite 15}
+		m_axis_weights_V_dest_V {Type O LastRead 13 FirstWrite 15}
 		reward_signal {Type I LastRead 0 FirstWrite -1}
-		spike_in_valid {Type O LastRead -1 FirstWrite 14}
-		spike_in_neuron_id {Type O LastRead -1 FirstWrite 14}
-		spike_in_weight {Type O LastRead -1 FirstWrite 14}
+		spike_in_valid {Type O LastRead -1 FirstWrite 16}
+		spike_in_neuron_id {Type O LastRead -1 FirstWrite 16}
+		spike_in_weight {Type O LastRead -1 FirstWrite 16}
 		spike_in_ready {Type I LastRead 0 FirstWrite -1}
 		spike_out_valid {Type I LastRead 0 FirstWrite -1}
 		spike_out_neuron_id {Type I LastRead 0 FirstWrite -1}
 		spike_out_weight {Type I LastRead 0 FirstWrite -1}
-		spike_out_ready {Type O LastRead -1 FirstWrite 4}
+		spike_out_ready {Type O LastRead -1 FirstWrite 5}
 		snn_enable {Type O LastRead -1 FirstWrite 2}
 		snn_reset {Type O LastRead -1 FirstWrite 2}
 		threshold_out {Type O LastRead -1 FirstWrite 2}
@@ -287,407 +287,371 @@ set ArgLastReadFirstWriteLatency {
 		initialized {Type IO LastRead -1 FirstWrite -1}
 		timestamp {Type IO LastRead -1 FirstWrite -1}
 		spike_counter {Type IO LastRead -1 FirstWrite -1}
-		p_ZL15pre_spike_times_0 {Type IO LastRead -1 FirstWrite -1}
-		p_ZL15pre_spike_times_1 {Type IO LastRead -1 FirstWrite -1}
-		p_ZL15pre_spike_times_2 {Type IO LastRead -1 FirstWrite -1}
-		p_ZL15pre_spike_times_3 {Type IO LastRead -1 FirstWrite -1}
-		p_ZL15pre_spike_times_4 {Type IO LastRead -1 FirstWrite -1}
-		p_ZL15pre_spike_times_5 {Type IO LastRead -1 FirstWrite -1}
-		p_ZL15pre_spike_times_6 {Type IO LastRead -1 FirstWrite -1}
-		p_ZL15pre_spike_times_7 {Type IO LastRead -1 FirstWrite -1}
-		p_ZL16post_spike_times_0 {Type IO LastRead -1 FirstWrite -1}
-		p_ZL16post_spike_times_1 {Type IO LastRead -1 FirstWrite -1}
-		p_ZL16post_spike_times_2 {Type IO LastRead -1 FirstWrite -1}
-		p_ZL16post_spike_times_3 {Type IO LastRead -1 FirstWrite -1}
-		p_ZL16post_spike_times_4 {Type IO LastRead -1 FirstWrite -1}
-		p_ZL16post_spike_times_5 {Type IO LastRead -1 FirstWrite -1}
-		p_ZL16post_spike_times_6 {Type IO LastRead -1 FirstWrite -1}
-		p_ZL16post_spike_times_7 {Type IO LastRead -1 FirstWrite -1}
-		p_ZL18eligibility_traces_0 {Type IO LastRead -1 FirstWrite -1}
-		p_ZL18eligibility_traces_1 {Type IO LastRead -1 FirstWrite -1}
-		p_ZL18eligibility_traces_2 {Type IO LastRead -1 FirstWrite -1}
-		p_ZL18eligibility_traces_3 {Type IO LastRead -1 FirstWrite -1}
-		p_ZL13weight_memory_0 {Type IO LastRead -1 FirstWrite -1}
-		p_ZL13weight_memory_1 {Type IO LastRead -1 FirstWrite -1}
-		p_ZL13weight_memory_2 {Type IO LastRead -1 FirstWrite -1}
-		p_ZL13weight_memory_3 {Type IO LastRead -1 FirstWrite -1}
-		p_ZL13weight_memory_4 {Type IO LastRead -1 FirstWrite -1}
-		p_ZL13weight_memory_5 {Type IO LastRead -1 FirstWrite -1}
-		p_ZL13weight_memory_6 {Type IO LastRead -1 FirstWrite -1}
-		p_ZL13weight_memory_7 {Type IO LastRead -1 FirstWrite -1}
-		weight_update_fifo {Type IO LastRead -1 FirstWrite -1}
+		p_ZL15pre_eligibility_0 {Type IO LastRead -1 FirstWrite -1}
+		p_ZL16post_eligibility_0 {Type IO LastRead -1 FirstWrite -1}
+		p_ZL15pre_eligibility_1 {Type IO LastRead -1 FirstWrite -1}
+		p_ZL16post_eligibility_1 {Type IO LastRead -1 FirstWrite -1}
+		p_ZL15pre_eligibility_2 {Type IO LastRead -1 FirstWrite -1}
+		p_ZL16post_eligibility_2 {Type IO LastRead -1 FirstWrite -1}
+		p_ZL15pre_eligibility_3 {Type IO LastRead -1 FirstWrite -1}
+		p_ZL16post_eligibility_3 {Type IO LastRead -1 FirstWrite -1}
+		p_ZL15pre_eligibility_4 {Type IO LastRead -1 FirstWrite -1}
+		p_ZL16post_eligibility_4 {Type IO LastRead -1 FirstWrite -1}
+		p_ZL15pre_eligibility_5 {Type IO LastRead -1 FirstWrite -1}
+		p_ZL16post_eligibility_5 {Type IO LastRead -1 FirstWrite -1}
+		p_ZL15pre_eligibility_6 {Type IO LastRead -1 FirstWrite -1}
+		p_ZL16post_eligibility_6 {Type IO LastRead -1 FirstWrite -1}
+		p_ZL15pre_eligibility_7 {Type IO LastRead -1 FirstWrite -1}
+		p_ZL16post_eligibility_7 {Type IO LastRead -1 FirstWrite -1}
+		pre_traces_trace_0 {Type IO LastRead -1 FirstWrite -1}
+		pre_traces_last_spike_time_0 {Type IO LastRead -1 FirstWrite -1}
+		post_traces_trace_0 {Type IO LastRead -1 FirstWrite -1}
+		post_traces_last_spike_time_0 {Type IO LastRead -1 FirstWrite -1}
+		pre_traces_trace_1 {Type IO LastRead -1 FirstWrite -1}
+		pre_traces_last_spike_time_1 {Type IO LastRead -1 FirstWrite -1}
+		post_traces_trace_1 {Type IO LastRead -1 FirstWrite -1}
+		post_traces_last_spike_time_1 {Type IO LastRead -1 FirstWrite -1}
+		pre_traces_trace_2 {Type IO LastRead -1 FirstWrite -1}
+		pre_traces_last_spike_time_2 {Type IO LastRead -1 FirstWrite -1}
+		post_traces_trace_2 {Type IO LastRead -1 FirstWrite -1}
+		post_traces_last_spike_time_2 {Type IO LastRead -1 FirstWrite -1}
+		pre_traces_trace_3 {Type IO LastRead -1 FirstWrite -1}
+		pre_traces_last_spike_time_3 {Type IO LastRead -1 FirstWrite -1}
+		post_traces_trace_3 {Type IO LastRead -1 FirstWrite -1}
+		post_traces_last_spike_time_3 {Type IO LastRead -1 FirstWrite -1}
+		pre_traces_trace_4 {Type IO LastRead -1 FirstWrite -1}
+		pre_traces_last_spike_time_4 {Type IO LastRead -1 FirstWrite -1}
+		post_traces_trace_4 {Type IO LastRead -1 FirstWrite -1}
+		post_traces_last_spike_time_4 {Type IO LastRead -1 FirstWrite -1}
+		pre_traces_trace_5 {Type IO LastRead -1 FirstWrite -1}
+		pre_traces_last_spike_time_5 {Type IO LastRead -1 FirstWrite -1}
+		post_traces_trace_5 {Type IO LastRead -1 FirstWrite -1}
+		post_traces_last_spike_time_5 {Type IO LastRead -1 FirstWrite -1}
+		pre_traces_trace_6 {Type IO LastRead -1 FirstWrite -1}
+		pre_traces_last_spike_time_6 {Type IO LastRead -1 FirstWrite -1}
+		post_traces_trace_6 {Type IO LastRead -1 FirstWrite -1}
+		post_traces_last_spike_time_6 {Type IO LastRead -1 FirstWrite -1}
+		pre_traces_trace_7 {Type IO LastRead -1 FirstWrite -1}
+		pre_traces_last_spike_time_7 {Type IO LastRead -1 FirstWrite -1}
+		post_traces_trace_7 {Type IO LastRead -1 FirstWrite -1}
+		post_traces_last_spike_time_7 {Type IO LastRead -1 FirstWrite -1}
+		p_ZL13weight_memory_0_0 {Type IO LastRead -1 FirstWrite -1}
+		p_ZL13weight_memory_0_1 {Type IO LastRead -1 FirstWrite -1}
+		p_ZL13weight_memory_1_0 {Type IO LastRead -1 FirstWrite -1}
+		p_ZL13weight_memory_1_1 {Type IO LastRead -1 FirstWrite -1}
+		p_ZL13weight_memory_2_0 {Type IO LastRead -1 FirstWrite -1}
+		p_ZL13weight_memory_2_1 {Type IO LastRead -1 FirstWrite -1}
+		p_ZL13weight_memory_3_0 {Type IO LastRead -1 FirstWrite -1}
+		p_ZL13weight_memory_3_1 {Type IO LastRead -1 FirstWrite -1}
+		EXP_DECAY_LUT {Type I LastRead -1 FirstWrite -1}
 		read_row {Type IO LastRead -1 FirstWrite -1}
 		read_col {Type IO LastRead -1 FirstWrite -1}}
-	snn_top_hls_Pipeline_RESET_PRE {
-		p_ZL15pre_spike_times_0 {Type O LastRead -1 FirstWrite 0}
-		p_ZL15pre_spike_times_1 {Type O LastRead -1 FirstWrite 0}
-		p_ZL15pre_spike_times_2 {Type O LastRead -1 FirstWrite 0}
-		p_ZL15pre_spike_times_3 {Type O LastRead -1 FirstWrite 0}
-		p_ZL15pre_spike_times_4 {Type O LastRead -1 FirstWrite 0}
-		p_ZL15pre_spike_times_5 {Type O LastRead -1 FirstWrite 0}
-		p_ZL15pre_spike_times_6 {Type O LastRead -1 FirstWrite 0}
-		p_ZL15pre_spike_times_7 {Type O LastRead -1 FirstWrite 0}
-		p_ZL16post_spike_times_0 {Type O LastRead -1 FirstWrite 0}
-		p_ZL16post_spike_times_1 {Type O LastRead -1 FirstWrite 0}
-		p_ZL16post_spike_times_2 {Type O LastRead -1 FirstWrite 0}
-		p_ZL16post_spike_times_3 {Type O LastRead -1 FirstWrite 0}
-		p_ZL16post_spike_times_4 {Type O LastRead -1 FirstWrite 0}
-		p_ZL16post_spike_times_5 {Type O LastRead -1 FirstWrite 0}
-		p_ZL16post_spike_times_6 {Type O LastRead -1 FirstWrite 0}
-		p_ZL16post_spike_times_7 {Type O LastRead -1 FirstWrite 0}}
-	snn_top_hls_Pipeline_RESET_TRACE_OUTER_RESET_TRACE_INNER {
-		p_ZL18eligibility_traces_0 {Type O LastRead -1 FirstWrite 1}
-		p_ZL18eligibility_traces_1 {Type O LastRead -1 FirstWrite 1}
-		p_ZL18eligibility_traces_2 {Type O LastRead -1 FirstWrite 1}
-		p_ZL18eligibility_traces_3 {Type O LastRead -1 FirstWrite 1}}
+	snn_top_hls_Pipeline_RESET_ELIG {
+		p_ZL15pre_eligibility_0 {Type O LastRead -1 FirstWrite 0}
+		p_ZL16post_eligibility_0 {Type O LastRead -1 FirstWrite 0}
+		p_ZL15pre_eligibility_1 {Type O LastRead -1 FirstWrite 0}
+		p_ZL16post_eligibility_1 {Type O LastRead -1 FirstWrite 0}
+		p_ZL15pre_eligibility_2 {Type O LastRead -1 FirstWrite 0}
+		p_ZL16post_eligibility_2 {Type O LastRead -1 FirstWrite 0}
+		p_ZL15pre_eligibility_3 {Type O LastRead -1 FirstWrite 0}
+		p_ZL16post_eligibility_3 {Type O LastRead -1 FirstWrite 0}
+		p_ZL15pre_eligibility_4 {Type O LastRead -1 FirstWrite 0}
+		p_ZL16post_eligibility_4 {Type O LastRead -1 FirstWrite 0}
+		p_ZL15pre_eligibility_5 {Type O LastRead -1 FirstWrite 0}
+		p_ZL16post_eligibility_5 {Type O LastRead -1 FirstWrite 0}
+		p_ZL15pre_eligibility_6 {Type O LastRead -1 FirstWrite 0}
+		p_ZL16post_eligibility_6 {Type O LastRead -1 FirstWrite 0}
+		p_ZL15pre_eligibility_7 {Type O LastRead -1 FirstWrite 0}
+		p_ZL16post_eligibility_7 {Type O LastRead -1 FirstWrite 0}}
+	snn_top_hls_Pipeline_RESET_TRACES {
+		pre_traces_trace_0 {Type O LastRead -1 FirstWrite 0}
+		pre_traces_last_spike_time_0 {Type O LastRead -1 FirstWrite 0}
+		post_traces_trace_0 {Type O LastRead -1 FirstWrite 0}
+		post_traces_last_spike_time_0 {Type O LastRead -1 FirstWrite 0}
+		pre_traces_trace_1 {Type O LastRead -1 FirstWrite 0}
+		pre_traces_last_spike_time_1 {Type O LastRead -1 FirstWrite 0}
+		post_traces_trace_1 {Type O LastRead -1 FirstWrite 0}
+		post_traces_last_spike_time_1 {Type O LastRead -1 FirstWrite 0}
+		pre_traces_trace_2 {Type O LastRead -1 FirstWrite 0}
+		pre_traces_last_spike_time_2 {Type O LastRead -1 FirstWrite 0}
+		post_traces_trace_2 {Type O LastRead -1 FirstWrite 0}
+		post_traces_last_spike_time_2 {Type O LastRead -1 FirstWrite 0}
+		pre_traces_trace_3 {Type O LastRead -1 FirstWrite 0}
+		pre_traces_last_spike_time_3 {Type O LastRead -1 FirstWrite 0}
+		post_traces_trace_3 {Type O LastRead -1 FirstWrite 0}
+		post_traces_last_spike_time_3 {Type O LastRead -1 FirstWrite 0}
+		pre_traces_trace_4 {Type O LastRead -1 FirstWrite 0}
+		pre_traces_last_spike_time_4 {Type O LastRead -1 FirstWrite 0}
+		post_traces_trace_4 {Type O LastRead -1 FirstWrite 0}
+		post_traces_last_spike_time_4 {Type O LastRead -1 FirstWrite 0}
+		pre_traces_trace_5 {Type O LastRead -1 FirstWrite 0}
+		pre_traces_last_spike_time_5 {Type O LastRead -1 FirstWrite 0}
+		post_traces_trace_5 {Type O LastRead -1 FirstWrite 0}
+		post_traces_last_spike_time_5 {Type O LastRead -1 FirstWrite 0}
+		pre_traces_trace_6 {Type O LastRead -1 FirstWrite 0}
+		pre_traces_last_spike_time_6 {Type O LastRead -1 FirstWrite 0}
+		post_traces_trace_6 {Type O LastRead -1 FirstWrite 0}
+		post_traces_last_spike_time_6 {Type O LastRead -1 FirstWrite 0}
+		pre_traces_trace_7 {Type O LastRead -1 FirstWrite 0}
+		pre_traces_last_spike_time_7 {Type O LastRead -1 FirstWrite 0}
+		post_traces_trace_7 {Type O LastRead -1 FirstWrite 0}
+		post_traces_last_spike_time_7 {Type O LastRead -1 FirstWrite 0}}
 	snn_top_hls_Pipeline_INIT_WEIGHT_OUTER_INIT_WEIGHT_INNER {
-		p_ZL13weight_memory_0 {Type O LastRead -1 FirstWrite 2}
-		p_ZL13weight_memory_1 {Type O LastRead -1 FirstWrite 2}
-		p_ZL13weight_memory_2 {Type O LastRead -1 FirstWrite 2}
-		p_ZL13weight_memory_3 {Type O LastRead -1 FirstWrite 2}
-		p_ZL13weight_memory_4 {Type O LastRead -1 FirstWrite 2}
-		p_ZL13weight_memory_5 {Type O LastRead -1 FirstWrite 2}
-		p_ZL13weight_memory_6 {Type O LastRead -1 FirstWrite 2}
-		p_ZL13weight_memory_7 {Type O LastRead -1 FirstWrite 2}}
-	process_pre_spike {
+		p_ZL13weight_memory_0_0 {Type O LastRead -1 FirstWrite 2}
+		p_ZL13weight_memory_0_1 {Type O LastRead -1 FirstWrite 2}
+		p_ZL13weight_memory_1_0 {Type O LastRead -1 FirstWrite 2}
+		p_ZL13weight_memory_1_1 {Type O LastRead -1 FirstWrite 2}
+		p_ZL13weight_memory_2_0 {Type O LastRead -1 FirstWrite 2}
+		p_ZL13weight_memory_2_1 {Type O LastRead -1 FirstWrite 2}
+		p_ZL13weight_memory_3_0 {Type O LastRead -1 FirstWrite 2}
+		p_ZL13weight_memory_3_1 {Type O LastRead -1 FirstWrite 2}}
+	process_pre_spike_aer {
 		pre_id {Type I LastRead 0 FirstWrite -1}
+		current_time {Type I LastRead 2 FirstWrite -1}
+		pre_traces_trace_0 {Type IO LastRead 2 FirstWrite 5}
+		pre_traces_trace_1 {Type IO LastRead 2 FirstWrite 5}
+		pre_traces_trace_2 {Type IO LastRead 2 FirstWrite 5}
+		pre_traces_trace_3 {Type IO LastRead 2 FirstWrite 5}
+		pre_traces_trace_4 {Type IO LastRead 2 FirstWrite 5}
+		pre_traces_trace_5 {Type IO LastRead 2 FirstWrite 5}
+		pre_traces_trace_6 {Type IO LastRead 2 FirstWrite 5}
+		pre_traces_trace_7 {Type IO LastRead 2 FirstWrite 5}
+		pre_traces_last_spike_time_0 {Type IO LastRead 0 FirstWrite 4}
+		pre_traces_last_spike_time_1 {Type IO LastRead 0 FirstWrite 4}
+		pre_traces_last_spike_time_2 {Type IO LastRead 0 FirstWrite 4}
+		pre_traces_last_spike_time_3 {Type IO LastRead 0 FirstWrite 4}
+		pre_traces_last_spike_time_4 {Type IO LastRead 0 FirstWrite 4}
+		pre_traces_last_spike_time_5 {Type IO LastRead 0 FirstWrite 4}
+		pre_traces_last_spike_time_6 {Type IO LastRead 0 FirstWrite 4}
+		pre_traces_last_spike_time_7 {Type IO LastRead 0 FirstWrite 4}
+		EXP_DECAY_LUT {Type I LastRead 2 FirstWrite -1}
+		post_traces_trace_3 {Type I LastRead 2 FirstWrite -1}
+		post_traces_trace_7 {Type I LastRead 2 FirstWrite -1}
+		post_traces_last_spike_time_3 {Type I LastRead 0 FirstWrite -1}
+		post_traces_last_spike_time_7 {Type I LastRead 0 FirstWrite -1}
+		post_traces_trace_2 {Type I LastRead 2 FirstWrite -1}
+		post_traces_trace_6 {Type I LastRead 2 FirstWrite -1}
+		post_traces_last_spike_time_2 {Type I LastRead 0 FirstWrite -1}
+		post_traces_last_spike_time_6 {Type I LastRead 0 FirstWrite -1}
+		post_traces_trace_1 {Type I LastRead 0 FirstWrite -1}
+		post_traces_trace_5 {Type I LastRead 0 FirstWrite -1}
+		post_traces_last_spike_time_1 {Type I LastRead 0 FirstWrite -1}
+		post_traces_last_spike_time_5 {Type I LastRead 0 FirstWrite -1}
+		post_traces_trace_0 {Type I LastRead 0 FirstWrite -1}
+		post_traces_trace_4 {Type I LastRead 0 FirstWrite -1}
+		post_traces_last_spike_time_0 {Type I LastRead 0 FirstWrite -1}
+		post_traces_last_spike_time_4 {Type I LastRead 0 FirstWrite -1}
+		p_ZL13weight_memory_0_0 {Type IO LastRead 4 FirstWrite 6}
+		p_ZL13weight_memory_0_1 {Type IO LastRead 4 FirstWrite 6}
+		p_ZL13weight_memory_1_0 {Type IO LastRead 4 FirstWrite 6}
+		p_ZL13weight_memory_1_1 {Type IO LastRead 4 FirstWrite 6}
+		p_ZL13weight_memory_2_0 {Type IO LastRead 5 FirstWrite 7}
+		p_ZL13weight_memory_2_1 {Type IO LastRead 5 FirstWrite 7}
+		p_ZL13weight_memory_3_0 {Type IO LastRead 5 FirstWrite 7}
+		p_ZL13weight_memory_3_1 {Type IO LastRead 5 FirstWrite 7}}
+	process_pre_spike_aer_Pipeline_LTD_LOOP {
 		current_time {Type I LastRead 0 FirstWrite -1}
-		params_a_plus_val {Type I LastRead 0 FirstWrite -1}
-		params_a_minus_val {Type I LastRead 0 FirstWrite -1}
-		params_tau_plus_val {Type I LastRead 0 FirstWrite -1}
-		params_tau_minus_val {Type I LastRead 0 FirstWrite -1}
-		params_stdp_window_val {Type I LastRead 0 FirstWrite -1}
-		p_ZL15pre_spike_times_0 {Type O LastRead -1 FirstWrite 0}
-		p_ZL15pre_spike_times_1 {Type O LastRead -1 FirstWrite 0}
-		p_ZL15pre_spike_times_2 {Type O LastRead -1 FirstWrite 0}
-		p_ZL15pre_spike_times_3 {Type O LastRead -1 FirstWrite 0}
-		p_ZL15pre_spike_times_4 {Type O LastRead -1 FirstWrite 0}
-		p_ZL15pre_spike_times_5 {Type O LastRead -1 FirstWrite 0}
-		p_ZL15pre_spike_times_6 {Type O LastRead -1 FirstWrite 0}
-		p_ZL15pre_spike_times_7 {Type O LastRead -1 FirstWrite 0}
-		p_ZL16post_spike_times_7 {Type I LastRead 0 FirstWrite -1}
-		p_ZL16post_spike_times_6 {Type I LastRead 0 FirstWrite -1}
-		p_ZL16post_spike_times_5 {Type I LastRead 0 FirstWrite -1}
-		p_ZL16post_spike_times_4 {Type I LastRead 0 FirstWrite -1}
-		p_ZL16post_spike_times_3 {Type I LastRead 0 FirstWrite -1}
-		p_ZL16post_spike_times_2 {Type I LastRead 0 FirstWrite -1}
-		p_ZL16post_spike_times_1 {Type I LastRead 0 FirstWrite -1}
-		p_ZL16post_spike_times_0 {Type I LastRead 0 FirstWrite -1}
-		weight_update_fifo {Type O LastRead 42 FirstWrite 35}}
-	process_pre_spike_Pipeline_STDP_LTD_LOOP {
-		params_stdp_window_val {Type I LastRead 0 FirstWrite -1}
-		current_time {Type I LastRead 0 FirstWrite -1}
-		sext_ln55 {Type I LastRead 0 FirstWrite -1}
-		zext_ln46 {Type I LastRead 0 FirstWrite -1}
-		sext_ln48 {Type I LastRead 0 FirstWrite -1}
-		sext_ln58 {Type I LastRead 0 FirstWrite -1}
-		sext_ln93 {Type I LastRead 0 FirstWrite -1}
 		pre_id {Type I LastRead 0 FirstWrite -1}
-		p_ZL16post_spike_times_7 {Type I LastRead 0 FirstWrite -1}
-		p_ZL16post_spike_times_6 {Type I LastRead 0 FirstWrite -1}
-		p_ZL16post_spike_times_5 {Type I LastRead 0 FirstWrite -1}
-		p_ZL16post_spike_times_4 {Type I LastRead 0 FirstWrite -1}
-		p_ZL16post_spike_times_3 {Type I LastRead 0 FirstWrite -1}
-		p_ZL16post_spike_times_2 {Type I LastRead 0 FirstWrite -1}
-		p_ZL16post_spike_times_1 {Type I LastRead 0 FirstWrite -1}
-		p_ZL16post_spike_times_0 {Type I LastRead 0 FirstWrite -1}
-		weight_update_fifo {Type O LastRead 42 FirstWrite 35}}
-	process_post_spike {
+		empty {Type I LastRead 0 FirstWrite -1}
+		post_traces_trace_3 {Type I LastRead 2 FirstWrite -1}
+		post_traces_trace_7 {Type I LastRead 2 FirstWrite -1}
+		post_traces_last_spike_time_3 {Type I LastRead 0 FirstWrite -1}
+		post_traces_last_spike_time_7 {Type I LastRead 0 FirstWrite -1}
+		EXP_DECAY_LUT {Type I LastRead -1 FirstWrite -1}
+		post_traces_trace_2 {Type I LastRead 2 FirstWrite -1}
+		post_traces_trace_6 {Type I LastRead 2 FirstWrite -1}
+		post_traces_last_spike_time_2 {Type I LastRead 0 FirstWrite -1}
+		post_traces_last_spike_time_6 {Type I LastRead 0 FirstWrite -1}
+		post_traces_trace_1 {Type I LastRead 0 FirstWrite -1}
+		post_traces_trace_5 {Type I LastRead 0 FirstWrite -1}
+		post_traces_last_spike_time_1 {Type I LastRead 0 FirstWrite -1}
+		post_traces_last_spike_time_5 {Type I LastRead 0 FirstWrite -1}
+		post_traces_trace_0 {Type I LastRead 0 FirstWrite -1}
+		post_traces_trace_4 {Type I LastRead 0 FirstWrite -1}
+		post_traces_last_spike_time_0 {Type I LastRead 0 FirstWrite -1}
+		post_traces_last_spike_time_4 {Type I LastRead 0 FirstWrite -1}
+		p_ZL13weight_memory_0_0 {Type IO LastRead 4 FirstWrite 6}
+		p_ZL13weight_memory_0_1 {Type IO LastRead 4 FirstWrite 6}
+		p_ZL13weight_memory_1_0 {Type IO LastRead 4 FirstWrite 6}
+		p_ZL13weight_memory_1_1 {Type IO LastRead 4 FirstWrite 6}
+		p_ZL13weight_memory_2_0 {Type IO LastRead 5 FirstWrite 7}
+		p_ZL13weight_memory_2_1 {Type IO LastRead 5 FirstWrite 7}
+		p_ZL13weight_memory_3_0 {Type IO LastRead 5 FirstWrite 7}
+		p_ZL13weight_memory_3_1 {Type IO LastRead 5 FirstWrite 7}}
+	process_post_spike_aer {
 		post_id {Type I LastRead 0 FirstWrite -1}
+		current_time {Type I LastRead 2 FirstWrite -1}
+		post_traces_trace_0 {Type IO LastRead 2 FirstWrite 5}
+		post_traces_trace_1 {Type IO LastRead 2 FirstWrite 5}
+		post_traces_trace_2 {Type IO LastRead 2 FirstWrite 5}
+		post_traces_trace_3 {Type IO LastRead 2 FirstWrite 5}
+		post_traces_trace_4 {Type IO LastRead 2 FirstWrite 5}
+		post_traces_trace_5 {Type IO LastRead 2 FirstWrite 5}
+		post_traces_trace_6 {Type IO LastRead 2 FirstWrite 5}
+		post_traces_trace_7 {Type IO LastRead 2 FirstWrite 5}
+		post_traces_last_spike_time_0 {Type IO LastRead 0 FirstWrite 4}
+		post_traces_last_spike_time_1 {Type IO LastRead 0 FirstWrite 4}
+		post_traces_last_spike_time_2 {Type IO LastRead 0 FirstWrite 4}
+		post_traces_last_spike_time_3 {Type IO LastRead 0 FirstWrite 4}
+		post_traces_last_spike_time_4 {Type IO LastRead 0 FirstWrite 4}
+		post_traces_last_spike_time_5 {Type IO LastRead 0 FirstWrite 4}
+		post_traces_last_spike_time_6 {Type IO LastRead 0 FirstWrite 4}
+		post_traces_last_spike_time_7 {Type IO LastRead 0 FirstWrite 4}
+		EXP_DECAY_LUT {Type I LastRead 2 FirstWrite -1}
+		pre_traces_trace_3 {Type I LastRead 2 FirstWrite -1}
+		pre_traces_trace_7 {Type I LastRead 2 FirstWrite -1}
+		pre_traces_last_spike_time_3 {Type I LastRead 0 FirstWrite -1}
+		pre_traces_last_spike_time_7 {Type I LastRead 0 FirstWrite -1}
+		pre_traces_trace_2 {Type I LastRead 2 FirstWrite -1}
+		pre_traces_trace_6 {Type I LastRead 2 FirstWrite -1}
+		pre_traces_last_spike_time_2 {Type I LastRead 0 FirstWrite -1}
+		pre_traces_last_spike_time_6 {Type I LastRead 0 FirstWrite -1}
+		pre_traces_trace_1 {Type I LastRead 0 FirstWrite -1}
+		pre_traces_trace_5 {Type I LastRead 0 FirstWrite -1}
+		pre_traces_last_spike_time_1 {Type I LastRead 0 FirstWrite -1}
+		pre_traces_last_spike_time_5 {Type I LastRead 0 FirstWrite -1}
+		pre_traces_trace_0 {Type I LastRead 0 FirstWrite -1}
+		pre_traces_trace_4 {Type I LastRead 0 FirstWrite -1}
+		pre_traces_last_spike_time_0 {Type I LastRead 0 FirstWrite -1}
+		pre_traces_last_spike_time_4 {Type I LastRead 0 FirstWrite -1}
+		p_ZL13weight_memory_0_0 {Type IO LastRead 5 FirstWrite 6}
+		p_ZL13weight_memory_1_0 {Type IO LastRead 5 FirstWrite 6}
+		p_ZL13weight_memory_2_0 {Type IO LastRead 5 FirstWrite 6}
+		p_ZL13weight_memory_3_0 {Type IO LastRead 5 FirstWrite 6}
+		p_ZL13weight_memory_0_1 {Type IO LastRead 5 FirstWrite 6}
+		p_ZL13weight_memory_1_1 {Type IO LastRead 5 FirstWrite 6}
+		p_ZL13weight_memory_2_1 {Type IO LastRead 5 FirstWrite 6}
+		p_ZL13weight_memory_3_1 {Type IO LastRead 5 FirstWrite 6}}
+	process_post_spike_aer_Pipeline_LTP_LOOP {
 		current_time {Type I LastRead 0 FirstWrite -1}
-		params_a_plus_val {Type I LastRead 0 FirstWrite -1}
-		params_a_minus_val {Type I LastRead 0 FirstWrite -1}
-		params_tau_plus_val {Type I LastRead 0 FirstWrite -1}
-		params_tau_minus_val {Type I LastRead 0 FirstWrite -1}
-		params_stdp_window_val {Type I LastRead 0 FirstWrite -1}
-		p_ZL16post_spike_times_0 {Type O LastRead -1 FirstWrite 0}
-		p_ZL16post_spike_times_1 {Type O LastRead -1 FirstWrite 0}
-		p_ZL16post_spike_times_2 {Type O LastRead -1 FirstWrite 0}
-		p_ZL16post_spike_times_3 {Type O LastRead -1 FirstWrite 0}
-		p_ZL16post_spike_times_4 {Type O LastRead -1 FirstWrite 0}
-		p_ZL16post_spike_times_5 {Type O LastRead -1 FirstWrite 0}
-		p_ZL16post_spike_times_6 {Type O LastRead -1 FirstWrite 0}
-		p_ZL16post_spike_times_7 {Type O LastRead -1 FirstWrite 0}
-		p_ZL15pre_spike_times_7 {Type I LastRead 0 FirstWrite -1}
-		p_ZL15pre_spike_times_6 {Type I LastRead 0 FirstWrite -1}
-		p_ZL15pre_spike_times_5 {Type I LastRead 0 FirstWrite -1}
-		p_ZL15pre_spike_times_4 {Type I LastRead 0 FirstWrite -1}
-		p_ZL15pre_spike_times_3 {Type I LastRead 0 FirstWrite -1}
-		p_ZL15pre_spike_times_2 {Type I LastRead 0 FirstWrite -1}
-		p_ZL15pre_spike_times_1 {Type I LastRead 0 FirstWrite -1}
-		p_ZL15pre_spike_times_0 {Type I LastRead 0 FirstWrite -1}
-		weight_update_fifo {Type O LastRead 42 FirstWrite 35}}
-	process_post_spike_Pipeline_STDP_LTP_LOOP {
-		params_stdp_window_val {Type I LastRead 0 FirstWrite -1}
-		current_time {Type I LastRead 0 FirstWrite -1}
-		sext_ln55 {Type I LastRead 0 FirstWrite -1}
-		zext_ln46 {Type I LastRead 0 FirstWrite -1}
-		sext_ln151 {Type I LastRead 0 FirstWrite -1}
-		sext_ln58 {Type I LastRead 0 FirstWrite -1}
-		sext_ln134 {Type I LastRead 0 FirstWrite -1}
-		post_id {Type I LastRead 0 FirstWrite -1}
-		p_ZL15pre_spike_times_7 {Type I LastRead 0 FirstWrite -1}
-		p_ZL15pre_spike_times_6 {Type I LastRead 0 FirstWrite -1}
-		p_ZL15pre_spike_times_5 {Type I LastRead 0 FirstWrite -1}
-		p_ZL15pre_spike_times_4 {Type I LastRead 0 FirstWrite -1}
-		p_ZL15pre_spike_times_3 {Type I LastRead 0 FirstWrite -1}
-		p_ZL15pre_spike_times_2 {Type I LastRead 0 FirstWrite -1}
-		p_ZL15pre_spike_times_1 {Type I LastRead 0 FirstWrite -1}
-		p_ZL15pre_spike_times_0 {Type I LastRead 0 FirstWrite -1}
-		weight_update_fifo {Type O LastRead 42 FirstWrite 35}}
-	apply_weight_updates {
-		params_learning_rate_val {Type I LastRead 0 FirstWrite -1}
-		params_rstdp_enable_val {Type I LastRead 0 FirstWrite -1}
-		params_trace_decay_val {Type I LastRead 0 FirstWrite -1}
+		zext_ln162 {Type I LastRead 0 FirstWrite -1}
+		empty {Type I LastRead 0 FirstWrite -1}
+		pre_traces_trace_3 {Type I LastRead 2 FirstWrite -1}
+		pre_traces_trace_7 {Type I LastRead 2 FirstWrite -1}
+		pre_traces_last_spike_time_3 {Type I LastRead 0 FirstWrite -1}
+		pre_traces_last_spike_time_7 {Type I LastRead 0 FirstWrite -1}
+		EXP_DECAY_LUT {Type I LastRead -1 FirstWrite -1}
+		pre_traces_trace_2 {Type I LastRead 2 FirstWrite -1}
+		pre_traces_trace_6 {Type I LastRead 2 FirstWrite -1}
+		pre_traces_last_spike_time_2 {Type I LastRead 0 FirstWrite -1}
+		pre_traces_last_spike_time_6 {Type I LastRead 0 FirstWrite -1}
+		pre_traces_trace_1 {Type I LastRead 0 FirstWrite -1}
+		pre_traces_trace_5 {Type I LastRead 0 FirstWrite -1}
+		pre_traces_last_spike_time_1 {Type I LastRead 0 FirstWrite -1}
+		pre_traces_last_spike_time_5 {Type I LastRead 0 FirstWrite -1}
+		pre_traces_trace_0 {Type I LastRead 0 FirstWrite -1}
+		pre_traces_trace_4 {Type I LastRead 0 FirstWrite -1}
+		pre_traces_last_spike_time_0 {Type I LastRead 0 FirstWrite -1}
+		pre_traces_last_spike_time_4 {Type I LastRead 0 FirstWrite -1}
+		p_ZL13weight_memory_0_0 {Type IO LastRead 5 FirstWrite 6}
+		p_ZL13weight_memory_1_0 {Type IO LastRead 5 FirstWrite 6}
+		p_ZL13weight_memory_2_0 {Type IO LastRead 5 FirstWrite 6}
+		p_ZL13weight_memory_3_0 {Type IO LastRead 5 FirstWrite 6}
+		p_ZL13weight_memory_0_1 {Type IO LastRead 5 FirstWrite 6}
+		p_ZL13weight_memory_1_1 {Type IO LastRead 5 FirstWrite 6}
+		p_ZL13weight_memory_2_1 {Type IO LastRead 5 FirstWrite 6}
+		p_ZL13weight_memory_3_1 {Type IO LastRead 5 FirstWrite 6}}
+	apply_rstdp_reward {
 		reward_signal {Type I LastRead 0 FirstWrite -1}
-		weight_update_fifo {Type I LastRead 1 FirstWrite -1}
-		p_ZL13weight_memory_0 {Type IO LastRead 3 FirstWrite 6}
-		p_ZL13weight_memory_1 {Type IO LastRead 3 FirstWrite 6}
-		p_ZL13weight_memory_2 {Type IO LastRead 3 FirstWrite 6}
-		p_ZL13weight_memory_3 {Type IO LastRead 3 FirstWrite 6}
-		p_ZL13weight_memory_4 {Type IO LastRead 3 FirstWrite 6}
-		p_ZL13weight_memory_5 {Type IO LastRead 3 FirstWrite 6}
-		p_ZL13weight_memory_6 {Type IO LastRead 3 FirstWrite 6}
-		p_ZL13weight_memory_7 {Type IO LastRead 3 FirstWrite 6}
-		p_ZL18eligibility_traces_0 {Type IO LastRead 2 FirstWrite 4}
-		p_ZL18eligibility_traces_1 {Type IO LastRead 2 FirstWrite 4}
-		p_ZL18eligibility_traces_2 {Type IO LastRead 2 FirstWrite 4}
-		p_ZL18eligibility_traces_3 {Type IO LastRead 2 FirstWrite 4}}
-	apply_weight_updates_Pipeline_VITIS_LOOP_167_1 {
-		sext_ln189 {Type I LastRead 0 FirstWrite -1}
-		and_ln177 {Type I LastRead 0 FirstWrite -1}
-		sext_ln184_1 {Type I LastRead 0 FirstWrite -1}
-		sext_ln184 {Type I LastRead 0 FirstWrite -1}
-		weight_update_fifo {Type I LastRead 1 FirstWrite -1}
-		p_ZL13weight_memory_0 {Type IO LastRead 3 FirstWrite 6}
-		p_ZL13weight_memory_1 {Type IO LastRead 3 FirstWrite 6}
-		p_ZL13weight_memory_2 {Type IO LastRead 3 FirstWrite 6}
-		p_ZL13weight_memory_3 {Type IO LastRead 3 FirstWrite 6}
-		p_ZL13weight_memory_4 {Type IO LastRead 3 FirstWrite 6}
-		p_ZL13weight_memory_5 {Type IO LastRead 3 FirstWrite 6}
-		p_ZL13weight_memory_6 {Type IO LastRead 3 FirstWrite 6}
-		p_ZL13weight_memory_7 {Type IO LastRead 3 FirstWrite 6}
-		p_ZL18eligibility_traces_0 {Type IO LastRead 2 FirstWrite 4}
-		p_ZL18eligibility_traces_1 {Type IO LastRead 2 FirstWrite 4}
-		p_ZL18eligibility_traces_2 {Type IO LastRead 2 FirstWrite 4}
-		p_ZL18eligibility_traces_3 {Type IO LastRead 2 FirstWrite 4}}
-	apply_reward_signal {
-		reward_signal {Type I LastRead 0 FirstWrite -1}
-		params_learning_rate_val {Type I LastRead 0 FirstWrite -1}
-		p_ZL18eligibility_traces_0 {Type I LastRead 1 FirstWrite -1}
-		p_ZL18eligibility_traces_1 {Type I LastRead 1 FirstWrite -1}
-		p_ZL18eligibility_traces_2 {Type I LastRead 1 FirstWrite -1}
-		p_ZL18eligibility_traces_3 {Type I LastRead 1 FirstWrite -1}
-		p_ZL13weight_memory_0 {Type IO LastRead 3 FirstWrite 6}
-		p_ZL13weight_memory_1 {Type IO LastRead 3 FirstWrite 6}
-		p_ZL13weight_memory_2 {Type IO LastRead 3 FirstWrite 6}
-		p_ZL13weight_memory_3 {Type IO LastRead 3 FirstWrite 6}
-		p_ZL13weight_memory_4 {Type IO LastRead 3 FirstWrite 6}
-		p_ZL13weight_memory_5 {Type IO LastRead 3 FirstWrite 6}
-		p_ZL13weight_memory_6 {Type IO LastRead 3 FirstWrite 6}
-		p_ZL13weight_memory_7 {Type IO LastRead 3 FirstWrite 6}}
-	apply_reward_signal_Pipeline_REWARD_OUTER_REWARD_INNER {
-		sext_ln230 {Type I LastRead 0 FirstWrite -1}
-		sext_ln223 {Type I LastRead 0 FirstWrite -1}
-		p_ZL18eligibility_traces_0 {Type I LastRead 1 FirstWrite -1}
-		p_ZL18eligibility_traces_1 {Type I LastRead 1 FirstWrite -1}
-		p_ZL18eligibility_traces_2 {Type I LastRead 1 FirstWrite -1}
-		p_ZL18eligibility_traces_3 {Type I LastRead 1 FirstWrite -1}
-		p_ZL13weight_memory_0 {Type IO LastRead 3 FirstWrite 6}
-		p_ZL13weight_memory_1 {Type IO LastRead 3 FirstWrite 6}
-		p_ZL13weight_memory_2 {Type IO LastRead 3 FirstWrite 6}
-		p_ZL13weight_memory_3 {Type IO LastRead 3 FirstWrite 6}
-		p_ZL13weight_memory_4 {Type IO LastRead 3 FirstWrite 6}
-		p_ZL13weight_memory_5 {Type IO LastRead 3 FirstWrite 6}
-		p_ZL13weight_memory_6 {Type IO LastRead 3 FirstWrite 6}
-		p_ZL13weight_memory_7 {Type IO LastRead 3 FirstWrite 6}}
+		p_ZL15pre_eligibility_0 {Type I LastRead 2 FirstWrite -1}
+		p_ZL15pre_eligibility_1 {Type I LastRead 2 FirstWrite -1}
+		p_ZL15pre_eligibility_2 {Type I LastRead 2 FirstWrite -1}
+		p_ZL15pre_eligibility_3 {Type I LastRead 2 FirstWrite -1}
+		p_ZL15pre_eligibility_4 {Type I LastRead 2 FirstWrite -1}
+		p_ZL15pre_eligibility_5 {Type I LastRead 2 FirstWrite -1}
+		p_ZL15pre_eligibility_6 {Type I LastRead 2 FirstWrite -1}
+		p_ZL15pre_eligibility_7 {Type I LastRead 2 FirstWrite -1}
+		p_ZL16post_eligibility_3 {Type I LastRead 0 FirstWrite -1}
+		p_ZL16post_eligibility_7 {Type I LastRead 0 FirstWrite -1}
+		p_ZL16post_eligibility_2 {Type I LastRead 0 FirstWrite -1}
+		p_ZL16post_eligibility_6 {Type I LastRead 0 FirstWrite -1}
+		p_ZL16post_eligibility_1 {Type I LastRead 0 FirstWrite -1}
+		p_ZL16post_eligibility_5 {Type I LastRead 0 FirstWrite -1}
+		p_ZL16post_eligibility_0 {Type I LastRead 0 FirstWrite -1}
+		p_ZL16post_eligibility_4 {Type I LastRead 0 FirstWrite -1}
+		p_ZL13weight_memory_0_0 {Type IO LastRead 1 FirstWrite 4}
+		p_ZL13weight_memory_0_1 {Type IO LastRead 1 FirstWrite 4}
+		p_ZL13weight_memory_1_0 {Type IO LastRead 1 FirstWrite 4}
+		p_ZL13weight_memory_1_1 {Type IO LastRead 1 FirstWrite 4}
+		p_ZL13weight_memory_2_0 {Type IO LastRead 3 FirstWrite 5}
+		p_ZL13weight_memory_2_1 {Type IO LastRead 3 FirstWrite 5}
+		p_ZL13weight_memory_3_0 {Type IO LastRead 3 FirstWrite 5}
+		p_ZL13weight_memory_3_1 {Type IO LastRead 3 FirstWrite 5}}
+	apply_rstdp_reward_Pipeline_RSTDP_INNER {
+		i {Type I LastRead 0 FirstWrite -1}
+		sext_ln239 {Type I LastRead 0 FirstWrite -1}
+		icmp_ln243 {Type I LastRead 0 FirstWrite -1}
+		icmp_ln243_1 {Type I LastRead 0 FirstWrite -1}
+		icmp_ln243_2 {Type I LastRead 0 FirstWrite -1}
+		empty_44 {Type I LastRead 0 FirstWrite -1}
+		empty {Type I LastRead 0 FirstWrite -1}
+		p_ZL16post_eligibility_3 {Type I LastRead 0 FirstWrite -1}
+		p_ZL16post_eligibility_7 {Type I LastRead 0 FirstWrite -1}
+		p_ZL16post_eligibility_2 {Type I LastRead 0 FirstWrite -1}
+		p_ZL16post_eligibility_6 {Type I LastRead 0 FirstWrite -1}
+		p_ZL16post_eligibility_1 {Type I LastRead 0 FirstWrite -1}
+		p_ZL16post_eligibility_5 {Type I LastRead 0 FirstWrite -1}
+		p_ZL16post_eligibility_0 {Type I LastRead 0 FirstWrite -1}
+		p_ZL16post_eligibility_4 {Type I LastRead 0 FirstWrite -1}
+		p_ZL13weight_memory_0_0 {Type IO LastRead 1 FirstWrite 4}
+		p_ZL13weight_memory_0_1 {Type IO LastRead 1 FirstWrite 4}
+		p_ZL13weight_memory_1_0 {Type IO LastRead 1 FirstWrite 4}
+		p_ZL13weight_memory_1_1 {Type IO LastRead 1 FirstWrite 4}
+		p_ZL13weight_memory_2_0 {Type IO LastRead 3 FirstWrite 5}
+		p_ZL13weight_memory_2_1 {Type IO LastRead 3 FirstWrite 5}
+		p_ZL13weight_memory_3_0 {Type IO LastRead 3 FirstWrite 5}
+		p_ZL13weight_memory_3_1 {Type IO LastRead 3 FirstWrite 5}}
 	decay_eligibility_traces {
-		params_trace_decay_val {Type I LastRead 0 FirstWrite -1}
-		p_ZL18eligibility_traces_0 {Type IO LastRead 1 FirstWrite 4}
-		p_ZL18eligibility_traces_1 {Type IO LastRead 1 FirstWrite 4}
-		p_ZL18eligibility_traces_2 {Type IO LastRead 1 FirstWrite 4}
-		p_ZL18eligibility_traces_3 {Type IO LastRead 1 FirstWrite 4}}
-	snn_top_hls_Pipeline_VITIS_LOOP_529_1 {
+		p_ZL15pre_eligibility_0 {Type IO LastRead 0 FirstWrite 2}
+		p_ZL15pre_eligibility_1 {Type IO LastRead 0 FirstWrite 2}
+		p_ZL15pre_eligibility_2 {Type IO LastRead 0 FirstWrite 2}
+		p_ZL15pre_eligibility_3 {Type IO LastRead 0 FirstWrite 2}
+		p_ZL15pre_eligibility_4 {Type IO LastRead 0 FirstWrite 2}
+		p_ZL15pre_eligibility_5 {Type IO LastRead 0 FirstWrite 2}
+		p_ZL15pre_eligibility_6 {Type IO LastRead 0 FirstWrite 2}
+		p_ZL15pre_eligibility_7 {Type IO LastRead 0 FirstWrite 2}
+		p_ZL16post_eligibility_0 {Type IO LastRead 0 FirstWrite 2}
+		p_ZL16post_eligibility_1 {Type IO LastRead 0 FirstWrite 2}
+		p_ZL16post_eligibility_2 {Type IO LastRead 0 FirstWrite 2}
+		p_ZL16post_eligibility_3 {Type IO LastRead 0 FirstWrite 2}
+		p_ZL16post_eligibility_4 {Type IO LastRead 0 FirstWrite 2}
+		p_ZL16post_eligibility_5 {Type IO LastRead 0 FirstWrite 2}
+		p_ZL16post_eligibility_6 {Type IO LastRead 0 FirstWrite 2}
+		p_ZL16post_eligibility_7 {Type IO LastRead 0 FirstWrite 2}}
+	decay_eligibility_traces_Pipeline_DECAY_PRE {
+		p_ZL15pre_eligibility_0 {Type IO LastRead 0 FirstWrite 2}
+		p_ZL15pre_eligibility_1 {Type IO LastRead 0 FirstWrite 2}
+		p_ZL15pre_eligibility_2 {Type IO LastRead 0 FirstWrite 2}
+		p_ZL15pre_eligibility_3 {Type IO LastRead 0 FirstWrite 2}
+		p_ZL15pre_eligibility_4 {Type IO LastRead 0 FirstWrite 2}
+		p_ZL15pre_eligibility_5 {Type IO LastRead 0 FirstWrite 2}
+		p_ZL15pre_eligibility_6 {Type IO LastRead 0 FirstWrite 2}
+		p_ZL15pre_eligibility_7 {Type IO LastRead 0 FirstWrite 2}}
+	decay_eligibility_traces_Pipeline_DECAY_POST {
+		p_ZL16post_eligibility_0 {Type IO LastRead 0 FirstWrite 2}
+		p_ZL16post_eligibility_1 {Type IO LastRead 0 FirstWrite 2}
+		p_ZL16post_eligibility_2 {Type IO LastRead 0 FirstWrite 2}
+		p_ZL16post_eligibility_3 {Type IO LastRead 0 FirstWrite 2}
+		p_ZL16post_eligibility_4 {Type IO LastRead 0 FirstWrite 2}
+		p_ZL16post_eligibility_5 {Type IO LastRead 0 FirstWrite 2}
+		p_ZL16post_eligibility_6 {Type IO LastRead 0 FirstWrite 2}
+		p_ZL16post_eligibility_7 {Type IO LastRead 0 FirstWrite 2}}
+	snn_top_hls_Pipeline_WEIGHT_SUM {
 		weight_sum_out {Type O LastRead -1 FirstWrite 1}
-		p_ZL13weight_memory_0 {Type I LastRead 0 FirstWrite -1}
-		p_ZL13weight_memory_1 {Type I LastRead 0 FirstWrite -1}
-		p_ZL13weight_memory_2 {Type I LastRead 0 FirstWrite -1}
-		p_ZL13weight_memory_3 {Type I LastRead 0 FirstWrite -1}
-		p_ZL13weight_memory_4 {Type I LastRead 0 FirstWrite -1}
-		p_ZL13weight_memory_5 {Type I LastRead 0 FirstWrite -1}
-		p_ZL13weight_memory_6 {Type I LastRead 0 FirstWrite -1}
-		p_ZL13weight_memory_7 {Type I LastRead 0 FirstWrite -1}}
-	snn_top_hls_Pipeline_VITIS_LOOP_529_11 {
-		sext_ln529 {Type I LastRead 0 FirstWrite -1}
-		weight_sum_2_out {Type O LastRead -1 FirstWrite 1}
-		p_ZL13weight_memory_0 {Type I LastRead 0 FirstWrite -1}
-		p_ZL13weight_memory_1 {Type I LastRead 0 FirstWrite -1}
-		p_ZL13weight_memory_2 {Type I LastRead 0 FirstWrite -1}
-		p_ZL13weight_memory_3 {Type I LastRead 0 FirstWrite -1}
-		p_ZL13weight_memory_4 {Type I LastRead 0 FirstWrite -1}
-		p_ZL13weight_memory_5 {Type I LastRead 0 FirstWrite -1}
-		p_ZL13weight_memory_6 {Type I LastRead 0 FirstWrite -1}
-		p_ZL13weight_memory_7 {Type I LastRead 0 FirstWrite -1}}
-	snn_top_hls_Pipeline_VITIS_LOOP_529_12 {
-		sext_ln529_1 {Type I LastRead 0 FirstWrite -1}
-		weight_sum_4_out {Type O LastRead -1 FirstWrite 1}
-		p_ZL13weight_memory_0 {Type I LastRead 0 FirstWrite -1}
-		p_ZL13weight_memory_1 {Type I LastRead 0 FirstWrite -1}
-		p_ZL13weight_memory_2 {Type I LastRead 0 FirstWrite -1}
-		p_ZL13weight_memory_3 {Type I LastRead 0 FirstWrite -1}
-		p_ZL13weight_memory_4 {Type I LastRead 0 FirstWrite -1}
-		p_ZL13weight_memory_5 {Type I LastRead 0 FirstWrite -1}
-		p_ZL13weight_memory_6 {Type I LastRead 0 FirstWrite -1}
-		p_ZL13weight_memory_7 {Type I LastRead 0 FirstWrite -1}}
-	snn_top_hls_Pipeline_VITIS_LOOP_529_13 {
-		weight_sum_4_reload {Type I LastRead 0 FirstWrite -1}
-		weight_sum_6_out {Type O LastRead -1 FirstWrite 1}
-		p_ZL13weight_memory_0 {Type I LastRead 0 FirstWrite -1}
-		p_ZL13weight_memory_1 {Type I LastRead 0 FirstWrite -1}
-		p_ZL13weight_memory_2 {Type I LastRead 0 FirstWrite -1}
-		p_ZL13weight_memory_3 {Type I LastRead 0 FirstWrite -1}
-		p_ZL13weight_memory_4 {Type I LastRead 0 FirstWrite -1}
-		p_ZL13weight_memory_5 {Type I LastRead 0 FirstWrite -1}
-		p_ZL13weight_memory_6 {Type I LastRead 0 FirstWrite -1}
-		p_ZL13weight_memory_7 {Type I LastRead 0 FirstWrite -1}}
-	snn_top_hls_Pipeline_VITIS_LOOP_529_14 {
-		sext_ln529_2 {Type I LastRead 0 FirstWrite -1}
-		weight_sum_8_out {Type O LastRead -1 FirstWrite 1}
-		p_ZL13weight_memory_0 {Type I LastRead 0 FirstWrite -1}
-		p_ZL13weight_memory_1 {Type I LastRead 0 FirstWrite -1}
-		p_ZL13weight_memory_2 {Type I LastRead 0 FirstWrite -1}
-		p_ZL13weight_memory_3 {Type I LastRead 0 FirstWrite -1}
-		p_ZL13weight_memory_4 {Type I LastRead 0 FirstWrite -1}
-		p_ZL13weight_memory_5 {Type I LastRead 0 FirstWrite -1}
-		p_ZL13weight_memory_6 {Type I LastRead 0 FirstWrite -1}
-		p_ZL13weight_memory_7 {Type I LastRead 0 FirstWrite -1}}
-	snn_top_hls_Pipeline_VITIS_LOOP_529_15 {
-		weight_sum_8_reload {Type I LastRead 0 FirstWrite -1}
-		weight_sum_10_out {Type O LastRead -1 FirstWrite 1}
-		p_ZL13weight_memory_0 {Type I LastRead 0 FirstWrite -1}
-		p_ZL13weight_memory_1 {Type I LastRead 0 FirstWrite -1}
-		p_ZL13weight_memory_2 {Type I LastRead 0 FirstWrite -1}
-		p_ZL13weight_memory_3 {Type I LastRead 0 FirstWrite -1}
-		p_ZL13weight_memory_4 {Type I LastRead 0 FirstWrite -1}
-		p_ZL13weight_memory_5 {Type I LastRead 0 FirstWrite -1}
-		p_ZL13weight_memory_6 {Type I LastRead 0 FirstWrite -1}
-		p_ZL13weight_memory_7 {Type I LastRead 0 FirstWrite -1}}
-	snn_top_hls_Pipeline_VITIS_LOOP_529_16 {
-		weight_sum_10_reload {Type I LastRead 0 FirstWrite -1}
-		weight_sum_12_out {Type O LastRead -1 FirstWrite 1}
-		p_ZL13weight_memory_0 {Type I LastRead 0 FirstWrite -1}
-		p_ZL13weight_memory_1 {Type I LastRead 0 FirstWrite -1}
-		p_ZL13weight_memory_2 {Type I LastRead 0 FirstWrite -1}
-		p_ZL13weight_memory_3 {Type I LastRead 0 FirstWrite -1}
-		p_ZL13weight_memory_4 {Type I LastRead 0 FirstWrite -1}
-		p_ZL13weight_memory_5 {Type I LastRead 0 FirstWrite -1}
-		p_ZL13weight_memory_6 {Type I LastRead 0 FirstWrite -1}
-		p_ZL13weight_memory_7 {Type I LastRead 0 FirstWrite -1}}
-	snn_top_hls_Pipeline_VITIS_LOOP_529_17 {
-		weight_sum_12_reload {Type I LastRead 0 FirstWrite -1}
-		weight_sum_14_out {Type O LastRead -1 FirstWrite 1}
-		p_ZL13weight_memory_0 {Type I LastRead 0 FirstWrite -1}
-		p_ZL13weight_memory_1 {Type I LastRead 0 FirstWrite -1}
-		p_ZL13weight_memory_2 {Type I LastRead 0 FirstWrite -1}
-		p_ZL13weight_memory_3 {Type I LastRead 0 FirstWrite -1}
-		p_ZL13weight_memory_4 {Type I LastRead 0 FirstWrite -1}
-		p_ZL13weight_memory_5 {Type I LastRead 0 FirstWrite -1}
-		p_ZL13weight_memory_6 {Type I LastRead 0 FirstWrite -1}
-		p_ZL13weight_memory_7 {Type I LastRead 0 FirstWrite -1}}
-	snn_top_hls_Pipeline_VITIS_LOOP_529_18 {
-		sext_ln529_3 {Type I LastRead 0 FirstWrite -1}
-		weight_sum_16_out {Type O LastRead -1 FirstWrite 1}
-		p_ZL13weight_memory_0 {Type I LastRead 0 FirstWrite -1}
-		p_ZL13weight_memory_1 {Type I LastRead 0 FirstWrite -1}
-		p_ZL13weight_memory_2 {Type I LastRead 0 FirstWrite -1}
-		p_ZL13weight_memory_3 {Type I LastRead 0 FirstWrite -1}
-		p_ZL13weight_memory_4 {Type I LastRead 0 FirstWrite -1}
-		p_ZL13weight_memory_5 {Type I LastRead 0 FirstWrite -1}
-		p_ZL13weight_memory_6 {Type I LastRead 0 FirstWrite -1}
-		p_ZL13weight_memory_7 {Type I LastRead 0 FirstWrite -1}}
-	snn_top_hls_Pipeline_VITIS_LOOP_529_19 {
-		weight_sum_16_reload {Type I LastRead 0 FirstWrite -1}
-		weight_sum_18_out {Type O LastRead -1 FirstWrite 1}
-		p_ZL13weight_memory_0 {Type I LastRead 0 FirstWrite -1}
-		p_ZL13weight_memory_1 {Type I LastRead 0 FirstWrite -1}
-		p_ZL13weight_memory_2 {Type I LastRead 0 FirstWrite -1}
-		p_ZL13weight_memory_3 {Type I LastRead 0 FirstWrite -1}
-		p_ZL13weight_memory_4 {Type I LastRead 0 FirstWrite -1}
-		p_ZL13weight_memory_5 {Type I LastRead 0 FirstWrite -1}
-		p_ZL13weight_memory_6 {Type I LastRead 0 FirstWrite -1}
-		p_ZL13weight_memory_7 {Type I LastRead 0 FirstWrite -1}}
-	snn_top_hls_Pipeline_VITIS_LOOP_529_110 {
-		weight_sum_18_reload {Type I LastRead 0 FirstWrite -1}
-		weight_sum_20_out {Type O LastRead -1 FirstWrite 1}
-		p_ZL13weight_memory_0 {Type I LastRead 0 FirstWrite -1}
-		p_ZL13weight_memory_1 {Type I LastRead 0 FirstWrite -1}
-		p_ZL13weight_memory_2 {Type I LastRead 0 FirstWrite -1}
-		p_ZL13weight_memory_3 {Type I LastRead 0 FirstWrite -1}
-		p_ZL13weight_memory_4 {Type I LastRead 0 FirstWrite -1}
-		p_ZL13weight_memory_5 {Type I LastRead 0 FirstWrite -1}
-		p_ZL13weight_memory_6 {Type I LastRead 0 FirstWrite -1}
-		p_ZL13weight_memory_7 {Type I LastRead 0 FirstWrite -1}}
-	snn_top_hls_Pipeline_VITIS_LOOP_529_111 {
-		weight_sum_20_reload {Type I LastRead 0 FirstWrite -1}
-		weight_sum_22_out {Type O LastRead -1 FirstWrite 1}
-		p_ZL13weight_memory_0 {Type I LastRead 0 FirstWrite -1}
-		p_ZL13weight_memory_1 {Type I LastRead 0 FirstWrite -1}
-		p_ZL13weight_memory_2 {Type I LastRead 0 FirstWrite -1}
-		p_ZL13weight_memory_3 {Type I LastRead 0 FirstWrite -1}
-		p_ZL13weight_memory_4 {Type I LastRead 0 FirstWrite -1}
-		p_ZL13weight_memory_5 {Type I LastRead 0 FirstWrite -1}
-		p_ZL13weight_memory_6 {Type I LastRead 0 FirstWrite -1}
-		p_ZL13weight_memory_7 {Type I LastRead 0 FirstWrite -1}}
-	snn_top_hls_Pipeline_VITIS_LOOP_529_112 {
-		weight_sum_22_reload {Type I LastRead 0 FirstWrite -1}
-		weight_sum_24_out {Type O LastRead -1 FirstWrite 1}
-		p_ZL13weight_memory_0 {Type I LastRead 0 FirstWrite -1}
-		p_ZL13weight_memory_1 {Type I LastRead 0 FirstWrite -1}
-		p_ZL13weight_memory_2 {Type I LastRead 0 FirstWrite -1}
-		p_ZL13weight_memory_3 {Type I LastRead 0 FirstWrite -1}
-		p_ZL13weight_memory_4 {Type I LastRead 0 FirstWrite -1}
-		p_ZL13weight_memory_5 {Type I LastRead 0 FirstWrite -1}
-		p_ZL13weight_memory_6 {Type I LastRead 0 FirstWrite -1}
-		p_ZL13weight_memory_7 {Type I LastRead 0 FirstWrite -1}}
-	snn_top_hls_Pipeline_VITIS_LOOP_529_113 {
-		weight_sum_24_reload {Type I LastRead 0 FirstWrite -1}
-		weight_sum_26_out {Type O LastRead -1 FirstWrite 1}
-		p_ZL13weight_memory_0 {Type I LastRead 0 FirstWrite -1}
-		p_ZL13weight_memory_1 {Type I LastRead 0 FirstWrite -1}
-		p_ZL13weight_memory_2 {Type I LastRead 0 FirstWrite -1}
-		p_ZL13weight_memory_3 {Type I LastRead 0 FirstWrite -1}
-		p_ZL13weight_memory_4 {Type I LastRead 0 FirstWrite -1}
-		p_ZL13weight_memory_5 {Type I LastRead 0 FirstWrite -1}
-		p_ZL13weight_memory_6 {Type I LastRead 0 FirstWrite -1}
-		p_ZL13weight_memory_7 {Type I LastRead 0 FirstWrite -1}}
-	snn_top_hls_Pipeline_VITIS_LOOP_529_114 {
-		weight_sum_26_reload {Type I LastRead 0 FirstWrite -1}
-		weight_sum_28_out {Type O LastRead -1 FirstWrite 1}
-		p_ZL13weight_memory_0 {Type I LastRead 0 FirstWrite -1}
-		p_ZL13weight_memory_1 {Type I LastRead 0 FirstWrite -1}
-		p_ZL13weight_memory_2 {Type I LastRead 0 FirstWrite -1}
-		p_ZL13weight_memory_3 {Type I LastRead 0 FirstWrite -1}
-		p_ZL13weight_memory_4 {Type I LastRead 0 FirstWrite -1}
-		p_ZL13weight_memory_5 {Type I LastRead 0 FirstWrite -1}
-		p_ZL13weight_memory_6 {Type I LastRead 0 FirstWrite -1}
-		p_ZL13weight_memory_7 {Type I LastRead 0 FirstWrite -1}}
-	snn_top_hls_Pipeline_VITIS_LOOP_529_115 {
-		weight_sum_28_reload {Type I LastRead 0 FirstWrite -1}
-		weight_sum_31_out {Type O LastRead -1 FirstWrite 1}
-		p_ZL13weight_memory_0 {Type I LastRead 0 FirstWrite -1}
-		p_ZL13weight_memory_1 {Type I LastRead 0 FirstWrite -1}
-		p_ZL13weight_memory_2 {Type I LastRead 0 FirstWrite -1}
-		p_ZL13weight_memory_3 {Type I LastRead 0 FirstWrite -1}
-		p_ZL13weight_memory_4 {Type I LastRead 0 FirstWrite -1}
-		p_ZL13weight_memory_5 {Type I LastRead 0 FirstWrite -1}
-		p_ZL13weight_memory_6 {Type I LastRead 0 FirstWrite -1}
-		p_ZL13weight_memory_7 {Type I LastRead 0 FirstWrite -1}}}
+		p_ZL13weight_memory_0_0 {Type I LastRead 1 FirstWrite -1}
+		p_ZL13weight_memory_0_1 {Type I LastRead 1 FirstWrite -1}
+		p_ZL13weight_memory_1_0 {Type I LastRead 1 FirstWrite -1}
+		p_ZL13weight_memory_1_1 {Type I LastRead 1 FirstWrite -1}
+		p_ZL13weight_memory_2_0 {Type I LastRead 1 FirstWrite -1}
+		p_ZL13weight_memory_2_1 {Type I LastRead 1 FirstWrite -1}
+		p_ZL13weight_memory_3_0 {Type I LastRead 1 FirstWrite -1}
+		p_ZL13weight_memory_3_1 {Type I LastRead 1 FirstWrite -1}}}
 
 set hasDtUnsupportedChannel 0
 
 set PerformanceInfo {[
-	{"Name" : "Latency", "Min" : "-1", "Max" : "-1"}
-	, {"Name" : "Interval", "Min" : "0", "Max" : "0"}
+	{"Name" : "Latency", "Min" : "18", "Max" : "6924"}
+	, {"Name" : "Interval", "Min" : "19", "Max" : "6925"}
 ]}
 
 set PipelineEnableSignalInfo {[

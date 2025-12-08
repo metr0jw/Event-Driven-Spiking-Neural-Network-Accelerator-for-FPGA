@@ -1,116 +1,95 @@
 {
   "0": {
-    "basicblocks": 103,
-    "calls": "3 4 5 1 2",
-    "control_depth": 2,
-    "def_use_depth": 6,
+    "basicblocks": 97,
+    "calls": "3 1 4 2",
+    "control_depth": 3,
+    "def_use_depth": 7,
     "file": "snn_top_hls.cpp",
-    "fileloc": 240,
-    "instructions": 1009,
+    "fileloc": 308,
+    "instructions": 877,
     "loads": {
-      "G": 145,
+      "G": 49,
       "L": 1
     },
-    "memory_accesses": 161,
+    "memory_accesses": 79,
     "name": "snn_top_hls",
     "stores": {
-      "G": 41,
+      "G": 81,
       "L": 14,
       "T": 15
     },
-    "total_instructions": 2967
+    "total_instructions": 1882
   },
   "1": {
-    "basicblocks": 22,
+    "basicblocks": 56,
+    "calls": "",
+    "control_depth": 3,
+    "def_use_depth": 14,
+    "file": "snn_top_hls.cpp",
+    "fileloc": 154,
+    "instructions": 336,
+    "loads": {
+      "G": 53
+    },
+    "memory_accesses": 56,
+    "name": "process_post_spike_aer",
+    "stores": {
+      "G": 32
+    },
+    "total_instructions": 336
+  },
+  "2": {
+    "basicblocks": 7,
+    "calls": "",
+    "control_depth": 1,
+    "def_use_depth": 5,
+    "file": "snn_top_hls.cpp",
+    "fileloc": 264,
+    "instructions": 118,
+    "loads": {
+      "G": 16
+    },
+    "memory_accesses": 32,
+    "name": "decay_eligibility_traces",
+    "stores": {
+      "G": 16
+    },
+    "total_instructions": 118
+  },
+  "3": {
+    "basicblocks": 48,
     "calls": "",
     "control_depth": 3,
     "def_use_depth": 15,
     "file": "snn_top_hls.cpp",
-    "fileloc": 213,
-    "instructions": 124,
+    "fileloc": 106,
+    "instructions": 308,
     "loads": {
-      "G": 12
+      "G": 45
     },
-    "memory_accesses": 21,
-    "name": "apply_reward_signal",
+    "memory_accesses": 40,
+    "name": "process_pre_spike_aer",
     "stores": {
-      "G": 8
+      "G": 24
     },
-    "total_instructions": 124
-  },
-  "2": {
-    "basicblocks": 19,
-    "calls": "",
-    "control_depth": 3,
-    "def_use_depth": 6,
-    "file": "snn_top_hls.cpp",
-    "fileloc": 199,
-    "instructions": 68,
-    "loads": {
-      "G": 4
-    },
-    "memory_accesses": 14,
-    "name": "decay_eligibility_traces",
-    "stores": {
-      "G": 8
-    },
-    "total_instructions": 68
-  },
-  "3": {
-    "basicblocks": 157,
-    "calls": "",
-    "control_depth": 8,
-    "def_use_depth": 18,
-    "file": "snn_top_hls.cpp",
-    "fileloc": 78,
-    "instructions": 809,
-    "loads": {
-      "G": 8
-    },
-    "memory_accesses": 32,
-    "name": "process_pre_spike",
-    "stores": {
-      "G": 8,
-      "L": 8
-    },
-    "total_instructions": 809
+    "total_instructions": 308
   },
   "4": {
-    "basicblocks": 157,
+    "basicblocks": 54,
     "calls": "",
-    "control_depth": 8,
-    "def_use_depth": 18,
+    "control_depth": 3,
+    "def_use_depth": 13,
     "file": "snn_top_hls.cpp",
-    "fileloc": 119,
-    "instructions": 809,
+    "fileloc": 204,
+    "instructions": 243,
     "loads": {
+      "G": 24
+    },
+    "memory_accesses": 28,
+    "name": "apply_rstdp_reward",
+    "stores": {
       "G": 8
     },
-    "memory_accesses": 32,
-    "name": "process_post_spike",
-    "stores": {
-      "G": 8,
-      "L": 8
-    },
-    "total_instructions": 809
-  },
-  "5": {
-    "basicblocks": 31,
-    "calls": "",
-    "control_depth": 4,
-    "def_use_depth": 18,
-    "file": "snn_top_hls.cpp",
-    "fileloc": 160,
-    "instructions": 148,
-    "loads": {
-      "G": 12,
-      "L": 1
-    },
-    "memory_accesses": 34,
-    "name": "apply_weight_updates",
-    "stores": {
-      "G": 16
-    },
-    "total_instructions": 148
+    "total_instructions": 243
   }
 }

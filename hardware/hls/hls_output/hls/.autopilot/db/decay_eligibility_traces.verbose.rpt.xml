@@ -1,7 +1,7 @@
 <profile>
 
 <section name = "Vitis HLS Report for 'decay_eligibility_traces'" level="0">
-<item name = "Date">Mon Dec  8 20:06:24 2025
+<item name = "Date">Mon Dec  8 20:49:13 2025
 </item>
 <item name = "Version">2025.2 (Build 6295257 on Nov 14 2025)</item>
 <item name = "Project">hls_output</item>
@@ -15,7 +15,7 @@
 <section name = "" level="1">
 <item name = "Summary"><table name="" hasTotal="0">
 <keys size="4">Clock, Target, Estimated, Uncertainty</keys>
-<column name="ap_clk">10.00 ns, 6.321 ns, 2.70 ns</column>
+<column name="ap_clk">10.00 ns, 5.169 ns, 2.70 ns</column>
 </table>
 </item>
 </section>
@@ -24,18 +24,19 @@
 <section name = "" level="1">
 <item name = "Summary"><table name="" hasTotal="0">
 <keys size="8">, min, max, min, max, min, max, Type</keys>
-<column name="">8197, 8197, 81.970 us, 81.970 us, 0, 0, loop pipeline stp</column>
+<column name="">12, 12, 0.120 us, 0.120 us, 12, 12, no</column>
 </table>
 </item>
 <item name = "Detail">
 <section name = "" level="1">
 <item name = "Instance"><table name="" hasTotal="0">
 <keys size="9">Instance, Module, min, max, min, max, min, max, Type</keys>
+<column name="grp_decay_eligibility_traces_Pipeline_DECAY_PRE_fu_46">decay_eligibility_traces_Pipeline_DECAY_PRE, 11, 11, 0.110 us, 0.110 us, 0, 0, loop pipeline stp</column>
+<column name="grp_decay_eligibility_traces_Pipeline_DECAY_POST_fu_66">decay_eligibility_traces_Pipeline_DECAY_POST, 11, 11, 0.110 us, 0.110 us, 0, 0, loop pipeline stp</column>
 </table>
 </item>
 <item name = "Loop"><table name="" hasTotal="0">
 <keys size="8">Loop Name, min, max, Latency, achieved, target, Count, Pipelined</keys>
-<column name="- DECAY_OUTER_DECAY_INNER">8195, 8195, 6, 2, 1, 4096, yes</column>
 </table>
 </item>
 </section>
@@ -48,22 +49,22 @@
 <item name = "Summary"><table name="" hasTotal="1">
 <keys size="6">Name, BRAM_18K, DSP, FF, LUT, URAM</keys>
 <column name="DSP">-, -, -, -, -</column>
-<column name="Expression">-, -, 0, 129, -</column>
+<column name="Expression">-, -, 0, 2, -</column>
 <column name="FIFO">-, -, -, -, -</column>
-<column name="Instance">-, 1, 0, 26, -</column>
+<column name="Instance">-, -, 248, 344, -</column>
 <column name="Memory">-, -, -, -, -</column>
-<column name="Multiplexer">-, -, 0, 133, -</column>
-<column name="Register">-, -, 215, -, -</column>
+<column name="Multiplexer">-, -, 0, 14, -</column>
+<column name="Register">-, -, 4, -, -</column>
 <specialColumn name="Available">280, 220, 106400, 53200, 0</specialColumn>
-<specialColumn name="Utilization (%)">0, ~0, ~0, ~0, 0</specialColumn>
+<specialColumn name="Utilization (%)">0, 0, ~0, ~0, 0</specialColumn>
 </table>
 </item>
 <item name = "Detail">
 <section name = "" level="1">
 <item name = "Instance"><table name="" hasTotal="1">
 <keys size="7">Instance, Module, BRAM_18K, DSP, FF, LUT, URAM</keys>
-<column name="mul_16s_16s_32_1_1_U256">mul_16s_16s_32_1_1, 0, 1, 0, 6, 0</column>
-<column name="sparsemux_9_2_16_1_1_U255">sparsemux_9_2_16_1_1, 0, 0, 0, 20, 0</column>
+<column name="grp_decay_eligibility_traces_Pipeline_DECAY_POST_fu_66">decay_eligibility_traces_Pipeline_DECAY_POST, 0, 0, 124, 172, 0</column>
+<column name="grp_decay_eligibility_traces_Pipeline_DECAY_PRE_fu_46">decay_eligibility_traces_Pipeline_DECAY_PRE, 0, 0, 124, 172, 0</column>
 </table>
 </item>
 <item name = "DSP"><table name="" hasTotal="0">
@@ -80,59 +81,19 @@
 </item>
 <item name = "Expression"><table name="" hasTotal="1">
 <keys size="7">Variable Name, Operation, DSP, FF, LUT, Bitwidth P0, Bitwidth P1</keys>
-<column name="add_ln202_1_fu_200_p2">+, 0, 0, 14, 13, 1</column>
-<column name="add_ln202_fu_217_p2">+, 0, 0, 14, 7, 1</column>
-<column name="add_ln203_fu_279_p2">+, 0, 0, 14, 7, 1</column>
-<column name="icmp_ln202_fu_194_p2">icmp, 0, 0, 17, 13, 14</column>
-<column name="icmp_ln203_fu_223_p2">icmp, 0, 0, 15, 7, 8</column>
-<column name="icmp_ln205_fu_326_p2">icmp, 0, 0, 39, 32, 1</column>
-<column name="select_ln202_1_fu_237_p3">select, 0, 0, 7, 1, 7</column>
-<column name="select_ln202_fu_229_p3">select, 0, 0, 7, 1, 1</column>
-<column name="ap_enable_pp0">xor, 0, 0, 2, 1, 2</column>
+<column name="ap_block_state2_on_subcall_done">or, 0, 0, 2, 1, 1</column>
 </table>
 </item>
 <item name = "Multiplexer"><table name="" hasTotal="1">
 <keys size="5">Name, LUT, Input Size, Bits, Total Bits</keys>
 <column name="ap_NS_fsm">14, 3, 1, 3</column>
-<column name="ap_done_int">9, 2, 1, 2</column>
-<column name="ap_enable_reg_pp0_iter0">9, 2, 1, 2</column>
-<column name="ap_enable_reg_pp0_iter1">9, 2, 1, 2</column>
-<column name="ap_sig_allocacmp_indvar_flatten_load">9, 2, 13, 26</column>
-<column name="i_fu_86">9, 2, 7, 14</column>
-<column name="indvar_flatten_fu_90">9, 2, 13, 26</column>
-<column name="j_fu_82">9, 2, 7, 14</column>
-<column name="p_ZL18eligibility_traces_0_d1_local">14, 3, 16, 48</column>
-<column name="p_ZL18eligibility_traces_1_d1_local">14, 3, 16, 48</column>
-<column name="p_ZL18eligibility_traces_2_d1_local">14, 3, 16, 48</column>
-<column name="p_ZL18eligibility_traces_3_d1_local">14, 3, 16, 48</column>
 </table>
 </item>
 <item name = "Register"><table name="" hasTotal="1">
 <keys size="5">Name, FF, LUT, Bits, Const Bits</keys>
 <column name="ap_CS_fsm">2, 0, 2, 0</column>
-<column name="ap_done_reg">1, 0, 1, 0</column>
-<column name="ap_enable_reg_pp0_iter0_reg">1, 0, 1, 0</column>
-<column name="ap_enable_reg_pp0_iter1">1, 0, 1, 0</column>
-<column name="ap_enable_reg_pp0_iter2">1, 0, 1, 0</column>
-<column name="ap_loop_exit_ready_pp0_iter1_reg">1, 0, 1, 0</column>
-<column name="i_fu_86">7, 0, 7, 0</column>
-<column name="icmp_ln202_reg_384">1, 0, 1, 0</column>
-<column name="indvar_flatten_fu_90">13, 0, 13, 0</column>
-<column name="j_fu_82">7, 0, 7, 0</column>
-<column name="mul_ln205_reg_424">32, 0, 32, 0</column>
-<column name="p_ZL18eligibility_traces_0_addr_reg_395">10, 0, 10, 0</column>
-<column name="p_ZL18eligibility_traces_0_addr_reg_395_pp0_iter1_reg">10, 0, 10, 0</column>
-<column name="p_ZL18eligibility_traces_1_addr_reg_401">10, 0, 10, 0</column>
-<column name="p_ZL18eligibility_traces_1_addr_reg_401_pp0_iter1_reg">10, 0, 10, 0</column>
-<column name="p_ZL18eligibility_traces_2_addr_reg_407">10, 0, 10, 0</column>
-<column name="p_ZL18eligibility_traces_2_addr_reg_407_pp0_iter1_reg">10, 0, 10, 0</column>
-<column name="p_ZL18eligibility_traces_3_addr_reg_413">10, 0, 10, 0</column>
-<column name="p_ZL18eligibility_traces_3_addr_reg_413_pp0_iter1_reg">10, 0, 10, 0</column>
-<column name="sext_ln205_reg_379">32, 0, 32, 0</column>
-<column name="tmp_reg_419">16, 0, 16, 0</column>
-<column name="trunc_ln203_1_reg_388">2, 0, 2, 0</column>
-<column name="trunc_ln203_1_reg_388_pp0_iter1_reg">2, 0, 2, 0</column>
-<column name="trunc_ln_reg_433">16, 0, 16, 0</column>
+<column name="grp_decay_eligibility_traces_Pipeline_DECAY_POST_fu_66_ap_start_reg">1, 0, 1, 0</column>
+<column name="grp_decay_eligibility_traces_Pipeline_DECAY_PRE_fu_46_ap_start_reg">1, 0, 1, 0</column>
 </table>
 </item>
 </section>
@@ -148,35 +109,118 @@
 <column name="ap_done">out, 1, ap_ctrl_hs, decay_eligibility_traces, return value</column>
 <column name="ap_idle">out, 1, ap_ctrl_hs, decay_eligibility_traces, return value</column>
 <column name="ap_ready">out, 1, ap_ctrl_hs, decay_eligibility_traces, return value</column>
-<column name="params_trace_decay_val">in, 16, ap_none, params_trace_decay_val, scalar</column>
-<column name="p_ZL18eligibility_traces_0_address0">out, 10, ap_memory, p_ZL18eligibility_traces_0, array</column>
-<column name="p_ZL18eligibility_traces_0_ce0">out, 1, ap_memory, p_ZL18eligibility_traces_0, array</column>
-<column name="p_ZL18eligibility_traces_0_q0">in, 16, ap_memory, p_ZL18eligibility_traces_0, array</column>
-<column name="p_ZL18eligibility_traces_0_address1">out, 10, ap_memory, p_ZL18eligibility_traces_0, array</column>
-<column name="p_ZL18eligibility_traces_0_ce1">out, 1, ap_memory, p_ZL18eligibility_traces_0, array</column>
-<column name="p_ZL18eligibility_traces_0_we1">out, 1, ap_memory, p_ZL18eligibility_traces_0, array</column>
-<column name="p_ZL18eligibility_traces_0_d1">out, 16, ap_memory, p_ZL18eligibility_traces_0, array</column>
-<column name="p_ZL18eligibility_traces_1_address0">out, 10, ap_memory, p_ZL18eligibility_traces_1, array</column>
-<column name="p_ZL18eligibility_traces_1_ce0">out, 1, ap_memory, p_ZL18eligibility_traces_1, array</column>
-<column name="p_ZL18eligibility_traces_1_q0">in, 16, ap_memory, p_ZL18eligibility_traces_1, array</column>
-<column name="p_ZL18eligibility_traces_1_address1">out, 10, ap_memory, p_ZL18eligibility_traces_1, array</column>
-<column name="p_ZL18eligibility_traces_1_ce1">out, 1, ap_memory, p_ZL18eligibility_traces_1, array</column>
-<column name="p_ZL18eligibility_traces_1_we1">out, 1, ap_memory, p_ZL18eligibility_traces_1, array</column>
-<column name="p_ZL18eligibility_traces_1_d1">out, 16, ap_memory, p_ZL18eligibility_traces_1, array</column>
-<column name="p_ZL18eligibility_traces_2_address0">out, 10, ap_memory, p_ZL18eligibility_traces_2, array</column>
-<column name="p_ZL18eligibility_traces_2_ce0">out, 1, ap_memory, p_ZL18eligibility_traces_2, array</column>
-<column name="p_ZL18eligibility_traces_2_q0">in, 16, ap_memory, p_ZL18eligibility_traces_2, array</column>
-<column name="p_ZL18eligibility_traces_2_address1">out, 10, ap_memory, p_ZL18eligibility_traces_2, array</column>
-<column name="p_ZL18eligibility_traces_2_ce1">out, 1, ap_memory, p_ZL18eligibility_traces_2, array</column>
-<column name="p_ZL18eligibility_traces_2_we1">out, 1, ap_memory, p_ZL18eligibility_traces_2, array</column>
-<column name="p_ZL18eligibility_traces_2_d1">out, 16, ap_memory, p_ZL18eligibility_traces_2, array</column>
-<column name="p_ZL18eligibility_traces_3_address0">out, 10, ap_memory, p_ZL18eligibility_traces_3, array</column>
-<column name="p_ZL18eligibility_traces_3_ce0">out, 1, ap_memory, p_ZL18eligibility_traces_3, array</column>
-<column name="p_ZL18eligibility_traces_3_q0">in, 16, ap_memory, p_ZL18eligibility_traces_3, array</column>
-<column name="p_ZL18eligibility_traces_3_address1">out, 10, ap_memory, p_ZL18eligibility_traces_3, array</column>
-<column name="p_ZL18eligibility_traces_3_ce1">out, 1, ap_memory, p_ZL18eligibility_traces_3, array</column>
-<column name="p_ZL18eligibility_traces_3_we1">out, 1, ap_memory, p_ZL18eligibility_traces_3, array</column>
-<column name="p_ZL18eligibility_traces_3_d1">out, 16, ap_memory, p_ZL18eligibility_traces_3, array</column>
+<column name="p_ZL15pre_eligibility_0_address0">out, 3, ap_memory, p_ZL15pre_eligibility_0, array</column>
+<column name="p_ZL15pre_eligibility_0_ce0">out, 1, ap_memory, p_ZL15pre_eligibility_0, array</column>
+<column name="p_ZL15pre_eligibility_0_q0">in, 8, ap_memory, p_ZL15pre_eligibility_0, array</column>
+<column name="p_ZL15pre_eligibility_0_address1">out, 3, ap_memory, p_ZL15pre_eligibility_0, array</column>
+<column name="p_ZL15pre_eligibility_0_ce1">out, 1, ap_memory, p_ZL15pre_eligibility_0, array</column>
+<column name="p_ZL15pre_eligibility_0_we1">out, 1, ap_memory, p_ZL15pre_eligibility_0, array</column>
+<column name="p_ZL15pre_eligibility_0_d1">out, 8, ap_memory, p_ZL15pre_eligibility_0, array</column>
+<column name="p_ZL15pre_eligibility_1_address0">out, 3, ap_memory, p_ZL15pre_eligibility_1, array</column>
+<column name="p_ZL15pre_eligibility_1_ce0">out, 1, ap_memory, p_ZL15pre_eligibility_1, array</column>
+<column name="p_ZL15pre_eligibility_1_q0">in, 8, ap_memory, p_ZL15pre_eligibility_1, array</column>
+<column name="p_ZL15pre_eligibility_1_address1">out, 3, ap_memory, p_ZL15pre_eligibility_1, array</column>
+<column name="p_ZL15pre_eligibility_1_ce1">out, 1, ap_memory, p_ZL15pre_eligibility_1, array</column>
+<column name="p_ZL15pre_eligibility_1_we1">out, 1, ap_memory, p_ZL15pre_eligibility_1, array</column>
+<column name="p_ZL15pre_eligibility_1_d1">out, 8, ap_memory, p_ZL15pre_eligibility_1, array</column>
+<column name="p_ZL15pre_eligibility_2_address0">out, 3, ap_memory, p_ZL15pre_eligibility_2, array</column>
+<column name="p_ZL15pre_eligibility_2_ce0">out, 1, ap_memory, p_ZL15pre_eligibility_2, array</column>
+<column name="p_ZL15pre_eligibility_2_q0">in, 8, ap_memory, p_ZL15pre_eligibility_2, array</column>
+<column name="p_ZL15pre_eligibility_2_address1">out, 3, ap_memory, p_ZL15pre_eligibility_2, array</column>
+<column name="p_ZL15pre_eligibility_2_ce1">out, 1, ap_memory, p_ZL15pre_eligibility_2, array</column>
+<column name="p_ZL15pre_eligibility_2_we1">out, 1, ap_memory, p_ZL15pre_eligibility_2, array</column>
+<column name="p_ZL15pre_eligibility_2_d1">out, 8, ap_memory, p_ZL15pre_eligibility_2, array</column>
+<column name="p_ZL15pre_eligibility_3_address0">out, 3, ap_memory, p_ZL15pre_eligibility_3, array</column>
+<column name="p_ZL15pre_eligibility_3_ce0">out, 1, ap_memory, p_ZL15pre_eligibility_3, array</column>
+<column name="p_ZL15pre_eligibility_3_q0">in, 8, ap_memory, p_ZL15pre_eligibility_3, array</column>
+<column name="p_ZL15pre_eligibility_3_address1">out, 3, ap_memory, p_ZL15pre_eligibility_3, array</column>
+<column name="p_ZL15pre_eligibility_3_ce1">out, 1, ap_memory, p_ZL15pre_eligibility_3, array</column>
+<column name="p_ZL15pre_eligibility_3_we1">out, 1, ap_memory, p_ZL15pre_eligibility_3, array</column>
+<column name="p_ZL15pre_eligibility_3_d1">out, 8, ap_memory, p_ZL15pre_eligibility_3, array</column>
+<column name="p_ZL15pre_eligibility_4_address0">out, 3, ap_memory, p_ZL15pre_eligibility_4, array</column>
+<column name="p_ZL15pre_eligibility_4_ce0">out, 1, ap_memory, p_ZL15pre_eligibility_4, array</column>
+<column name="p_ZL15pre_eligibility_4_q0">in, 8, ap_memory, p_ZL15pre_eligibility_4, array</column>
+<column name="p_ZL15pre_eligibility_4_address1">out, 3, ap_memory, p_ZL15pre_eligibility_4, array</column>
+<column name="p_ZL15pre_eligibility_4_ce1">out, 1, ap_memory, p_ZL15pre_eligibility_4, array</column>
+<column name="p_ZL15pre_eligibility_4_we1">out, 1, ap_memory, p_ZL15pre_eligibility_4, array</column>
+<column name="p_ZL15pre_eligibility_4_d1">out, 8, ap_memory, p_ZL15pre_eligibility_4, array</column>
+<column name="p_ZL15pre_eligibility_5_address0">out, 3, ap_memory, p_ZL15pre_eligibility_5, array</column>
+<column name="p_ZL15pre_eligibility_5_ce0">out, 1, ap_memory, p_ZL15pre_eligibility_5, array</column>
+<column name="p_ZL15pre_eligibility_5_q0">in, 8, ap_memory, p_ZL15pre_eligibility_5, array</column>
+<column name="p_ZL15pre_eligibility_5_address1">out, 3, ap_memory, p_ZL15pre_eligibility_5, array</column>
+<column name="p_ZL15pre_eligibility_5_ce1">out, 1, ap_memory, p_ZL15pre_eligibility_5, array</column>
+<column name="p_ZL15pre_eligibility_5_we1">out, 1, ap_memory, p_ZL15pre_eligibility_5, array</column>
+<column name="p_ZL15pre_eligibility_5_d1">out, 8, ap_memory, p_ZL15pre_eligibility_5, array</column>
+<column name="p_ZL15pre_eligibility_6_address0">out, 3, ap_memory, p_ZL15pre_eligibility_6, array</column>
+<column name="p_ZL15pre_eligibility_6_ce0">out, 1, ap_memory, p_ZL15pre_eligibility_6, array</column>
+<column name="p_ZL15pre_eligibility_6_q0">in, 8, ap_memory, p_ZL15pre_eligibility_6, array</column>
+<column name="p_ZL15pre_eligibility_6_address1">out, 3, ap_memory, p_ZL15pre_eligibility_6, array</column>
+<column name="p_ZL15pre_eligibility_6_ce1">out, 1, ap_memory, p_ZL15pre_eligibility_6, array</column>
+<column name="p_ZL15pre_eligibility_6_we1">out, 1, ap_memory, p_ZL15pre_eligibility_6, array</column>
+<column name="p_ZL15pre_eligibility_6_d1">out, 8, ap_memory, p_ZL15pre_eligibility_6, array</column>
+<column name="p_ZL15pre_eligibility_7_address0">out, 3, ap_memory, p_ZL15pre_eligibility_7, array</column>
+<column name="p_ZL15pre_eligibility_7_ce0">out, 1, ap_memory, p_ZL15pre_eligibility_7, array</column>
+<column name="p_ZL15pre_eligibility_7_q0">in, 8, ap_memory, p_ZL15pre_eligibility_7, array</column>
+<column name="p_ZL15pre_eligibility_7_address1">out, 3, ap_memory, p_ZL15pre_eligibility_7, array</column>
+<column name="p_ZL15pre_eligibility_7_ce1">out, 1, ap_memory, p_ZL15pre_eligibility_7, array</column>
+<column name="p_ZL15pre_eligibility_7_we1">out, 1, ap_memory, p_ZL15pre_eligibility_7, array</column>
+<column name="p_ZL15pre_eligibility_7_d1">out, 8, ap_memory, p_ZL15pre_eligibility_7, array</column>
+<column name="p_ZL16post_eligibility_0_address0">out, 3, ap_memory, p_ZL16post_eligibility_0, array</column>
+<column name="p_ZL16post_eligibility_0_ce0">out, 1, ap_memory, p_ZL16post_eligibility_0, array</column>
+<column name="p_ZL16post_eligibility_0_q0">in, 8, ap_memory, p_ZL16post_eligibility_0, array</column>
+<column name="p_ZL16post_eligibility_0_address1">out, 3, ap_memory, p_ZL16post_eligibility_0, array</column>
+<column name="p_ZL16post_eligibility_0_ce1">out, 1, ap_memory, p_ZL16post_eligibility_0, array</column>
+<column name="p_ZL16post_eligibility_0_we1">out, 1, ap_memory, p_ZL16post_eligibility_0, array</column>
+<column name="p_ZL16post_eligibility_0_d1">out, 8, ap_memory, p_ZL16post_eligibility_0, array</column>
+<column name="p_ZL16post_eligibility_1_address0">out, 3, ap_memory, p_ZL16post_eligibility_1, array</column>
+<column name="p_ZL16post_eligibility_1_ce0">out, 1, ap_memory, p_ZL16post_eligibility_1, array</column>
+<column name="p_ZL16post_eligibility_1_q0">in, 8, ap_memory, p_ZL16post_eligibility_1, array</column>
+<column name="p_ZL16post_eligibility_1_address1">out, 3, ap_memory, p_ZL16post_eligibility_1, array</column>
+<column name="p_ZL16post_eligibility_1_ce1">out, 1, ap_memory, p_ZL16post_eligibility_1, array</column>
+<column name="p_ZL16post_eligibility_1_we1">out, 1, ap_memory, p_ZL16post_eligibility_1, array</column>
+<column name="p_ZL16post_eligibility_1_d1">out, 8, ap_memory, p_ZL16post_eligibility_1, array</column>
+<column name="p_ZL16post_eligibility_2_address0">out, 3, ap_memory, p_ZL16post_eligibility_2, array</column>
+<column name="p_ZL16post_eligibility_2_ce0">out, 1, ap_memory, p_ZL16post_eligibility_2, array</column>
+<column name="p_ZL16post_eligibility_2_q0">in, 8, ap_memory, p_ZL16post_eligibility_2, array</column>
+<column name="p_ZL16post_eligibility_2_address1">out, 3, ap_memory, p_ZL16post_eligibility_2, array</column>
+<column name="p_ZL16post_eligibility_2_ce1">out, 1, ap_memory, p_ZL16post_eligibility_2, array</column>
+<column name="p_ZL16post_eligibility_2_we1">out, 1, ap_memory, p_ZL16post_eligibility_2, array</column>
+<column name="p_ZL16post_eligibility_2_d1">out, 8, ap_memory, p_ZL16post_eligibility_2, array</column>
+<column name="p_ZL16post_eligibility_3_address0">out, 3, ap_memory, p_ZL16post_eligibility_3, array</column>
+<column name="p_ZL16post_eligibility_3_ce0">out, 1, ap_memory, p_ZL16post_eligibility_3, array</column>
+<column name="p_ZL16post_eligibility_3_q0">in, 8, ap_memory, p_ZL16post_eligibility_3, array</column>
+<column name="p_ZL16post_eligibility_3_address1">out, 3, ap_memory, p_ZL16post_eligibility_3, array</column>
+<column name="p_ZL16post_eligibility_3_ce1">out, 1, ap_memory, p_ZL16post_eligibility_3, array</column>
+<column name="p_ZL16post_eligibility_3_we1">out, 1, ap_memory, p_ZL16post_eligibility_3, array</column>
+<column name="p_ZL16post_eligibility_3_d1">out, 8, ap_memory, p_ZL16post_eligibility_3, array</column>
+<column name="p_ZL16post_eligibility_4_address0">out, 3, ap_memory, p_ZL16post_eligibility_4, array</column>
+<column name="p_ZL16post_eligibility_4_ce0">out, 1, ap_memory, p_ZL16post_eligibility_4, array</column>
+<column name="p_ZL16post_eligibility_4_q0">in, 8, ap_memory, p_ZL16post_eligibility_4, array</column>
+<column name="p_ZL16post_eligibility_4_address1">out, 3, ap_memory, p_ZL16post_eligibility_4, array</column>
+<column name="p_ZL16post_eligibility_4_ce1">out, 1, ap_memory, p_ZL16post_eligibility_4, array</column>
+<column name="p_ZL16post_eligibility_4_we1">out, 1, ap_memory, p_ZL16post_eligibility_4, array</column>
+<column name="p_ZL16post_eligibility_4_d1">out, 8, ap_memory, p_ZL16post_eligibility_4, array</column>
+<column name="p_ZL16post_eligibility_5_address0">out, 3, ap_memory, p_ZL16post_eligibility_5, array</column>
+<column name="p_ZL16post_eligibility_5_ce0">out, 1, ap_memory, p_ZL16post_eligibility_5, array</column>
+<column name="p_ZL16post_eligibility_5_q0">in, 8, ap_memory, p_ZL16post_eligibility_5, array</column>
+<column name="p_ZL16post_eligibility_5_address1">out, 3, ap_memory, p_ZL16post_eligibility_5, array</column>
+<column name="p_ZL16post_eligibility_5_ce1">out, 1, ap_memory, p_ZL16post_eligibility_5, array</column>
+<column name="p_ZL16post_eligibility_5_we1">out, 1, ap_memory, p_ZL16post_eligibility_5, array</column>
+<column name="p_ZL16post_eligibility_5_d1">out, 8, ap_memory, p_ZL16post_eligibility_5, array</column>
+<column name="p_ZL16post_eligibility_6_address0">out, 3, ap_memory, p_ZL16post_eligibility_6, array</column>
+<column name="p_ZL16post_eligibility_6_ce0">out, 1, ap_memory, p_ZL16post_eligibility_6, array</column>
+<column name="p_ZL16post_eligibility_6_q0">in, 8, ap_memory, p_ZL16post_eligibility_6, array</column>
+<column name="p_ZL16post_eligibility_6_address1">out, 3, ap_memory, p_ZL16post_eligibility_6, array</column>
+<column name="p_ZL16post_eligibility_6_ce1">out, 1, ap_memory, p_ZL16post_eligibility_6, array</column>
+<column name="p_ZL16post_eligibility_6_we1">out, 1, ap_memory, p_ZL16post_eligibility_6, array</column>
+<column name="p_ZL16post_eligibility_6_d1">out, 8, ap_memory, p_ZL16post_eligibility_6, array</column>
+<column name="p_ZL16post_eligibility_7_address0">out, 3, ap_memory, p_ZL16post_eligibility_7, array</column>
+<column name="p_ZL16post_eligibility_7_ce0">out, 1, ap_memory, p_ZL16post_eligibility_7, array</column>
+<column name="p_ZL16post_eligibility_7_q0">in, 8, ap_memory, p_ZL16post_eligibility_7, array</column>
+<column name="p_ZL16post_eligibility_7_address1">out, 3, ap_memory, p_ZL16post_eligibility_7, array</column>
+<column name="p_ZL16post_eligibility_7_ce1">out, 1, ap_memory, p_ZL16post_eligibility_7, array</column>
+<column name="p_ZL16post_eligibility_7_we1">out, 1, ap_memory, p_ZL16post_eligibility_7, array</column>
+<column name="p_ZL16post_eligibility_7_d1">out, 8, ap_memory, p_ZL16post_eligibility_7, array</column>
 </table>
 </item>
 </section>

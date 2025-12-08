@@ -153,7 +153,7 @@ extern "C" {
 }
 # 2 "<built-in>" 2
 # 1 "src/snn_top_hls.cpp" 2
-# 16 "src/snn_top_hls.cpp"
+# 18 "src/snn_top_hls.cpp"
 # 1 "src/snn_top_hls.h" 1
 # 14 "src/snn_top_hls.h"
 # 1 "/home/jwlee/tools/2025.2/Vitis/common/technology/autopilot/ap_int.h" 1
@@ -55263,8 +55263,7 @@ __attribute__((sdx_kernel("snn_top_hls", 0))) void snn_top_hls(
 void write_weight(neuron_id_t pre_id, neuron_id_t post_id, weight_t weight);
 weight_t read_weight(neuron_id_t pre_id, neuron_id_t post_id);
 void load_weights_from_stream(hls::stream<axis_weight_t> &weight_stream, ap_uint<16> num_weights);
-# 17 "src/snn_top_hls.cpp" 2
-
+# 19 "src/snn_top_hls.cpp" 2
 
 
 
@@ -55272,44 +55271,67 @@ void load_weights_from_stream(hls::stream<axis_weight_t> &weight_stream, ap_uint
 static weight_t weight_memory[MAX_NEURONS][MAX_NEURONS];
 
 
-static spike_time_t pre_spike_times[MAX_NEURONS];
-static spike_time_t post_spike_times[MAX_NEURONS];
-
-
-static ap_fixed<16,8> eligibility_traces[MAX_NEURONS][MAX_NEURONS];
 
 
 
 
-static weight_delta_t calc_stdp_update(
-    spike_time_t pre_time,
-    spike_time_t post_time,
-    const learning_params_t &params
+
+typedef struct {
+    ap_uint<8> trace;
+    ap_uint<16> last_spike_time;
+} neuron_trace_t;
+
+static neuron_trace_t pre_traces[MAX_NEURONS];
+static neuron_trace_t post_traces[MAX_NEURONS];
+
+
+
+
+
+
+static const ap_uint<8> EXP_DECAY_LUT[16] = {
+    255,
+    223,
+    195,
+    170,
+    149,
+    130,
+    114,
+    100,
+    87,
+    76,
+    67,
+    58,
+    51,
+    45,
+    39,
+    34
+};
+
+
+
+
+
+static ap_uint<8> compute_decayed_trace(
+    ap_uint<8> old_trace,
+    ap_uint<16> last_time,
+    ap_uint<16> current_time
 ) {
 #pragma HLS INLINE
 
-    if (pre_time == 0 || post_time == 0) return 0;
+    if (old_trace == 0) return 0;
 
-    ap_int<32> dt = (ap_int<32>)post_time - (ap_int<32>)pre_time;
-    weight_delta_t delta = 0;
 
-    if (dt > 0 && dt < (ap_int<32>)params.stdp_window) {
+    ap_uint<16> dt = current_time - last_time;
 
-        ap_fixed<16,8> dt_ratio = (ap_fixed<16,8>)dt / (ap_fixed<16,8>)params.tau_plus;
-        ap_fixed<16,8> exp_decay = ap_fixed<16,8>(1.0) - dt_ratio;
-        if (exp_decay > 0) {
-            delta = (weight_delta_t)(params.a_plus * exp_decay * WEIGHT_SCALE);
-        }
-    } else if (dt < 0 && (-dt) < (ap_int<32>)params.stdp_window) {
 
-        ap_fixed<16,8> dt_ratio = (ap_fixed<16,8>)dt / (ap_fixed<16,8>)params.tau_minus;
-        ap_fixed<16,8> exp_decay = ap_fixed<16,8>(1.0) + dt_ratio;
-        if (exp_decay > 0) {
-            delta = (weight_delta_t)(-params.a_minus * exp_decay * WEIGHT_SCALE);
-        }
-    }
+    if (dt >= 16) return 0;
 
-    return delta;
+
+
+    ap_uint<16> decayed = ((ap_uint<16>)old_trace * EXP_DECAY_LUT[dt]) >> 8;
+
+    return (ap_uint<8>)decayed;
 }
 
 
@@ -55321,127 +55343,154 @@ static weight_t clip_weight(ap_int<16> w) {
     if (w < MIN_WEIGHT) return MIN_WEIGHT;
     return (weight_t)w;
 }
-
-
-
-
-static void process_pre_spike(
+# 106 "src/snn_top_hls.cpp"
+static void process_pre_spike_aer(
     neuron_id_t pre_id,
-    spike_time_t current_time,
-    const learning_params_t &params,
-    bool learning_enable,
-    hls::stream<weight_update_t> &weight_updates
+    ap_uint<16> current_time,
+    const learning_params_t &params
 ) {
 #pragma HLS INLINE off
 
 
-    pre_spike_times[pre_id] = current_time;
+    neuron_trace_t old_pre = pre_traces[pre_id];
+    ap_uint<8> decayed_pre = compute_decayed_trace(old_pre.trace, old_pre.last_spike_time, current_time);
 
-    if (!learning_enable) return;
 
-
-    STDP_LTD_LOOP: for (int post_id = 0; post_id < MAX_NEURONS; post_id++) {
-#pragma HLS PIPELINE II=1
-#pragma HLS UNROLL factor=8
-
-        spike_time_t post_time = post_spike_times[post_id];
-        if (post_time == 0) continue;
-
-        weight_delta_t delta = calc_stdp_update(current_time, post_time, params);
-
-        if (delta != 0) {
-            weight_update_t update;
-            update.pre_id = pre_id;
-            update.post_id = post_id;
-            update.delta = delta;
-            update.timestamp = current_time;
-
-            if (!weight_updates.full()) {
-                weight_updates.write(update);
-            }
-        }
-    }
-}
+    ap_uint<9> new_trace = (ap_uint<9>)decayed_pre + 128;
+    pre_traces[pre_id].trace = (new_trace > 255) ? (ap_uint<8>)255 : (ap_uint<8>)new_trace;
+    pre_traces[pre_id].last_spike_time = current_time;
 
 
 
-
-static void process_post_spike(
-    neuron_id_t post_id,
-    spike_time_t current_time,
-    const learning_params_t &params,
-    bool learning_enable,
-    hls::stream<weight_update_t> &weight_updates
-) {
-#pragma HLS INLINE off
-
-
-    post_spike_times[post_id] = current_time;
-
-    if (!learning_enable) return;
-
-
-    STDP_LTP_LOOP: for (int pre_id = 0; pre_id < MAX_NEURONS; pre_id++) {
-#pragma HLS PIPELINE II=1
-#pragma HLS UNROLL factor=8
-
-        spike_time_t pre_time = pre_spike_times[pre_id];
-        if (pre_time == 0) continue;
-
-        weight_delta_t delta = calc_stdp_update(pre_time, current_time, params);
-
-        if (delta != 0) {
-            weight_update_t update;
-            update.pre_id = pre_id;
-            update.post_id = post_id;
-            update.delta = delta;
-            update.timestamp = current_time;
-
-            if (!weight_updates.full()) {
-                weight_updates.write(update);
-            }
-        }
-    }
-}
-
-
-
-
-static void apply_weight_updates(
-    hls::stream<weight_update_t> &weight_updates,
-    const learning_params_t &params,
-    ap_int<8> reward_signal
-) {
-#pragma HLS INLINE off
-
-    VITIS_LOOP_167_1: while (!weight_updates.empty()) {
+    LTD_LOOP: for (int j = 0; j < MAX_NEURONS; j++) {
 #pragma HLS PIPELINE II=2
-
-        weight_update_t update = weight_updates.read();
-
-
-        weight_t current_weight = weight_memory[update.pre_id][update.post_id];
+#pragma HLS UNROLL factor=4
 
 
-        weight_delta_t modulated_delta = update.delta;
-        if (params.rstdp_enable && reward_signal != 0) {
-
-            ap_fixed<16,8> reward_factor = (ap_fixed<16,8>)reward_signal / ap_fixed<16,8>(128.0);
-            modulated_delta = (weight_delta_t)((ap_fixed<16,8>)update.delta * reward_factor);
+        neuron_trace_t post_t = post_traces[j];
+        ap_uint<8> post_trace_val = compute_decayed_trace(post_t.trace, post_t.last_spike_time, current_time);
 
 
-            eligibility_traces[update.pre_id][update.post_id] +=
-                (ap_fixed<16,8>)update.delta * params.trace_decay;
-        }
+        if (post_trace_val == 0) continue;
 
 
-        ap_int<16> new_weight = (ap_int<16>)current_weight +
-            (ap_int<16>)(modulated_delta * params.learning_rate);
+
+        ap_int<16> delta = -((ap_int<16>)post_trace_val >> 6);
 
 
-        weight_memory[update.pre_id][update.post_id] = clip_weight(new_weight);
+        weight_t current_w = weight_memory[pre_id][j];
+
+
+        weight_memory[pre_id][j] = clip_weight((ap_int<16>)current_w + delta);
     }
 }
+# 154 "src/snn_top_hls.cpp"
+static void process_post_spike_aer(
+    neuron_id_t post_id,
+    ap_uint<16> current_time,
+    const learning_params_t &params
+) {
+#pragma HLS INLINE off
+
+
+    neuron_trace_t old_post = post_traces[post_id];
+    ap_uint<8> decayed_post = compute_decayed_trace(old_post.trace, old_post.last_spike_time, current_time);
+
+
+    ap_uint<9> new_trace = (ap_uint<9>)decayed_post + 128;
+    post_traces[post_id].trace = (new_trace > 255) ? (ap_uint<8>)255 : (ap_uint<8>)new_trace;
+    post_traces[post_id].last_spike_time = current_time;
+
+
+
+    LTP_LOOP: for (int i = 0; i < MAX_NEURONS; i++) {
+#pragma HLS PIPELINE II=2
+#pragma HLS UNROLL factor=4
+
+
+        neuron_trace_t pre_t = pre_traces[i];
+        ap_uint<8> pre_trace_val = compute_decayed_trace(pre_t.trace, pre_t.last_spike_time, current_time);
+
+
+        if (pre_trace_val == 0) continue;
+
+
+
+        ap_int<16> delta = (ap_int<16>)pre_trace_val >> 5;
+
+
+        weight_t current_w = weight_memory[i][post_id];
+
+
+        weight_memory[i][post_id] = clip_weight((ap_int<16>)current_w + delta);
+    }
+}
+
+
+
+
+
+
+
+static ap_int<8> pre_eligibility[MAX_NEURONS];
+static ap_int<8> post_eligibility[MAX_NEURONS];
+
+static void apply_rstdp_reward(
+    ap_int<8> reward_signal,
+    const learning_params_t &params,
+    ap_uint<16> current_time
+) {
+#pragma HLS INLINE off
+
+    if (reward_signal == 0 || !params.rstdp_enable) return;
+
+    bool reward_positive = (reward_signal >= 0);
+    ap_uint<8> reward_mag = reward_positive ? (ap_uint<8>)reward_signal : (ap_uint<8>)(-reward_signal);
+
+
+    ap_uint<2> shift_sel;
+    if (reward_mag >= 64) shift_sel = 0;
+    else if (reward_mag >= 32) shift_sel = 1;
+    else if (reward_mag >= 16) shift_sel = 2;
+    else shift_sel = 3;
+
+
+
+    RSTDP_OUTER: for (int i = 0; i < MAX_NEURONS; i++) {
+#pragma HLS LOOP_FLATTEN off
+
+        ap_int<8> pre_elig = pre_eligibility[i];
+        if (pre_elig == 0) continue;
+
+        RSTDP_INNER: for (int j = 0; j < MAX_NEURONS; j++) {
+#pragma HLS PIPELINE II=2
+#pragma HLS UNROLL factor=4
+
+            ap_int<8> post_elig = post_eligibility[j];
+            if (post_elig == 0) continue;
+
+
+            ap_int<16> combined_elig = ((ap_int<16>)pre_elig * (ap_int<16>)post_elig) >> 8;
+
+
+            ap_int<16> scaled;
+            switch (shift_sel) {
+                case 0: scaled = combined_elig >> 1; break;
+                case 1: scaled = combined_elig >> 2; break;
+                case 2: scaled = combined_elig >> 3; break;
+                default: scaled = combined_elig >> 4; break;
+            }
+
+
+            ap_int<16> delta = reward_positive ? scaled : (ap_int<16>)(-scaled);
+
+
+            weight_t current_w = weight_memory[i][j];
+            weight_memory[i][j] = clip_weight((ap_int<16>)current_w + delta);
+        }
+    }
+}
+
 
 
 
@@ -55449,39 +55498,42 @@ static void apply_weight_updates(
 static void decay_eligibility_traces(const learning_params_t &params) {
 #pragma HLS INLINE off
 
-    DECAY_OUTER: for (int i = 0; i < MAX_NEURONS; i++) {
-        DECAY_INNER: for (int j = 0; j < MAX_NEURONS; j++) {
+
+    DECAY_PRE: for (int i = 0; i < MAX_NEURONS; i++) {
 #pragma HLS PIPELINE II=1
-            eligibility_traces[i][j] *= params.trace_decay;
-        }
+#pragma HLS UNROLL factor=8
+
+
+        ap_int<8> trace = pre_eligibility[i];
+        pre_eligibility[i] = trace - (trace >> 3);
+    }
+
+
+    DECAY_POST: for (int j = 0; j < MAX_NEURONS; j++) {
+#pragma HLS PIPELINE II=1
+#pragma HLS UNROLL factor=8
+
+        ap_int<8> trace = post_eligibility[j];
+        post_eligibility[j] = trace - (trace >> 3);
     }
 }
 
 
 
 
-static void apply_reward_signal(
-    ap_int<8> reward_signal,
-    const learning_params_t &params
-) {
-#pragma HLS INLINE off
 
-    if (reward_signal == 0) return;
+static void update_eligibility_on_pre_spike(neuron_id_t pre_id) {
+#pragma HLS INLINE
 
-    ap_fixed<16,8> reward_factor = (ap_fixed<16,8>)reward_signal / ap_fixed<16,8>(128.0);
+    ap_int<9> new_elig = (ap_int<9>)pre_eligibility[pre_id] + 32;
+    pre_eligibility[pre_id] = (new_elig > 127) ? (ap_int<8>)127 : (ap_int<8>)new_elig;
+}
 
-    REWARD_OUTER: for (int i = 0; i < MAX_NEURONS; i++) {
-        REWARD_INNER: for (int j = 0; j < MAX_NEURONS; j++) {
-#pragma HLS PIPELINE II=1
+static void update_eligibility_on_post_spike(neuron_id_t post_id) {
+#pragma HLS INLINE
 
-            ap_fixed<16,8> trace = eligibility_traces[i][j];
-            if (trace != 0) {
-                weight_t current = weight_memory[i][j];
-                ap_int<16> delta = (ap_int<16>)(trace * reward_factor * params.learning_rate * WEIGHT_SCALE);
-                weight_memory[i][j] = clip_weight((ap_int<16>)current + delta);
-            }
-        }
-    }
+    ap_int<9> new_elig = (ap_int<9>)post_eligibility[post_id] + 32;
+    post_eligibility[post_id] = (new_elig > 127) ? (ap_int<8>)127 : (ap_int<8>)new_elig;
 }
 
 
@@ -55533,7 +55585,7 @@ __attribute__((sdx_kernel("snn_top_hls", 0))) void snn_top_hls(
 ) {
 #line 1 "directive"
 #pragma HLSDIRECTIVE TOP name=snn_top_hls
-# 283 "src/snn_top_hls.cpp"
+# 351 "src/snn_top_hls.cpp"
 
 
 
@@ -55573,12 +55625,21 @@ __attribute__((sdx_kernel("snn_top_hls", 0))) void snn_top_hls(
 
 
 
+
 #pragma HLS BIND_STORAGE variable=weight_memory type=RAM_2P impl=BRAM
-#pragma HLS ARRAY_PARTITION variable=weight_memory cyclic factor=8 dim=2
-#pragma HLS BIND_STORAGE variable=pre_spike_times type=RAM_1P impl=BRAM
-#pragma HLS BIND_STORAGE variable=post_spike_times type=RAM_1P impl=BRAM
-#pragma HLS BIND_STORAGE variable=eligibility_traces type=RAM_2P impl=BRAM
-#pragma HLS ARRAY_PARTITION variable=eligibility_traces cyclic factor=4 dim=2
+#pragma HLS ARRAY_PARTITION variable=weight_memory cyclic factor=4 dim=2
+
+
+#pragma HLS BIND_STORAGE variable=pre_eligibility type=RAM_2P impl=BRAM
+#pragma HLS ARRAY_PARTITION variable=pre_eligibility cyclic factor=8
+#pragma HLS BIND_STORAGE variable=post_eligibility type=RAM_2P impl=BRAM
+#pragma HLS ARRAY_PARTITION variable=post_eligibility cyclic factor=8
+
+
+#pragma HLS BIND_STORAGE variable=pre_traces type=RAM_2P impl=BRAM
+#pragma HLS ARRAY_PARTITION variable=pre_traces cyclic factor=8
+#pragma HLS BIND_STORAGE variable=post_traces type=RAM_2P impl=BRAM
+#pragma HLS ARRAY_PARTITION variable=post_traces cyclic factor=8
 
 
 
@@ -55587,10 +55648,6 @@ __attribute__((sdx_kernel("snn_top_hls", 0))) void snn_top_hls(
     static ap_uint<32> spike_counter = 0;
     static ap_uint<32> update_counter = 0;
     static bool initialized = false;
-
-
-    static hls::stream<weight_update_t> weight_update_fifo;
-#pragma HLS STREAM variable=weight_update_fifo depth=64
 
 
 
@@ -55614,18 +55671,19 @@ __attribute__((sdx_kernel("snn_top_hls", 0))) void snn_top_hls(
         update_counter = 0;
 
 
-        RESET_PRE: for (int i = 0; i < MAX_NEURONS; i++) {
-#pragma HLS UNROLL factor=8
-            pre_spike_times[i] = 0;
-            post_spike_times[i] = 0;
+        RESET_ELIG: for (int i = 0; i < MAX_NEURONS; i++) {
+#pragma HLS PIPELINE II=1
+            pre_eligibility[i] = 0;
+            post_eligibility[i] = 0;
         }
 
 
-        RESET_TRACE_OUTER: for (int i = 0; i < MAX_NEURONS; i++) {
-            RESET_TRACE_INNER: for (int j = 0; j < MAX_NEURONS; j++) {
-#pragma HLS UNROLL factor=8
-                eligibility_traces[i][j] = 0;
-            }
+        RESET_TRACES: for (int i = 0; i < MAX_NEURONS; i++) {
+#pragma HLS PIPELINE II=1
+            pre_traces[i].trace = 0;
+            pre_traces[i].last_spike_time = 0;
+            post_traces[i].trace = 0;
+            post_traces[i].last_spike_time = 0;
         }
 
 
@@ -55673,7 +55731,8 @@ __attribute__((sdx_kernel("snn_top_hls", 0))) void snn_top_hls(
 
 
         if (learning_enable) {
-            process_pre_spike(pre_id, timestamp, learning_params, true, weight_update_fifo);
+            process_pre_spike_aer(pre_id, timestamp, learning_params);
+            update_eligibility_on_pre_spike(pre_id);
         }
 
         spike_counter++;
@@ -55704,23 +55763,16 @@ __attribute__((sdx_kernel("snn_top_hls", 0))) void snn_top_hls(
 
 
         if (learning_enable) {
-            process_post_spike(post_id, timestamp, learning_params, true, weight_update_fifo);
+            process_post_spike_aer(post_id, timestamp, learning_params);
+            update_eligibility_on_post_spike(post_id);
         }
     }
 
 
 
 
-    if (learning_enable) {
-        apply_weight_updates(weight_update_fifo, learning_params,
-                            learning_params.rstdp_enable ? reward_signal : (ap_int<8>)0);
-    }
-
-
-
-
     if (apply_reward && learning_params.rstdp_enable) {
-        apply_reward_signal(reward_signal, learning_params);
+        apply_rstdp_reward(reward_signal, learning_params, timestamp);
         decay_eligibility_traces(learning_params);
     }
 
@@ -55768,7 +55820,7 @@ __attribute__((sdx_kernel("snn_top_hls", 0))) void snn_top_hls(
     status[0] = snn_ready;
     status[1] = snn_busy;
     status[2] = learning_enable;
-    status[3] = !weight_update_fifo.empty();
+    status[3] = 0;
     status[4] = learning_params.rstdp_enable;
     status(15, 8) = update_counter(7, 0);
 
@@ -55778,9 +55830,9 @@ __attribute__((sdx_kernel("snn_top_hls", 0))) void snn_top_hls(
 
 
     ap_int<32> weight_sum = 0;
-    WEIGHT_SUM: for (int i = 0; i < 16; i++) {
-#pragma HLS UNROLL
-        VITIS_LOOP_529_1: for (int j = 0; j < 16; j++) {
+    WEIGHT_SUM: for (int i = 0; i < 8; i++) {
+#pragma HLS PIPELINE II=1
+        VITIS_LOOP_597_1: for (int j = 0; j < 8; j++) {
             weight_sum += weight_memory[i][j];
         }
     }

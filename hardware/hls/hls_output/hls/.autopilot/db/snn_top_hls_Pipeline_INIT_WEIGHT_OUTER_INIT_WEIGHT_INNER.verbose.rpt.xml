@@ -1,7 +1,7 @@
 <profile>
 
 <section name = "Vitis HLS Report for 'snn_top_hls_Pipeline_INIT_WEIGHT_OUTER_INIT_WEIGHT_INNER'" level="0">
-<item name = "Date">Mon Dec  8 20:06:22 2025
+<item name = "Date">Mon Dec  8 20:49:12 2025
 </item>
 <item name = "Version">2025.2 (Build 6295257 on Nov 14 2025)</item>
 <item name = "Project">hls_output</item>
@@ -78,13 +78,13 @@
 </item>
 <item name = "Expression"><table name="" hasTotal="1">
 <keys size="7">Variable Name, Operation, DSP, FF, LUT, Bitwidth P0, Bitwidth P1</keys>
-<column name="add_ln379_1_fu_262_p2">+, 0, 0, 14, 13, 1</column>
-<column name="add_ln379_fu_336_p2">+, 0, 0, 14, 7, 1</column>
-<column name="add_ln380_fu_322_p2">+, 0, 0, 14, 7, 1</column>
-<column name="icmp_ln379_fu_256_p2">icmp, 0, 0, 17, 13, 14</column>
-<column name="icmp_ln380_fu_276_p2">icmp, 0, 0, 15, 7, 8</column>
-<column name="select_ln379_1_fu_342_p3">select, 0, 0, 7, 1, 7</column>
-<column name="select_ln379_fu_282_p3">select, 0, 0, 7, 1, 1</column>
+<column name="add_ln453_1_fu_256_p2">+, 0, 0, 14, 13, 1</column>
+<column name="add_ln453_fu_322_p2">+, 0, 0, 14, 7, 1</column>
+<column name="add_ln454_fu_308_p2">+, 0, 0, 14, 7, 1</column>
+<column name="icmp_ln453_fu_250_p2">icmp, 0, 0, 17, 13, 14</column>
+<column name="icmp_ln454_fu_270_p2">icmp, 0, 0, 15, 7, 8</column>
+<column name="select_ln453_1_fu_328_p3">select, 0, 0, 7, 1, 7</column>
+<column name="select_ln453_fu_276_p3">select, 0, 0, 7, 1, 1</column>
 <column name="ap_enable_pp0">xor, 0, 0, 2, 1, 2</column>
 </table>
 </item>
@@ -92,10 +92,10 @@
 <keys size="5">Name, LUT, Input Size, Bits, Total Bits</keys>
 <column name="ap_done_int">9, 2, 1, 2</column>
 <column name="ap_enable_reg_pp0_iter1">9, 2, 1, 2</column>
-<column name="ap_sig_allocacmp_indvar_flatten6_load">9, 2, 13, 26</column>
-<column name="i_fu_86">9, 2, 7, 14</column>
-<column name="indvar_flatten6_fu_90">9, 2, 13, 26</column>
-<column name="j_1_fu_82">9, 2, 7, 14</column>
+<column name="ap_sig_allocacmp_indvar_flatten_load">9, 2, 13, 26</column>
+<column name="i_2_fu_80">9, 2, 7, 14</column>
+<column name="indvar_flatten_fu_84">9, 2, 13, 26</column>
+<column name="j_fu_76">9, 2, 7, 14</column>
 </table>
 </item>
 <item name = "Register"><table name="" hasTotal="1">
@@ -105,12 +105,12 @@
 <column name="ap_enable_reg_pp0_iter1">1, 0, 1, 0</column>
 <column name="ap_enable_reg_pp0_iter2">1, 0, 1, 0</column>
 <column name="ap_loop_exit_ready_pp0_iter1_reg">1, 0, 1, 0</column>
-<column name="i_fu_86">7, 0, 7, 0</column>
-<column name="icmp_ln380_reg_402">1, 0, 1, 0</column>
-<column name="indvar_flatten6_fu_90">13, 0, 13, 0</column>
-<column name="j_1_fu_82">7, 0, 7, 0</column>
-<column name="lshr_ln2_reg_411">3, 0, 3, 0</column>
-<column name="trunc_ln380_1_reg_407">3, 0, 3, 0</column>
+<column name="i_2_fu_80">7, 0, 7, 0</column>
+<column name="icmp_ln454_reg_398">1, 0, 1, 0</column>
+<column name="indvar_flatten_fu_84">13, 0, 13, 0</column>
+<column name="j_fu_76">7, 0, 7, 0</column>
+<column name="lshr_ln2_reg_407">4, 0, 4, 0</column>
+<column name="trunc_ln454_reg_403">2, 0, 2, 0</column>
 </table>
 </item>
 </section>
@@ -126,38 +126,38 @@
 <column name="ap_done">out, 1, ap_ctrl_hs, snn_top_hls_Pipeline_INIT_WEIGHT_OUTER_INIT_WEIGHT_INNER, return value</column>
 <column name="ap_idle">out, 1, ap_ctrl_hs, snn_top_hls_Pipeline_INIT_WEIGHT_OUTER_INIT_WEIGHT_INNER, return value</column>
 <column name="ap_ready">out, 1, ap_ctrl_hs, snn_top_hls_Pipeline_INIT_WEIGHT_OUTER_INIT_WEIGHT_INNER, return value</column>
-<column name="p_ZL13weight_memory_0_address1">out, 9, ap_memory, p_ZL13weight_memory_0, array</column>
-<column name="p_ZL13weight_memory_0_ce1">out, 1, ap_memory, p_ZL13weight_memory_0, array</column>
-<column name="p_ZL13weight_memory_0_we1">out, 1, ap_memory, p_ZL13weight_memory_0, array</column>
-<column name="p_ZL13weight_memory_0_d1">out, 8, ap_memory, p_ZL13weight_memory_0, array</column>
-<column name="p_ZL13weight_memory_1_address1">out, 9, ap_memory, p_ZL13weight_memory_1, array</column>
-<column name="p_ZL13weight_memory_1_ce1">out, 1, ap_memory, p_ZL13weight_memory_1, array</column>
-<column name="p_ZL13weight_memory_1_we1">out, 1, ap_memory, p_ZL13weight_memory_1, array</column>
-<column name="p_ZL13weight_memory_1_d1">out, 8, ap_memory, p_ZL13weight_memory_1, array</column>
-<column name="p_ZL13weight_memory_2_address1">out, 9, ap_memory, p_ZL13weight_memory_2, array</column>
-<column name="p_ZL13weight_memory_2_ce1">out, 1, ap_memory, p_ZL13weight_memory_2, array</column>
-<column name="p_ZL13weight_memory_2_we1">out, 1, ap_memory, p_ZL13weight_memory_2, array</column>
-<column name="p_ZL13weight_memory_2_d1">out, 8, ap_memory, p_ZL13weight_memory_2, array</column>
-<column name="p_ZL13weight_memory_3_address1">out, 9, ap_memory, p_ZL13weight_memory_3, array</column>
-<column name="p_ZL13weight_memory_3_ce1">out, 1, ap_memory, p_ZL13weight_memory_3, array</column>
-<column name="p_ZL13weight_memory_3_we1">out, 1, ap_memory, p_ZL13weight_memory_3, array</column>
-<column name="p_ZL13weight_memory_3_d1">out, 8, ap_memory, p_ZL13weight_memory_3, array</column>
-<column name="p_ZL13weight_memory_4_address1">out, 9, ap_memory, p_ZL13weight_memory_4, array</column>
-<column name="p_ZL13weight_memory_4_ce1">out, 1, ap_memory, p_ZL13weight_memory_4, array</column>
-<column name="p_ZL13weight_memory_4_we1">out, 1, ap_memory, p_ZL13weight_memory_4, array</column>
-<column name="p_ZL13weight_memory_4_d1">out, 8, ap_memory, p_ZL13weight_memory_4, array</column>
-<column name="p_ZL13weight_memory_5_address1">out, 9, ap_memory, p_ZL13weight_memory_5, array</column>
-<column name="p_ZL13weight_memory_5_ce1">out, 1, ap_memory, p_ZL13weight_memory_5, array</column>
-<column name="p_ZL13weight_memory_5_we1">out, 1, ap_memory, p_ZL13weight_memory_5, array</column>
-<column name="p_ZL13weight_memory_5_d1">out, 8, ap_memory, p_ZL13weight_memory_5, array</column>
-<column name="p_ZL13weight_memory_6_address1">out, 9, ap_memory, p_ZL13weight_memory_6, array</column>
-<column name="p_ZL13weight_memory_6_ce1">out, 1, ap_memory, p_ZL13weight_memory_6, array</column>
-<column name="p_ZL13weight_memory_6_we1">out, 1, ap_memory, p_ZL13weight_memory_6, array</column>
-<column name="p_ZL13weight_memory_6_d1">out, 8, ap_memory, p_ZL13weight_memory_6, array</column>
-<column name="p_ZL13weight_memory_7_address1">out, 9, ap_memory, p_ZL13weight_memory_7, array</column>
-<column name="p_ZL13weight_memory_7_ce1">out, 1, ap_memory, p_ZL13weight_memory_7, array</column>
-<column name="p_ZL13weight_memory_7_we1">out, 1, ap_memory, p_ZL13weight_memory_7, array</column>
-<column name="p_ZL13weight_memory_7_d1">out, 8, ap_memory, p_ZL13weight_memory_7, array</column>
+<column name="p_ZL13weight_memory_0_0_address1">out, 9, ap_memory, p_ZL13weight_memory_0_0, array</column>
+<column name="p_ZL13weight_memory_0_0_ce1">out, 1, ap_memory, p_ZL13weight_memory_0_0, array</column>
+<column name="p_ZL13weight_memory_0_0_we1">out, 1, ap_memory, p_ZL13weight_memory_0_0, array</column>
+<column name="p_ZL13weight_memory_0_0_d1">out, 8, ap_memory, p_ZL13weight_memory_0_0, array</column>
+<column name="p_ZL13weight_memory_0_1_address1">out, 9, ap_memory, p_ZL13weight_memory_0_1, array</column>
+<column name="p_ZL13weight_memory_0_1_ce1">out, 1, ap_memory, p_ZL13weight_memory_0_1, array</column>
+<column name="p_ZL13weight_memory_0_1_we1">out, 1, ap_memory, p_ZL13weight_memory_0_1, array</column>
+<column name="p_ZL13weight_memory_0_1_d1">out, 8, ap_memory, p_ZL13weight_memory_0_1, array</column>
+<column name="p_ZL13weight_memory_1_0_address1">out, 9, ap_memory, p_ZL13weight_memory_1_0, array</column>
+<column name="p_ZL13weight_memory_1_0_ce1">out, 1, ap_memory, p_ZL13weight_memory_1_0, array</column>
+<column name="p_ZL13weight_memory_1_0_we1">out, 1, ap_memory, p_ZL13weight_memory_1_0, array</column>
+<column name="p_ZL13weight_memory_1_0_d1">out, 8, ap_memory, p_ZL13weight_memory_1_0, array</column>
+<column name="p_ZL13weight_memory_1_1_address1">out, 9, ap_memory, p_ZL13weight_memory_1_1, array</column>
+<column name="p_ZL13weight_memory_1_1_ce1">out, 1, ap_memory, p_ZL13weight_memory_1_1, array</column>
+<column name="p_ZL13weight_memory_1_1_we1">out, 1, ap_memory, p_ZL13weight_memory_1_1, array</column>
+<column name="p_ZL13weight_memory_1_1_d1">out, 8, ap_memory, p_ZL13weight_memory_1_1, array</column>
+<column name="p_ZL13weight_memory_2_0_address1">out, 9, ap_memory, p_ZL13weight_memory_2_0, array</column>
+<column name="p_ZL13weight_memory_2_0_ce1">out, 1, ap_memory, p_ZL13weight_memory_2_0, array</column>
+<column name="p_ZL13weight_memory_2_0_we1">out, 1, ap_memory, p_ZL13weight_memory_2_0, array</column>
+<column name="p_ZL13weight_memory_2_0_d1">out, 8, ap_memory, p_ZL13weight_memory_2_0, array</column>
+<column name="p_ZL13weight_memory_2_1_address1">out, 9, ap_memory, p_ZL13weight_memory_2_1, array</column>
+<column name="p_ZL13weight_memory_2_1_ce1">out, 1, ap_memory, p_ZL13weight_memory_2_1, array</column>
+<column name="p_ZL13weight_memory_2_1_we1">out, 1, ap_memory, p_ZL13weight_memory_2_1, array</column>
+<column name="p_ZL13weight_memory_2_1_d1">out, 8, ap_memory, p_ZL13weight_memory_2_1, array</column>
+<column name="p_ZL13weight_memory_3_0_address1">out, 9, ap_memory, p_ZL13weight_memory_3_0, array</column>
+<column name="p_ZL13weight_memory_3_0_ce1">out, 1, ap_memory, p_ZL13weight_memory_3_0, array</column>
+<column name="p_ZL13weight_memory_3_0_we1">out, 1, ap_memory, p_ZL13weight_memory_3_0, array</column>
+<column name="p_ZL13weight_memory_3_0_d1">out, 8, ap_memory, p_ZL13weight_memory_3_0, array</column>
+<column name="p_ZL13weight_memory_3_1_address1">out, 9, ap_memory, p_ZL13weight_memory_3_1, array</column>
+<column name="p_ZL13weight_memory_3_1_ce1">out, 1, ap_memory, p_ZL13weight_memory_3_1, array</column>
+<column name="p_ZL13weight_memory_3_1_we1">out, 1, ap_memory, p_ZL13weight_memory_3_1, array</column>
+<column name="p_ZL13weight_memory_3_1_d1">out, 8, ap_memory, p_ZL13weight_memory_3_1, array</column>
 </table>
 </item>
 </section>

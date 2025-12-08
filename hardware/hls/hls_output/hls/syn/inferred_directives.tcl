@@ -1,10 +1,2 @@
-# Inferred from syn.compile.pipeline_loops=64
-set_directive_pipeline snn_top_hls/RESET_PRE
-set_directive_pipeline snn_top_hls/RESET_TRACE_INNER
-set_directive_pipeline snn_top_hls/VITIS_LOOP_529_1
-# Inferred from Performance Budgeter performance directives
-set_directive_loop_flatten snn_top_hls/RESET_TRACE_OUTER
 # Inferred from performance & pipeline pragmas/directives
-set_directive_loop_flatten decay_eligibility_traces/DECAY_OUTER
-set_directive_loop_flatten apply_reward_signal/REWARD_OUTER
 set_directive_loop_flatten snn_top_hls/INIT_WEIGHT_OUTER

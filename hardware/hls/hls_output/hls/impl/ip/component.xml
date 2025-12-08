@@ -1516,7 +1516,7 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>viewChecksum</spirit:name>
-            <spirit:value>933a8111</spirit:value>
+            <spirit:value>8389e5ca</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -1532,7 +1532,7 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>viewChecksum</spirit:name>
-            <spirit:value>1dc1ba52</spirit:value>
+            <spirit:value>6aea3fa5</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -1548,7 +1548,7 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>viewChecksum</spirit:name>
-            <spirit:value>cbd3a41a</spirit:value>
+            <spirit:value>080fddd3</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -1564,7 +1564,7 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>viewChecksum</spirit:name>
-            <spirit:value>f3df0577</spirit:value>
+            <spirit:value>d2486f1a</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -2634,19 +2634,11 @@
         <spirit:userFileType>USED_IN_out_of_context</spirit:userFileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>hdl/verilog/snn_top_hls_apply_reward_signal.v</spirit:name>
+        <spirit:name>hdl/verilog/snn_top_hls_apply_rstdp_reward.v</spirit:name>
         <spirit:fileType>verilogSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>hdl/verilog/snn_top_hls_apply_reward_signal_Pipeline_REWARD_OUTER_REWARD_INNER.v</spirit:name>
-        <spirit:fileType>verilogSource</spirit:fileType>
-      </spirit:file>
-      <spirit:file>
-        <spirit:name>hdl/verilog/snn_top_hls_apply_weight_updates.v</spirit:name>
-        <spirit:fileType>verilogSource</spirit:fileType>
-      </spirit:file>
-      <spirit:file>
-        <spirit:name>hdl/verilog/snn_top_hls_apply_weight_updates_Pipeline_VITIS_LOOP_167_1.v</spirit:name>
+        <spirit:name>hdl/verilog/snn_top_hls_apply_rstdp_reward_Pipeline_RSTDP_INNER.v</spirit:name>
         <spirit:fileType>verilogSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
@@ -2658,7 +2650,11 @@
         <spirit:fileType>verilogSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>hdl/verilog/snn_top_hls_fifo_w64_d64_A.v</spirit:name>
+        <spirit:name>hdl/verilog/snn_top_hls_decay_eligibility_traces_Pipeline_DECAY_POST.v</spirit:name>
+        <spirit:fileType>verilogSource</spirit:fileType>
+      </spirit:file>
+      <spirit:file>
+        <spirit:name>hdl/verilog/snn_top_hls_decay_eligibility_traces_Pipeline_DECAY_PRE.v</spirit:name>
         <spirit:fileType>verilogSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
@@ -2674,67 +2670,59 @@
         <spirit:fileType>verilogSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>hdl/verilog/snn_top_hls_mac_muladd_16s_16s_24s_32_4_1.v</spirit:name>
+        <spirit:name>hdl/verilog/snn_top_hls_mul_8ns_8ns_16_1_1.v</spirit:name>
         <spirit:fileType>verilogSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>hdl/verilog/snn_top_hls_mac_mulsub_16s_16ns_1ns_31_4_1.v</spirit:name>
+        <spirit:name>hdl/verilog/snn_top_hls_mul_8s_8s_16_1_1.v</spirit:name>
         <spirit:fileType>verilogSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>hdl/verilog/snn_top_hls_mul_16ns_16s_31_1_1.v</spirit:name>
-        <spirit:fileType>verilogSource</spirit:fileType>
-      </spirit:file>
-      <spirit:file>
-        <spirit:name>hdl/verilog/snn_top_hls_mul_16s_10s_26_1_1.v</spirit:name>
-        <spirit:fileType>verilogSource</spirit:fileType>
-      </spirit:file>
-      <spirit:file>
-        <spirit:name>hdl/verilog/snn_top_hls_mul_16s_16s_32_1_1.v</spirit:name>
-        <spirit:fileType>verilogSource</spirit:fileType>
-      </spirit:file>
-      <spirit:file>
-        <spirit:name>hdl/verilog/snn_top_hls_mul_26s_16s_40_1_1.v</spirit:name>
-        <spirit:fileType>verilogSource</spirit:fileType>
-      </spirit:file>
-      <spirit:file>
-        <spirit:name>hdl/verilog/snn_top_hls_p_ZL13weight_memory_0_RAM_2P_BRAM_1R1W.dat</spirit:name>
+        <spirit:name>hdl/verilog/snn_top_hls_p_ZL13weight_memory_0_0_RAM_2P_BRAM_1R1W.dat</spirit:name>
         <spirit:userFileType>mif</spirit:userFileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>hdl/verilog/snn_top_hls_p_ZL13weight_memory_0_RAM_2P_BRAM_1R1W.v</spirit:name>
+        <spirit:name>hdl/verilog/snn_top_hls_p_ZL13weight_memory_0_0_RAM_2P_BRAM_1R1W.v</spirit:name>
         <spirit:fileType>verilogSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>hdl/verilog/snn_top_hls_p_ZL15pre_spike_times_0_RAM_1P_BRAM_1R1W.dat</spirit:name>
+        <spirit:name>hdl/verilog/snn_top_hls_p_ZL15pre_eligibility_0_RAM_2P_BRAM_1R1W.dat</spirit:name>
         <spirit:userFileType>mif</spirit:userFileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>hdl/verilog/snn_top_hls_p_ZL15pre_spike_times_0_RAM_1P_BRAM_1R1W.v</spirit:name>
+        <spirit:name>hdl/verilog/snn_top_hls_p_ZL15pre_eligibility_0_RAM_2P_BRAM_1R1W.v</spirit:name>
         <spirit:fileType>verilogSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>hdl/verilog/snn_top_hls_p_ZL18eligibility_traces_0_RAM_2P_BRAM_1R1W.dat</spirit:name>
+        <spirit:name>hdl/verilog/snn_top_hls_pre_traces_last_spike_time_0_RAM_2P_BRAM_1R1W.dat</spirit:name>
         <spirit:userFileType>mif</spirit:userFileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>hdl/verilog/snn_top_hls_p_ZL18eligibility_traces_0_RAM_2P_BRAM_1R1W.v</spirit:name>
+        <spirit:name>hdl/verilog/snn_top_hls_pre_traces_last_spike_time_0_RAM_2P_BRAM_1R1W.v</spirit:name>
         <spirit:fileType>verilogSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>hdl/verilog/snn_top_hls_process_post_spike.v</spirit:name>
+        <spirit:name>hdl/verilog/snn_top_hls_process_post_spike_aer.v</spirit:name>
         <spirit:fileType>verilogSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>hdl/verilog/snn_top_hls_process_post_spike_Pipeline_STDP_LTP_LOOP.v</spirit:name>
+        <spirit:name>hdl/verilog/snn_top_hls_process_post_spike_aer_Pipeline_LTP_LOOP.v</spirit:name>
         <spirit:fileType>verilogSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>hdl/verilog/snn_top_hls_process_pre_spike.v</spirit:name>
+        <spirit:name>hdl/verilog/snn_top_hls_process_pre_spike_aer.v</spirit:name>
         <spirit:fileType>verilogSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>hdl/verilog/snn_top_hls_process_pre_spike_Pipeline_STDP_LTD_LOOP.v</spirit:name>
+        <spirit:name>hdl/verilog/snn_top_hls_process_pre_spike_aer_Pipeline_LTD_LOOP.v</spirit:name>
+        <spirit:fileType>verilogSource</spirit:fileType>
+      </spirit:file>
+      <spirit:file>
+        <spirit:name>hdl/verilog/snn_top_hls_process_pre_spike_aer_Pipeline_LTD_LOOP_EXP_DECAY_LUT_ROM_AUTO_1R.dat</spirit:name>
+        <spirit:userFileType>mif</spirit:userFileType>
+      </spirit:file>
+      <spirit:file>
+        <spirit:name>hdl/verilog/snn_top_hls_process_pre_spike_aer_Pipeline_LTD_LOOP_EXP_DECAY_LUT_ROM_AUTO_1R.v</spirit:name>
         <spirit:fileType>verilogSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
@@ -2742,91 +2730,39 @@
         <spirit:fileType>verilogSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>hdl/verilog/snn_top_hls_sdiv_24ns_16s_16_28_1.v</spirit:name>
-        <spirit:fileType>verilogSource</spirit:fileType>
-      </spirit:file>
-      <spirit:file>
         <spirit:name>hdl/verilog/snn_top_hls_snn_top_hls_Pipeline_INIT_WEIGHT_OUTER_INIT_WEIGHT_INNER.v</spirit:name>
         <spirit:fileType>verilogSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>hdl/verilog/snn_top_hls_snn_top_hls_Pipeline_RESET_PRE.v</spirit:name>
+        <spirit:name>hdl/verilog/snn_top_hls_snn_top_hls_Pipeline_RESET_ELIG.v</spirit:name>
         <spirit:fileType>verilogSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>hdl/verilog/snn_top_hls_snn_top_hls_Pipeline_RESET_TRACE_OUTER_RESET_TRACE_INNER.v</spirit:name>
+        <spirit:name>hdl/verilog/snn_top_hls_snn_top_hls_Pipeline_RESET_TRACES.v</spirit:name>
         <spirit:fileType>verilogSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>hdl/verilog/snn_top_hls_snn_top_hls_Pipeline_VITIS_LOOP_529_1.v</spirit:name>
+        <spirit:name>hdl/verilog/snn_top_hls_snn_top_hls_Pipeline_WEIGHT_SUM.v</spirit:name>
         <spirit:fileType>verilogSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>hdl/verilog/snn_top_hls_snn_top_hls_Pipeline_VITIS_LOOP_529_11.v</spirit:name>
+        <spirit:name>hdl/verilog/snn_top_hls_sparsemux_7_2_2_1_1.v</spirit:name>
         <spirit:fileType>verilogSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>hdl/verilog/snn_top_hls_snn_top_hls_Pipeline_VITIS_LOOP_529_12.v</spirit:name>
+        <spirit:name>hdl/verilog/snn_top_hls_sparsemux_9_2_8_1_1.v</spirit:name>
         <spirit:fileType>verilogSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>hdl/verilog/snn_top_hls_snn_top_hls_Pipeline_VITIS_LOOP_529_13.v</spirit:name>
-        <spirit:fileType>verilogSource</spirit:fileType>
-      </spirit:file>
-      <spirit:file>
-        <spirit:name>hdl/verilog/snn_top_hls_snn_top_hls_Pipeline_VITIS_LOOP_529_14.v</spirit:name>
-        <spirit:fileType>verilogSource</spirit:fileType>
-      </spirit:file>
-      <spirit:file>
-        <spirit:name>hdl/verilog/snn_top_hls_snn_top_hls_Pipeline_VITIS_LOOP_529_15.v</spirit:name>
-        <spirit:fileType>verilogSource</spirit:fileType>
-      </spirit:file>
-      <spirit:file>
-        <spirit:name>hdl/verilog/snn_top_hls_snn_top_hls_Pipeline_VITIS_LOOP_529_16.v</spirit:name>
-        <spirit:fileType>verilogSource</spirit:fileType>
-      </spirit:file>
-      <spirit:file>
-        <spirit:name>hdl/verilog/snn_top_hls_snn_top_hls_Pipeline_VITIS_LOOP_529_17.v</spirit:name>
-        <spirit:fileType>verilogSource</spirit:fileType>
-      </spirit:file>
-      <spirit:file>
-        <spirit:name>hdl/verilog/snn_top_hls_snn_top_hls_Pipeline_VITIS_LOOP_529_18.v</spirit:name>
-        <spirit:fileType>verilogSource</spirit:fileType>
-      </spirit:file>
-      <spirit:file>
-        <spirit:name>hdl/verilog/snn_top_hls_snn_top_hls_Pipeline_VITIS_LOOP_529_19.v</spirit:name>
-        <spirit:fileType>verilogSource</spirit:fileType>
-      </spirit:file>
-      <spirit:file>
-        <spirit:name>hdl/verilog/snn_top_hls_snn_top_hls_Pipeline_VITIS_LOOP_529_110.v</spirit:name>
-        <spirit:fileType>verilogSource</spirit:fileType>
-      </spirit:file>
-      <spirit:file>
-        <spirit:name>hdl/verilog/snn_top_hls_snn_top_hls_Pipeline_VITIS_LOOP_529_111.v</spirit:name>
-        <spirit:fileType>verilogSource</spirit:fileType>
-      </spirit:file>
-      <spirit:file>
-        <spirit:name>hdl/verilog/snn_top_hls_snn_top_hls_Pipeline_VITIS_LOOP_529_112.v</spirit:name>
-        <spirit:fileType>verilogSource</spirit:fileType>
-      </spirit:file>
-      <spirit:file>
-        <spirit:name>hdl/verilog/snn_top_hls_snn_top_hls_Pipeline_VITIS_LOOP_529_113.v</spirit:name>
-        <spirit:fileType>verilogSource</spirit:fileType>
-      </spirit:file>
-      <spirit:file>
-        <spirit:name>hdl/verilog/snn_top_hls_snn_top_hls_Pipeline_VITIS_LOOP_529_114.v</spirit:name>
-        <spirit:fileType>verilogSource</spirit:fileType>
-      </spirit:file>
-      <spirit:file>
-        <spirit:name>hdl/verilog/snn_top_hls_snn_top_hls_Pipeline_VITIS_LOOP_529_115.v</spirit:name>
-        <spirit:fileType>verilogSource</spirit:fileType>
-      </spirit:file>
-      <spirit:file>
-        <spirit:name>hdl/verilog/snn_top_hls_sparsemux_9_2_16_1_1.v</spirit:name>
+        <spirit:name>hdl/verilog/snn_top_hls_sparsemux_9_3_7_1_1.v</spirit:name>
         <spirit:fileType>verilogSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
         <spirit:name>hdl/verilog/snn_top_hls_sparsemux_17_3_8_1_1.v</spirit:name>
+        <spirit:fileType>verilogSource</spirit:fileType>
+      </spirit:file>
+      <spirit:file>
+        <spirit:name>hdl/verilog/snn_top_hls_sparsemux_17_3_16_1_1.v</spirit:name>
         <spirit:fileType>verilogSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
@@ -2837,22 +2773,12 @@
     <spirit:fileSet>
       <spirit:name>xilinx_verilogbehavioralsimulation_view_fileset</spirit:name>
       <spirit:file>
-        <spirit:name>hdl/verilog/snn_top_hls_apply_reward_signal.v</spirit:name>
+        <spirit:name>hdl/verilog/snn_top_hls_apply_rstdp_reward.v</spirit:name>
         <spirit:fileType>verilogSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>hdl/verilog/snn_top_hls_apply_reward_signal_Pipeline_REWARD_OUTER_REWARD_INNER.v</spirit:name>
-        <spirit:fileType>verilogSource</spirit:fileType>
-        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-      </spirit:file>
-      <spirit:file>
-        <spirit:name>hdl/verilog/snn_top_hls_apply_weight_updates.v</spirit:name>
-        <spirit:fileType>verilogSource</spirit:fileType>
-        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-      </spirit:file>
-      <spirit:file>
-        <spirit:name>hdl/verilog/snn_top_hls_apply_weight_updates_Pipeline_VITIS_LOOP_167_1.v</spirit:name>
+        <spirit:name>hdl/verilog/snn_top_hls_apply_rstdp_reward_Pipeline_RSTDP_INNER.v</spirit:name>
         <spirit:fileType>verilogSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
       </spirit:file>
@@ -2867,7 +2793,12 @@
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>hdl/verilog/snn_top_hls_fifo_w64_d64_A.v</spirit:name>
+        <spirit:name>hdl/verilog/snn_top_hls_decay_eligibility_traces_Pipeline_DECAY_POST.v</spirit:name>
+        <spirit:fileType>verilogSource</spirit:fileType>
+        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
+      </spirit:file>
+      <spirit:file>
+        <spirit:name>hdl/verilog/snn_top_hls_decay_eligibility_traces_Pipeline_DECAY_PRE.v</spirit:name>
         <spirit:fileType>verilogSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
       </spirit:file>
@@ -2887,79 +2818,68 @@
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>hdl/verilog/snn_top_hls_mac_muladd_16s_16s_24s_32_4_1.v</spirit:name>
+        <spirit:name>hdl/verilog/snn_top_hls_mul_8ns_8ns_16_1_1.v</spirit:name>
         <spirit:fileType>verilogSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>hdl/verilog/snn_top_hls_mac_mulsub_16s_16ns_1ns_31_4_1.v</spirit:name>
+        <spirit:name>hdl/verilog/snn_top_hls_mul_8s_8s_16_1_1.v</spirit:name>
         <spirit:fileType>verilogSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>hdl/verilog/snn_top_hls_mul_16ns_16s_31_1_1.v</spirit:name>
-        <spirit:fileType>verilogSource</spirit:fileType>
-        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-      </spirit:file>
-      <spirit:file>
-        <spirit:name>hdl/verilog/snn_top_hls_mul_16s_10s_26_1_1.v</spirit:name>
-        <spirit:fileType>verilogSource</spirit:fileType>
-        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-      </spirit:file>
-      <spirit:file>
-        <spirit:name>hdl/verilog/snn_top_hls_mul_16s_16s_32_1_1.v</spirit:name>
-        <spirit:fileType>verilogSource</spirit:fileType>
-        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-      </spirit:file>
-      <spirit:file>
-        <spirit:name>hdl/verilog/snn_top_hls_mul_26s_16s_40_1_1.v</spirit:name>
-        <spirit:fileType>verilogSource</spirit:fileType>
-        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-      </spirit:file>
-      <spirit:file>
-        <spirit:name>hdl/verilog/snn_top_hls_p_ZL13weight_memory_0_RAM_2P_BRAM_1R1W.dat</spirit:name>
+        <spirit:name>hdl/verilog/snn_top_hls_p_ZL13weight_memory_0_0_RAM_2P_BRAM_1R1W.dat</spirit:name>
         <spirit:userFileType>mif</spirit:userFileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>hdl/verilog/snn_top_hls_p_ZL13weight_memory_0_RAM_2P_BRAM_1R1W.v</spirit:name>
+        <spirit:name>hdl/verilog/snn_top_hls_p_ZL13weight_memory_0_0_RAM_2P_BRAM_1R1W.v</spirit:name>
         <spirit:fileType>verilogSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>hdl/verilog/snn_top_hls_p_ZL15pre_spike_times_0_RAM_1P_BRAM_1R1W.dat</spirit:name>
+        <spirit:name>hdl/verilog/snn_top_hls_p_ZL15pre_eligibility_0_RAM_2P_BRAM_1R1W.dat</spirit:name>
         <spirit:userFileType>mif</spirit:userFileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>hdl/verilog/snn_top_hls_p_ZL15pre_spike_times_0_RAM_1P_BRAM_1R1W.v</spirit:name>
+        <spirit:name>hdl/verilog/snn_top_hls_p_ZL15pre_eligibility_0_RAM_2P_BRAM_1R1W.v</spirit:name>
         <spirit:fileType>verilogSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>hdl/verilog/snn_top_hls_p_ZL18eligibility_traces_0_RAM_2P_BRAM_1R1W.dat</spirit:name>
+        <spirit:name>hdl/verilog/snn_top_hls_pre_traces_last_spike_time_0_RAM_2P_BRAM_1R1W.dat</spirit:name>
         <spirit:userFileType>mif</spirit:userFileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>hdl/verilog/snn_top_hls_p_ZL18eligibility_traces_0_RAM_2P_BRAM_1R1W.v</spirit:name>
+        <spirit:name>hdl/verilog/snn_top_hls_pre_traces_last_spike_time_0_RAM_2P_BRAM_1R1W.v</spirit:name>
         <spirit:fileType>verilogSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>hdl/verilog/snn_top_hls_process_post_spike.v</spirit:name>
+        <spirit:name>hdl/verilog/snn_top_hls_process_post_spike_aer.v</spirit:name>
         <spirit:fileType>verilogSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>hdl/verilog/snn_top_hls_process_post_spike_Pipeline_STDP_LTP_LOOP.v</spirit:name>
+        <spirit:name>hdl/verilog/snn_top_hls_process_post_spike_aer_Pipeline_LTP_LOOP.v</spirit:name>
         <spirit:fileType>verilogSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>hdl/verilog/snn_top_hls_process_pre_spike.v</spirit:name>
+        <spirit:name>hdl/verilog/snn_top_hls_process_pre_spike_aer.v</spirit:name>
         <spirit:fileType>verilogSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>hdl/verilog/snn_top_hls_process_pre_spike_Pipeline_STDP_LTD_LOOP.v</spirit:name>
+        <spirit:name>hdl/verilog/snn_top_hls_process_pre_spike_aer_Pipeline_LTD_LOOP.v</spirit:name>
+        <spirit:fileType>verilogSource</spirit:fileType>
+        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
+      </spirit:file>
+      <spirit:file>
+        <spirit:name>hdl/verilog/snn_top_hls_process_pre_spike_aer_Pipeline_LTD_LOOP_EXP_DECAY_LUT_ROM_AUTO_1R.dat</spirit:name>
+        <spirit:userFileType>mif</spirit:userFileType>
+      </spirit:file>
+      <spirit:file>
+        <spirit:name>hdl/verilog/snn_top_hls_process_pre_spike_aer_Pipeline_LTD_LOOP_EXP_DECAY_LUT_ROM_AUTO_1R.v</spirit:name>
         <spirit:fileType>verilogSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
       </spirit:file>
@@ -2969,112 +2889,47 @@
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>hdl/verilog/snn_top_hls_sdiv_24ns_16s_16_28_1.v</spirit:name>
-        <spirit:fileType>verilogSource</spirit:fileType>
-        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-      </spirit:file>
-      <spirit:file>
         <spirit:name>hdl/verilog/snn_top_hls_snn_top_hls_Pipeline_INIT_WEIGHT_OUTER_INIT_WEIGHT_INNER.v</spirit:name>
         <spirit:fileType>verilogSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>hdl/verilog/snn_top_hls_snn_top_hls_Pipeline_RESET_PRE.v</spirit:name>
+        <spirit:name>hdl/verilog/snn_top_hls_snn_top_hls_Pipeline_RESET_ELIG.v</spirit:name>
         <spirit:fileType>verilogSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>hdl/verilog/snn_top_hls_snn_top_hls_Pipeline_RESET_TRACE_OUTER_RESET_TRACE_INNER.v</spirit:name>
+        <spirit:name>hdl/verilog/snn_top_hls_snn_top_hls_Pipeline_RESET_TRACES.v</spirit:name>
         <spirit:fileType>verilogSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>hdl/verilog/snn_top_hls_snn_top_hls_Pipeline_VITIS_LOOP_529_1.v</spirit:name>
+        <spirit:name>hdl/verilog/snn_top_hls_snn_top_hls_Pipeline_WEIGHT_SUM.v</spirit:name>
         <spirit:fileType>verilogSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>hdl/verilog/snn_top_hls_snn_top_hls_Pipeline_VITIS_LOOP_529_11.v</spirit:name>
+        <spirit:name>hdl/verilog/snn_top_hls_sparsemux_7_2_2_1_1.v</spirit:name>
         <spirit:fileType>verilogSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>hdl/verilog/snn_top_hls_snn_top_hls_Pipeline_VITIS_LOOP_529_12.v</spirit:name>
+        <spirit:name>hdl/verilog/snn_top_hls_sparsemux_9_2_8_1_1.v</spirit:name>
         <spirit:fileType>verilogSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>hdl/verilog/snn_top_hls_snn_top_hls_Pipeline_VITIS_LOOP_529_13.v</spirit:name>
-        <spirit:fileType>verilogSource</spirit:fileType>
-        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-      </spirit:file>
-      <spirit:file>
-        <spirit:name>hdl/verilog/snn_top_hls_snn_top_hls_Pipeline_VITIS_LOOP_529_14.v</spirit:name>
-        <spirit:fileType>verilogSource</spirit:fileType>
-        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-      </spirit:file>
-      <spirit:file>
-        <spirit:name>hdl/verilog/snn_top_hls_snn_top_hls_Pipeline_VITIS_LOOP_529_15.v</spirit:name>
-        <spirit:fileType>verilogSource</spirit:fileType>
-        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-      </spirit:file>
-      <spirit:file>
-        <spirit:name>hdl/verilog/snn_top_hls_snn_top_hls_Pipeline_VITIS_LOOP_529_16.v</spirit:name>
-        <spirit:fileType>verilogSource</spirit:fileType>
-        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-      </spirit:file>
-      <spirit:file>
-        <spirit:name>hdl/verilog/snn_top_hls_snn_top_hls_Pipeline_VITIS_LOOP_529_17.v</spirit:name>
-        <spirit:fileType>verilogSource</spirit:fileType>
-        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-      </spirit:file>
-      <spirit:file>
-        <spirit:name>hdl/verilog/snn_top_hls_snn_top_hls_Pipeline_VITIS_LOOP_529_18.v</spirit:name>
-        <spirit:fileType>verilogSource</spirit:fileType>
-        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-      </spirit:file>
-      <spirit:file>
-        <spirit:name>hdl/verilog/snn_top_hls_snn_top_hls_Pipeline_VITIS_LOOP_529_19.v</spirit:name>
-        <spirit:fileType>verilogSource</spirit:fileType>
-        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-      </spirit:file>
-      <spirit:file>
-        <spirit:name>hdl/verilog/snn_top_hls_snn_top_hls_Pipeline_VITIS_LOOP_529_110.v</spirit:name>
-        <spirit:fileType>verilogSource</spirit:fileType>
-        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-      </spirit:file>
-      <spirit:file>
-        <spirit:name>hdl/verilog/snn_top_hls_snn_top_hls_Pipeline_VITIS_LOOP_529_111.v</spirit:name>
-        <spirit:fileType>verilogSource</spirit:fileType>
-        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-      </spirit:file>
-      <spirit:file>
-        <spirit:name>hdl/verilog/snn_top_hls_snn_top_hls_Pipeline_VITIS_LOOP_529_112.v</spirit:name>
-        <spirit:fileType>verilogSource</spirit:fileType>
-        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-      </spirit:file>
-      <spirit:file>
-        <spirit:name>hdl/verilog/snn_top_hls_snn_top_hls_Pipeline_VITIS_LOOP_529_113.v</spirit:name>
-        <spirit:fileType>verilogSource</spirit:fileType>
-        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-      </spirit:file>
-      <spirit:file>
-        <spirit:name>hdl/verilog/snn_top_hls_snn_top_hls_Pipeline_VITIS_LOOP_529_114.v</spirit:name>
-        <spirit:fileType>verilogSource</spirit:fileType>
-        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-      </spirit:file>
-      <spirit:file>
-        <spirit:name>hdl/verilog/snn_top_hls_snn_top_hls_Pipeline_VITIS_LOOP_529_115.v</spirit:name>
-        <spirit:fileType>verilogSource</spirit:fileType>
-        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-      </spirit:file>
-      <spirit:file>
-        <spirit:name>hdl/verilog/snn_top_hls_sparsemux_9_2_16_1_1.v</spirit:name>
+        <spirit:name>hdl/verilog/snn_top_hls_sparsemux_9_3_7_1_1.v</spirit:name>
         <spirit:fileType>verilogSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
       </spirit:file>
       <spirit:file>
         <spirit:name>hdl/verilog/snn_top_hls_sparsemux_17_3_8_1_1.v</spirit:name>
+        <spirit:fileType>verilogSource</spirit:fileType>
+        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
+      </spirit:file>
+      <spirit:file>
+        <spirit:name>hdl/verilog/snn_top_hls_sparsemux_17_3_16_1_1.v</spirit:name>
         <spirit:fileType>verilogSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
       </spirit:file>
@@ -3092,19 +2947,11 @@
         <spirit:userFileType>USED_IN_out_of_context</spirit:userFileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>hdl/vhdl/snn_top_hls_apply_reward_signal.vhd</spirit:name>
+        <spirit:name>hdl/vhdl/snn_top_hls_apply_rstdp_reward.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>hdl/vhdl/snn_top_hls_apply_reward_signal_Pipeline_REWARD_OUTER_REWARD_INNER.vhd</spirit:name>
-        <spirit:fileType>vhdlSource</spirit:fileType>
-      </spirit:file>
-      <spirit:file>
-        <spirit:name>hdl/vhdl/snn_top_hls_apply_weight_updates.vhd</spirit:name>
-        <spirit:fileType>vhdlSource</spirit:fileType>
-      </spirit:file>
-      <spirit:file>
-        <spirit:name>hdl/vhdl/snn_top_hls_apply_weight_updates_Pipeline_VITIS_LOOP_167_1.vhd</spirit:name>
+        <spirit:name>hdl/vhdl/snn_top_hls_apply_rstdp_reward_Pipeline_RSTDP_INNER.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
@@ -3116,7 +2963,11 @@
         <spirit:fileType>vhdlSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>hdl/vhdl/snn_top_hls_fifo_w64_d64_A.vhd</spirit:name>
+        <spirit:name>hdl/vhdl/snn_top_hls_decay_eligibility_traces_Pipeline_DECAY_POST.vhd</spirit:name>
+        <spirit:fileType>vhdlSource</spirit:fileType>
+      </spirit:file>
+      <spirit:file>
+        <spirit:name>hdl/vhdl/snn_top_hls_decay_eligibility_traces_Pipeline_DECAY_PRE.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
@@ -3124,55 +2975,43 @@
         <spirit:fileType>vhdlSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>hdl/vhdl/snn_top_hls_mac_muladd_16s_16s_24s_32_4_1.vhd</spirit:name>
+        <spirit:name>hdl/vhdl/snn_top_hls_mul_8ns_8ns_16_1_1.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>hdl/vhdl/snn_top_hls_mac_mulsub_16s_16ns_1ns_31_4_1.vhd</spirit:name>
+        <spirit:name>hdl/vhdl/snn_top_hls_mul_8s_8s_16_1_1.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>hdl/vhdl/snn_top_hls_mul_16ns_16s_31_1_1.vhd</spirit:name>
+        <spirit:name>hdl/vhdl/snn_top_hls_p_ZL13weight_memory_0_0_RAM_2P_BRAM_1R1W.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>hdl/vhdl/snn_top_hls_mul_16s_10s_26_1_1.vhd</spirit:name>
+        <spirit:name>hdl/vhdl/snn_top_hls_p_ZL15pre_eligibility_0_RAM_2P_BRAM_1R1W.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>hdl/vhdl/snn_top_hls_mul_16s_16s_32_1_1.vhd</spirit:name>
+        <spirit:name>hdl/vhdl/snn_top_hls_pre_traces_last_spike_time_0_RAM_2P_BRAM_1R1W.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>hdl/vhdl/snn_top_hls_mul_26s_16s_40_1_1.vhd</spirit:name>
+        <spirit:name>hdl/vhdl/snn_top_hls_process_post_spike_aer.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>hdl/vhdl/snn_top_hls_p_ZL13weight_memory_0_RAM_2P_BRAM_1R1W.vhd</spirit:name>
+        <spirit:name>hdl/vhdl/snn_top_hls_process_post_spike_aer_Pipeline_LTP_LOOP.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>hdl/vhdl/snn_top_hls_p_ZL15pre_spike_times_0_RAM_1P_BRAM_1R1W.vhd</spirit:name>
+        <spirit:name>hdl/vhdl/snn_top_hls_process_pre_spike_aer.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>hdl/vhdl/snn_top_hls_p_ZL18eligibility_traces_0_RAM_2P_BRAM_1R1W.vhd</spirit:name>
+        <spirit:name>hdl/vhdl/snn_top_hls_process_pre_spike_aer_Pipeline_LTD_LOOP.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>hdl/vhdl/snn_top_hls_process_post_spike.vhd</spirit:name>
-        <spirit:fileType>vhdlSource</spirit:fileType>
-      </spirit:file>
-      <spirit:file>
-        <spirit:name>hdl/vhdl/snn_top_hls_process_post_spike_Pipeline_STDP_LTP_LOOP.vhd</spirit:name>
-        <spirit:fileType>vhdlSource</spirit:fileType>
-      </spirit:file>
-      <spirit:file>
-        <spirit:name>hdl/vhdl/snn_top_hls_process_pre_spike.vhd</spirit:name>
-        <spirit:fileType>vhdlSource</spirit:fileType>
-      </spirit:file>
-      <spirit:file>
-        <spirit:name>hdl/vhdl/snn_top_hls_process_pre_spike_Pipeline_STDP_LTD_LOOP.vhd</spirit:name>
+        <spirit:name>hdl/vhdl/snn_top_hls_process_pre_spike_aer_Pipeline_LTD_LOOP_EXP_DECAY_LUT_ROM_AUTO_1R.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
@@ -3180,118 +3019,56 @@
         <spirit:fileType>vhdlSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>hdl/vhdl/snn_top_hls_sdiv_24ns_16s_16_28_1.vhd</spirit:name>
-        <spirit:fileType>vhdlSource</spirit:fileType>
-      </spirit:file>
-      <spirit:file>
         <spirit:name>hdl/vhdl/snn_top_hls_snn_top_hls_Pipeline_INIT_WEIGHT_OUTER_INIT_WEIGHT_INNER.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>hdl/vhdl/snn_top_hls_snn_top_hls_Pipeline_RESET_PRE.vhd</spirit:name>
+        <spirit:name>hdl/vhdl/snn_top_hls_snn_top_hls_Pipeline_RESET_ELIG.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>hdl/vhdl/snn_top_hls_snn_top_hls_Pipeline_RESET_TRACE_OUTER_RESET_TRACE_INNER.vhd</spirit:name>
+        <spirit:name>hdl/vhdl/snn_top_hls_snn_top_hls_Pipeline_RESET_TRACES.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>hdl/vhdl/snn_top_hls_snn_top_hls_Pipeline_VITIS_LOOP_529_1.vhd</spirit:name>
+        <spirit:name>hdl/vhdl/snn_top_hls_snn_top_hls_Pipeline_WEIGHT_SUM.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>hdl/vhdl/snn_top_hls_snn_top_hls_Pipeline_VITIS_LOOP_529_11.vhd</spirit:name>
+        <spirit:name>hdl/vhdl/snn_top_hls_sparsemux_7_2_2_1_1.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>hdl/vhdl/snn_top_hls_snn_top_hls_Pipeline_VITIS_LOOP_529_12.vhd</spirit:name>
+        <spirit:name>hdl/vhdl/snn_top_hls_sparsemux_9_2_8_1_1.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>hdl/vhdl/snn_top_hls_snn_top_hls_Pipeline_VITIS_LOOP_529_13.vhd</spirit:name>
-        <spirit:fileType>vhdlSource</spirit:fileType>
-      </spirit:file>
-      <spirit:file>
-        <spirit:name>hdl/vhdl/snn_top_hls_snn_top_hls_Pipeline_VITIS_LOOP_529_14.vhd</spirit:name>
-        <spirit:fileType>vhdlSource</spirit:fileType>
-      </spirit:file>
-      <spirit:file>
-        <spirit:name>hdl/vhdl/snn_top_hls_snn_top_hls_Pipeline_VITIS_LOOP_529_15.vhd</spirit:name>
-        <spirit:fileType>vhdlSource</spirit:fileType>
-      </spirit:file>
-      <spirit:file>
-        <spirit:name>hdl/vhdl/snn_top_hls_snn_top_hls_Pipeline_VITIS_LOOP_529_16.vhd</spirit:name>
-        <spirit:fileType>vhdlSource</spirit:fileType>
-      </spirit:file>
-      <spirit:file>
-        <spirit:name>hdl/vhdl/snn_top_hls_snn_top_hls_Pipeline_VITIS_LOOP_529_17.vhd</spirit:name>
-        <spirit:fileType>vhdlSource</spirit:fileType>
-      </spirit:file>
-      <spirit:file>
-        <spirit:name>hdl/vhdl/snn_top_hls_snn_top_hls_Pipeline_VITIS_LOOP_529_18.vhd</spirit:name>
-        <spirit:fileType>vhdlSource</spirit:fileType>
-      </spirit:file>
-      <spirit:file>
-        <spirit:name>hdl/vhdl/snn_top_hls_snn_top_hls_Pipeline_VITIS_LOOP_529_19.vhd</spirit:name>
-        <spirit:fileType>vhdlSource</spirit:fileType>
-      </spirit:file>
-      <spirit:file>
-        <spirit:name>hdl/vhdl/snn_top_hls_snn_top_hls_Pipeline_VITIS_LOOP_529_110.vhd</spirit:name>
-        <spirit:fileType>vhdlSource</spirit:fileType>
-      </spirit:file>
-      <spirit:file>
-        <spirit:name>hdl/vhdl/snn_top_hls_snn_top_hls_Pipeline_VITIS_LOOP_529_111.vhd</spirit:name>
-        <spirit:fileType>vhdlSource</spirit:fileType>
-      </spirit:file>
-      <spirit:file>
-        <spirit:name>hdl/vhdl/snn_top_hls_snn_top_hls_Pipeline_VITIS_LOOP_529_112.vhd</spirit:name>
-        <spirit:fileType>vhdlSource</spirit:fileType>
-      </spirit:file>
-      <spirit:file>
-        <spirit:name>hdl/vhdl/snn_top_hls_snn_top_hls_Pipeline_VITIS_LOOP_529_113.vhd</spirit:name>
-        <spirit:fileType>vhdlSource</spirit:fileType>
-      </spirit:file>
-      <spirit:file>
-        <spirit:name>hdl/vhdl/snn_top_hls_snn_top_hls_Pipeline_VITIS_LOOP_529_114.vhd</spirit:name>
-        <spirit:fileType>vhdlSource</spirit:fileType>
-      </spirit:file>
-      <spirit:file>
-        <spirit:name>hdl/vhdl/snn_top_hls_snn_top_hls_Pipeline_VITIS_LOOP_529_115.vhd</spirit:name>
-        <spirit:fileType>vhdlSource</spirit:fileType>
-      </spirit:file>
-      <spirit:file>
-        <spirit:name>hdl/vhdl/snn_top_hls_sparsemux_9_2_16_1_1.vhd</spirit:name>
+        <spirit:name>hdl/vhdl/snn_top_hls_sparsemux_9_3_7_1_1.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
         <spirit:name>hdl/vhdl/snn_top_hls_sparsemux_17_3_8_1_1.vhd</spirit:name>
+        <spirit:fileType>vhdlSource</spirit:fileType>
+      </spirit:file>
+      <spirit:file>
+        <spirit:name>hdl/vhdl/snn_top_hls_sparsemux_17_3_16_1_1.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
         <spirit:name>hdl/vhdl/snn_top_hls.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:userFileType>CHECKSUM_bed5973a</spirit:userFileType>
+        <spirit:userFileType>CHECKSUM_3b1734b4</spirit:userFileType>
       </spirit:file>
     </spirit:fileSet>
     <spirit:fileSet>
       <spirit:name>xilinx_vhdlbehavioralsimulation_view_fileset</spirit:name>
       <spirit:file>
-        <spirit:name>hdl/vhdl/snn_top_hls_apply_reward_signal.vhd</spirit:name>
+        <spirit:name>hdl/vhdl/snn_top_hls_apply_rstdp_reward.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>hdl/vhdl/snn_top_hls_apply_reward_signal_Pipeline_REWARD_OUTER_REWARD_INNER.vhd</spirit:name>
-        <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-      </spirit:file>
-      <spirit:file>
-        <spirit:name>hdl/vhdl/snn_top_hls_apply_weight_updates.vhd</spirit:name>
-        <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-      </spirit:file>
-      <spirit:file>
-        <spirit:name>hdl/vhdl/snn_top_hls_apply_weight_updates_Pipeline_VITIS_LOOP_167_1.vhd</spirit:name>
+        <spirit:name>hdl/vhdl/snn_top_hls_apply_rstdp_reward_Pipeline_RSTDP_INNER.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
       </spirit:file>
@@ -3306,7 +3083,12 @@
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>hdl/vhdl/snn_top_hls_fifo_w64_d64_A.vhd</spirit:name>
+        <spirit:name>hdl/vhdl/snn_top_hls_decay_eligibility_traces_Pipeline_DECAY_POST.vhd</spirit:name>
+        <spirit:fileType>vhdlSource</spirit:fileType>
+        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
+      </spirit:file>
+      <spirit:file>
+        <spirit:name>hdl/vhdl/snn_top_hls_decay_eligibility_traces_Pipeline_DECAY_PRE.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
       </spirit:file>
@@ -3316,67 +3098,52 @@
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>hdl/vhdl/snn_top_hls_mac_muladd_16s_16s_24s_32_4_1.vhd</spirit:name>
+        <spirit:name>hdl/vhdl/snn_top_hls_mul_8ns_8ns_16_1_1.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>hdl/vhdl/snn_top_hls_mac_mulsub_16s_16ns_1ns_31_4_1.vhd</spirit:name>
+        <spirit:name>hdl/vhdl/snn_top_hls_mul_8s_8s_16_1_1.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>hdl/vhdl/snn_top_hls_mul_16ns_16s_31_1_1.vhd</spirit:name>
+        <spirit:name>hdl/vhdl/snn_top_hls_p_ZL13weight_memory_0_0_RAM_2P_BRAM_1R1W.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>hdl/vhdl/snn_top_hls_mul_16s_10s_26_1_1.vhd</spirit:name>
+        <spirit:name>hdl/vhdl/snn_top_hls_p_ZL15pre_eligibility_0_RAM_2P_BRAM_1R1W.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>hdl/vhdl/snn_top_hls_mul_16s_16s_32_1_1.vhd</spirit:name>
+        <spirit:name>hdl/vhdl/snn_top_hls_pre_traces_last_spike_time_0_RAM_2P_BRAM_1R1W.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>hdl/vhdl/snn_top_hls_mul_26s_16s_40_1_1.vhd</spirit:name>
+        <spirit:name>hdl/vhdl/snn_top_hls_process_post_spike_aer.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>hdl/vhdl/snn_top_hls_p_ZL13weight_memory_0_RAM_2P_BRAM_1R1W.vhd</spirit:name>
+        <spirit:name>hdl/vhdl/snn_top_hls_process_post_spike_aer_Pipeline_LTP_LOOP.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>hdl/vhdl/snn_top_hls_p_ZL15pre_spike_times_0_RAM_1P_BRAM_1R1W.vhd</spirit:name>
+        <spirit:name>hdl/vhdl/snn_top_hls_process_pre_spike_aer.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>hdl/vhdl/snn_top_hls_p_ZL18eligibility_traces_0_RAM_2P_BRAM_1R1W.vhd</spirit:name>
+        <spirit:name>hdl/vhdl/snn_top_hls_process_pre_spike_aer_Pipeline_LTD_LOOP.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>hdl/vhdl/snn_top_hls_process_post_spike.vhd</spirit:name>
-        <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-      </spirit:file>
-      <spirit:file>
-        <spirit:name>hdl/vhdl/snn_top_hls_process_post_spike_Pipeline_STDP_LTP_LOOP.vhd</spirit:name>
-        <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-      </spirit:file>
-      <spirit:file>
-        <spirit:name>hdl/vhdl/snn_top_hls_process_pre_spike.vhd</spirit:name>
-        <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-      </spirit:file>
-      <spirit:file>
-        <spirit:name>hdl/vhdl/snn_top_hls_process_pre_spike_Pipeline_STDP_LTD_LOOP.vhd</spirit:name>
+        <spirit:name>hdl/vhdl/snn_top_hls_process_pre_spike_aer_Pipeline_LTD_LOOP_EXP_DECAY_LUT_ROM_AUTO_1R.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
       </spirit:file>
@@ -3386,112 +3153,47 @@
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>hdl/vhdl/snn_top_hls_sdiv_24ns_16s_16_28_1.vhd</spirit:name>
-        <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-      </spirit:file>
-      <spirit:file>
         <spirit:name>hdl/vhdl/snn_top_hls_snn_top_hls_Pipeline_INIT_WEIGHT_OUTER_INIT_WEIGHT_INNER.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>hdl/vhdl/snn_top_hls_snn_top_hls_Pipeline_RESET_PRE.vhd</spirit:name>
+        <spirit:name>hdl/vhdl/snn_top_hls_snn_top_hls_Pipeline_RESET_ELIG.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>hdl/vhdl/snn_top_hls_snn_top_hls_Pipeline_RESET_TRACE_OUTER_RESET_TRACE_INNER.vhd</spirit:name>
+        <spirit:name>hdl/vhdl/snn_top_hls_snn_top_hls_Pipeline_RESET_TRACES.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>hdl/vhdl/snn_top_hls_snn_top_hls_Pipeline_VITIS_LOOP_529_1.vhd</spirit:name>
+        <spirit:name>hdl/vhdl/snn_top_hls_snn_top_hls_Pipeline_WEIGHT_SUM.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>hdl/vhdl/snn_top_hls_snn_top_hls_Pipeline_VITIS_LOOP_529_11.vhd</spirit:name>
+        <spirit:name>hdl/vhdl/snn_top_hls_sparsemux_7_2_2_1_1.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>hdl/vhdl/snn_top_hls_snn_top_hls_Pipeline_VITIS_LOOP_529_12.vhd</spirit:name>
+        <spirit:name>hdl/vhdl/snn_top_hls_sparsemux_9_2_8_1_1.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>hdl/vhdl/snn_top_hls_snn_top_hls_Pipeline_VITIS_LOOP_529_13.vhd</spirit:name>
-        <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-      </spirit:file>
-      <spirit:file>
-        <spirit:name>hdl/vhdl/snn_top_hls_snn_top_hls_Pipeline_VITIS_LOOP_529_14.vhd</spirit:name>
-        <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-      </spirit:file>
-      <spirit:file>
-        <spirit:name>hdl/vhdl/snn_top_hls_snn_top_hls_Pipeline_VITIS_LOOP_529_15.vhd</spirit:name>
-        <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-      </spirit:file>
-      <spirit:file>
-        <spirit:name>hdl/vhdl/snn_top_hls_snn_top_hls_Pipeline_VITIS_LOOP_529_16.vhd</spirit:name>
-        <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-      </spirit:file>
-      <spirit:file>
-        <spirit:name>hdl/vhdl/snn_top_hls_snn_top_hls_Pipeline_VITIS_LOOP_529_17.vhd</spirit:name>
-        <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-      </spirit:file>
-      <spirit:file>
-        <spirit:name>hdl/vhdl/snn_top_hls_snn_top_hls_Pipeline_VITIS_LOOP_529_18.vhd</spirit:name>
-        <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-      </spirit:file>
-      <spirit:file>
-        <spirit:name>hdl/vhdl/snn_top_hls_snn_top_hls_Pipeline_VITIS_LOOP_529_19.vhd</spirit:name>
-        <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-      </spirit:file>
-      <spirit:file>
-        <spirit:name>hdl/vhdl/snn_top_hls_snn_top_hls_Pipeline_VITIS_LOOP_529_110.vhd</spirit:name>
-        <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-      </spirit:file>
-      <spirit:file>
-        <spirit:name>hdl/vhdl/snn_top_hls_snn_top_hls_Pipeline_VITIS_LOOP_529_111.vhd</spirit:name>
-        <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-      </spirit:file>
-      <spirit:file>
-        <spirit:name>hdl/vhdl/snn_top_hls_snn_top_hls_Pipeline_VITIS_LOOP_529_112.vhd</spirit:name>
-        <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-      </spirit:file>
-      <spirit:file>
-        <spirit:name>hdl/vhdl/snn_top_hls_snn_top_hls_Pipeline_VITIS_LOOP_529_113.vhd</spirit:name>
-        <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-      </spirit:file>
-      <spirit:file>
-        <spirit:name>hdl/vhdl/snn_top_hls_snn_top_hls_Pipeline_VITIS_LOOP_529_114.vhd</spirit:name>
-        <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-      </spirit:file>
-      <spirit:file>
-        <spirit:name>hdl/vhdl/snn_top_hls_snn_top_hls_Pipeline_VITIS_LOOP_529_115.vhd</spirit:name>
-        <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-      </spirit:file>
-      <spirit:file>
-        <spirit:name>hdl/vhdl/snn_top_hls_sparsemux_9_2_16_1_1.vhd</spirit:name>
+        <spirit:name>hdl/vhdl/snn_top_hls_sparsemux_9_3_7_1_1.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
       </spirit:file>
       <spirit:file>
         <spirit:name>hdl/vhdl/snn_top_hls_sparsemux_17_3_8_1_1.vhd</spirit:name>
+        <spirit:fileType>vhdlSource</spirit:fileType>
+        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
+      </spirit:file>
+      <spirit:file>
+        <spirit:name>hdl/vhdl/snn_top_hls_sparsemux_17_3_16_1_1.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
       </spirit:file>
@@ -3596,11 +3298,11 @@
     </spirit:parameter>
     <spirit:parameter>
       <spirit:name>latency</spirit:name>
-      <spirit:value spirit:id="PARAM_VALUE.latency" spirit:order="4">undef</spirit:value>
+      <spirit:value spirit:id="PARAM_VALUE.latency" spirit:order="4">18</spirit:value>
     </spirit:parameter>
     <spirit:parameter>
       <spirit:name>II</spirit:name>
-      <spirit:value spirit:id="PARAM_VALUE.II" spirit:order="5">undef</spirit:value>
+      <spirit:value spirit:id="PARAM_VALUE.II" spirit:order="5">19 ~ 6925</spirit:value>
     </spirit:parameter>
   </spirit:parameters>
   <spirit:vendorExtensions>
@@ -3613,8 +3315,8 @@
       </xilinx:taxonomies>
       <xilinx:displayName>Snn_top_hls</xilinx:displayName>
       <xilinx:definitionSource>HLS</xilinx:definitionSource>
-      <xilinx:coreRevision>2114382846</xilinx:coreRevision>
-      <xilinx:coreCreationDateTime>2025-12-08T11:06:38Z</xilinx:coreCreationDateTime>
+      <xilinx:coreRevision>2114382889</xilinx:coreRevision>
+      <xilinx:coreCreationDateTime>2025-12-08T11:49:27Z</xilinx:coreCreationDateTime>
       <xilinx:sdxKernelAttributes>
         <xilinx:sdx_kernel>true</xilinx:sdx_kernel>
         <xilinx:sdx_kernel_type>hls</xilinx:sdx_kernel_type>
@@ -3624,10 +3326,10 @@
       <xilinx:xilinxVersion>2025.2</xilinx:xilinxVersion>
       <xilinx:checksum xilinx:scope="busInterfaces" xilinx:value="a23778b8"/>
       <xilinx:checksum xilinx:scope="memoryMaps" xilinx:value="7f5f2185"/>
-      <xilinx:checksum xilinx:scope="fileGroups" xilinx:value="c75da2b6"/>
+      <xilinx:checksum xilinx:scope="fileGroups" xilinx:value="90b3e375"/>
       <xilinx:checksum xilinx:scope="ports" xilinx:value="1feb2f81"/>
       <xilinx:checksum xilinx:scope="hdlParameters" xilinx:value="01d24a89"/>
-      <xilinx:checksum xilinx:scope="parameters" xilinx:value="050161e0"/>
+      <xilinx:checksum xilinx:scope="parameters" xilinx:value="a7d6f8c9"/>
     </xilinx:packagingInfo>
   </spirit:vendorExtensions>
 </spirit:component>

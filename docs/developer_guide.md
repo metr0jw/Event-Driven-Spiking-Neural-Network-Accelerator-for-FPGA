@@ -399,74 +399,81 @@ module tb_spike_buffer;
 endmodule
 ```
 
-### HLS Development
+### HLS Development (v++ Compiler - Vitis 2025.2+)
 
 #### HLS Project Structure
 ```
 hardware/hls/
-├── include/          # Header files
-│   ├── snn_types.h
-│   ├── snn_config.h
-│   └── axi_interfaces.h
 ├── src/              # Source files
-│   ├── snn_learning_engine.cpp
-│   ├── spike_encoder.cpp
-│   └── weight_updater.cpp
-├── test/             # Testbenches
-│   ├── tb_snn_learning_engine.cpp
-│   └── test_utils.h
-└── scripts/          # Build scripts
-    ├── create_project.tcl
-    ├── run_synthesis.tcl
-    └── run_cosim.tcl
+│   ├── snn_top_hls.cpp   # Main HLS implementation
+│   └── snn_top_hls.h     # Header file
+├── scripts/          # Build scripts
+│   ├── build_hls.sh      # v++ build script (recommended)
+│   └── README            # HLS documentation
+├── hls_output/       # Generated outputs (after synthesis)
+│   └── hls/
+│       ├── impl/ip/      # Packaged IP
+│       └── syn/report/   # Synthesis reports
+└── test/             # Testbenches (optional)
 ```
+
+#### Per-Neuron Trace Architecture
+
+The HLS implementation uses memory-efficient **Per-Neuron Traces** instead of Per-Synapse:
+
+```cpp
+// Per-Neuron trace storage - O(N+M) instead of O(N×M)
+typedef struct {
+    ap_uint<8> trace;            // 8-bit exponential trace
+    ap_uint<16> last_spike_time; // Timestamp for lazy update
+} neuron_trace_t;
+
+static neuron_trace_t pre_traces[MAX_NEURONS];   // O(N)
+static neuron_trace_t post_traces[MAX_NEURONS];  // O(M)
+
+// Exponential decay LUT for lazy update
+static const ap_uint<8> EXP_DECAY_LUT[16] = {
+    255, 223, 195, 170, 149, 130, 114, 100,
+    87, 76, 67, 58, 51, 45, 39, 34
+};
+```
+
+**STDP Learning Flow**:
+1. **Pre-Spike**: Update `pre_traces[i]`, apply LTD using `post_traces[j]`
+2. **Post-Spike**: Update `post_traces[j]`, apply LTP using `pre_traces[i]`
+3. **R-STDP Reward**: Modulate weights using `pre_eligibility × post_eligibility × reward`
 
 #### HLS Coding Guidelines
 
 **Function Template**:
 ```cpp
-#include "snn_types.h"
-#include "hls_stream.h"
-#include "ap_int.h"
+#include "snn_top_hls.h"
 
-void hls_function(
-    // AXI-Stream inputs
-    hls::stream<spike_t> &input_spikes,
+void snn_top_hls(
+    // AXI4-Lite control registers
+    ap_uint<32> ctrl_reg,
+    ap_uint<32> config_reg,
+    learning_params_t learning_params,
+    ap_uint<32> &status_reg,
     
-    // AXI-Stream outputs
-    hls::stream<spike_t> &output_spikes,
+    // AXI4-Stream interfaces
+    hls::stream<axis_spike_t> &s_axis_spikes,
+    hls::stream<axis_spike_t> &m_axis_spikes,
     
-    // AXI-Lite configuration
-    ap_uint<16> threshold,
-    ap_uint<8> leak_factor,
-    
-    // Memory interfaces
-    weight_t *weight_memory
+    // Reward signal for R-STDP
+    ap_int<8> reward_signal
 ) {
     // Interface pragmas
-    #pragma HLS INTERFACE axis port=input_spikes
-    #pragma HLS INTERFACE axis port=output_spikes
-    #pragma HLS INTERFACE s_axilite port=threshold
-    #pragma HLS INTERFACE s_axilite port=leak_factor
-    #pragma HLS INTERFACE m_axi depth=4096 port=weight_memory
-    #pragma HLS INTERFACE ap_ctrl_none port=return
+    #pragma HLS INTERFACE s_axilite port=ctrl_reg bundle=ctrl
+    #pragma HLS INTERFACE s_axilite port=config_reg bundle=ctrl
+    #pragma HLS INTERFACE axis port=s_axis_spikes
+    #pragma HLS INTERFACE axis port=m_axis_spikes
+    
+    // Memory pragmas
+    #pragma HLS BIND_STORAGE variable=weight_memory type=RAM_2P impl=BRAM
+    #pragma HLS ARRAY_PARTITION variable=weight_memory cyclic factor=4 dim=2
     
     // Implementation
-    spike_t spike_in;
-    if (input_spikes.read_nb(spike_in)) {
-        // Process spike
-        ap_int<16> membrane = 0;
-        weight_t weight = weight_memory[spike_in.neuron_id];
-        
-        membrane += weight;
-        
-        if (membrane > threshold) {
-            spike_t spike_out;
-            spike_out.neuron_id = spike_in.neuron_id;
-            spike_out.timestamp = spike_in.timestamp;
-            output_spikes.write(spike_out);
-        }
-    }
 }
 ```
 
@@ -474,64 +481,65 @@ void hls_function(
 
 ```cpp
 // Pipeline loops for throughput
-void process_array(int data[100]) {
-    #pragma HLS PIPELINE II=1
-    for (int i = 0; i < 100; i++) {
-        data[i] = data[i] * 2;
-    }
+STDP_LOOP: for (int j = 0; j < MAX_NEURONS; j++) {
+    #pragma HLS PIPELINE II=2
+    #pragma HLS UNROLL factor=4
+    // Process weight updates
 }
 
-// Dataflow for task-level parallelism
-void dataflow_example(hls::stream<int> &in, hls::stream<int> &out) {
-    #pragma HLS DATAFLOW
-    
-    hls::stream<int> temp;
-    
-    stage1(in, temp);
-    stage2(temp, out);
-}
-
-// Array partitioning for bandwidth
-void array_partition_example() {
-    static int buffer[1024];
-    #pragma HLS ARRAY_PARTITION variable=buffer cyclic factor=8
-    
-    // Operations on buffer
-}
+// Shift-based arithmetic (no DSP usage)
+ap_int<16> delta = (ap_int<16>)trace_val >> 5;  // ~0.03 learning rate
 ```
 
-#### Building HLS Projects
+#### Building HLS with v++ (Recommended)
 
 ```bash
 cd hardware/hls
 
-# Create project
-vivado_hls -f scripts/create_project.tcl
+# Option 1: Use build script
+./scripts/build_hls.sh --clean
 
-# Run C simulation
-vivado_hls -f scripts/run_csim.tcl
+# Option 2: Direct v++ command
+v++ -c --mode hls \
+    --part xc7z020clg400-1 \
+    --work_dir ./hls_output \
+    --hls.clock 10ns \
+    --hls.syn.top snn_top_hls \
+    --hls.syn.file "src/snn_top_hls.cpp" \
+    --hls.flow_target vivado
 
-# Run synthesis
-vivado_hls -f scripts/run_synthesis.tcl
-
-# Run co-simulation
-vivado_hls -f scripts/run_cosim.tcl
-
-# Export IP
-vivado_hls -f scripts/export_ip.tcl
+# Check synthesis results
+cat hls_output/hls/syn/report/csynth.rpt
 ```
+
+**Build Script Options**:
+```bash
+./scripts/build_hls.sh --help
+
+Options:
+  --clean        Remove previous build
+  --clock 8ns    Set clock period (default: 10ns)
+  --part PART    Target FPGA (default: xc7z020clg400-1)
+  --verbose      Show detailed output
+```
+
+#### Expected HLS Results
+
+| Metric | Target | Achieved |
+|--------|--------|----------|
+| Fmax | 100 MHz | 138.10 MHz ✅ |
+| BRAM | <50% | 20% (56 blocks) |
+| FF | <10% | 2% (2,850) |
+| LUT | <30% | 21% (11,503) |
+| DSP | 0 | 0 (shift-based) |
 
 ### Vivado Project Creation
 
 #### Using TCL Scripts
 
-**Create HLS Project**:
-```bash
-vivado_hls -f create_hls_project.tcl
-```
-
 **Create Vivado Project**:
 ```bash
+source /tools/Xilinx/2025.2/Vivado/settings64.sh
 vivado -mode batch -source create_vivado_project.tcl
 ```
 

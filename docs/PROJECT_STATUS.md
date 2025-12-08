@@ -1,6 +1,6 @@
 # Project Status - SNN FPGA Accelerator
 
-**Last Updated**: December 8, 2025
+**Last Updated**: January 2025
 
 ## Overview
 
@@ -10,16 +10,27 @@ Event-Driven Spiking Neural Network (SNN) Accelerator for PYNQ-Z2 FPGA with on-c
 
 ## 🎉 HLS Synthesis Complete!
 
+### Latest Results (Per-Neuron Trace Architecture v2.0)
+
+| Metric | Value | Notes |
+|--------|-------|-------|
+| **Target Frequency** | 100 MHz | 10ns clock period |
+| **Achieved Fmax** | **138.10 MHz** | +38% timing margin |
+| **Timing Slack** | +0.06 ns | Meets timing with margin |
+
 ### Resource Utilization (xc7z020-clg400-1)
 | Resource | Used | Available | Utilization |
 |----------|------|-----------|-------------|
-| **BRAM** | 32 | 280 | 11% |
-| **DSP** | 39 | 220 | 17% |
-| **FF** | 58,184 | 106,400 | 54% |
-| **LUT** | 56,644 | 53,200 | 106% ⚠️ |
+| **BRAM** | 56 | 280 | 20% |
+| **DSP** | 0 | 220 | 0% |
+| **FF** | 2,850 | 106,400 | 2% |
+| **LUT** | 11,503 | 53,200 | 21% |
 
-- **Estimated Fmax**: 126.49 MHz (target: 100 MHz)
-- **IP Location**: `hardware/ip_repo/snn_top_hls/`
+### Architecture Highlights
+- **Per-Neuron Trace**: O(N+M) memory instead of O(N×M) per-synapse
+- **Lazy Update**: Compute-on-demand trace decay
+- **LUT-based Decay**: 16-entry exponential decay lookup table
+- **Build Tool**: Vitis HLS 2025.2 with **v++ CLI** (TCL deprecated)
 
 ---
 
@@ -43,13 +54,13 @@ Event-Driven Spiking Neural Network (SNN) Accelerator for PYNQ-Z2 FPGA with on-c
 ### 2. HLS Implementation
 | Module | Status | Notes |
 |--------|--------|-------|
-| `snn_top_hls.cpp` | ✅ Complete | HLS synthesized with v++ (LUT optimized) |
+| `snn_top_hls.cpp` | ✅ Complete | **Per-Neuron Trace architecture**, 138.10 MHz |
 | `learning_engine.cpp` | ✅ Complete | STDP/R-STDP with eligibility traces |
 | `spike_encoder.cpp` | ✅ Complete | Rate/Temporal encoding |
 | `weight_update.cpp` | ✅ Complete | Batch weight updates |
 | `pc_interface.cpp` | ✅ Complete | Spike/Weight/Membrane potential I/O |
 
-> Note: `spike_decoder.cpp` removed - decoding handled in software on PC side
+> **Build System**: Uses `v++` CLI (Vitis 2025.2). Legacy TCL workflow deprecated.
 
 ### 3. Python Software
 | Component | Status | Tests |
@@ -68,25 +79,18 @@ Event-Driven Spiking Neural Network (SNN) Accelerator for PYNQ-Z2 FPGA with on-c
 
 ## 🔄 In Progress / Pending
 
-### 1. Vitis HLS Synthesis
-- **Status**: Blocked by Tcl environment issue
-- **Issue**: Tcl 8.6.13 vs 8.6.11 version conflict in Vitis HLS 2025.2
-- **Workaround**: Use Vitis HLS GUI mode for synthesis
-- **Required**: Generate `snn_top_hls` IP for Vivado integration
+### 1. Vivado Integration
+- **Status**: Ready for integration
+- **HLS IP**: Successfully synthesized with v++
+- **Project Location**: `hardware/vivado/`
 
-### 2. AXI Wrapper
-- **Status**: Pending HLS synthesis
-- **Note**: Original RTL `axi_wrapper.v` was removed, replaced by HLS implementation
-- **Required**: HLS IP generation for `axi_wrapper`
-
-### 3. Vivado Integration
-- **Status**: Project created, synthesis blocked
-- **Blocker**: Missing `axi_wrapper` module
-- **Project Location**: `build/vivado/snn_accelerator_pynq.xpr`
-
-### 4. Bitstream Generation
-- **Status**: Pending successful synthesis
+### 2. Bitstream Generation
+- **Status**: Pending Vivado implementation
 - **Target**: PYNQ-Z2 (xc7z020clg400-1)
+
+### 3. Hardware Testing
+- **Status**: Pending bitstream
+- **Goal**: Validate on PYNQ-Z2 board
 
 ---
 
@@ -108,7 +112,7 @@ Event-Driven-Spiking-Neural-Network-Accelerator-for-FPGA/
 │   │   ├── src/           # HLS C++ source
 │   │   ├── include/       # HLS headers
 │   │   ├── test/          # HLS testbenches
-│   │   └── scripts/       # TCL synthesis scripts
+│   │   └── scripts/       # v++ build scripts (build_hls.sh)
 │   ├── constraints/       # XDC constraint files
 │   ├── scripts/           # Vivado TCL scripts
 │   └── ip_repo/           # Generated IP repository
@@ -124,20 +128,33 @@ Event-Driven-Spiking-Neural-Network-Accelerator-for-FPGA/
 
 ## Next Steps
 
-1. **Run Vitis HLS in GUI mode** to synthesize:
-   - `snn_top_hls`
-   - `axi_wrapper` (if separate)
-
-2. **Export HLS IP** to `hardware/ip_repo/`
-
-3. **Run Vivado synthesis**:
+1. **Run Vivado Implementation**:
    ```bash
-   vivado -mode batch -source hardware/scripts/run_synthesis.tcl
+   cd hardware/vivado
+   vivado -mode batch -source ../scripts/create_project.tcl
    ```
 
-4. **Generate bitstream** for PYNQ-Z2
+2. **Generate Bitstream** for PYNQ-Z2
 
-5. **Test on hardware** with Python driver
+3. **Test on Hardware** with Python driver
+
+---
+
+## Build Commands
+
+### HLS Synthesis (v++ CLI)
+```bash
+cd hardware/hls/scripts
+./build_hls.sh           # Full build
+./build_hls.sh csim      # C-simulation only
+./build_hls.sh syn       # Synthesis only
+```
+
+### Vivado Build
+```bash
+cd hardware/vivado
+vivado -mode batch -source ../scripts/build_bitstream.tcl
+```
 
 ---
 
@@ -163,24 +180,34 @@ ALL TESTS PASSED - NO HIGH-Z ISSUES
 87 passed, 3 skipped
 ```
 
-### HLS C-Simulation (December 5, 2025)
+### HLS Synthesis Results (January 2025)
 ```
-snn_top_hls: All tests passed
-- Forward propagation: PASS
-- STDP learning: PASS
-- R-STDP with eligibility traces: PASS
-- Spike encoding/decoding: PASS
+============================================================
+ Vitis HLS 2025.2 Synthesis Results (v++ CLI)
+============================================================
+
+Target: xc7z020clg400-1 (PYNQ-Z2)
+Clock: 10ns (100 MHz target)
+
+TIMING:
+- Achieved Fmax: 138.10 MHz
+- Timing Slack: +0.06 ns
+- Status: PASS ✅
+
+RESOURCES:
+- BRAM: 56 / 280 (20%)
+- LUT:  11,503 / 53,200 (21%)
+- FF:   2,850 / 106,400 (2%)
+- DSP:  0 / 220 (0%)
+
+ARCHITECTURE: Per-Neuron Trace (O(N+M) memory)
 ```
 
 ---
 
 ## Known Issues
 
-1. **Vitis HLS Tcl Environment**: Tcl version conflict prevents batch mode execution
-   - System has Tcl 8.6.13, Vitis expects 8.6.11
-   - Solution: Use GUI mode or resolve system Tcl version
-
-2. **PYNQ-Z2 Board Part**: Not installed in Vivado board store
+1. **PYNQ-Z2 Board Part**: Not installed in Vivado board store
    - Using direct part specification (xc7z020clg400-1) instead
 
 ---

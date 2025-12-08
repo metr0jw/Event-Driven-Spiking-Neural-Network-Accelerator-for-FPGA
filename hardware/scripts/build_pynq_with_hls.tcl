@@ -31,15 +31,24 @@ puts ""
 #-----------------------------------------------------------------------------
 puts "Step 1: Checking HLS IP..."
 
+# Check for v++ generated output first, then legacy location
+set hls_output_path "$proj_root/hardware/hls/hls_output"
 set hls_ip_path "$hls_ip_dir/snn_top_hls_1_0"
-if {![file exists $hls_ip_path]} {
-    puts "ERROR: HLS IP not found at $hls_ip_path"
+
+if {[file exists "$hls_output_path/hls/impl/ip"]} {
+    set hls_ip_path "$hls_output_path/hls/impl/ip"
+    puts "  Found v++ HLS IP: $hls_ip_path"
+} elseif {[file exists $hls_ip_path]} {
+    puts "  Found legacy HLS IP: $hls_ip_path"
+} else {
+    puts "ERROR: HLS IP not found"
     puts "Please run HLS synthesis first:"
     puts "  cd hardware/hls/scripts"
-    puts "  vitis_hls -f run_snn_top_hls.tcl"
+    puts "  ./build_hls.sh"
+    puts ""
+    puts "Note: vitis_hls -f script.tcl is deprecated in Vitis 2025.2+"
     exit 1
 }
-puts "  Found HLS IP: $hls_ip_path"
 
 #-----------------------------------------------------------------------------
 # Step 2: Create Vivado project

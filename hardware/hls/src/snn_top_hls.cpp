@@ -7,8 +7,10 @@
 // Contact       : jwlee@linux.com
 // Description   : Unified HLS top-level integrating:
 //                 - AXI4-Lite control/status registers
-//                 - AXI4-Stream spike I/O
+//                 - AXI4-Stream spike I/O (AER: Address Event Representation)
 //                 - STDP/R-STDP on-chip learning engine
+//                 - Per-Neuron Trace (NOT Per-Synapse) for memory efficiency
+//                 - Lazy Update with timestamp-based decay
 //                 - Weight memory management
 //                 - Direct interface to Verilog SNN core
 //-----------------------------------------------------------------------------
@@ -16,64 +18,72 @@
 #include "snn_top_hls.h"
 
 //=============================================================================
-// Weight Memory (On-Chip BRAM)
-// Note: HLS pragmas for these arrays are applied inside the top function
+// Weight Memory (On-Chip BRAM) - O(N x M)
 //=============================================================================
 static weight_t weight_memory[MAX_NEURONS][MAX_NEURONS];
 
-// Spike time tracking for STDP
-static spike_time_t pre_spike_times[MAX_NEURONS];
-static spike_time_t post_spike_times[MAX_NEURONS];
+//=============================================================================
+// Per-Neuron Trace Storage - O(N + M) instead of O(N x M)
+//=============================================================================
 
-// Eligibility traces for R-STDP
-static ap_fixed<16,8> eligibility_traces[MAX_NEURONS][MAX_NEURONS];
+// Pre-synaptic trace (x_i): Updated when input neuron i fires
+// Stores: 8-bit trace value + 16-bit last spike timestamp
+typedef struct {
+    ap_uint<8> trace;           // Exponential trace value (fixed-point 0.0-1.0)
+    ap_uint<16> last_spike_time; // Timestamp for lazy update
+} neuron_trace_t;
+
+static neuron_trace_t pre_traces[MAX_NEURONS];   // Input neuron traces
+static neuron_trace_t post_traces[MAX_NEURONS];  // Output neuron traces
 
 //=============================================================================
-// STDP Weight Update Calculation (Shift/AC with DSP)
+// Exponential Decay Look-Up Table for Lazy Update
+// exp(-dt/tau) approximated with 16 entries for dt=0..15
+// After dt>=16, trace decays to near zero
 //=============================================================================
-static weight_delta_t calc_stdp_update(
-    spike_time_t pre_time,
-    spike_time_t post_time,
-    const learning_params_t &params
+static const ap_uint<8> EXP_DECAY_LUT[16] = {
+    255,  // dt=0:  exp(0) = 1.0
+    223,  // dt=1:  ~0.875
+    195,  // dt=2:  ~0.765
+    170,  // dt=3:  ~0.670
+    149,  // dt=4:  ~0.585
+    130,  // dt=5:  ~0.512
+    114,  // dt=6:  ~0.448
+    100,  // dt=7:  ~0.392
+    87,   // dt=8:  ~0.343
+    76,   // dt=9:  ~0.300
+    67,   // dt=10: ~0.262
+    58,   // dt=11: ~0.229
+    51,   // dt=12: ~0.200
+    45,   // dt=13: ~0.175
+    39,   // dt=14: ~0.153
+    34    // dt=15: ~0.134
+};
+
+//=============================================================================
+// Lazy Update: Compute decayed trace on-demand
+// Only calculates when spike occurs, avoiding per-step computation
+//=============================================================================
+static ap_uint<8> compute_decayed_trace(
+    ap_uint<8> old_trace,
+    ap_uint<16> last_time,
+    ap_uint<16> current_time
 ) {
     #pragma HLS INLINE
-    #pragma HLS ALLOCATION operation instances=mul limit=0
     
-    if (pre_time == 0 || post_time == 0) return 0;
+    if (old_trace == 0) return 0;
     
-    ap_int<32> dt = (ap_int<32>)post_time - (ap_int<32>)pre_time;
-    weight_delta_t delta = 0;
+    // Calculate elapsed time
+    ap_uint<16> dt = current_time - last_time;
     
-    // Pure shift/add STDP implementation
-    // Decay approximation: window - |dt| scaled by shifts only
-    // a_plus/a_minus assumed to be power-of-2 friendly (0.5, 0.25, etc.)
+    // If too much time passed, trace is essentially zero
+    if (dt >= 16) return 0;
     
-    ap_int<16> abs_dt = (dt >= 0) ? (ap_int<16>)dt : (ap_int<16>)(-dt);
-    ap_int<16> window = (ap_int<16>)params.stdp_window;
+    // Apply exponential decay from LUT
+    // new_trace = old_trace * decay_factor / 256
+    ap_uint<16> decayed = ((ap_uint<16>)old_trace * EXP_DECAY_LUT[dt]) >> 8;
     
-    if (abs_dt < window && abs_dt > 0) {
-        // Linear decay: (window - abs_dt) >> 4 gives normalized decay factor
-        ap_int<16> decay = (window - abs_dt) >> 4;
-        
-        // Scale by learning amplitude using shifts only
-        // Approximate a_plus/a_minus as shift amounts (e.g., 0.5 = >>1, 0.25 = >>2)
-        // decay >> 2 for base amplitude, then adjust
-        ap_int<16> base_delta = decay >> 2;  // Base scaling
-        
-        // Add fractional components: x + (x>>1) + (x>>2) ≈ x*1.75
-        ap_int<16> scaled_delta = base_delta + (base_delta >> 1);
-        
-        if (dt > 0) {
-            // LTP: pre before post (positive delta)
-            delta = (weight_delta_t)scaled_delta;
-        } else {
-            // LTD: post before pre (negative delta)
-            // Slightly smaller magnitude for LTD
-            delta = (weight_delta_t)(-(base_delta + (base_delta >> 2)));
-        }
-    }
-    
-    return delta;
+    return (ap_uint<8>)decayed;
 }
 
 //=============================================================================
@@ -87,230 +97,209 @@ static weight_t clip_weight(ap_int<16> w) {
 }
 
 //=============================================================================
-// Process Pre-Synaptic Spike (Input Spike)
+// Process Pre-Synaptic Spike (Input Spike) - Per-Neuron Trace STDP
+// When pre-neuron i fires:
+//   1. Update pre_trace[i] with lazy decay + spike
+//   2. For all post-neurons j: Apply LTD using post_trace[j]
+//      W[i][j] -= A_neg * post_trace[j]
 //=============================================================================
-static void process_pre_spike(
+static void process_pre_spike_aer(
     neuron_id_t pre_id,
-    spike_time_t current_time,
-    const learning_params_t &params,
-    bool learning_enable,
-    hls::stream<weight_update_t> &weight_updates
-) {
-    #pragma HLS INLINE off
-    
-    // Update pre-spike time
-    pre_spike_times[pre_id] = current_time;
-    
-    if (!learning_enable) return;
-    
-    // STDP: Check all post-synaptic neurons for LTD
-    STDP_LTD_LOOP: for (int post_id = 0; post_id < MAX_NEURONS; post_id++) {
-        #pragma HLS PIPELINE II=1
-        #pragma HLS UNROLL factor=4
-        
-        spike_time_t post_time = post_spike_times[post_id];
-        if (post_time == 0) continue;
-        
-        weight_delta_t delta = calc_stdp_update(current_time, post_time, params);
-        
-        if (delta != 0) {
-            weight_update_t update;
-            update.pre_id = pre_id;
-            update.post_id = post_id;
-            update.delta = delta;
-            update.timestamp = current_time;
-            
-            if (!weight_updates.full()) {
-                weight_updates.write(update);
-            }
-        }
-    }
-}
-
-//=============================================================================
-// Process Post-Synaptic Spike (Output Spike)
-//=============================================================================
-static void process_post_spike(
-    neuron_id_t post_id,
-    spike_time_t current_time,
-    const learning_params_t &params,
-    bool learning_enable,
-    hls::stream<weight_update_t> &weight_updates
-) {
-    #pragma HLS INLINE off
-    
-    // Update post-spike time
-    post_spike_times[post_id] = current_time;
-    
-    if (!learning_enable) return;
-    
-    // STDP: Check all pre-synaptic neurons for LTP
-    STDP_LTP_LOOP: for (int pre_id = 0; pre_id < MAX_NEURONS; pre_id++) {
-        #pragma HLS PIPELINE II=1
-        #pragma HLS UNROLL factor=4
-        
-        spike_time_t pre_time = pre_spike_times[pre_id];
-        if (pre_time == 0) continue;
-        
-        weight_delta_t delta = calc_stdp_update(pre_time, current_time, params);
-        
-        if (delta != 0) {
-            weight_update_t update;
-            update.pre_id = pre_id;
-            update.post_id = post_id;
-            update.delta = delta;
-            update.timestamp = current_time;
-            
-            if (!weight_updates.full()) {
-                weight_updates.write(update);
-            }
-        }
-    }
-}
-
-//=============================================================================
-// Apply Weight Updates (Shift/Add only - minimizes LUT, uses BRAM/DSP)
-//=============================================================================
-static void apply_weight_updates(
-    hls::stream<weight_update_t> &weight_updates,
-    const learning_params_t &params,
-    ap_int<8> reward_signal  // For R-STDP
-) {
-    #pragma HLS INLINE off
-    #pragma HLS ALLOCATION operation instances=mul limit=1
-    
-    // Process limited updates per cycle to bound resource usage
-    int update_count = 0;
-    const int MAX_UPDATES_PER_CYCLE = 8;
-    
-    while (!weight_updates.empty() && update_count < MAX_UPDATES_PER_CYCLE) {
-        #pragma HLS PIPELINE II=2
-        #pragma HLS LOOP_TRIPCOUNT min=0 max=8
-        
-        weight_update_t update = weight_updates.read();
-        update_count++;
-        
-        // Read current weight from BRAM
-        weight_t current_weight = weight_memory[update.pre_id][update.post_id];
-        
-        // Apply R-STDP modulation using shifts only
-        ap_int<16> modulated_delta = (ap_int<16>)update.delta;
-        
-        if (params.rstdp_enable && reward_signal != 0) {
-            // Reward scaling: delta * (reward/128) ≈ (delta * reward) >> 7
-            // But avoid multiply: use conditional shifts based on reward magnitude
-            ap_int<8> abs_reward = (reward_signal >= 0) ? reward_signal : (ap_int<8>)(-reward_signal);
-            
-            // Approximate scaling by reward using shifts
-            // reward ~64-127 -> delta >> 1, reward ~32-63 -> delta >> 2, etc.
-            ap_int<16> reward_scaled;
-            if (abs_reward >= 64) {
-                reward_scaled = modulated_delta - (modulated_delta >> 2);  // ~0.75x
-            } else if (abs_reward >= 32) {
-                reward_scaled = modulated_delta >> 1;  // 0.5x
-            } else if (abs_reward >= 16) {
-                reward_scaled = modulated_delta >> 2;  // 0.25x
-            } else {
-                reward_scaled = modulated_delta >> 3;  // 0.125x
-            }
-            
-            // Apply sign of reward
-            modulated_delta = (reward_signal >= 0) ? reward_scaled : -reward_scaled;
-            
-            // Update eligibility trace using shift
-            ap_fixed<16,8> trace_update = (ap_fixed<16,8>)update.delta >> 2;
-            eligibility_traces[update.pre_id][update.post_id] += trace_update;
-        }
-        
-        // Apply learning rate using shifts: lr * delta
-        // Approximate learning_rate (0.01-1.0) with shift: >>4 for ~0.0625, >>3 for ~0.125
-        ap_int<16> lr_scaled = (modulated_delta >> 3) + (modulated_delta >> 5);  // ~0.156
-        
-        // Update weight
-        ap_int<16> new_weight = (ap_int<16>)current_weight + lr_scaled;
-        
-        // Clip and store to BRAM
-        weight_memory[update.pre_id][update.post_id] = clip_weight(new_weight);
-    }
-}
-
-//=============================================================================
-// Decay Eligibility Traces (For R-STDP) - Shift-based decay
-//=============================================================================
-static void decay_eligibility_traces(const learning_params_t &params) {
-    #pragma HLS INLINE off
-    #pragma HLS ALLOCATION operation instances=mul limit=0
-    
-    DECAY_OUTER: for (int i = 0; i < MAX_NEURONS; i++) {
-        DECAY_INNER: for (int j = 0; j < MAX_NEURONS; j++) {
-            #pragma HLS PIPELINE II=1
-            #pragma HLS UNROLL factor=4
-            
-            // Decay using shift: trace = trace - (trace >> 3) ≈ trace * 0.875
-            ap_fixed<16,8> trace = eligibility_traces[i][j];
-            ap_fixed<16,8> decay_amount = trace >> 3;  // 12.5% decay
-            eligibility_traces[i][j] = trace - decay_amount;
-        }
-    }
-}
-
-//=============================================================================
-// Apply Reward Signal (R-STDP) - Pure Shift/Add Operations
-//=============================================================================
-static void apply_reward_signal(
-    ap_int<8> reward_signal,
+    ap_uint<16> current_time,
     const learning_params_t &params
 ) {
     #pragma HLS INLINE off
-    #pragma HLS ALLOCATION operation instances=mul limit=0
     
-    if (reward_signal == 0) return;
+    // Step 1: Lazy update pre-trace and add new spike
+    neuron_trace_t old_pre = pre_traces[pre_id];
+    ap_uint<8> decayed_pre = compute_decayed_trace(old_pre.trace, old_pre.last_spike_time, current_time);
     
-    // Precompute reward sign and magnitude
+    // Add new spike contribution (saturating add)
+    ap_uint<9> new_trace = (ap_uint<9>)decayed_pre + 128;  // Add 0.5 in 8-bit fixed point
+    pre_traces[pre_id].trace = (new_trace > 255) ? (ap_uint<8>)255 : (ap_uint<8>)new_trace;
+    pre_traces[pre_id].last_spike_time = current_time;
+    
+    // Step 2: Apply LTD to all synapses from this pre-neuron
+    // W[pre_id][j] -= A_neg * post_trace[j]
+    LTD_LOOP: for (int j = 0; j < MAX_NEURONS; j++) {
+        #pragma HLS PIPELINE II=2
+        #pragma HLS UNROLL factor=4
+        
+        // Get decayed post-trace (lazy update)
+        neuron_trace_t post_t = post_traces[j];
+        ap_uint<8> post_trace_val = compute_decayed_trace(post_t.trace, post_t.last_spike_time, current_time);
+        
+        // Skip if no recent post-synaptic activity
+        if (post_trace_val == 0) continue;
+        
+        // Compute LTD: delta = -A_neg * post_trace (using shifts)
+        // A_neg ≈ 0.01 -> post_trace >> 7 (approximately)
+        ap_int<16> delta = -((ap_int<16>)post_trace_val >> 6);  // ~0.015
+        
+        // Read current weight
+        weight_t current_w = weight_memory[pre_id][j];
+        
+        // Apply update
+        weight_memory[pre_id][j] = clip_weight((ap_int<16>)current_w + delta);
+    }
+}
+
+//=============================================================================
+// Process Post-Synaptic Spike (Output Spike) - Per-Neuron Trace STDP
+// When post-neuron j fires:
+//   1. Update post_trace[j] with lazy decay + spike
+//   2. For all pre-neurons i: Apply LTP using pre_trace[i]
+//      W[i][j] += A_pos * pre_trace[i]
+//=============================================================================
+static void process_post_spike_aer(
+    neuron_id_t post_id,
+    ap_uint<16> current_time,
+    const learning_params_t &params
+) {
+    #pragma HLS INLINE off
+    
+    // Step 1: Lazy update post-trace and add new spike
+    neuron_trace_t old_post = post_traces[post_id];
+    ap_uint<8> decayed_post = compute_decayed_trace(old_post.trace, old_post.last_spike_time, current_time);
+    
+    // Add new spike contribution (saturating add)
+    ap_uint<9> new_trace = (ap_uint<9>)decayed_post + 128;
+    post_traces[post_id].trace = (new_trace > 255) ? (ap_uint<8>)255 : (ap_uint<8>)new_trace;
+    post_traces[post_id].last_spike_time = current_time;
+    
+    // Step 2: Apply LTP to all synapses to this post-neuron
+    // W[i][post_id] += A_pos * pre_trace[i]
+    LTP_LOOP: for (int i = 0; i < MAX_NEURONS; i++) {
+        #pragma HLS PIPELINE II=2
+        #pragma HLS UNROLL factor=4
+        
+        // Get decayed pre-trace (lazy update)
+        neuron_trace_t pre_t = pre_traces[i];
+        ap_uint<8> pre_trace_val = compute_decayed_trace(pre_t.trace, pre_t.last_spike_time, current_time);
+        
+        // Skip if no recent pre-synaptic activity
+        if (pre_trace_val == 0) continue;
+        
+        // Compute LTP: delta = +A_pos * pre_trace (using shifts)
+        // A_pos ≈ 0.01 -> pre_trace >> 6 (slightly larger than LTD)
+        ap_int<16> delta = (ap_int<16>)pre_trace_val >> 5;  // ~0.03
+        
+        // Read current weight
+        weight_t current_w = weight_memory[i][post_id];
+        
+        // Apply update
+        weight_memory[i][post_id] = clip_weight((ap_int<16>)current_w + delta);
+    }
+}
+
+//=============================================================================
+// Apply Weight Updates with R-STDP Modulation
+// Per-Neuron Eligibility Traces: O(N+M) storage only
+//=============================================================================
+
+// Per-Neuron Eligibility traces for R-STDP (NOT per-synapse!)
+static ap_int<8> pre_eligibility[MAX_NEURONS];   // Pre-neuron eligibility
+static ap_int<8> post_eligibility[MAX_NEURONS];  // Post-neuron eligibility
+
+static void apply_rstdp_reward(
+    ap_int<8> reward_signal,
+    const learning_params_t &params,
+    ap_uint<16> current_time
+) {
+    #pragma HLS INLINE off
+    
+    if (reward_signal == 0 || !params.rstdp_enable) return;
+    
     bool reward_positive = (reward_signal >= 0);
     ap_uint<8> reward_mag = reward_positive ? (ap_uint<8>)reward_signal : (ap_uint<8>)(-reward_signal);
     
-    // Determine shift amount based on reward magnitude
-    ap_uint<3> reward_shift;
-    if (reward_mag >= 64) reward_shift = 1;       // ~0.5x
-    else if (reward_mag >= 32) reward_shift = 2;  // ~0.25x
-    else if (reward_mag >= 16) reward_shift = 3;  // ~0.125x
-    else reward_shift = 4;                         // ~0.0625x
+    // Determine shift based on reward magnitude
+    ap_uint<2> shift_sel;
+    if (reward_mag >= 64) shift_sel = 0;
+    else if (reward_mag >= 32) shift_sel = 1;
+    else if (reward_mag >= 16) shift_sel = 2;
+    else shift_sel = 3;
     
-    REWARD_OUTER: for (int i = 0; i < MAX_NEURONS; i++) {
-        REWARD_INNER: for (int j = 0; j < MAX_NEURONS; j++) {
-            #pragma HLS PIPELINE II=1
+    // Apply reward modulated by eligibility traces
+    // W[i][j] += reward * pre_elig[i] * post_elig[j] (approximated with shifts)
+    RSTDP_OUTER: for (int i = 0; i < MAX_NEURONS; i++) {
+        #pragma HLS LOOP_FLATTEN off
+        
+        ap_int<8> pre_elig = pre_eligibility[i];
+        if (pre_elig == 0) continue;  // Skip inactive pre-neurons
+        
+        RSTDP_INNER: for (int j = 0; j < MAX_NEURONS; j++) {
+            #pragma HLS PIPELINE II=2
             #pragma HLS UNROLL factor=4
             
-            ap_fixed<16,8> trace = eligibility_traces[i][j];
+            ap_int<8> post_elig = post_eligibility[j];
+            if (post_elig == 0) continue;  // Skip inactive post-neurons
             
-            // Skip zero traces (most common case)
-            if (trace == 0) continue;
+            // Combine eligibilities: (pre_elig * post_elig) >> 8
+            ap_int<16> combined_elig = ((ap_int<16>)pre_elig * (ap_int<16>)post_elig) >> 8;
             
-            weight_t current = weight_memory[i][j];
-            
-            // Scale trace by reward using precomputed shift
-            ap_int<16> trace_int = (ap_int<16>)trace;
-            ap_int<16> scaled_trace;
-            
-            // Manual shift selection to avoid variable shift (saves LUT)
-            switch (reward_shift) {
-                case 1: scaled_trace = trace_int >> 1; break;
-                case 2: scaled_trace = trace_int >> 2; break;
-                case 3: scaled_trace = trace_int >> 3; break;
-                default: scaled_trace = trace_int >> 4; break;
+            // Apply reward scaling
+            ap_int<16> scaled;
+            switch (shift_sel) {
+                case 0: scaled = combined_elig >> 1; break;
+                case 1: scaled = combined_elig >> 2; break;
+                case 2: scaled = combined_elig >> 3; break;
+                default: scaled = combined_elig >> 4; break;
             }
             
-            // Apply learning rate: another shift (>> 3 ≈ 0.125)
-            ap_int<16> delta = scaled_trace >> 3;
-            
-            // Apply reward sign
-            if (!reward_positive) delta = -delta;
+            // Apply sign
+            ap_int<16> delta = reward_positive ? scaled : (ap_int<16>)(-scaled);
             
             // Update weight
-            weight_memory[i][j] = clip_weight((ap_int<16>)current + delta);
+            weight_t current_w = weight_memory[i][j];
+            weight_memory[i][j] = clip_weight((ap_int<16>)current_w + delta);
         }
     }
+}
+
+//=============================================================================
+// Decay Per-Neuron Eligibility Traces - O(N+M) operations only!
+// Much faster than O(N*M) per-synapse decay
+//=============================================================================
+static void decay_eligibility_traces(const learning_params_t &params) {
+    #pragma HLS INLINE off
+    
+    // Decay pre-neuron eligibility traces
+    DECAY_PRE: for (int i = 0; i < MAX_NEURONS; i++) {
+        #pragma HLS PIPELINE II=1
+        #pragma HLS UNROLL factor=8
+        
+        // Simple shift-based decay: trace = trace - (trace >> 3) ≈ 0.875
+        ap_int<8> trace = pre_eligibility[i];
+        pre_eligibility[i] = trace - (trace >> 3);
+    }
+    
+    // Decay post-neuron eligibility traces
+    DECAY_POST: for (int j = 0; j < MAX_NEURONS; j++) {
+        #pragma HLS PIPELINE II=1
+        #pragma HLS UNROLL factor=8
+        
+        ap_int<8> trace = post_eligibility[j];
+        post_eligibility[j] = trace - (trace >> 3);
+    }
+}
+
+//=============================================================================
+// Update Eligibility on Spike Events
+// Called when pre/post spikes occur to mark "credit assignment"
+//=============================================================================
+static void update_eligibility_on_pre_spike(neuron_id_t pre_id) {
+    #pragma HLS INLINE
+    // Increase pre-neuron eligibility (saturating)
+    ap_int<9> new_elig = (ap_int<9>)pre_eligibility[pre_id] + 32;
+    pre_eligibility[pre_id] = (new_elig > 127) ? (ap_int<8>)127 : (ap_int<8>)new_elig;
+}
+
+static void update_eligibility_on_post_spike(neuron_id_t post_id) {
+    #pragma HLS INLINE
+    // Increase post-neuron eligibility (saturating)
+    ap_int<9> new_elig = (ap_int<9>)post_eligibility[post_id] + 32;
+    post_eligibility[post_id] = (new_elig > 127) ? (ap_int<8>)127 : (ap_int<8>)new_elig;
 }
 
 //=============================================================================
@@ -397,16 +386,22 @@ void snn_top_hls(
     
     //=========================================================================
     // Static Array Storage Bindings (must be inside function scope)
-    // Increased BRAM usage to reduce LUT - factor=4 matches UNROLL
+    // Per-Neuron architecture: O(N+M) instead of O(N*M)
     //=========================================================================
     #pragma HLS BIND_STORAGE variable=weight_memory type=RAM_2P impl=BRAM
     #pragma HLS ARRAY_PARTITION variable=weight_memory cyclic factor=4 dim=2
-    #pragma HLS BIND_STORAGE variable=pre_spike_times type=RAM_2P impl=BRAM
-    #pragma HLS ARRAY_PARTITION variable=pre_spike_times cyclic factor=4
-    #pragma HLS BIND_STORAGE variable=post_spike_times type=RAM_2P impl=BRAM
-    #pragma HLS ARRAY_PARTITION variable=post_spike_times cyclic factor=4
-    #pragma HLS BIND_STORAGE variable=eligibility_traces type=RAM_2P impl=BRAM
-    #pragma HLS ARRAY_PARTITION variable=eligibility_traces cyclic factor=4 dim=2
+    
+    // Per-Neuron Eligibility (O(N+M) vs O(N*M)) - Major memory savings!
+    #pragma HLS BIND_STORAGE variable=pre_eligibility type=RAM_2P impl=BRAM
+    #pragma HLS ARRAY_PARTITION variable=pre_eligibility cyclic factor=8
+    #pragma HLS BIND_STORAGE variable=post_eligibility type=RAM_2P impl=BRAM
+    #pragma HLS ARRAY_PARTITION variable=post_eligibility cyclic factor=8
+    
+    // Per-Neuron Traces for Lazy Update (includes timestamp)
+    #pragma HLS BIND_STORAGE variable=pre_traces type=RAM_2P impl=BRAM
+    #pragma HLS ARRAY_PARTITION variable=pre_traces cyclic factor=8
+    #pragma HLS BIND_STORAGE variable=post_traces type=RAM_2P impl=BRAM
+    #pragma HLS ARRAY_PARTITION variable=post_traces cyclic factor=8
     
     //=========================================================================
     // Internal State
@@ -415,10 +410,6 @@ void snn_top_hls(
     static ap_uint<32> spike_counter = 0;
     static ap_uint<32> update_counter = 0;
     static bool initialized = false;
-    
-    // Weight update FIFO
-    static hls::stream<weight_update_t> weight_update_fifo;
-    #pragma HLS STREAM variable=weight_update_fifo depth=64
     
     //=========================================================================
     // Control Signal Extraction
@@ -441,19 +432,20 @@ void snn_top_hls(
         spike_counter = 0;
         update_counter = 0;
         
-        // Clear spike times
-        RESET_PRE: for (int i = 0; i < MAX_NEURONS; i++) {
+        // Clear Per-Neuron eligibility traces (O(N+M) - much faster than O(N*M)!)
+        RESET_ELIG: for (int i = 0; i < MAX_NEURONS; i++) {
             #pragma HLS PIPELINE II=1
-            pre_spike_times[i] = 0;
-            post_spike_times[i] = 0;
+            pre_eligibility[i] = 0;
+            post_eligibility[i] = 0;
         }
         
-        // Clear eligibility traces
-        RESET_TRACE_OUTER: for (int i = 0; i < MAX_NEURONS; i++) {
-            RESET_TRACE_INNER: for (int j = 0; j < MAX_NEURONS; j++) {
-                #pragma HLS PIPELINE II=1
-                eligibility_traces[i][j] = 0;
-            }
+        // Clear Per-Neuron STDP traces
+        RESET_TRACES: for (int i = 0; i < MAX_NEURONS; i++) {
+            #pragma HLS PIPELINE II=1
+            pre_traces[i].trace = 0;
+            pre_traces[i].last_spike_time = 0;
+            post_traces[i].trace = 0;
+            post_traces[i].last_spike_time = 0;
         }
         
         // Initialize weights (optional: set to small random or zero)
@@ -499,9 +491,10 @@ void snn_top_hls(
         spike_in_neuron_id = pre_id;
         spike_in_weight = weight;
         
-        // Process for STDP learning
+        // Per-Neuron STDP: Update pre-trace and process LTD
         if (learning_enable) {
-            process_pre_spike(pre_id, timestamp, learning_params, true, weight_update_fifo);
+            process_pre_spike_aer(pre_id, timestamp, learning_params);
+            update_eligibility_on_pre_spike(pre_id);
         }
         
         spike_counter++;
@@ -530,25 +523,18 @@ void snn_top_hls(
         out_pkt.user = 0;
         m_axis_spikes.write(out_pkt);
         
-        // Process for STDP learning
+        // Per-Neuron STDP: Update post-trace and process LTP
         if (learning_enable) {
-            process_post_spike(post_id, timestamp, learning_params, true, weight_update_fifo);
+            process_post_spike_aer(post_id, timestamp, learning_params);
+            update_eligibility_on_post_spike(post_id);
         }
     }
     
     //=========================================================================
-    // Apply Weight Updates (STDP)
-    //=========================================================================
-    if (learning_enable) {
-        apply_weight_updates(weight_update_fifo, learning_params, 
-                            learning_params.rstdp_enable ? reward_signal : (ap_int<8>)0);
-    }
-    
-    //=========================================================================
-    // Apply Reward Signal (R-STDP)
+    // R-STDP Reward Application (uses Per-Neuron Eligibility Traces)
     //=========================================================================
     if (apply_reward && learning_params.rstdp_enable) {
-        apply_reward_signal(reward_signal, learning_params);
+        apply_rstdp_reward(reward_signal, learning_params, timestamp);
         decay_eligibility_traces(learning_params);
     }
     
@@ -596,7 +582,7 @@ void snn_top_hls(
     status[0] = snn_ready;
     status[1] = snn_busy;
     status[2] = learning_enable;
-    status[3] = !weight_update_fifo.empty();
+    status[3] = 0;  // Reserved
     status[4] = learning_params.rstdp_enable;
     status(15, 8) = update_counter(7, 0);
     

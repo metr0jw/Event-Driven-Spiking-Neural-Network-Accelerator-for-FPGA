@@ -1,42 +1,55 @@
-How to use the HLS scripts
-1. Make the shell script executable:
+# HLS Scripts Directory
+
+## Modern v++ Workflow (Vitis 2025.2+)
+
+The legacy `vitis_hls -f script.tcl` workflow is deprecated.
+Use the `v++` compiler instead.
+
+### Quick Build
+
 ```bash
-chmod +x hls/script/run_hls.sh
+# From hardware/hls directory:
+./scripts/build_hls.sh --clean
+
+# Or directly with v++:
+v++ -c --mode hls \
+    --part xc7z020clg400-1 \
+    --work_dir ./hls_output \
+    --hls.clock 10ns \
+    --hls.syn.top snn_top_hls \
+    --hls.syn.file "src/snn_top_hls.cpp" \
+    --hls.flow_target vivado
 ```
 
-2. Run the complete HLS flow
+### Files
+
+- `build_hls.sh` - Main build script using v++ CLI
+- `hls_config.cfg` - HLS configuration (optional)
+- `snn_top_hls_vpp.cfg` - v++ configuration file
+- `vpp_hls_config.cfg` - Alternative v++ config
+
+### Build Options
+
 ```bash
-cd hardware/hls/script
-
-# Basic build (synthesis + IP export)
-./run_hls.sh
-
-# Clean build with co-simulation
-./run_hls.sh --clean --cosim
-
-# Or run directly with Vitis HLS
-vitis_hls -f build_all.tcl
+./scripts/build_hls.sh --help
 ```
 
-3. Individual script usage
-```tcl
-# Create projects only
-vitis_hls -f create_project.tcl
+Options:
+- `--clean` - Remove previous build
+- `--clock 8ns` - Set clock period
+- `--part xc7z020clg400-1` - Target FPGA
+- `--verbose` - Show detailed output
 
-# Run synthesis only
-vitis_hls -f run_synthesis.tcl
+### Output
 
-# Run co-simulation only
-vitis_hls -f run_cosim.tcl
+After successful synthesis:
+- IP Package: `hls_output/hls/impl/ip/`
+- Reports: `hls_output/hls/syn/report/csynth.rpt`
+- ZIP: `hls_output/snn_top_hls.zip`
 
-# Export IP only
-vitis_hls -f export_ip.tcl
+### Integration with Vivado
+
+Copy the generated IP to your project:
+```bash
+cp -r hls_output/hls/impl/ip ../ip_repo/snn_top_hls
 ```
-
-4. Integration with Vivado:
-After running the scripts, the generated IP cores will be in hardware/ip/custom_ip/.
-To use them in Vivado:
- - Open your Vivado project
- - Go to Settings → Repository → IP Repository
- - Add the path to hardware/ip/custom_ip/
- - The HLS IP cores will appear in the IP catalog

@@ -3,9 +3,14 @@
 # Build and benchmark all optimization strategies
 #==============================================================================
 
-# Vivado HLS settings
+# Vitis HLS settings (v++ CLI - Vitis 2025.2+)
+# Note: Legacy vitis_hls -f script.tcl is deprecated
+VPP := v++
+VPP_FLAGS := --mode hls
+
+# For software testbench only (not HLS synthesis)
 VIVADO_HLS := vitis_hls
-VIVADO_HLS_FLAGS := 
+VIVADO_HLS_FLAGS :== 
 
 # Compiler settings for software testbench
 CXX := g++

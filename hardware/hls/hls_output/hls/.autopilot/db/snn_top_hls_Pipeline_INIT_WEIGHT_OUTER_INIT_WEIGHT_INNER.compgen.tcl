@@ -11,17 +11,17 @@ if {${::AESL::PGuard_autoexp_gen}} {
 if {${::AESL::PGuard_autoexp_gen}} {
 if {[info proc ::AESL_LIB_XILADAPTER::xil_bram_gen] == "::AESL_LIB_XILADAPTER::xil_bram_gen"} {
 eval "::AESL_LIB_XILADAPTER::xil_bram_gen { \
-    id 21 \
-    name p_ZL13weight_memory_0 \
+    id 49 \
+    name p_ZL13weight_memory_0_0 \
     reset_level 1 \
     sync_rst true \
     dir O \
-    corename p_ZL13weight_memory_0 \
+    corename p_ZL13weight_memory_0_0 \
     op interface \
-    ports { p_ZL13weight_memory_0_address1 { O 9 vector } p_ZL13weight_memory_0_ce1 { O 1 bit } p_ZL13weight_memory_0_we1 { O 1 bit } p_ZL13weight_memory_0_d1 { O 8 vector } } \
+    ports { p_ZL13weight_memory_0_0_address1 { O 9 vector } p_ZL13weight_memory_0_0_ce1 { O 1 bit } p_ZL13weight_memory_0_0_we1 { O 1 bit } p_ZL13weight_memory_0_0_d1 { O 8 vector } } \
 } "
 } else {
-puts "@W \[IMPL-110\] Cannot find bus interface model in the library. Ignored generation of bus interface for 'p_ZL13weight_memory_0'"
+puts "@W \[IMPL-110\] Cannot find bus interface model in the library. Ignored generation of bus interface for 'p_ZL13weight_memory_0_0'"
 }
 }
 
@@ -30,17 +30,17 @@ puts "@W \[IMPL-110\] Cannot find bus interface model in the library. Ignored ge
 if {${::AESL::PGuard_autoexp_gen}} {
 if {[info proc ::AESL_LIB_XILADAPTER::xil_bram_gen] == "::AESL_LIB_XILADAPTER::xil_bram_gen"} {
 eval "::AESL_LIB_XILADAPTER::xil_bram_gen { \
-    id 22 \
-    name p_ZL13weight_memory_1 \
+    id 50 \
+    name p_ZL13weight_memory_0_1 \
     reset_level 1 \
     sync_rst true \
     dir O \
-    corename p_ZL13weight_memory_1 \
+    corename p_ZL13weight_memory_0_1 \
     op interface \
-    ports { p_ZL13weight_memory_1_address1 { O 9 vector } p_ZL13weight_memory_1_ce1 { O 1 bit } p_ZL13weight_memory_1_we1 { O 1 bit } p_ZL13weight_memory_1_d1 { O 8 vector } } \
+    ports { p_ZL13weight_memory_0_1_address1 { O 9 vector } p_ZL13weight_memory_0_1_ce1 { O 1 bit } p_ZL13weight_memory_0_1_we1 { O 1 bit } p_ZL13weight_memory_0_1_d1 { O 8 vector } } \
 } "
 } else {
-puts "@W \[IMPL-110\] Cannot find bus interface model in the library. Ignored generation of bus interface for 'p_ZL13weight_memory_1'"
+puts "@W \[IMPL-110\] Cannot find bus interface model in the library. Ignored generation of bus interface for 'p_ZL13weight_memory_0_1'"
 }
 }
 
@@ -49,17 +49,17 @@ puts "@W \[IMPL-110\] Cannot find bus interface model in the library. Ignored ge
 if {${::AESL::PGuard_autoexp_gen}} {
 if {[info proc ::AESL_LIB_XILADAPTER::xil_bram_gen] == "::AESL_LIB_XILADAPTER::xil_bram_gen"} {
 eval "::AESL_LIB_XILADAPTER::xil_bram_gen { \
-    id 23 \
-    name p_ZL13weight_memory_2 \
+    id 51 \
+    name p_ZL13weight_memory_1_0 \
     reset_level 1 \
     sync_rst true \
     dir O \
-    corename p_ZL13weight_memory_2 \
+    corename p_ZL13weight_memory_1_0 \
     op interface \
-    ports { p_ZL13weight_memory_2_address1 { O 9 vector } p_ZL13weight_memory_2_ce1 { O 1 bit } p_ZL13weight_memory_2_we1 { O 1 bit } p_ZL13weight_memory_2_d1 { O 8 vector } } \
+    ports { p_ZL13weight_memory_1_0_address1 { O 9 vector } p_ZL13weight_memory_1_0_ce1 { O 1 bit } p_ZL13weight_memory_1_0_we1 { O 1 bit } p_ZL13weight_memory_1_0_d1 { O 8 vector } } \
 } "
 } else {
-puts "@W \[IMPL-110\] Cannot find bus interface model in the library. Ignored generation of bus interface for 'p_ZL13weight_memory_2'"
+puts "@W \[IMPL-110\] Cannot find bus interface model in the library. Ignored generation of bus interface for 'p_ZL13weight_memory_1_0'"
 }
 }
 
@@ -68,17 +68,17 @@ puts "@W \[IMPL-110\] Cannot find bus interface model in the library. Ignored ge
 if {${::AESL::PGuard_autoexp_gen}} {
 if {[info proc ::AESL_LIB_XILADAPTER::xil_bram_gen] == "::AESL_LIB_XILADAPTER::xil_bram_gen"} {
 eval "::AESL_LIB_XILADAPTER::xil_bram_gen { \
-    id 24 \
-    name p_ZL13weight_memory_3 \
+    id 52 \
+    name p_ZL13weight_memory_1_1 \
     reset_level 1 \
     sync_rst true \
     dir O \
-    corename p_ZL13weight_memory_3 \
+    corename p_ZL13weight_memory_1_1 \
     op interface \
-    ports { p_ZL13weight_memory_3_address1 { O 9 vector } p_ZL13weight_memory_3_ce1 { O 1 bit } p_ZL13weight_memory_3_we1 { O 1 bit } p_ZL13weight_memory_3_d1 { O 8 vector } } \
+    ports { p_ZL13weight_memory_1_1_address1 { O 9 vector } p_ZL13weight_memory_1_1_ce1 { O 1 bit } p_ZL13weight_memory_1_1_we1 { O 1 bit } p_ZL13weight_memory_1_1_d1 { O 8 vector } } \
 } "
 } else {
-puts "@W \[IMPL-110\] Cannot find bus interface model in the library. Ignored generation of bus interface for 'p_ZL13weight_memory_3'"
+puts "@W \[IMPL-110\] Cannot find bus interface model in the library. Ignored generation of bus interface for 'p_ZL13weight_memory_1_1'"
 }
 }
 
@@ -87,17 +87,17 @@ puts "@W \[IMPL-110\] Cannot find bus interface model in the library. Ignored ge
 if {${::AESL::PGuard_autoexp_gen}} {
 if {[info proc ::AESL_LIB_XILADAPTER::xil_bram_gen] == "::AESL_LIB_XILADAPTER::xil_bram_gen"} {
 eval "::AESL_LIB_XILADAPTER::xil_bram_gen { \
-    id 25 \
-    name p_ZL13weight_memory_4 \
+    id 53 \
+    name p_ZL13weight_memory_2_0 \
     reset_level 1 \
     sync_rst true \
     dir O \
-    corename p_ZL13weight_memory_4 \
+    corename p_ZL13weight_memory_2_0 \
     op interface \
-    ports { p_ZL13weight_memory_4_address1 { O 9 vector } p_ZL13weight_memory_4_ce1 { O 1 bit } p_ZL13weight_memory_4_we1 { O 1 bit } p_ZL13weight_memory_4_d1 { O 8 vector } } \
+    ports { p_ZL13weight_memory_2_0_address1 { O 9 vector } p_ZL13weight_memory_2_0_ce1 { O 1 bit } p_ZL13weight_memory_2_0_we1 { O 1 bit } p_ZL13weight_memory_2_0_d1 { O 8 vector } } \
 } "
 } else {
-puts "@W \[IMPL-110\] Cannot find bus interface model in the library. Ignored generation of bus interface for 'p_ZL13weight_memory_4'"
+puts "@W \[IMPL-110\] Cannot find bus interface model in the library. Ignored generation of bus interface for 'p_ZL13weight_memory_2_0'"
 }
 }
 
@@ -106,17 +106,17 @@ puts "@W \[IMPL-110\] Cannot find bus interface model in the library. Ignored ge
 if {${::AESL::PGuard_autoexp_gen}} {
 if {[info proc ::AESL_LIB_XILADAPTER::xil_bram_gen] == "::AESL_LIB_XILADAPTER::xil_bram_gen"} {
 eval "::AESL_LIB_XILADAPTER::xil_bram_gen { \
-    id 26 \
-    name p_ZL13weight_memory_5 \
+    id 54 \
+    name p_ZL13weight_memory_2_1 \
     reset_level 1 \
     sync_rst true \
     dir O \
-    corename p_ZL13weight_memory_5 \
+    corename p_ZL13weight_memory_2_1 \
     op interface \
-    ports { p_ZL13weight_memory_5_address1 { O 9 vector } p_ZL13weight_memory_5_ce1 { O 1 bit } p_ZL13weight_memory_5_we1 { O 1 bit } p_ZL13weight_memory_5_d1 { O 8 vector } } \
+    ports { p_ZL13weight_memory_2_1_address1 { O 9 vector } p_ZL13weight_memory_2_1_ce1 { O 1 bit } p_ZL13weight_memory_2_1_we1 { O 1 bit } p_ZL13weight_memory_2_1_d1 { O 8 vector } } \
 } "
 } else {
-puts "@W \[IMPL-110\] Cannot find bus interface model in the library. Ignored generation of bus interface for 'p_ZL13weight_memory_5'"
+puts "@W \[IMPL-110\] Cannot find bus interface model in the library. Ignored generation of bus interface for 'p_ZL13weight_memory_2_1'"
 }
 }
 
@@ -125,17 +125,17 @@ puts "@W \[IMPL-110\] Cannot find bus interface model in the library. Ignored ge
 if {${::AESL::PGuard_autoexp_gen}} {
 if {[info proc ::AESL_LIB_XILADAPTER::xil_bram_gen] == "::AESL_LIB_XILADAPTER::xil_bram_gen"} {
 eval "::AESL_LIB_XILADAPTER::xil_bram_gen { \
-    id 27 \
-    name p_ZL13weight_memory_6 \
+    id 55 \
+    name p_ZL13weight_memory_3_0 \
     reset_level 1 \
     sync_rst true \
     dir O \
-    corename p_ZL13weight_memory_6 \
+    corename p_ZL13weight_memory_3_0 \
     op interface \
-    ports { p_ZL13weight_memory_6_address1 { O 9 vector } p_ZL13weight_memory_6_ce1 { O 1 bit } p_ZL13weight_memory_6_we1 { O 1 bit } p_ZL13weight_memory_6_d1 { O 8 vector } } \
+    ports { p_ZL13weight_memory_3_0_address1 { O 9 vector } p_ZL13weight_memory_3_0_ce1 { O 1 bit } p_ZL13weight_memory_3_0_we1 { O 1 bit } p_ZL13weight_memory_3_0_d1 { O 8 vector } } \
 } "
 } else {
-puts "@W \[IMPL-110\] Cannot find bus interface model in the library. Ignored generation of bus interface for 'p_ZL13weight_memory_6'"
+puts "@W \[IMPL-110\] Cannot find bus interface model in the library. Ignored generation of bus interface for 'p_ZL13weight_memory_3_0'"
 }
 }
 
@@ -144,17 +144,17 @@ puts "@W \[IMPL-110\] Cannot find bus interface model in the library. Ignored ge
 if {${::AESL::PGuard_autoexp_gen}} {
 if {[info proc ::AESL_LIB_XILADAPTER::xil_bram_gen] == "::AESL_LIB_XILADAPTER::xil_bram_gen"} {
 eval "::AESL_LIB_XILADAPTER::xil_bram_gen { \
-    id 28 \
-    name p_ZL13weight_memory_7 \
+    id 56 \
+    name p_ZL13weight_memory_3_1 \
     reset_level 1 \
     sync_rst true \
     dir O \
-    corename p_ZL13weight_memory_7 \
+    corename p_ZL13weight_memory_3_1 \
     op interface \
-    ports { p_ZL13weight_memory_7_address1 { O 9 vector } p_ZL13weight_memory_7_ce1 { O 1 bit } p_ZL13weight_memory_7_we1 { O 1 bit } p_ZL13weight_memory_7_d1 { O 8 vector } } \
+    ports { p_ZL13weight_memory_3_1_address1 { O 9 vector } p_ZL13weight_memory_3_1_ce1 { O 1 bit } p_ZL13weight_memory_3_1_we1 { O 1 bit } p_ZL13weight_memory_3_1_d1 { O 8 vector } } \
 } "
 } else {
-puts "@W \[IMPL-110\] Cannot find bus interface model in the library. Ignored generation of bus interface for 'p_ZL13weight_memory_7'"
+puts "@W \[IMPL-110\] Cannot find bus interface model in the library. Ignored generation of bus interface for 'p_ZL13weight_memory_3_1'"
 }
 }
 

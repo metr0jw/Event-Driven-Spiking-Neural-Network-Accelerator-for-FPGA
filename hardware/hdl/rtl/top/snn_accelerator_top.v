@@ -489,6 +489,9 @@ endgenerate
     wire [31:0] debug_cycle_count = cycle_counter;
     wire [31:0] debug_active_cycles = active_cycles;
     
+    // Button/switch control signals (declare before use)
+    wire inject_spike = btn[2] & sw[1];
+    
     // Test spike injection (connected to status output via LED)
     reg inject_spike_d;
     wire test_spike_pulse;
@@ -539,7 +542,7 @@ endgenerate
     
     wire manual_reset = btn[0];
     wire single_step = btn[1] & sw[0];
-    wire inject_spike = btn[2] & sw[1];
+    // inject_spike already declared above
     wire clear_stats = btn[3];
 
 endmodule

@@ -1,7 +1,7 @@
 <profile>
 
 <section name = "Vitis HLS Report for 'decay_eligibility_traces'" level="0">
-<item name = "Date">Mon Dec  8 20:06:21 2025
+<item name = "Date">Mon Dec  8 20:49:11 2025
 </item>
 <item name = "Version">2025.2 (Build 6295257 on Nov 14 2025)</item>
 <item name = "Project">hls_output</item>
@@ -15,7 +15,7 @@
 <section name = "" level="1">
 <item name = "Summary"><table name="" hasTotal="0">
 <keys size="4">Clock, Target, Estimated, Uncertainty</keys>
-<column name="ap_clk">10.00 ns, 6.321 ns, 2.70 ns</column>
+<column name="ap_clk">10.00 ns, 5.169 ns, 2.70 ns</column>
 </table>
 </item>
 </section>
@@ -24,18 +24,19 @@
 <section name = "" level="1">
 <item name = "Summary"><table name="" hasTotal="0">
 <keys size="8">, min, max, min, max, min, max, Type</keys>
-<column name="">8197, 8197, 81.970 us, 81.970 us, 0, 0, loop pipeline stp</column>
+<column name="">12, 12, 0.120 us, 0.120 us, 12, 12, no</column>
 </table>
 </item>
 <item name = "Detail">
 <section name = "" level="1">
 <item name = "Instance"><table name="" hasTotal="0">
 <keys size="9">Instance, Module, min, max, min, max, min, max, Type</keys>
+<column name="grp_decay_eligibility_traces_Pipeline_DECAY_PRE_fu_46">decay_eligibility_traces_Pipeline_DECAY_PRE, 11, 11, 0.110 us, 0.110 us, 0, 0, loop pipeline stp</column>
+<column name="grp_decay_eligibility_traces_Pipeline_DECAY_POST_fu_66">decay_eligibility_traces_Pipeline_DECAY_POST, 11, 11, 0.110 us, 0.110 us, 0, 0, loop pipeline stp</column>
 </table>
 </item>
 <item name = "Loop"><table name="" hasTotal="0">
 <keys size="8">Loop Name, min, max, Latency, achieved, target, Count, Pipelined</keys>
-<column name="- DECAY_OUTER_DECAY_INNER">8195, 8195, 6, 2, 1, 4096, yes</column>
 </table>
 </item>
 </section>

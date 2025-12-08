@@ -9,11 +9,11 @@
       <key>filename</key>
       <string>src/snn_top_hls.cpp</string>
       <key>line</key>
-      <integer>39</integer>
+      <integer>72</integer>
       <key>column</key>
       <integer>1</integer>
       <key>message</key>
-      <string>HLS pragma dump _XLX_SEP_ PragmaIsValid=1_XLX_SEP_ PragmaType=inline_XLX_SEP_ PragmaContext=hls_XLX_SEP_ PragmaFunction=calc_stdp_update_XLX_SEP_ PragmaOptions=_XLX_SEP_</string>
+      <string>HLS pragma dump _XLX_SEP_ PragmaIsValid=1_XLX_SEP_ PragmaType=inline_XLX_SEP_ PragmaContext=hls_XLX_SEP_ PragmaFunction=compute_decayed_trace_XLX_SEP_ PragmaOptions=_XLX_SEP_</string>
       <key>ID</key>
       <integer>6999</integer>
       <key>WarningOption</key>
@@ -25,7 +25,7 @@
       <key>filename</key>
       <string>src/snn_top_hls.cpp</string>
       <key>line</key>
-      <integer>69</integer>
+      <integer>93</integer>
       <key>column</key>
       <integer>1</integer>
       <key>message</key>
@@ -41,11 +41,11 @@
       <key>filename</key>
       <string>src/snn_top_hls.cpp</string>
       <key>line</key>
-      <integer>85</integer>
+      <integer>111</integer>
       <key>column</key>
       <integer>1</integer>
       <key>message</key>
-      <string>HLS pragma dump _XLX_SEP_ PragmaIsValid=1_XLX_SEP_ PragmaType=inline_XLX_SEP_ PragmaContext=hls_XLX_SEP_ PragmaFunction=process_pre_spike_XLX_SEP_ PragmaOptions=off_XLX_SEP_</string>
+      <string>HLS pragma dump _XLX_SEP_ PragmaIsValid=1_XLX_SEP_ PragmaType=inline_XLX_SEP_ PragmaContext=hls_XLX_SEP_ PragmaFunction=process_pre_spike_aer_XLX_SEP_ PragmaOptions=off_XLX_SEP_</string>
       <key>ID</key>
       <integer>6999</integer>
       <key>WarningOption</key>
@@ -57,27 +57,11 @@
       <key>filename</key>
       <string>src/snn_top_hls.cpp</string>
       <key>line</key>
-      <integer>94</integer>
+      <integer>125</integer>
       <key>column</key>
       <integer>1</integer>
       <key>message</key>
-      <string>HLS pragma dump _XLX_SEP_ PragmaIsValid=1_XLX_SEP_ PragmaType=pipeline_XLX_SEP_ PragmaContext=hls_XLX_SEP_ PragmaFunction=process_pre_spike_XLX_SEP_ PragmaOptions=II=1_XLX_SEP_</string>
-      <key>ID</key>
-      <integer>6999</integer>
-      <key>WarningOption</key>
-      <string>dump-hls-pragmas</string>
-    </dict>
-    <dict>
-      <key>level</key>
-      <string>warning</string>
-      <key>filename</key>
-      <string>src/snn_top_hls.cpp</string>
-      <key>line</key>
-      <integer>95</integer>
-      <key>column</key>
-      <integer>1</integer>
-      <key>message</key>
-      <string>HLS pragma dump _XLX_SEP_ PragmaIsValid=1_XLX_SEP_ PragmaType=unroll_XLX_SEP_ PragmaContext=hls_XLX_SEP_ PragmaFunction=process_pre_spike_XLX_SEP_ PragmaOptions=factor=8_XLX_SEP_</string>
+      <string>HLS pragma dump _XLX_SEP_ PragmaIsValid=1_XLX_SEP_ PragmaType=pipeline_XLX_SEP_ PragmaContext=hls_XLX_SEP_ PragmaFunction=process_pre_spike_aer_XLX_SEP_ PragmaOptions=II=2_XLX_SEP_</string>
       <key>ID</key>
       <integer>6999</integer>
       <key>WarningOption</key>
@@ -93,7 +77,7 @@
       <key>column</key>
       <integer>1</integer>
       <key>message</key>
-      <string>HLS pragma dump _XLX_SEP_ PragmaIsValid=1_XLX_SEP_ PragmaType=inline_XLX_SEP_ PragmaContext=hls_XLX_SEP_ PragmaFunction=process_post_spike_XLX_SEP_ PragmaOptions=off_XLX_SEP_</string>
+      <string>HLS pragma dump _XLX_SEP_ PragmaIsValid=1_XLX_SEP_ PragmaType=unroll_XLX_SEP_ PragmaContext=hls_XLX_SEP_ PragmaFunction=process_pre_spike_aer_XLX_SEP_ PragmaOptions=factor=4_XLX_SEP_</string>
       <key>ID</key>
       <integer>6999</integer>
       <key>WarningOption</key>
@@ -105,11 +89,27 @@
       <key>filename</key>
       <string>src/snn_top_hls.cpp</string>
       <key>line</key>
-      <integer>135</integer>
+      <integer>109</integer>
+      <key>column</key>
+      <integer>30</integer>
+      <key>message</key>
+      <string>unused parameter &apos;params&apos;</string>
+      <key>ID</key>
+      <integer>6591</integer>
+      <key>WarningOption</key>
+      <string>unused-parameter</string>
+    </dict>
+    <dict>
+      <key>level</key>
+      <string>warning</string>
+      <key>filename</key>
+      <string>src/snn_top_hls.cpp</string>
+      <key>line</key>
+      <integer>159</integer>
       <key>column</key>
       <integer>1</integer>
       <key>message</key>
-      <string>HLS pragma dump _XLX_SEP_ PragmaIsValid=1_XLX_SEP_ PragmaType=pipeline_XLX_SEP_ PragmaContext=hls_XLX_SEP_ PragmaFunction=process_post_spike_XLX_SEP_ PragmaOptions=II=1_XLX_SEP_</string>
+      <string>HLS pragma dump _XLX_SEP_ PragmaIsValid=1_XLX_SEP_ PragmaType=inline_XLX_SEP_ PragmaContext=hls_XLX_SEP_ PragmaFunction=process_post_spike_aer_XLX_SEP_ PragmaOptions=off_XLX_SEP_</string>
       <key>ID</key>
       <integer>6999</integer>
       <key>WarningOption</key>
@@ -121,11 +121,11 @@
       <key>filename</key>
       <string>src/snn_top_hls.cpp</string>
       <key>line</key>
-      <integer>136</integer>
+      <integer>173</integer>
       <key>column</key>
       <integer>1</integer>
       <key>message</key>
-      <string>HLS pragma dump _XLX_SEP_ PragmaIsValid=1_XLX_SEP_ PragmaType=unroll_XLX_SEP_ PragmaContext=hls_XLX_SEP_ PragmaFunction=process_post_spike_XLX_SEP_ PragmaOptions=factor=8_XLX_SEP_</string>
+      <string>HLS pragma dump _XLX_SEP_ PragmaIsValid=1_XLX_SEP_ PragmaType=pipeline_XLX_SEP_ PragmaContext=hls_XLX_SEP_ PragmaFunction=process_post_spike_aer_XLX_SEP_ PragmaOptions=II=2_XLX_SEP_</string>
       <key>ID</key>
       <integer>6999</integer>
       <key>WarningOption</key>
@@ -137,11 +137,11 @@
       <key>filename</key>
       <string>src/snn_top_hls.cpp</string>
       <key>line</key>
-      <integer>165</integer>
+      <integer>174</integer>
       <key>column</key>
       <integer>1</integer>
       <key>message</key>
-      <string>HLS pragma dump _XLX_SEP_ PragmaIsValid=1_XLX_SEP_ PragmaType=inline_XLX_SEP_ PragmaContext=hls_XLX_SEP_ PragmaFunction=apply_weight_updates_XLX_SEP_ PragmaOptions=off_XLX_SEP_</string>
+      <string>HLS pragma dump _XLX_SEP_ PragmaIsValid=1_XLX_SEP_ PragmaType=unroll_XLX_SEP_ PragmaContext=hls_XLX_SEP_ PragmaFunction=process_post_spike_aer_XLX_SEP_ PragmaOptions=factor=4_XLX_SEP_</string>
       <key>ID</key>
       <integer>6999</integer>
       <key>WarningOption</key>
@@ -153,11 +153,27 @@
       <key>filename</key>
       <string>src/snn_top_hls.cpp</string>
       <key>line</key>
-      <integer>168</integer>
+      <integer>157</integer>
+      <key>column</key>
+      <integer>30</integer>
+      <key>message</key>
+      <string>unused parameter &apos;params&apos;</string>
+      <key>ID</key>
+      <integer>6591</integer>
+      <key>WarningOption</key>
+      <string>unused-parameter</string>
+    </dict>
+    <dict>
+      <key>level</key>
+      <string>warning</string>
+      <key>filename</key>
+      <string>src/snn_top_hls.cpp</string>
+      <key>line</key>
+      <integer>209</integer>
       <key>column</key>
       <integer>1</integer>
       <key>message</key>
-      <string>HLS pragma dump _XLX_SEP_ PragmaIsValid=1_XLX_SEP_ PragmaType=pipeline_XLX_SEP_ PragmaContext=hls_XLX_SEP_ PragmaFunction=apply_weight_updates_XLX_SEP_ PragmaOptions=II=2_XLX_SEP_</string>
+      <string>HLS pragma dump _XLX_SEP_ PragmaIsValid=1_XLX_SEP_ PragmaType=inline_XLX_SEP_ PragmaContext=hls_XLX_SEP_ PragmaFunction=apply_rstdp_reward_XLX_SEP_ PragmaOptions=off_XLX_SEP_</string>
       <key>ID</key>
       <integer>6999</integer>
       <key>WarningOption</key>
@@ -169,7 +185,71 @@
       <key>filename</key>
       <string>src/snn_top_hls.cpp</string>
       <key>line</key>
-      <integer>200</integer>
+      <integer>226</integer>
+      <key>column</key>
+      <integer>1</integer>
+      <key>message</key>
+      <string>HLS pragma dump _XLX_SEP_ PragmaIsValid=1_XLX_SEP_ PragmaType=loop_flatten_XLX_SEP_ PragmaContext=hls_XLX_SEP_ PragmaFunction=apply_rstdp_reward_XLX_SEP_ PragmaOptions=off_XLX_SEP_</string>
+      <key>ID</key>
+      <integer>6999</integer>
+      <key>WarningOption</key>
+      <string>dump-hls-pragmas</string>
+    </dict>
+    <dict>
+      <key>level</key>
+      <string>warning</string>
+      <key>filename</key>
+      <string>src/snn_top_hls.cpp</string>
+      <key>line</key>
+      <integer>232</integer>
+      <key>column</key>
+      <integer>1</integer>
+      <key>message</key>
+      <string>HLS pragma dump _XLX_SEP_ PragmaIsValid=1_XLX_SEP_ PragmaType=pipeline_XLX_SEP_ PragmaContext=hls_XLX_SEP_ PragmaFunction=apply_rstdp_reward_XLX_SEP_ PragmaOptions=II=2_XLX_SEP_</string>
+      <key>ID</key>
+      <integer>6999</integer>
+      <key>WarningOption</key>
+      <string>dump-hls-pragmas</string>
+    </dict>
+    <dict>
+      <key>level</key>
+      <string>warning</string>
+      <key>filename</key>
+      <string>src/snn_top_hls.cpp</string>
+      <key>line</key>
+      <integer>233</integer>
+      <key>column</key>
+      <integer>1</integer>
+      <key>message</key>
+      <string>HLS pragma dump _XLX_SEP_ PragmaIsValid=1_XLX_SEP_ PragmaType=unroll_XLX_SEP_ PragmaContext=hls_XLX_SEP_ PragmaFunction=apply_rstdp_reward_XLX_SEP_ PragmaOptions=factor=4_XLX_SEP_</string>
+      <key>ID</key>
+      <integer>6999</integer>
+      <key>WarningOption</key>
+      <string>dump-hls-pragmas</string>
+    </dict>
+    <dict>
+      <key>level</key>
+      <string>warning</string>
+      <key>filename</key>
+      <string>src/snn_top_hls.cpp</string>
+      <key>line</key>
+      <integer>207</integer>
+      <key>column</key>
+      <integer>17</integer>
+      <key>message</key>
+      <string>unused parameter &apos;current_time&apos;</string>
+      <key>ID</key>
+      <integer>6591</integer>
+      <key>WarningOption</key>
+      <string>unused-parameter</string>
+    </dict>
+    <dict>
+      <key>level</key>
+      <string>warning</string>
+      <key>filename</key>
+      <string>src/snn_top_hls.cpp</string>
+      <key>line</key>
+      <integer>265</integer>
       <key>column</key>
       <integer>1</integer>
       <key>message</key>
@@ -185,7 +265,7 @@
       <key>filename</key>
       <string>src/snn_top_hls.cpp</string>
       <key>line</key>
-      <integer>204</integer>
+      <integer>269</integer>
       <key>column</key>
       <integer>1</integer>
       <key>message</key>
@@ -201,11 +281,11 @@
       <key>filename</key>
       <string>src/snn_top_hls.cpp</string>
       <key>line</key>
-      <integer>217</integer>
+      <integer>270</integer>
       <key>column</key>
       <integer>1</integer>
       <key>message</key>
-      <string>HLS pragma dump _XLX_SEP_ PragmaIsValid=1_XLX_SEP_ PragmaType=inline_XLX_SEP_ PragmaContext=hls_XLX_SEP_ PragmaFunction=apply_reward_signal_XLX_SEP_ PragmaOptions=off_XLX_SEP_</string>
+      <string>HLS pragma dump _XLX_SEP_ PragmaIsValid=1_XLX_SEP_ PragmaType=unroll_XLX_SEP_ PragmaContext=hls_XLX_SEP_ PragmaFunction=decay_eligibility_traces_XLX_SEP_ PragmaOptions=factor=8_XLX_SEP_</string>
       <key>ID</key>
       <integer>6999</integer>
       <key>WarningOption</key>
@@ -217,11 +297,75 @@
       <key>filename</key>
       <string>src/snn_top_hls.cpp</string>
       <key>line</key>
-      <integer>225</integer>
+      <integer>279</integer>
       <key>column</key>
       <integer>1</integer>
       <key>message</key>
-      <string>HLS pragma dump _XLX_SEP_ PragmaIsValid=1_XLX_SEP_ PragmaType=pipeline_XLX_SEP_ PragmaContext=hls_XLX_SEP_ PragmaFunction=apply_reward_signal_XLX_SEP_ PragmaOptions=II=1_XLX_SEP_</string>
+      <string>HLS pragma dump _XLX_SEP_ PragmaIsValid=1_XLX_SEP_ PragmaType=pipeline_XLX_SEP_ PragmaContext=hls_XLX_SEP_ PragmaFunction=decay_eligibility_traces_XLX_SEP_ PragmaOptions=II=1_XLX_SEP_</string>
+      <key>ID</key>
+      <integer>6999</integer>
+      <key>WarningOption</key>
+      <string>dump-hls-pragmas</string>
+    </dict>
+    <dict>
+      <key>level</key>
+      <string>warning</string>
+      <key>filename</key>
+      <string>src/snn_top_hls.cpp</string>
+      <key>line</key>
+      <integer>280</integer>
+      <key>column</key>
+      <integer>1</integer>
+      <key>message</key>
+      <string>HLS pragma dump _XLX_SEP_ PragmaIsValid=1_XLX_SEP_ PragmaType=unroll_XLX_SEP_ PragmaContext=hls_XLX_SEP_ PragmaFunction=decay_eligibility_traces_XLX_SEP_ PragmaOptions=factor=8_XLX_SEP_</string>
+      <key>ID</key>
+      <integer>6999</integer>
+      <key>WarningOption</key>
+      <string>dump-hls-pragmas</string>
+    </dict>
+    <dict>
+      <key>level</key>
+      <string>warning</string>
+      <key>filename</key>
+      <string>src/snn_top_hls.cpp</string>
+      <key>line</key>
+      <integer>264</integer>
+      <key>column</key>
+      <integer>63</integer>
+      <key>message</key>
+      <string>unused parameter &apos;params&apos;</string>
+      <key>ID</key>
+      <integer>6591</integer>
+      <key>WarningOption</key>
+      <string>unused-parameter</string>
+    </dict>
+    <dict>
+      <key>level</key>
+      <string>warning</string>
+      <key>filename</key>
+      <string>src/snn_top_hls.cpp</string>
+      <key>line</key>
+      <integer>292</integer>
+      <key>column</key>
+      <integer>1</integer>
+      <key>message</key>
+      <string>HLS pragma dump _XLX_SEP_ PragmaIsValid=1_XLX_SEP_ PragmaType=inline_XLX_SEP_ PragmaContext=hls_XLX_SEP_ PragmaFunction=update_eligibility_on_pre_spike_XLX_SEP_ PragmaOptions=_XLX_SEP_</string>
+      <key>ID</key>
+      <integer>6999</integer>
+      <key>WarningOption</key>
+      <string>dump-hls-pragmas</string>
+    </dict>
+    <dict>
+      <key>level</key>
+      <string>warning</string>
+      <key>filename</key>
+      <string>src/snn_top_hls.cpp</string>
+      <key>line</key>
+      <integer>299</integer>
+      <key>column</key>
+      <integer>1</integer>
+      <key>message</key>
+      <string>HLS pragma dump _XLX_SEP_ PragmaIsValid=1_XLX_SEP_ PragmaType=inline_XLX_SEP_ PragmaContext=hls_XLX_SEP_ PragmaFunction=update_eligibility_on_post_spike_XLX_SEP_ PragmaOptions=_XLX_SEP_</string>
       <key>ID</key>
       <integer>6999</integer>
       <key>WarningOption</key>
@@ -249,7 +393,7 @@
       <key>filename</key>
       <string>src/snn_top_hls.cpp</string>
       <key>line</key>
-      <integer>288</integer>
+      <integer>356</integer>
       <key>column</key>
       <integer>1</integer>
       <key>message</key>
@@ -265,7 +409,7 @@
       <key>filename</key>
       <string>src/snn_top_hls.cpp</string>
       <key>line</key>
-      <integer>289</integer>
+      <integer>357</integer>
       <key>column</key>
       <integer>1</integer>
       <key>message</key>
@@ -281,7 +425,7 @@
       <key>filename</key>
       <string>src/snn_top_hls.cpp</string>
       <key>line</key>
-      <integer>290</integer>
+      <integer>358</integer>
       <key>column</key>
       <integer>1</integer>
       <key>message</key>
@@ -297,7 +441,7 @@
       <key>filename</key>
       <string>src/snn_top_hls.cpp</string>
       <key>line</key>
-      <integer>291</integer>
+      <integer>359</integer>
       <key>column</key>
       <integer>1</integer>
       <key>message</key>
@@ -313,7 +457,7 @@
       <key>filename</key>
       <string>src/snn_top_hls.cpp</string>
       <key>line</key>
-      <integer>292</integer>
+      <integer>360</integer>
       <key>column</key>
       <integer>1</integer>
       <key>message</key>
@@ -329,7 +473,7 @@
       <key>filename</key>
       <string>src/snn_top_hls.cpp</string>
       <key>line</key>
-      <integer>293</integer>
+      <integer>361</integer>
       <key>column</key>
       <integer>1</integer>
       <key>message</key>
@@ -345,7 +489,7 @@
       <key>filename</key>
       <string>src/snn_top_hls.cpp</string>
       <key>line</key>
-      <integer>294</integer>
+      <integer>362</integer>
       <key>column</key>
       <integer>1</integer>
       <key>message</key>
@@ -361,7 +505,7 @@
       <key>filename</key>
       <string>src/snn_top_hls.cpp</string>
       <key>line</key>
-      <integer>295</integer>
+      <integer>363</integer>
       <key>column</key>
       <integer>1</integer>
       <key>message</key>
@@ -377,7 +521,7 @@
       <key>filename</key>
       <string>src/snn_top_hls.cpp</string>
       <key>line</key>
-      <integer>296</integer>
+      <integer>364</integer>
       <key>column</key>
       <integer>1</integer>
       <key>message</key>
@@ -393,7 +537,7 @@
       <key>filename</key>
       <string>src/snn_top_hls.cpp</string>
       <key>line</key>
-      <integer>299</integer>
+      <integer>367</integer>
       <key>column</key>
       <integer>1</integer>
       <key>message</key>
@@ -409,7 +553,7 @@
       <key>filename</key>
       <string>src/snn_top_hls.cpp</string>
       <key>line</key>
-      <integer>300</integer>
+      <integer>368</integer>
       <key>column</key>
       <integer>1</integer>
       <key>message</key>
@@ -425,7 +569,7 @@
       <key>filename</key>
       <string>src/snn_top_hls.cpp</string>
       <key>line</key>
-      <integer>301</integer>
+      <integer>369</integer>
       <key>column</key>
       <integer>1</integer>
       <key>message</key>
@@ -441,7 +585,7 @@
       <key>filename</key>
       <string>src/snn_top_hls.cpp</string>
       <key>line</key>
-      <integer>304</integer>
+      <integer>372</integer>
       <key>column</key>
       <integer>1</integer>
       <key>message</key>
@@ -457,7 +601,7 @@
       <key>filename</key>
       <string>src/snn_top_hls.cpp</string>
       <key>line</key>
-      <integer>305</integer>
+      <integer>373</integer>
       <key>column</key>
       <integer>1</integer>
       <key>message</key>
@@ -473,7 +617,7 @@
       <key>filename</key>
       <string>src/snn_top_hls.cpp</string>
       <key>line</key>
-      <integer>306</integer>
+      <integer>374</integer>
       <key>column</key>
       <integer>1</integer>
       <key>message</key>
@@ -489,7 +633,7 @@
       <key>filename</key>
       <string>src/snn_top_hls.cpp</string>
       <key>line</key>
-      <integer>307</integer>
+      <integer>375</integer>
       <key>column</key>
       <integer>1</integer>
       <key>message</key>
@@ -505,7 +649,7 @@
       <key>filename</key>
       <string>src/snn_top_hls.cpp</string>
       <key>line</key>
-      <integer>308</integer>
+      <integer>376</integer>
       <key>column</key>
       <integer>1</integer>
       <key>message</key>
@@ -521,7 +665,7 @@
       <key>filename</key>
       <string>src/snn_top_hls.cpp</string>
       <key>line</key>
-      <integer>309</integer>
+      <integer>377</integer>
       <key>column</key>
       <integer>1</integer>
       <key>message</key>
@@ -537,7 +681,7 @@
       <key>filename</key>
       <string>src/snn_top_hls.cpp</string>
       <key>line</key>
-      <integer>310</integer>
+      <integer>378</integer>
       <key>column</key>
       <integer>1</integer>
       <key>message</key>
@@ -553,7 +697,7 @@
       <key>filename</key>
       <string>src/snn_top_hls.cpp</string>
       <key>line</key>
-      <integer>311</integer>
+      <integer>379</integer>
       <key>column</key>
       <integer>1</integer>
       <key>message</key>
@@ -569,7 +713,7 @@
       <key>filename</key>
       <string>src/snn_top_hls.cpp</string>
       <key>line</key>
-      <integer>312</integer>
+      <integer>380</integer>
       <key>column</key>
       <integer>1</integer>
       <key>message</key>
@@ -585,7 +729,7 @@
       <key>filename</key>
       <string>src/snn_top_hls.cpp</string>
       <key>line</key>
-      <integer>313</integer>
+      <integer>381</integer>
       <key>column</key>
       <integer>1</integer>
       <key>message</key>
@@ -601,7 +745,7 @@
       <key>filename</key>
       <string>src/snn_top_hls.cpp</string>
       <key>line</key>
-      <integer>314</integer>
+      <integer>382</integer>
       <key>column</key>
       <integer>1</integer>
       <key>message</key>
@@ -617,7 +761,7 @@
       <key>filename</key>
       <string>src/snn_top_hls.cpp</string>
       <key>line</key>
-      <integer>315</integer>
+      <integer>383</integer>
       <key>column</key>
       <integer>1</integer>
       <key>message</key>
@@ -633,7 +777,7 @@
       <key>filename</key>
       <string>src/snn_top_hls.cpp</string>
       <key>line</key>
-      <integer>316</integer>
+      <integer>384</integer>
       <key>column</key>
       <integer>1</integer>
       <key>message</key>
@@ -649,7 +793,7 @@
       <key>filename</key>
       <string>src/snn_top_hls.cpp</string>
       <key>line</key>
-      <integer>317</integer>
+      <integer>385</integer>
       <key>column</key>
       <integer>1</integer>
       <key>message</key>
@@ -665,7 +809,7 @@
       <key>filename</key>
       <string>src/snn_top_hls.cpp</string>
       <key>line</key>
-      <integer>322</integer>
+      <integer>391</integer>
       <key>column</key>
       <integer>1</integer>
       <key>message</key>
@@ -681,11 +825,11 @@
       <key>filename</key>
       <string>src/snn_top_hls.cpp</string>
       <key>line</key>
-      <integer>323</integer>
+      <integer>392</integer>
       <key>column</key>
       <integer>1</integer>
       <key>message</key>
-      <string>HLS pragma dump _XLX_SEP_ PragmaIsValid=1_XLX_SEP_ PragmaType=array_partition_XLX_SEP_ PragmaContext=hls_XLX_SEP_ PragmaFunction=snn_top_hls_XLX_SEP_ PragmaOptions=variable=weight_memory cyclic factor=8 dim=2_XLX_SEP_</string>
+      <string>HLS pragma dump _XLX_SEP_ PragmaIsValid=1_XLX_SEP_ PragmaType=array_partition_XLX_SEP_ PragmaContext=hls_XLX_SEP_ PragmaFunction=snn_top_hls_XLX_SEP_ PragmaOptions=variable=weight_memory cyclic factor=4 dim=2_XLX_SEP_</string>
       <key>ID</key>
       <integer>6999</integer>
       <key>WarningOption</key>
@@ -697,11 +841,11 @@
       <key>filename</key>
       <string>src/snn_top_hls.cpp</string>
       <key>line</key>
-      <integer>324</integer>
+      <integer>395</integer>
       <key>column</key>
       <integer>1</integer>
       <key>message</key>
-      <string>HLS pragma dump _XLX_SEP_ PragmaIsValid=1_XLX_SEP_ PragmaType=bind_storage_XLX_SEP_ PragmaContext=hls_XLX_SEP_ PragmaFunction=snn_top_hls_XLX_SEP_ PragmaOptions=variable=pre_spike_times type=RAM_1P impl=BRAM_XLX_SEP_</string>
+      <string>HLS pragma dump _XLX_SEP_ PragmaIsValid=1_XLX_SEP_ PragmaType=bind_storage_XLX_SEP_ PragmaContext=hls_XLX_SEP_ PragmaFunction=snn_top_hls_XLX_SEP_ PragmaOptions=variable=pre_eligibility type=RAM_2P impl=BRAM_XLX_SEP_</string>
       <key>ID</key>
       <integer>6999</integer>
       <key>WarningOption</key>
@@ -713,11 +857,11 @@
       <key>filename</key>
       <string>src/snn_top_hls.cpp</string>
       <key>line</key>
-      <integer>325</integer>
+      <integer>396</integer>
       <key>column</key>
       <integer>1</integer>
       <key>message</key>
-      <string>HLS pragma dump _XLX_SEP_ PragmaIsValid=1_XLX_SEP_ PragmaType=bind_storage_XLX_SEP_ PragmaContext=hls_XLX_SEP_ PragmaFunction=snn_top_hls_XLX_SEP_ PragmaOptions=variable=post_spike_times type=RAM_1P impl=BRAM_XLX_SEP_</string>
+      <string>HLS pragma dump _XLX_SEP_ PragmaIsValid=1_XLX_SEP_ PragmaType=array_partition_XLX_SEP_ PragmaContext=hls_XLX_SEP_ PragmaFunction=snn_top_hls_XLX_SEP_ PragmaOptions=variable=pre_eligibility cyclic factor=8_XLX_SEP_</string>
       <key>ID</key>
       <integer>6999</integer>
       <key>WarningOption</key>
@@ -729,11 +873,11 @@
       <key>filename</key>
       <string>src/snn_top_hls.cpp</string>
       <key>line</key>
-      <integer>326</integer>
+      <integer>397</integer>
       <key>column</key>
       <integer>1</integer>
       <key>message</key>
-      <string>HLS pragma dump _XLX_SEP_ PragmaIsValid=1_XLX_SEP_ PragmaType=bind_storage_XLX_SEP_ PragmaContext=hls_XLX_SEP_ PragmaFunction=snn_top_hls_XLX_SEP_ PragmaOptions=variable=eligibility_traces type=RAM_2P impl=BRAM_XLX_SEP_</string>
+      <string>HLS pragma dump _XLX_SEP_ PragmaIsValid=1_XLX_SEP_ PragmaType=bind_storage_XLX_SEP_ PragmaContext=hls_XLX_SEP_ PragmaFunction=snn_top_hls_XLX_SEP_ PragmaOptions=variable=post_eligibility type=RAM_2P impl=BRAM_XLX_SEP_</string>
       <key>ID</key>
       <integer>6999</integer>
       <key>WarningOption</key>
@@ -745,11 +889,11 @@
       <key>filename</key>
       <string>src/snn_top_hls.cpp</string>
       <key>line</key>
-      <integer>327</integer>
+      <integer>398</integer>
       <key>column</key>
       <integer>1</integer>
       <key>message</key>
-      <string>HLS pragma dump _XLX_SEP_ PragmaIsValid=1_XLX_SEP_ PragmaType=array_partition_XLX_SEP_ PragmaContext=hls_XLX_SEP_ PragmaFunction=snn_top_hls_XLX_SEP_ PragmaOptions=variable=eligibility_traces cyclic factor=4 dim=2_XLX_SEP_</string>
+      <string>HLS pragma dump _XLX_SEP_ PragmaIsValid=1_XLX_SEP_ PragmaType=array_partition_XLX_SEP_ PragmaContext=hls_XLX_SEP_ PragmaFunction=snn_top_hls_XLX_SEP_ PragmaOptions=variable=post_eligibility cyclic factor=8_XLX_SEP_</string>
       <key>ID</key>
       <integer>6999</integer>
       <key>WarningOption</key>
@@ -761,11 +905,11 @@
       <key>filename</key>
       <string>src/snn_top_hls.cpp</string>
       <key>line</key>
-      <integer>339</integer>
+      <integer>401</integer>
       <key>column</key>
       <integer>1</integer>
       <key>message</key>
-      <string>HLS pragma dump _XLX_SEP_ PragmaIsValid=1_XLX_SEP_ PragmaType=stream_XLX_SEP_ PragmaContext=hls_XLX_SEP_ PragmaFunction=snn_top_hls_XLX_SEP_ PragmaOptions=variable=weight_update_fifo depth=64_XLX_SEP_</string>
+      <string>HLS pragma dump _XLX_SEP_ PragmaIsValid=1_XLX_SEP_ PragmaType=bind_storage_XLX_SEP_ PragmaContext=hls_XLX_SEP_ PragmaFunction=snn_top_hls_XLX_SEP_ PragmaOptions=variable=pre_traces type=RAM_2P impl=BRAM_XLX_SEP_</string>
       <key>ID</key>
       <integer>6999</integer>
       <key>WarningOption</key>
@@ -777,11 +921,11 @@
       <key>filename</key>
       <string>src/snn_top_hls.cpp</string>
       <key>line</key>
-      <integer>364</integer>
+      <integer>402</integer>
       <key>column</key>
       <integer>1</integer>
       <key>message</key>
-      <string>HLS pragma dump _XLX_SEP_ PragmaIsValid=1_XLX_SEP_ PragmaType=unroll_XLX_SEP_ PragmaContext=hls_XLX_SEP_ PragmaFunction=snn_top_hls_XLX_SEP_ PragmaOptions=factor=8_XLX_SEP_</string>
+      <string>HLS pragma dump _XLX_SEP_ PragmaIsValid=1_XLX_SEP_ PragmaType=array_partition_XLX_SEP_ PragmaContext=hls_XLX_SEP_ PragmaFunction=snn_top_hls_XLX_SEP_ PragmaOptions=variable=pre_traces cyclic factor=8_XLX_SEP_</string>
       <key>ID</key>
       <integer>6999</integer>
       <key>WarningOption</key>
@@ -793,11 +937,11 @@
       <key>filename</key>
       <string>src/snn_top_hls.cpp</string>
       <key>line</key>
-      <integer>372</integer>
+      <integer>403</integer>
       <key>column</key>
       <integer>1</integer>
       <key>message</key>
-      <string>HLS pragma dump _XLX_SEP_ PragmaIsValid=1_XLX_SEP_ PragmaType=unroll_XLX_SEP_ PragmaContext=hls_XLX_SEP_ PragmaFunction=snn_top_hls_XLX_SEP_ PragmaOptions=factor=8_XLX_SEP_</string>
+      <string>HLS pragma dump _XLX_SEP_ PragmaIsValid=1_XLX_SEP_ PragmaType=bind_storage_XLX_SEP_ PragmaContext=hls_XLX_SEP_ PragmaFunction=snn_top_hls_XLX_SEP_ PragmaOptions=variable=post_traces type=RAM_2P impl=BRAM_XLX_SEP_</string>
       <key>ID</key>
       <integer>6999</integer>
       <key>WarningOption</key>
@@ -809,7 +953,23 @@
       <key>filename</key>
       <string>src/snn_top_hls.cpp</string>
       <key>line</key>
-      <integer>381</integer>
+      <integer>404</integer>
+      <key>column</key>
+      <integer>1</integer>
+      <key>message</key>
+      <string>HLS pragma dump _XLX_SEP_ PragmaIsValid=1_XLX_SEP_ PragmaType=array_partition_XLX_SEP_ PragmaContext=hls_XLX_SEP_ PragmaFunction=snn_top_hls_XLX_SEP_ PragmaOptions=variable=post_traces cyclic factor=8_XLX_SEP_</string>
+      <key>ID</key>
+      <integer>6999</integer>
+      <key>WarningOption</key>
+      <string>dump-hls-pragmas</string>
+    </dict>
+    <dict>
+      <key>level</key>
+      <string>warning</string>
+      <key>filename</key>
+      <string>src/snn_top_hls.cpp</string>
+      <key>line</key>
+      <integer>437</integer>
       <key>column</key>
       <integer>1</integer>
       <key>message</key>
@@ -825,11 +985,11 @@
       <key>filename</key>
       <string>src/snn_top_hls.cpp</string>
       <key>line</key>
-      <integer>528</integer>
+      <integer>444</integer>
       <key>column</key>
       <integer>1</integer>
       <key>message</key>
-      <string>HLS pragma dump _XLX_SEP_ PragmaIsValid=1_XLX_SEP_ PragmaType=unroll_XLX_SEP_ PragmaContext=hls_XLX_SEP_ PragmaFunction=snn_top_hls_XLX_SEP_ PragmaOptions=_XLX_SEP_</string>
+      <string>HLS pragma dump _XLX_SEP_ PragmaIsValid=1_XLX_SEP_ PragmaType=pipeline_XLX_SEP_ PragmaContext=hls_XLX_SEP_ PragmaFunction=snn_top_hls_XLX_SEP_ PragmaOptions=II=1_XLX_SEP_</string>
       <key>ID</key>
       <integer>6999</integer>
       <key>WarningOption</key>
@@ -841,7 +1001,39 @@
       <key>filename</key>
       <string>src/snn_top_hls.cpp</string>
       <key>line</key>
-      <integer>544</integer>
+      <integer>455</integer>
+      <key>column</key>
+      <integer>1</integer>
+      <key>message</key>
+      <string>HLS pragma dump _XLX_SEP_ PragmaIsValid=1_XLX_SEP_ PragmaType=pipeline_XLX_SEP_ PragmaContext=hls_XLX_SEP_ PragmaFunction=snn_top_hls_XLX_SEP_ PragmaOptions=II=1_XLX_SEP_</string>
+      <key>ID</key>
+      <integer>6999</integer>
+      <key>WarningOption</key>
+      <string>dump-hls-pragmas</string>
+    </dict>
+    <dict>
+      <key>level</key>
+      <string>warning</string>
+      <key>filename</key>
+      <string>src/snn_top_hls.cpp</string>
+      <key>line</key>
+      <integer>596</integer>
+      <key>column</key>
+      <integer>1</integer>
+      <key>message</key>
+      <string>HLS pragma dump _XLX_SEP_ PragmaIsValid=1_XLX_SEP_ PragmaType=pipeline_XLX_SEP_ PragmaContext=hls_XLX_SEP_ PragmaFunction=snn_top_hls_XLX_SEP_ PragmaOptions=II=1_XLX_SEP_</string>
+      <key>ID</key>
+      <integer>6999</integer>
+      <key>WarningOption</key>
+      <string>dump-hls-pragmas</string>
+    </dict>
+    <dict>
+      <key>level</key>
+      <string>warning</string>
+      <key>filename</key>
+      <string>src/snn_top_hls.cpp</string>
+      <key>line</key>
+      <integer>612</integer>
       <key>column</key>
       <integer>1</integer>
       <key>message</key>
@@ -857,7 +1049,7 @@
       <key>filename</key>
       <string>src/snn_top_hls.cpp</string>
       <key>line</key>
-      <integer>552</integer>
+      <integer>620</integer>
       <key>column</key>
       <integer>1</integer>
       <key>message</key>
@@ -873,7 +1065,7 @@
       <key>filename</key>
       <string>src/snn_top_hls.cpp</string>
       <key>line</key>
-      <integer>563</integer>
+      <integer>631</integer>
       <key>column</key>
       <integer>1</integer>
       <key>message</key>
@@ -889,7 +1081,7 @@
       <key>filename</key>
       <string>src/snn_top_hls.cpp</string>
       <key>line</key>
-      <integer>566</integer>
+      <integer>634</integer>
       <key>column</key>
       <integer>1</integer>
       <key>message</key>
