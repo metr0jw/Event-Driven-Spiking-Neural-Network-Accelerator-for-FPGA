@@ -1,0 +1,1168 @@
+--- !Missed
+Pass:            inline
+Name:            NeverInline
+DebugLoc:        { File: /mnt/wsl/workspace/Event-Driven-Spiking-Neural-Network-Accelerator-for-FPGA/hardware/hls/hls_output/hls/.autopilot/db/snn_top_hls.pp.0.cpp, 
+                   Line: 0, Column: 0 }
+Function:        _GLOBAL__sub_I_snn_top_hls.pp.0.cpp
+Args:            
+  - Callee:          __cxx_global_var_init
+    DebugLoc:        { File: /mnt/wsl/workspace/Event-Driven-Spiking-Neural-Network-Accelerator-for-FPGA/hardware/hls/hls_output/hls/.autopilot/db/snn_top_hls.pp.0.cpp, 
+                       Line: 0, Column: 0 }
+  - String:          ' not inlined into '
+  - Caller:          _GLOBAL__sub_I_snn_top_hls.pp.0.cpp
+    DebugLoc:        { File: /mnt/wsl/workspace/Event-Driven-Spiking-Neural-Network-Accelerator-for-FPGA/hardware/hls/hls_output/hls/.autopilot/db/snn_top_hls.pp.0.cpp, 
+                       Line: 0, Column: 0 }
+  - String:          ' because it should never be inlined (cost=never)'
+...
+--- !Missed
+Pass:            inline
+Name:            NeverInline
+DebugLoc:        { File: /mnt/wsl/workspace/Event-Driven-Spiking-Neural-Network-Accelerator-for-FPGA/hardware/hls/hls_output/hls/.autopilot/db/snn_top_hls.pp.0.cpp, 
+                   Line: 0, Column: 0 }
+Function:        _GLOBAL__sub_I_snn_top_hls.pp.0.cpp
+Args:            
+  - Callee:          __cxx_global_var_init.1
+    DebugLoc:        { File: /mnt/wsl/workspace/Event-Driven-Spiking-Neural-Network-Accelerator-for-FPGA/hardware/hls/hls_output/hls/.autopilot/db/snn_top_hls.pp.0.cpp, 
+                       Line: 0, Column: 0 }
+  - String:          ' not inlined into '
+  - Caller:          _GLOBAL__sub_I_snn_top_hls.pp.0.cpp
+    DebugLoc:        { File: /mnt/wsl/workspace/Event-Driven-Spiking-Neural-Network-Accelerator-for-FPGA/hardware/hls/hls_output/hls/.autopilot/db/snn_top_hls.pp.0.cpp, 
+                       Line: 0, Column: 0 }
+  - String:          ' because it should never be inlined (cost=never)'
+...
+--- !Passed
+Pass:            inline
+Name:            AlwaysInline
+DebugLoc:        { File: src/snn_top_hls.cpp, Line: 100, Column: 32 }
+Function:        _ZL17process_pre_spike7ap_uintILi8EES_ILi32EERK17learning_params_tbRN3hls6streamI15weight_update_tLi0EEE
+Args:            
+  - String:          'Inlining function '''
+  - Callee:          'calc_stdp_update(ap_uint<32>, ap_uint<32>, learning_params_t const&)'
+    DebugLoc:        { File: src/snn_top_hls.cpp, Line: 38, Column: 0 }
+  - String:          ''' into '''
+  - Caller:          'process_pre_spike(ap_uint<8>, ap_uint<32>, learning_params_t const&, bool, hls::stream<weight_update_t, 0>&)'
+    DebugLoc:        { File: src/snn_top_hls.cpp, Line: 84, Column: 0 }
+  - String:          ''''
+...
+--- !Passed
+Pass:            inline
+Name:            AlwaysInline
+DebugLoc:        { File: src/snn_top_hls.cpp, Line: 141, Column: 32 }
+Function:        _ZL18process_post_spike7ap_uintILi8EES_ILi32EERK17learning_params_tbRN3hls6streamI15weight_update_tLi0EEE
+Args:            
+  - String:          'Inlining function '''
+  - Callee:          'calc_stdp_update(ap_uint<32>, ap_uint<32>, learning_params_t const&)'
+    DebugLoc:        { File: src/snn_top_hls.cpp, Line: 38, Column: 0 }
+  - String:          ''' into '''
+  - Caller:          'process_post_spike(ap_uint<8>, ap_uint<32>, learning_params_t const&, bool, hls::stream<weight_update_t, 0>&)'
+    DebugLoc:        { File: src/snn_top_hls.cpp, Line: 125, Column: 0 }
+  - String:          ''''
+...
+--- !Passed
+Pass:            inline
+Name:            AlwaysInline
+DebugLoc:        { File: src/snn_top_hls.cpp, Line: 192, Column: 56 }
+Function:        _ZL20apply_weight_updatesRN3hls6streamI15weight_update_tLi0EEERK17learning_params_t6ap_intILi8EE
+Args:            
+  - String:          'Inlining function '''
+  - Callee:          'clip_weight(ap_int<16>)'
+    DebugLoc:        { File: src/snn_top_hls.cpp, Line: 68, Column: 0 }
+  - String:          ''' into '''
+  - Caller:          'apply_weight_updates(hls::stream<weight_update_t, 0>&, learning_params_t const&, ap_int<8>)'
+    DebugLoc:        { File: src/snn_top_hls.cpp, Line: 164, Column: 0 }
+  - String:          ''''
+...
+--- !Passed
+Pass:            inline
+Name:            AlwaysInline
+DebugLoc:        { File: src/snn_top_hls.cpp, Line: 231, Column: 39 }
+Function:        _ZL19apply_reward_signal6ap_intILi8EERK17learning_params_t
+Args:            
+  - String:          'Inlining function '''
+  - Callee:          'clip_weight(ap_int<16>)'
+    DebugLoc:        { File: src/snn_top_hls.cpp, Line: 68, Column: 0 }
+  - String:          ''' into '''
+  - Caller:          'apply_reward_signal(ap_int<8>, learning_params_t const&)'
+    DebugLoc:        { File: src/snn_top_hls.cpp, Line: 216, Column: 0 }
+  - String:          ''''
+...
+--- !Missed
+Pass:            inline
+Name:            NeverInline
+DebugLoc:        { File: src/snn_top_hls.cpp, Line: 470, Column: 9 }
+Function:        _Z11snn_top_hls7ap_uintILi32EES0_17learning_params_tRS0_S2_S2_S2_RN3hls6streamINS3_4axisIS0_Lm1ELm1ELm1ELh56ELb0EEELi0EEES8_S8_6ap_intILi8EERS_ILi1EERS_ILi8EERSA_SB_SB_SD_SA_SC_SC_SC_RS_ILi16EESH_SB_SB_
+Args:            
+  - Callee:          'decay_eligibility_traces(learning_params_t const&)'
+    DebugLoc:        { File: src/snn_top_hls.cpp, Line: 199, Column: 0 }
+  - String:          ' not inlined into '
+  - Caller:          'snn_top_hls(ap_uint<32>, ap_uint<32>, learning_params_t, ap_uint<32>&, ap_uint<32>&, ap_uint<32>&, ap_uint<32>&, hls::stream<hls::axis<ap_uint<32>, 1ul, 1ul, 1ul, (unsigned char)56, false>, 0>&, hls::stream<hls::axis<ap_uint<32>, 1ul, 1ul, 1ul, (unsigned char)56, false>, 0>&, hls::stream<hls::axis<ap_uint<32>, 1ul, 1ul, 1ul, (unsigned char)56, false>, 0>&, ap_int<8>, ap_uint<1>&, ap_uint<8>&, ap_int<8>&, ap_uint<1>, ap_uint<1>, ap_uint<8>, ap_int<8>, ap_uint<1>&, ap_uint<1>&, ap_uint<1>&, ap_uint<16>&, ap_uint<16>&, ap_uint<1>, ap_uint<1>)'
+    DebugLoc:        { File: src/snn_top_hls.cpp, Line: 283, Column: 0 }
+  - String:          ' because it should never be inlined (cost=never)'
+...
+--- !Missed
+Pass:            inline
+Name:            NeverInline
+DebugLoc:        { File: src/snn_top_hls.cpp, Line: 469, Column: 9 }
+Function:        _Z11snn_top_hls7ap_uintILi32EES0_17learning_params_tRS0_S2_S2_S2_RN3hls6streamINS3_4axisIS0_Lm1ELm1ELm1ELh56ELb0EEELi0EEES8_S8_6ap_intILi8EERS_ILi1EERS_ILi8EERSA_SB_SB_SD_SA_SC_SC_SC_RS_ILi16EESH_SB_SB_
+Args:            
+  - Callee:          'apply_reward_signal(ap_int<8>, learning_params_t const&)'
+    DebugLoc:        { File: src/snn_top_hls.cpp, Line: 216, Column: 0 }
+  - String:          ' not inlined into '
+  - Caller:          'snn_top_hls(ap_uint<32>, ap_uint<32>, learning_params_t, ap_uint<32>&, ap_uint<32>&, ap_uint<32>&, ap_uint<32>&, hls::stream<hls::axis<ap_uint<32>, 1ul, 1ul, 1ul, (unsigned char)56, false>, 0>&, hls::stream<hls::axis<ap_uint<32>, 1ul, 1ul, 1ul, (unsigned char)56, false>, 0>&, hls::stream<hls::axis<ap_uint<32>, 1ul, 1ul, 1ul, (unsigned char)56, false>, 0>&, ap_int<8>, ap_uint<1>&, ap_uint<8>&, ap_int<8>&, ap_uint<1>, ap_uint<1>, ap_uint<8>, ap_int<8>, ap_uint<1>&, ap_uint<1>&, ap_uint<1>&, ap_uint<16>&, ap_uint<16>&, ap_uint<1>, ap_uint<1>)'
+    DebugLoc:        { File: src/snn_top_hls.cpp, Line: 283, Column: 0 }
+  - String:          ' because it should never be inlined (cost=never)'
+...
+--- !Missed
+Pass:            inline
+Name:            NeverInline
+DebugLoc:        { File: src/snn_top_hls.cpp, Line: 461, Column: 9 }
+Function:        _Z11snn_top_hls7ap_uintILi32EES0_17learning_params_tRS0_S2_S2_S2_RN3hls6streamINS3_4axisIS0_Lm1ELm1ELm1ELh56ELb0EEELi0EEES8_S8_6ap_intILi8EERS_ILi1EERS_ILi8EERSA_SB_SB_SD_SA_SC_SC_SC_RS_ILi16EESH_SB_SB_
+Args:            
+  - Callee:          'apply_weight_updates(hls::stream<weight_update_t, 0>&, learning_params_t const&, ap_int<8>)'
+    DebugLoc:        { File: src/snn_top_hls.cpp, Line: 164, Column: 0 }
+  - String:          ' not inlined into '
+  - Caller:          'snn_top_hls(ap_uint<32>, ap_uint<32>, learning_params_t, ap_uint<32>&, ap_uint<32>&, ap_uint<32>&, ap_uint<32>&, hls::stream<hls::axis<ap_uint<32>, 1ul, 1ul, 1ul, (unsigned char)56, false>, 0>&, hls::stream<hls::axis<ap_uint<32>, 1ul, 1ul, 1ul, (unsigned char)56, false>, 0>&, hls::stream<hls::axis<ap_uint<32>, 1ul, 1ul, 1ul, (unsigned char)56, false>, 0>&, ap_int<8>, ap_uint<1>&, ap_uint<8>&, ap_int<8>&, ap_uint<1>, ap_uint<1>, ap_uint<8>, ap_int<8>, ap_uint<1>&, ap_uint<1>&, ap_uint<1>&, ap_uint<16>&, ap_uint<16>&, ap_uint<1>, ap_uint<1>)'
+    DebugLoc:        { File: src/snn_top_hls.cpp, Line: 283, Column: 0 }
+  - String:          ' because it should never be inlined (cost=never)'
+...
+--- !Missed
+Pass:            inline
+Name:            NeverInline
+DebugLoc:        { File: src/snn_top_hls.cpp, Line: 453, Column: 13 }
+Function:        _Z11snn_top_hls7ap_uintILi32EES0_17learning_params_tRS0_S2_S2_S2_RN3hls6streamINS3_4axisIS0_Lm1ELm1ELm1ELh56ELb0EEELi0EEES8_S8_6ap_intILi8EERS_ILi1EERS_ILi8EERSA_SB_SB_SD_SA_SC_SC_SC_RS_ILi16EESH_SB_SB_
+Args:            
+  - Callee:          'process_post_spike(ap_uint<8>, ap_uint<32>, learning_params_t const&, bool, hls::stream<weight_update_t, 0>&)'
+    DebugLoc:        { File: src/snn_top_hls.cpp, Line: 125, Column: 0 }
+  - String:          ' not inlined into '
+  - Caller:          'snn_top_hls(ap_uint<32>, ap_uint<32>, learning_params_t, ap_uint<32>&, ap_uint<32>&, ap_uint<32>&, ap_uint<32>&, hls::stream<hls::axis<ap_uint<32>, 1ul, 1ul, 1ul, (unsigned char)56, false>, 0>&, hls::stream<hls::axis<ap_uint<32>, 1ul, 1ul, 1ul, (unsigned char)56, false>, 0>&, hls::stream<hls::axis<ap_uint<32>, 1ul, 1ul, 1ul, (unsigned char)56, false>, 0>&, ap_int<8>, ap_uint<1>&, ap_uint<8>&, ap_int<8>&, ap_uint<1>, ap_uint<1>, ap_uint<8>, ap_int<8>, ap_uint<1>&, ap_uint<1>&, ap_uint<1>&, ap_uint<16>&, ap_uint<16>&, ap_uint<1>, ap_uint<1>)'
+    DebugLoc:        { File: src/snn_top_hls.cpp, Line: 283, Column: 0 }
+  - String:          ' because it should never be inlined (cost=never)'
+...
+--- !Missed
+Pass:            inline
+Name:            NeverInline
+DebugLoc:        { File: src/snn_top_hls.cpp, Line: 422, Column: 13 }
+Function:        _Z11snn_top_hls7ap_uintILi32EES0_17learning_params_tRS0_S2_S2_S2_RN3hls6streamINS3_4axisIS0_Lm1ELm1ELm1ELh56ELb0EEELi0EEES8_S8_6ap_intILi8EERS_ILi1EERS_ILi8EERSA_SB_SB_SD_SA_SC_SC_SC_RS_ILi16EESH_SB_SB_
+Args:            
+  - Callee:          'process_pre_spike(ap_uint<8>, ap_uint<32>, learning_params_t const&, bool, hls::stream<weight_update_t, 0>&)'
+    DebugLoc:        { File: src/snn_top_hls.cpp, Line: 84, Column: 0 }
+  - String:          ' not inlined into '
+  - Caller:          'snn_top_hls(ap_uint<32>, ap_uint<32>, learning_params_t, ap_uint<32>&, ap_uint<32>&, ap_uint<32>&, ap_uint<32>&, hls::stream<hls::axis<ap_uint<32>, 1ul, 1ul, 1ul, (unsigned char)56, false>, 0>&, hls::stream<hls::axis<ap_uint<32>, 1ul, 1ul, 1ul, (unsigned char)56, false>, 0>&, hls::stream<hls::axis<ap_uint<32>, 1ul, 1ul, 1ul, (unsigned char)56, false>, 0>&, ap_int<8>, ap_uint<1>&, ap_uint<8>&, ap_int<8>&, ap_uint<1>, ap_uint<1>, ap_uint<8>, ap_int<8>, ap_uint<1>&, ap_uint<1>&, ap_uint<1>&, ap_uint<16>&, ap_uint<16>&, ap_uint<1>, ap_uint<1>)'
+    DebugLoc:        { File: src/snn_top_hls.cpp, Line: 283, Column: 0 }
+  - String:          ' because it should never be inlined (cost=never)'
+...
+--- !Passed
+Pass:            reflow-pragma-loop-unroll
+Name:            PragmaFullyUnroll
+DebugLoc:        { File: src/snn_top_hls.cpp, Line: 283, Column: 0 }
+Function:        _Z11snn_top_hls7ap_uintILi32EES0_17learning_params_tRS0_S2_S2_S2_RN3hls6streamINS3_4axisIS0_Lm1ELm1ELm1ELh56ELb0EEELi0EEES8_S8_6ap_intILi8EERS_ILi1EERS_ILi8EERSA_SB_SB_SD_SA_SC_SC_SC_RS_ILi16EESH_SB_SB_
+Args:            
+  - String:          'Unrolling loop '''
+  - LoopName:        WEIGHT_SUM
+  - String:          ''' ('
+  - LoopLoc:         'src/snn_top_hls.cpp:527:17'
+  - String:          ') '
+  - String:          'in function '''
+  - String:          snn_top_hls
+  - String:          ''' completely with a factor of '
+  - Factor:          '16'
+...
+--- !Passed
+Pass:            reflow-pragma-loop-unroll
+Name:            PragmaPartiallyUnroll
+DebugLoc:        { File: src/snn_top_hls.cpp, Line: 283, Column: 0 }
+Function:        _Z11snn_top_hls7ap_uintILi32EES0_17learning_params_tRS0_S2_S2_S2_RN3hls6streamINS3_4axisIS0_Lm1ELm1ELm1ELh56ELb0EEELi0EEES8_S8_6ap_intILi8EERS_ILi1EERS_ILi8EERSA_SB_SB_SD_SA_SC_SC_SC_RS_ILi16EESH_SB_SB_
+Args:            
+  - String:          'Unrolling loop '''
+  - LoopName:        RESET_TRACE_INNER
+  - String:          ''' ('
+  - LoopLoc:         'src/snn_top_hls.cpp:371:32'
+  - String:          ') '
+  - String:          'in function '''
+  - String:          snn_top_hls
+  - String:          ''' partially '
+  - String:          ''
+  - String:          'with a factor of '
+  - Factor:          '8'
+...
+--- !Passed
+Pass:            reflow-pragma-loop-unroll
+Name:            PragmaPartiallyUnroll
+DebugLoc:        { File: src/snn_top_hls.cpp, Line: 283, Column: 0 }
+Function:        _Z11snn_top_hls7ap_uintILi32EES0_17learning_params_tRS0_S2_S2_S2_RN3hls6streamINS3_4axisIS0_Lm1ELm1ELm1ELh56ELb0EEELi0EEES8_S8_6ap_intILi8EERS_ILi1EERS_ILi8EERSA_SB_SB_SD_SA_SC_SC_SC_RS_ILi16EESH_SB_SB_
+Args:            
+  - String:          'Unrolling loop '''
+  - LoopName:        RESET_PRE
+  - String:          ''' ('
+  - LoopLoc:         'src/snn_top_hls.cpp:363:20'
+  - String:          ') '
+  - String:          'in function '''
+  - String:          snn_top_hls
+  - String:          ''' partially '
+  - String:          ''
+  - String:          'with a factor of '
+  - Factor:          '8'
+...
+--- !Passed
+Pass:            reflow-pragma-loop-unroll
+Name:            PragmaPartiallyUnroll
+DebugLoc:        { File: src/snn_top_hls.cpp, Line: 125, Column: 0 }
+Function:        _ZL18process_post_spike7ap_uintILi8EES_ILi32EERK17learning_params_tbRN3hls6streamI15weight_update_tLi0EEE
+Args:            
+  - String:          'Unrolling loop '''
+  - LoopName:        STDP_LTP_LOOP
+  - String:          ''' ('
+  - LoopLoc:         'src/snn_top_hls.cpp:134:20'
+  - String:          ') '
+  - String:          'in function '''
+  - String:          process_post_spike
+  - String:          ''' partially '
+  - String:          ''
+  - String:          'with a factor of '
+  - Factor:          '8'
+...
+--- !Passed
+Pass:            reflow-pragma-loop-unroll
+Name:            PragmaPartiallyUnroll
+DebugLoc:        { File: src/snn_top_hls.cpp, Line: 84, Column: 0 }
+Function:        _ZL17process_pre_spike7ap_uintILi8EES_ILi32EERK17learning_params_tbRN3hls6streamI15weight_update_tLi0EEE
+Args:            
+  - String:          'Unrolling loop '''
+  - LoopName:        STDP_LTD_LOOP
+  - String:          ''' ('
+  - LoopLoc:         'src/snn_top_hls.cpp:93:20'
+  - String:          ') '
+  - String:          'in function '''
+  - String:          process_pre_spike
+  - String:          ''' partially '
+  - String:          ''
+  - String:          'with a factor of '
+  - Factor:          '8'
+...
+--- !Missed
+Pass:            inline
+Name:            NeverInline
+DebugLoc:        { File: src/snn_top_hls.cpp, Line: 422, Column: 13 }
+Function:        _Z11snn_top_hls7ap_uintILi32EES0_17learning_params_tRS0_S2_S2_S2_RN3hls6streamINS3_4axisIS0_Lm1ELm1ELm1ELh56ELb0EEELi0EEES8_S8_6ap_intILi8EERS_ILi1EERS_ILi8EERSA_SB_SB_SD_SA_SC_SC_SC_RS_ILi16EESH_SB_SB_
+Args:            
+  - Callee:          'process_pre_spike(ap_uint<8>, ap_uint<32>, learning_params_t const&, bool, hls::stream<weight_update_t, 0>&)'
+    DebugLoc:        { File: src/snn_top_hls.cpp, Line: 84, Column: 0 }
+  - String:          ' not inlined into '
+  - Caller:          'snn_top_hls(ap_uint<32>, ap_uint<32>, learning_params_t, ap_uint<32>&, ap_uint<32>&, ap_uint<32>&, ap_uint<32>&, hls::stream<hls::axis<ap_uint<32>, 1ul, 1ul, 1ul, (unsigned char)56, false>, 0>&, hls::stream<hls::axis<ap_uint<32>, 1ul, 1ul, 1ul, (unsigned char)56, false>, 0>&, hls::stream<hls::axis<ap_uint<32>, 1ul, 1ul, 1ul, (unsigned char)56, false>, 0>&, ap_int<8>, ap_uint<1>&, ap_uint<8>&, ap_int<8>&, ap_uint<1>, ap_uint<1>, ap_uint<8>, ap_int<8>, ap_uint<1>&, ap_uint<1>&, ap_uint<1>&, ap_uint<16>&, ap_uint<16>&, ap_uint<1>, ap_uint<1>)'
+    DebugLoc:        { File: src/snn_top_hls.cpp, Line: 283, Column: 0 }
+  - String:          ' because it should never be inlined (cost=never)'
+...
+--- !Missed
+Pass:            inline
+Name:            NeverInline
+DebugLoc:        { File: src/snn_top_hls.cpp, Line: 453, Column: 13 }
+Function:        _Z11snn_top_hls7ap_uintILi32EES0_17learning_params_tRS0_S2_S2_S2_RN3hls6streamINS3_4axisIS0_Lm1ELm1ELm1ELh56ELb0EEELi0EEES8_S8_6ap_intILi8EERS_ILi1EERS_ILi8EERSA_SB_SB_SD_SA_SC_SC_SC_RS_ILi16EESH_SB_SB_
+Args:            
+  - Callee:          'process_post_spike(ap_uint<8>, ap_uint<32>, learning_params_t const&, bool, hls::stream<weight_update_t, 0>&)'
+    DebugLoc:        { File: src/snn_top_hls.cpp, Line: 125, Column: 0 }
+  - String:          ' not inlined into '
+  - Caller:          'snn_top_hls(ap_uint<32>, ap_uint<32>, learning_params_t, ap_uint<32>&, ap_uint<32>&, ap_uint<32>&, ap_uint<32>&, hls::stream<hls::axis<ap_uint<32>, 1ul, 1ul, 1ul, (unsigned char)56, false>, 0>&, hls::stream<hls::axis<ap_uint<32>, 1ul, 1ul, 1ul, (unsigned char)56, false>, 0>&, hls::stream<hls::axis<ap_uint<32>, 1ul, 1ul, 1ul, (unsigned char)56, false>, 0>&, ap_int<8>, ap_uint<1>&, ap_uint<8>&, ap_int<8>&, ap_uint<1>, ap_uint<1>, ap_uint<8>, ap_int<8>, ap_uint<1>&, ap_uint<1>&, ap_uint<1>&, ap_uint<16>&, ap_uint<16>&, ap_uint<1>, ap_uint<1>)'
+    DebugLoc:        { File: src/snn_top_hls.cpp, Line: 283, Column: 0 }
+  - String:          ' because it should never be inlined (cost=never)'
+...
+--- !Missed
+Pass:            inline
+Name:            NeverInline
+DebugLoc:        { File: src/snn_top_hls.cpp, Line: 461, Column: 9 }
+Function:        _Z11snn_top_hls7ap_uintILi32EES0_17learning_params_tRS0_S2_S2_S2_RN3hls6streamINS3_4axisIS0_Lm1ELm1ELm1ELh56ELb0EEELi0EEES8_S8_6ap_intILi8EERS_ILi1EERS_ILi8EERSA_SB_SB_SD_SA_SC_SC_SC_RS_ILi16EESH_SB_SB_
+Args:            
+  - Callee:          'apply_weight_updates(hls::stream<weight_update_t, 0>&, learning_params_t const&, ap_int<8>)'
+    DebugLoc:        { File: src/snn_top_hls.cpp, Line: 164, Column: 0 }
+  - String:          ' not inlined into '
+  - Caller:          'snn_top_hls(ap_uint<32>, ap_uint<32>, learning_params_t, ap_uint<32>&, ap_uint<32>&, ap_uint<32>&, ap_uint<32>&, hls::stream<hls::axis<ap_uint<32>, 1ul, 1ul, 1ul, (unsigned char)56, false>, 0>&, hls::stream<hls::axis<ap_uint<32>, 1ul, 1ul, 1ul, (unsigned char)56, false>, 0>&, hls::stream<hls::axis<ap_uint<32>, 1ul, 1ul, 1ul, (unsigned char)56, false>, 0>&, ap_int<8>, ap_uint<1>&, ap_uint<8>&, ap_int<8>&, ap_uint<1>, ap_uint<1>, ap_uint<8>, ap_int<8>, ap_uint<1>&, ap_uint<1>&, ap_uint<1>&, ap_uint<16>&, ap_uint<16>&, ap_uint<1>, ap_uint<1>)'
+    DebugLoc:        { File: src/snn_top_hls.cpp, Line: 283, Column: 0 }
+  - String:          ' because it should never be inlined (cost=never)'
+...
+--- !Missed
+Pass:            inline
+Name:            NeverInline
+DebugLoc:        { File: src/snn_top_hls.cpp, Line: 469, Column: 9 }
+Function:        _Z11snn_top_hls7ap_uintILi32EES0_17learning_params_tRS0_S2_S2_S2_RN3hls6streamINS3_4axisIS0_Lm1ELm1ELm1ELh56ELb0EEELi0EEES8_S8_6ap_intILi8EERS_ILi1EERS_ILi8EERSA_SB_SB_SD_SA_SC_SC_SC_RS_ILi16EESH_SB_SB_
+Args:            
+  - Callee:          'apply_reward_signal(ap_int<8>, learning_params_t const&)'
+    DebugLoc:        { File: src/snn_top_hls.cpp, Line: 216, Column: 0 }
+  - String:          ' not inlined into '
+  - Caller:          'snn_top_hls(ap_uint<32>, ap_uint<32>, learning_params_t, ap_uint<32>&, ap_uint<32>&, ap_uint<32>&, ap_uint<32>&, hls::stream<hls::axis<ap_uint<32>, 1ul, 1ul, 1ul, (unsigned char)56, false>, 0>&, hls::stream<hls::axis<ap_uint<32>, 1ul, 1ul, 1ul, (unsigned char)56, false>, 0>&, hls::stream<hls::axis<ap_uint<32>, 1ul, 1ul, 1ul, (unsigned char)56, false>, 0>&, ap_int<8>, ap_uint<1>&, ap_uint<8>&, ap_int<8>&, ap_uint<1>, ap_uint<1>, ap_uint<8>, ap_int<8>, ap_uint<1>&, ap_uint<1>&, ap_uint<1>&, ap_uint<16>&, ap_uint<16>&, ap_uint<1>, ap_uint<1>)'
+    DebugLoc:        { File: src/snn_top_hls.cpp, Line: 283, Column: 0 }
+  - String:          ' because it should never be inlined (cost=never)'
+...
+--- !Missed
+Pass:            inline
+Name:            NeverInline
+DebugLoc:        { File: src/snn_top_hls.cpp, Line: 470, Column: 9 }
+Function:        _Z11snn_top_hls7ap_uintILi32EES0_17learning_params_tRS0_S2_S2_S2_RN3hls6streamINS3_4axisIS0_Lm1ELm1ELm1ELh56ELb0EEELi0EEES8_S8_6ap_intILi8EERS_ILi1EERS_ILi8EERSA_SB_SB_SD_SA_SC_SC_SC_RS_ILi16EESH_SB_SB_
+Args:            
+  - Callee:          'decay_eligibility_traces(learning_params_t const&)'
+    DebugLoc:        { File: src/snn_top_hls.cpp, Line: 199, Column: 0 }
+  - String:          ' not inlined into '
+  - Caller:          'snn_top_hls(ap_uint<32>, ap_uint<32>, learning_params_t, ap_uint<32>&, ap_uint<32>&, ap_uint<32>&, ap_uint<32>&, hls::stream<hls::axis<ap_uint<32>, 1ul, 1ul, 1ul, (unsigned char)56, false>, 0>&, hls::stream<hls::axis<ap_uint<32>, 1ul, 1ul, 1ul, (unsigned char)56, false>, 0>&, hls::stream<hls::axis<ap_uint<32>, 1ul, 1ul, 1ul, (unsigned char)56, false>, 0>&, ap_int<8>, ap_uint<1>&, ap_uint<8>&, ap_int<8>&, ap_uint<1>, ap_uint<1>, ap_uint<8>, ap_int<8>, ap_uint<1>&, ap_uint<1>&, ap_uint<1>&, ap_uint<16>&, ap_uint<16>&, ap_uint<1>, ap_uint<1>)'
+    DebugLoc:        { File: src/snn_top_hls.cpp, Line: 283, Column: 0 }
+  - String:          ' because it should never be inlined (cost=never)'
+...
+--- !Missed
+Pass:            inline
+Name:            NeverInline
+Function:        apatb_snn_top_hls_ir
+Args:            
+  - Callee:          'snn_top_hls(ap_uint<32>, ap_uint<32>, learning_params_t, ap_uint<32>&, ap_uint<32>&, ap_uint<32>&, ap_uint<32>&, hls::stream<hls::axis<ap_uint<32>, 1ul, 1ul, 1ul, (unsigned char)56, false>, 0>&, hls::stream<hls::axis<ap_uint<32>, 1ul, 1ul, 1ul, (unsigned char)56, false>, 0>&, hls::stream<hls::axis<ap_uint<32>, 1ul, 1ul, 1ul, (unsigned char)56, false>, 0>&, ap_int<8>, ap_uint<1>&, ap_uint<8>&, ap_int<8>&, ap_uint<1>, ap_uint<1>, ap_uint<8>, ap_int<8>, ap_uint<1>&, ap_uint<1>&, ap_uint<1>&, ap_uint<16>&, ap_uint<16>&, ap_uint<1>, ap_uint<1>)'
+    DebugLoc:        { File: src/snn_top_hls.cpp, Line: 283, Column: 0 }
+  - String:          ' not inlined into '
+  - Caller:          apatb_snn_top_hls_ir
+  - String:          ' because it should never be inlined (cost=never)'
+...
+--- !Passed
+Pass:            reflow-array-partition
+Name:            ArrayXform
+DebugLoc:        { File: src/snn_top_hls.cpp, Line: 22, Column: 0 }
+Function:        _ZL19apply_reward_signal6ap_intILi8EERK17learning_params_t
+Args:            
+  - String:          'Applying '
+  - String:          array_partition
+  - String:          ' to '''
+  - UOName:          _ZL13weight_memory
+  - String:          ''':'
+  - String:          ' '
+  - Mode:            Cyclic
+  - String:          ' partitioning'
+  - String:          ' with factor '
+  - Factor:          '8'
+  - String:          ' on dimension '
+  - Dim:             '2'
+  - String:          .
+...
+--- !Passed
+Pass:            reflow-array-partition
+Name:            ArrayXform
+DebugLoc:        { File: src/snn_top_hls.cpp, Line: 29, Column: 0 }
+Function:        _ZL24decay_eligibility_tracesRK17learning_params_t
+Args:            
+  - String:          'Applying '
+  - String:          array_partition
+  - String:          ' to '''
+  - UOName:          _ZL18eligibility_traces
+  - String:          ''':'
+  - String:          ' '
+  - Mode:            Cyclic
+  - String:          ' partitioning'
+  - String:          ' with factor '
+  - Factor:          '4'
+  - String:          ' on dimension '
+  - Dim:             '2'
+  - String:          .
+...
+--- !Failure
+Pass:            reflow-array-partition
+Name:            WarnArrayXFORMOnIndexCast
+DebugLoc:        { File: src/snn_top_hls.cpp, Line: 173, Column: 35 }
+Function:        _ZL20apply_weight_updatesRN3hls6streamI15weight_update_tLi0EEERK17learning_params_t6ap_intILi8EE
+Args:            
+  - String:          Array transformation on index using bit extension logic may lead to poor performance. Please use int or long for array index computation to benefit from optimizations.
+...
+--- !Failure
+Pass:            reflow-array-partition
+Name:            WarnArrayXFORMOnIndexCast
+DebugLoc:        { File: src/snn_top_hls.cpp, Line: 173, Column: 35 }
+Function:        _ZL20apply_weight_updatesRN3hls6streamI15weight_update_tLi0EEERK17learning_params_t6ap_intILi8EE
+Args:            
+  - String:          Array transformation on index using bit extension logic may lead to poor performance. Please use int or long for array index computation to benefit from optimizations.
+...
+--- !Failure
+Pass:            reflow-array-partition
+Name:            WarnArrayXFORMOnIndexCast
+DebugLoc:        { File: src/snn_top_hls.cpp, Line: 484, Column: 28 }
+Function:        _Z11snn_top_hls7ap_uintILi32EES0_17learning_params_tRS0_S2_S2_S2_RN3hls6streamINS3_4axisIS0_Lm1ELm1ELm1ELh56ELb0EEELi0EEES8_S8_6ap_intILi8EERS_ILi1EERS_ILi8EERSA_SB_SB_SD_SA_SC_SC_SC_RS_ILi16EESH_SB_SB_
+Args:            
+  - String:          Array transformation on index using bit extension logic may lead to poor performance. Please use int or long for array index computation to benefit from optimizations.
+...
+--- !Missed
+Pass:            reflow-burst-inference
+Name:            CouldNotAnalyzeBoundsPattern
+DebugLoc:        { File: src/snn_top_hls.cpp, Line: 167, Column: 23 }
+Function:        _ZL20apply_weight_updatesRN3hls6streamI15weight_update_tLi0EEERK17learning_params_t6ap_intILi8EE
+Args:            
+  - String:          Could not analyze the loop bounds
+  - String:          ' _XLX_SEP_ '
+  - LoopName:        VITIS_LOOP_167_1
+  - String:          ' '
+  - LoopLoc:         'src/snn_top_hls.cpp:167:23'
+  - String:          ' '
+  - Function:        'apply_weight_updates(hls::stream<weight_update_t, 0>&, learning_params_t const&, ap_int<8>)'
+    DebugLoc:        { File: src/snn_top_hls.cpp, Line: 164, Column: 0 }
+  - String:          ' '
+...
+--- !Failure
+Pass:            reflow-occurrence-inference
+Name:            NonComputableLoopForm
+DebugLoc:        { File: src/snn_top_hls.cpp, Line: 167, Column: 23 }
+Function:        _ZL20apply_weight_updatesRN3hls6streamI15weight_update_tLi0EEERK17learning_params_t6ap_intILi8EE
+Args:            
+  - String:          'Could not analyze occurrence information within '''
+  - LoopName:        VITIS_LOOP_167_1
+  - String:          '''('
+  - LoopLoc:         'src/snn_top_hls.cpp:167:23'
+  - String:          ') . Requires loop in simplify form and with single exit.'
+...
+--- !HLSReportInfo
+Pass:            reflow-auto-loop-pipeline
+Name:            AutoLoopPipeline
+Args:            
+  - String:          'Pipelining loop< '
+  - LoopName:        RESET_PRE
+  - String:          '> at '
+  - LoopLoc:         'src/snn_top_hls.cpp:363:20'
+  - String:          ' due to pipeline_loops threshold'
+...
+--- !Passed
+Pass:            reflow-auto-loop-pipeline
+Name:            AutoParallelPerformanceDrivenVerbosePassed
+DebugLoc:        { File: src/snn_top_hls.cpp, Line: 363, Column: 20 }
+Function:        _Z11snn_top_hls7ap_uintILi32EES0_17learning_params_tRS0_S2_S2_S2_RN3hls6streamINS3_4axisIS0_Lm1ELm1ELm1ELh56ELb0EEELi0EEES8_S8_6ap_intILi8EERS_ILi1EERS_ILi8EERSA_SB_SB_SD_SA_SC_SC_SC_RS_ILi16EESH_SB_SB_
+Args:            
+  - PragmaType:      pipeline
+  - String:          ' '
+  - PragmaOptions:   ' '
+  - String:          ' '
+  - PragmaIsAuto:    '1'
+  - String:          ' '
+  - PragmaFunction:  snn_top_hls
+  - String:          ' '
+  - PragmaInferReason: config_compile -pipeline_loops 64
+  - LoopName:        RESET_PRE
+  - String:          ' '
+  - LoopLoc:         'src/snn_top_hls.cpp:363:20'
+    DebugLoc:        { File: src/snn_top_hls.cpp, Line: 363, Column: 20 }
+  - String:          ' '
+...
+--- !HLSReportInfo
+Pass:            reflow-auto-loop-pipeline
+Name:            AutoLoopPipeline
+Args:            
+  - String:          'Pipelining loop< '
+  - LoopName:        RESET_TRACE_INNER
+  - String:          '> at '
+  - LoopLoc:         'src/snn_top_hls.cpp:371:32'
+  - String:          ' due to pipeline_loops threshold'
+...
+--- !Passed
+Pass:            reflow-auto-loop-pipeline
+Name:            AutoParallelPerformanceDrivenVerbosePassed
+DebugLoc:        { File: src/snn_top_hls.cpp, Line: 371, Column: 32 }
+Function:        _Z11snn_top_hls7ap_uintILi32EES0_17learning_params_tRS0_S2_S2_S2_RN3hls6streamINS3_4axisIS0_Lm1ELm1ELm1ELh56ELb0EEELi0EEES8_S8_6ap_intILi8EERS_ILi1EERS_ILi8EERSA_SB_SB_SD_SA_SC_SC_SC_RS_ILi16EESH_SB_SB_
+Args:            
+  - PragmaType:      pipeline
+  - String:          ' '
+  - PragmaOptions:   ' '
+  - String:          ' '
+  - PragmaIsAuto:    '1'
+  - String:          ' '
+  - PragmaFunction:  snn_top_hls
+  - String:          ' '
+  - PragmaInferReason: config_compile -pipeline_loops 64
+  - LoopName:        RESET_TRACE_INNER
+  - String:          ' '
+  - LoopLoc:         'src/snn_top_hls.cpp:371:32'
+    DebugLoc:        { File: src/snn_top_hls.cpp, Line: 371, Column: 32 }
+  - String:          ' '
+...
+--- !HLSReportInfo
+Pass:            reflow-auto-loop-pipeline
+Name:            AutoLoopPipeline
+Args:            
+  - String:          'Pipelining loop< '
+  - LoopName:        VITIS_LOOP_529_1
+  - String:          '> at '
+  - LoopLoc:         'src/snn_top_hls.cpp:529:27'
+  - String:          ' due to pipeline_loops threshold'
+...
+--- !Passed
+Pass:            reflow-auto-loop-pipeline
+Name:            AutoParallelPerformanceDrivenVerbosePassed
+DebugLoc:        { File: src/snn_top_hls.cpp, Line: 529, Column: 27 }
+Function:        _Z11snn_top_hls7ap_uintILi32EES0_17learning_params_tRS0_S2_S2_S2_RN3hls6streamINS3_4axisIS0_Lm1ELm1ELm1ELh56ELb0EEELi0EEES8_S8_6ap_intILi8EERS_ILi1EERS_ILi8EERSA_SB_SB_SD_SA_SC_SC_SC_RS_ILi16EESH_SB_SB_
+Args:            
+  - PragmaType:      pipeline
+  - String:          ' '
+  - PragmaOptions:   ' '
+  - String:          ' '
+  - PragmaIsAuto:    '1'
+  - String:          ' '
+  - PragmaFunction:  snn_top_hls
+  - String:          ' '
+  - PragmaInferReason: config_compile -pipeline_loops 64
+  - LoopName:        VITIS_LOOP_529_1
+  - String:          ' '
+  - LoopLoc:         'src/snn_top_hls.cpp:529:27'
+    DebugLoc:        { File: src/snn_top_hls.cpp, Line: 529, Column: 27 }
+  - String:          ' '
+...
+--- !HLSReportInfo
+Pass:            reflow-auto-loop-pipeline
+Name:            AutoLoopPipeline
+Args:            
+  - String:          'Pipelining loop< '
+  - LoopName:        VITIS_LOOP_529_1
+  - String:          '> at '
+  - LoopLoc:         'src/snn_top_hls.cpp:529:27'
+  - String:          ' due to pipeline_loops threshold'
+...
+--- !Passed
+Pass:            reflow-auto-loop-pipeline
+Name:            AutoParallelPerformanceDrivenVerbosePassed
+DebugLoc:        { File: src/snn_top_hls.cpp, Line: 529, Column: 27 }
+Function:        _Z11snn_top_hls7ap_uintILi32EES0_17learning_params_tRS0_S2_S2_S2_RN3hls6streamINS3_4axisIS0_Lm1ELm1ELm1ELh56ELb0EEELi0EEES8_S8_6ap_intILi8EERS_ILi1EERS_ILi8EERSA_SB_SB_SD_SA_SC_SC_SC_RS_ILi16EESH_SB_SB_
+Args:            
+  - PragmaType:      pipeline
+  - String:          ' '
+  - PragmaOptions:   ' '
+  - String:          ' '
+  - PragmaIsAuto:    '1'
+  - String:          ' '
+  - PragmaFunction:  snn_top_hls
+  - String:          ' '
+  - PragmaInferReason: config_compile -pipeline_loops 64
+  - LoopName:        VITIS_LOOP_529_1
+  - String:          ' '
+  - LoopLoc:         'src/snn_top_hls.cpp:529:27'
+    DebugLoc:        { File: src/snn_top_hls.cpp, Line: 529, Column: 27 }
+  - String:          ' '
+...
+--- !HLSReportInfo
+Pass:            reflow-auto-loop-pipeline
+Name:            AutoLoopPipeline
+Args:            
+  - String:          'Pipelining loop< '
+  - LoopName:        VITIS_LOOP_529_1
+  - String:          '> at '
+  - LoopLoc:         'src/snn_top_hls.cpp:529:27'
+  - String:          ' due to pipeline_loops threshold'
+...
+--- !Passed
+Pass:            reflow-auto-loop-pipeline
+Name:            AutoParallelPerformanceDrivenVerbosePassed
+DebugLoc:        { File: src/snn_top_hls.cpp, Line: 529, Column: 27 }
+Function:        _Z11snn_top_hls7ap_uintILi32EES0_17learning_params_tRS0_S2_S2_S2_RN3hls6streamINS3_4axisIS0_Lm1ELm1ELm1ELh56ELb0EEELi0EEES8_S8_6ap_intILi8EERS_ILi1EERS_ILi8EERSA_SB_SB_SD_SA_SC_SC_SC_RS_ILi16EESH_SB_SB_
+Args:            
+  - PragmaType:      pipeline
+  - String:          ' '
+  - PragmaOptions:   ' '
+  - String:          ' '
+  - PragmaIsAuto:    '1'
+  - String:          ' '
+  - PragmaFunction:  snn_top_hls
+  - String:          ' '
+  - PragmaInferReason: config_compile -pipeline_loops 64
+  - LoopName:        VITIS_LOOP_529_1
+  - String:          ' '
+  - LoopLoc:         'src/snn_top_hls.cpp:529:27'
+    DebugLoc:        { File: src/snn_top_hls.cpp, Line: 529, Column: 27 }
+  - String:          ' '
+...
+--- !HLSReportInfo
+Pass:            reflow-auto-loop-pipeline
+Name:            AutoLoopPipeline
+Args:            
+  - String:          'Pipelining loop< '
+  - LoopName:        VITIS_LOOP_529_1
+  - String:          '> at '
+  - LoopLoc:         'src/snn_top_hls.cpp:529:27'
+  - String:          ' due to pipeline_loops threshold'
+...
+--- !Passed
+Pass:            reflow-auto-loop-pipeline
+Name:            AutoParallelPerformanceDrivenVerbosePassed
+DebugLoc:        { File: src/snn_top_hls.cpp, Line: 529, Column: 27 }
+Function:        _Z11snn_top_hls7ap_uintILi32EES0_17learning_params_tRS0_S2_S2_S2_RN3hls6streamINS3_4axisIS0_Lm1ELm1ELm1ELh56ELb0EEELi0EEES8_S8_6ap_intILi8EERS_ILi1EERS_ILi8EERSA_SB_SB_SD_SA_SC_SC_SC_RS_ILi16EESH_SB_SB_
+Args:            
+  - PragmaType:      pipeline
+  - String:          ' '
+  - PragmaOptions:   ' '
+  - String:          ' '
+  - PragmaIsAuto:    '1'
+  - String:          ' '
+  - PragmaFunction:  snn_top_hls
+  - String:          ' '
+  - PragmaInferReason: config_compile -pipeline_loops 64
+  - LoopName:        VITIS_LOOP_529_1
+  - String:          ' '
+  - LoopLoc:         'src/snn_top_hls.cpp:529:27'
+    DebugLoc:        { File: src/snn_top_hls.cpp, Line: 529, Column: 27 }
+  - String:          ' '
+...
+--- !HLSReportInfo
+Pass:            reflow-auto-loop-pipeline
+Name:            AutoLoopPipeline
+Args:            
+  - String:          'Pipelining loop< '
+  - LoopName:        VITIS_LOOP_529_1
+  - String:          '> at '
+  - LoopLoc:         'src/snn_top_hls.cpp:529:27'
+  - String:          ' due to pipeline_loops threshold'
+...
+--- !Passed
+Pass:            reflow-auto-loop-pipeline
+Name:            AutoParallelPerformanceDrivenVerbosePassed
+DebugLoc:        { File: src/snn_top_hls.cpp, Line: 529, Column: 27 }
+Function:        _Z11snn_top_hls7ap_uintILi32EES0_17learning_params_tRS0_S2_S2_S2_RN3hls6streamINS3_4axisIS0_Lm1ELm1ELm1ELh56ELb0EEELi0EEES8_S8_6ap_intILi8EERS_ILi1EERS_ILi8EERSA_SB_SB_SD_SA_SC_SC_SC_RS_ILi16EESH_SB_SB_
+Args:            
+  - PragmaType:      pipeline
+  - String:          ' '
+  - PragmaOptions:   ' '
+  - String:          ' '
+  - PragmaIsAuto:    '1'
+  - String:          ' '
+  - PragmaFunction:  snn_top_hls
+  - String:          ' '
+  - PragmaInferReason: config_compile -pipeline_loops 64
+  - LoopName:        VITIS_LOOP_529_1
+  - String:          ' '
+  - LoopLoc:         'src/snn_top_hls.cpp:529:27'
+    DebugLoc:        { File: src/snn_top_hls.cpp, Line: 529, Column: 27 }
+  - String:          ' '
+...
+--- !HLSReportInfo
+Pass:            reflow-auto-loop-pipeline
+Name:            AutoLoopPipeline
+Args:            
+  - String:          'Pipelining loop< '
+  - LoopName:        VITIS_LOOP_529_1
+  - String:          '> at '
+  - LoopLoc:         'src/snn_top_hls.cpp:529:27'
+  - String:          ' due to pipeline_loops threshold'
+...
+--- !Passed
+Pass:            reflow-auto-loop-pipeline
+Name:            AutoParallelPerformanceDrivenVerbosePassed
+DebugLoc:        { File: src/snn_top_hls.cpp, Line: 529, Column: 27 }
+Function:        _Z11snn_top_hls7ap_uintILi32EES0_17learning_params_tRS0_S2_S2_S2_RN3hls6streamINS3_4axisIS0_Lm1ELm1ELm1ELh56ELb0EEELi0EEES8_S8_6ap_intILi8EERS_ILi1EERS_ILi8EERSA_SB_SB_SD_SA_SC_SC_SC_RS_ILi16EESH_SB_SB_
+Args:            
+  - PragmaType:      pipeline
+  - String:          ' '
+  - PragmaOptions:   ' '
+  - String:          ' '
+  - PragmaIsAuto:    '1'
+  - String:          ' '
+  - PragmaFunction:  snn_top_hls
+  - String:          ' '
+  - PragmaInferReason: config_compile -pipeline_loops 64
+  - LoopName:        VITIS_LOOP_529_1
+  - String:          ' '
+  - LoopLoc:         'src/snn_top_hls.cpp:529:27'
+    DebugLoc:        { File: src/snn_top_hls.cpp, Line: 529, Column: 27 }
+  - String:          ' '
+...
+--- !HLSReportInfo
+Pass:            reflow-auto-loop-pipeline
+Name:            AutoLoopPipeline
+Args:            
+  - String:          'Pipelining loop< '
+  - LoopName:        VITIS_LOOP_529_1
+  - String:          '> at '
+  - LoopLoc:         'src/snn_top_hls.cpp:529:27'
+  - String:          ' due to pipeline_loops threshold'
+...
+--- !Passed
+Pass:            reflow-auto-loop-pipeline
+Name:            AutoParallelPerformanceDrivenVerbosePassed
+DebugLoc:        { File: src/snn_top_hls.cpp, Line: 529, Column: 27 }
+Function:        _Z11snn_top_hls7ap_uintILi32EES0_17learning_params_tRS0_S2_S2_S2_RN3hls6streamINS3_4axisIS0_Lm1ELm1ELm1ELh56ELb0EEELi0EEES8_S8_6ap_intILi8EERS_ILi1EERS_ILi8EERSA_SB_SB_SD_SA_SC_SC_SC_RS_ILi16EESH_SB_SB_
+Args:            
+  - PragmaType:      pipeline
+  - String:          ' '
+  - PragmaOptions:   ' '
+  - String:          ' '
+  - PragmaIsAuto:    '1'
+  - String:          ' '
+  - PragmaFunction:  snn_top_hls
+  - String:          ' '
+  - PragmaInferReason: config_compile -pipeline_loops 64
+  - LoopName:        VITIS_LOOP_529_1
+  - String:          ' '
+  - LoopLoc:         'src/snn_top_hls.cpp:529:27'
+    DebugLoc:        { File: src/snn_top_hls.cpp, Line: 529, Column: 27 }
+  - String:          ' '
+...
+--- !HLSReportInfo
+Pass:            reflow-auto-loop-pipeline
+Name:            AutoLoopPipeline
+Args:            
+  - String:          'Pipelining loop< '
+  - LoopName:        VITIS_LOOP_529_1
+  - String:          '> at '
+  - LoopLoc:         'src/snn_top_hls.cpp:529:27'
+  - String:          ' due to pipeline_loops threshold'
+...
+--- !Passed
+Pass:            reflow-auto-loop-pipeline
+Name:            AutoParallelPerformanceDrivenVerbosePassed
+DebugLoc:        { File: src/snn_top_hls.cpp, Line: 529, Column: 27 }
+Function:        _Z11snn_top_hls7ap_uintILi32EES0_17learning_params_tRS0_S2_S2_S2_RN3hls6streamINS3_4axisIS0_Lm1ELm1ELm1ELh56ELb0EEELi0EEES8_S8_6ap_intILi8EERS_ILi1EERS_ILi8EERSA_SB_SB_SD_SA_SC_SC_SC_RS_ILi16EESH_SB_SB_
+Args:            
+  - PragmaType:      pipeline
+  - String:          ' '
+  - PragmaOptions:   ' '
+  - String:          ' '
+  - PragmaIsAuto:    '1'
+  - String:          ' '
+  - PragmaFunction:  snn_top_hls
+  - String:          ' '
+  - PragmaInferReason: config_compile -pipeline_loops 64
+  - LoopName:        VITIS_LOOP_529_1
+  - String:          ' '
+  - LoopLoc:         'src/snn_top_hls.cpp:529:27'
+    DebugLoc:        { File: src/snn_top_hls.cpp, Line: 529, Column: 27 }
+  - String:          ' '
+...
+--- !HLSReportInfo
+Pass:            reflow-auto-loop-pipeline
+Name:            AutoLoopPipeline
+Args:            
+  - String:          'Pipelining loop< '
+  - LoopName:        VITIS_LOOP_529_1
+  - String:          '> at '
+  - LoopLoc:         'src/snn_top_hls.cpp:529:27'
+  - String:          ' due to pipeline_loops threshold'
+...
+--- !Passed
+Pass:            reflow-auto-loop-pipeline
+Name:            AutoParallelPerformanceDrivenVerbosePassed
+DebugLoc:        { File: src/snn_top_hls.cpp, Line: 529, Column: 27 }
+Function:        _Z11snn_top_hls7ap_uintILi32EES0_17learning_params_tRS0_S2_S2_S2_RN3hls6streamINS3_4axisIS0_Lm1ELm1ELm1ELh56ELb0EEELi0EEES8_S8_6ap_intILi8EERS_ILi1EERS_ILi8EERSA_SB_SB_SD_SA_SC_SC_SC_RS_ILi16EESH_SB_SB_
+Args:            
+  - PragmaType:      pipeline
+  - String:          ' '
+  - PragmaOptions:   ' '
+  - String:          ' '
+  - PragmaIsAuto:    '1'
+  - String:          ' '
+  - PragmaFunction:  snn_top_hls
+  - String:          ' '
+  - PragmaInferReason: config_compile -pipeline_loops 64
+  - LoopName:        VITIS_LOOP_529_1
+  - String:          ' '
+  - LoopLoc:         'src/snn_top_hls.cpp:529:27'
+    DebugLoc:        { File: src/snn_top_hls.cpp, Line: 529, Column: 27 }
+  - String:          ' '
+...
+--- !HLSReportInfo
+Pass:            reflow-auto-loop-pipeline
+Name:            AutoLoopPipeline
+Args:            
+  - String:          'Pipelining loop< '
+  - LoopName:        VITIS_LOOP_529_1
+  - String:          '> at '
+  - LoopLoc:         'src/snn_top_hls.cpp:529:27'
+  - String:          ' due to pipeline_loops threshold'
+...
+--- !Passed
+Pass:            reflow-auto-loop-pipeline
+Name:            AutoParallelPerformanceDrivenVerbosePassed
+DebugLoc:        { File: src/snn_top_hls.cpp, Line: 529, Column: 27 }
+Function:        _Z11snn_top_hls7ap_uintILi32EES0_17learning_params_tRS0_S2_S2_S2_RN3hls6streamINS3_4axisIS0_Lm1ELm1ELm1ELh56ELb0EEELi0EEES8_S8_6ap_intILi8EERS_ILi1EERS_ILi8EERSA_SB_SB_SD_SA_SC_SC_SC_RS_ILi16EESH_SB_SB_
+Args:            
+  - PragmaType:      pipeline
+  - String:          ' '
+  - PragmaOptions:   ' '
+  - String:          ' '
+  - PragmaIsAuto:    '1'
+  - String:          ' '
+  - PragmaFunction:  snn_top_hls
+  - String:          ' '
+  - PragmaInferReason: config_compile -pipeline_loops 64
+  - LoopName:        VITIS_LOOP_529_1
+  - String:          ' '
+  - LoopLoc:         'src/snn_top_hls.cpp:529:27'
+    DebugLoc:        { File: src/snn_top_hls.cpp, Line: 529, Column: 27 }
+  - String:          ' '
+...
+--- !HLSReportInfo
+Pass:            reflow-auto-loop-pipeline
+Name:            AutoLoopPipeline
+Args:            
+  - String:          'Pipelining loop< '
+  - LoopName:        VITIS_LOOP_529_1
+  - String:          '> at '
+  - LoopLoc:         'src/snn_top_hls.cpp:529:27'
+  - String:          ' due to pipeline_loops threshold'
+...
+--- !Passed
+Pass:            reflow-auto-loop-pipeline
+Name:            AutoParallelPerformanceDrivenVerbosePassed
+DebugLoc:        { File: src/snn_top_hls.cpp, Line: 529, Column: 27 }
+Function:        _Z11snn_top_hls7ap_uintILi32EES0_17learning_params_tRS0_S2_S2_S2_RN3hls6streamINS3_4axisIS0_Lm1ELm1ELm1ELh56ELb0EEELi0EEES8_S8_6ap_intILi8EERS_ILi1EERS_ILi8EERSA_SB_SB_SD_SA_SC_SC_SC_RS_ILi16EESH_SB_SB_
+Args:            
+  - PragmaType:      pipeline
+  - String:          ' '
+  - PragmaOptions:   ' '
+  - String:          ' '
+  - PragmaIsAuto:    '1'
+  - String:          ' '
+  - PragmaFunction:  snn_top_hls
+  - String:          ' '
+  - PragmaInferReason: config_compile -pipeline_loops 64
+  - LoopName:        VITIS_LOOP_529_1
+  - String:          ' '
+  - LoopLoc:         'src/snn_top_hls.cpp:529:27'
+    DebugLoc:        { File: src/snn_top_hls.cpp, Line: 529, Column: 27 }
+  - String:          ' '
+...
+--- !HLSReportInfo
+Pass:            reflow-auto-loop-pipeline
+Name:            AutoLoopPipeline
+Args:            
+  - String:          'Pipelining loop< '
+  - LoopName:        VITIS_LOOP_529_1
+  - String:          '> at '
+  - LoopLoc:         'src/snn_top_hls.cpp:529:27'
+  - String:          ' due to pipeline_loops threshold'
+...
+--- !Passed
+Pass:            reflow-auto-loop-pipeline
+Name:            AutoParallelPerformanceDrivenVerbosePassed
+DebugLoc:        { File: src/snn_top_hls.cpp, Line: 529, Column: 27 }
+Function:        _Z11snn_top_hls7ap_uintILi32EES0_17learning_params_tRS0_S2_S2_S2_RN3hls6streamINS3_4axisIS0_Lm1ELm1ELm1ELh56ELb0EEELi0EEES8_S8_6ap_intILi8EERS_ILi1EERS_ILi8EERSA_SB_SB_SD_SA_SC_SC_SC_RS_ILi16EESH_SB_SB_
+Args:            
+  - PragmaType:      pipeline
+  - String:          ' '
+  - PragmaOptions:   ' '
+  - String:          ' '
+  - PragmaIsAuto:    '1'
+  - String:          ' '
+  - PragmaFunction:  snn_top_hls
+  - String:          ' '
+  - PragmaInferReason: config_compile -pipeline_loops 64
+  - LoopName:        VITIS_LOOP_529_1
+  - String:          ' '
+  - LoopLoc:         'src/snn_top_hls.cpp:529:27'
+    DebugLoc:        { File: src/snn_top_hls.cpp, Line: 529, Column: 27 }
+  - String:          ' '
+...
+--- !HLSReportInfo
+Pass:            reflow-auto-loop-pipeline
+Name:            AutoLoopPipeline
+Args:            
+  - String:          'Pipelining loop< '
+  - LoopName:        VITIS_LOOP_529_1
+  - String:          '> at '
+  - LoopLoc:         'src/snn_top_hls.cpp:529:27'
+  - String:          ' due to pipeline_loops threshold'
+...
+--- !Passed
+Pass:            reflow-auto-loop-pipeline
+Name:            AutoParallelPerformanceDrivenVerbosePassed
+DebugLoc:        { File: src/snn_top_hls.cpp, Line: 529, Column: 27 }
+Function:        _Z11snn_top_hls7ap_uintILi32EES0_17learning_params_tRS0_S2_S2_S2_RN3hls6streamINS3_4axisIS0_Lm1ELm1ELm1ELh56ELb0EEELi0EEES8_S8_6ap_intILi8EERS_ILi1EERS_ILi8EERSA_SB_SB_SD_SA_SC_SC_SC_RS_ILi16EESH_SB_SB_
+Args:            
+  - PragmaType:      pipeline
+  - String:          ' '
+  - PragmaOptions:   ' '
+  - String:          ' '
+  - PragmaIsAuto:    '1'
+  - String:          ' '
+  - PragmaFunction:  snn_top_hls
+  - String:          ' '
+  - PragmaInferReason: config_compile -pipeline_loops 64
+  - LoopName:        VITIS_LOOP_529_1
+  - String:          ' '
+  - LoopLoc:         'src/snn_top_hls.cpp:529:27'
+    DebugLoc:        { File: src/snn_top_hls.cpp, Line: 529, Column: 27 }
+  - String:          ' '
+...
+--- !HLSReportInfo
+Pass:            reflow-auto-loop-pipeline
+Name:            AutoLoopPipeline
+Args:            
+  - String:          'Pipelining loop< '
+  - LoopName:        VITIS_LOOP_529_1
+  - String:          '> at '
+  - LoopLoc:         'src/snn_top_hls.cpp:529:27'
+  - String:          ' due to pipeline_loops threshold'
+...
+--- !Passed
+Pass:            reflow-auto-loop-pipeline
+Name:            AutoParallelPerformanceDrivenVerbosePassed
+DebugLoc:        { File: src/snn_top_hls.cpp, Line: 529, Column: 27 }
+Function:        _Z11snn_top_hls7ap_uintILi32EES0_17learning_params_tRS0_S2_S2_S2_RN3hls6streamINS3_4axisIS0_Lm1ELm1ELm1ELh56ELb0EEELi0EEES8_S8_6ap_intILi8EERS_ILi1EERS_ILi8EERSA_SB_SB_SD_SA_SC_SC_SC_RS_ILi16EESH_SB_SB_
+Args:            
+  - PragmaType:      pipeline
+  - String:          ' '
+  - PragmaOptions:   ' '
+  - String:          ' '
+  - PragmaIsAuto:    '1'
+  - String:          ' '
+  - PragmaFunction:  snn_top_hls
+  - String:          ' '
+  - PragmaInferReason: config_compile -pipeline_loops 64
+  - LoopName:        VITIS_LOOP_529_1
+  - String:          ' '
+  - LoopLoc:         'src/snn_top_hls.cpp:529:27'
+    DebugLoc:        { File: src/snn_top_hls.cpp, Line: 529, Column: 27 }
+  - String:          ' '
+...
+--- !HLSReportInfo
+Pass:            reflow-auto-loop-pipeline
+Name:            AutoLoopPipeline
+Args:            
+  - String:          'Pipelining loop< '
+  - LoopName:        VITIS_LOOP_529_1
+  - String:          '> at '
+  - LoopLoc:         'src/snn_top_hls.cpp:529:27'
+  - String:          ' due to pipeline_loops threshold'
+...
+--- !Passed
+Pass:            reflow-auto-loop-pipeline
+Name:            AutoParallelPerformanceDrivenVerbosePassed
+DebugLoc:        { File: src/snn_top_hls.cpp, Line: 529, Column: 27 }
+Function:        _Z11snn_top_hls7ap_uintILi32EES0_17learning_params_tRS0_S2_S2_S2_RN3hls6streamINS3_4axisIS0_Lm1ELm1ELm1ELh56ELb0EEELi0EEES8_S8_6ap_intILi8EERS_ILi1EERS_ILi8EERSA_SB_SB_SD_SA_SC_SC_SC_RS_ILi16EESH_SB_SB_
+Args:            
+  - PragmaType:      pipeline
+  - String:          ' '
+  - PragmaOptions:   ' '
+  - String:          ' '
+  - PragmaIsAuto:    '1'
+  - String:          ' '
+  - PragmaFunction:  snn_top_hls
+  - String:          ' '
+  - PragmaInferReason: config_compile -pipeline_loops 64
+  - LoopName:        VITIS_LOOP_529_1
+  - String:          ' '
+  - LoopLoc:         'src/snn_top_hls.cpp:529:27'
+    DebugLoc:        { File: src/snn_top_hls.cpp, Line: 529, Column: 27 }
+  - String:          ' '
+...
+--- !HLSReportInfo
+Pass:            reflow-auto-loop-pipeline
+Name:            AutoLoopPipeline
+Args:            
+  - String:          'Pipelining loop< '
+  - LoopName:        VITIS_LOOP_529_1
+  - String:          '> at '
+  - LoopLoc:         'src/snn_top_hls.cpp:529:27'
+  - String:          ' due to pipeline_loops threshold'
+...
+--- !Passed
+Pass:            reflow-auto-loop-pipeline
+Name:            AutoParallelPerformanceDrivenVerbosePassed
+DebugLoc:        { File: src/snn_top_hls.cpp, Line: 529, Column: 27 }
+Function:        _Z11snn_top_hls7ap_uintILi32EES0_17learning_params_tRS0_S2_S2_S2_RN3hls6streamINS3_4axisIS0_Lm1ELm1ELm1ELh56ELb0EEELi0EEES8_S8_6ap_intILi8EERS_ILi1EERS_ILi8EERSA_SB_SB_SD_SA_SC_SC_SC_RS_ILi16EESH_SB_SB_
+Args:            
+  - PragmaType:      pipeline
+  - String:          ' '
+  - PragmaOptions:   ' '
+  - String:          ' '
+  - PragmaIsAuto:    '1'
+  - String:          ' '
+  - PragmaFunction:  snn_top_hls
+  - String:          ' '
+  - PragmaInferReason: config_compile -pipeline_loops 64
+  - LoopName:        VITIS_LOOP_529_1
+  - String:          ' '
+  - LoopLoc:         'src/snn_top_hls.cpp:529:27'
+    DebugLoc:        { File: src/snn_top_hls.cpp, Line: 529, Column: 27 }
+  - String:          ' '
+...
+--- !Passed
+Pass:            reflow-auto-array-partition
+Name:            AutoParallelPerformanceDrivenVerbosePassed
+DebugLoc:        { File: src/snn_top_hls.cpp, Line: 25, Column: 0 }
+Function:        _Z11snn_top_hls7ap_uintILi32EES0_17learning_params_tRS0_S2_S2_S2_RN3hls6streamINS3_4axisIS0_Lm1ELm1ELm1ELh56ELb0EEELi0EEES8_S8_6ap_intILi8EERS_ILi1EERS_ILi8EERSA_SB_SB_SD_SA_SC_SC_SC_RS_ILi16EESH_SB_SB_
+Args:            
+  - PragmaType:      array_partition
+  - String:          ' '
+  - PragmaOptions:   'dim=1 type=cyclic factor=8 variable=pre_spike_times'
+  - String:          ' '
+  - PragmaIsAuto:    '1'
+  - String:          ' '
+  - PragmaFunction:  snn_top_hls
+  - String:          ' '
+  - VarLoc:          'src/snn_top_hls.cpp:25:0'
+  - String:          ' '
+  - VarName:         pre_spike_times
+  - String:          ' '
+...
+--- !Passed
+Pass:            reflow-auto-array-partition
+Name:            AutoArrayXform
+DebugLoc:        { File: src/snn_top_hls.cpp, Line: 25, Column: 0 }
+Function:        _Z11snn_top_hls7ap_uintILi32EES0_17learning_params_tRS0_S2_S2_S2_RN3hls6streamINS3_4axisIS0_Lm1ELm1ELm1ELh56ELb0EEELi0EEES8_S8_6ap_intILi8EERS_ILi1EERS_ILi8EERSA_SB_SB_SD_SA_SC_SC_SC_RS_ILi16EESH_SB_SB_
+Args:            
+  - String:          'Inferring pragma '''
+  - PragmaType:      array_partition
+  - String:          ' type='
+  - Mode:            cyclic
+  - String:          ' factor='
+  - Factor:          '8'
+  - String:          ' dim='
+  - Dim:             '1'
+  - String:          ''' for array '''
+  - Name:            pre_spike_times
+  - String:          ''''
+  - String:          ' due to '
+  - String:          pipeline
+  - String:          ' pragma'
+...
+--- !Passed
+Pass:            reflow-auto-array-partition
+Name:            AutoParallelPerformanceDrivenVerbosePassed
+DebugLoc:        { File: src/snn_top_hls.cpp, Line: 26, Column: 0 }
+Function:        _Z11snn_top_hls7ap_uintILi32EES0_17learning_params_tRS0_S2_S2_S2_RN3hls6streamINS3_4axisIS0_Lm1ELm1ELm1ELh56ELb0EEELi0EEES8_S8_6ap_intILi8EERS_ILi1EERS_ILi8EERSA_SB_SB_SD_SA_SC_SC_SC_RS_ILi16EESH_SB_SB_
+Args:            
+  - PragmaType:      array_partition
+  - String:          ' '
+  - PragmaOptions:   'dim=1 type=cyclic factor=8 variable=post_spike_times'
+  - String:          ' '
+  - PragmaIsAuto:    '1'
+  - String:          ' '
+  - PragmaFunction:  snn_top_hls
+  - String:          ' '
+  - VarLoc:          'src/snn_top_hls.cpp:26:0'
+  - String:          ' '
+  - VarName:         post_spike_times
+  - String:          ' '
+...
+--- !Passed
+Pass:            reflow-auto-array-partition
+Name:            AutoArrayXform
+DebugLoc:        { File: src/snn_top_hls.cpp, Line: 26, Column: 0 }
+Function:        _Z11snn_top_hls7ap_uintILi32EES0_17learning_params_tRS0_S2_S2_S2_RN3hls6streamINS3_4axisIS0_Lm1ELm1ELm1ELh56ELb0EEELi0EEES8_S8_6ap_intILi8EERS_ILi1EERS_ILi8EERSA_SB_SB_SD_SA_SC_SC_SC_RS_ILi16EESH_SB_SB_
+Args:            
+  - String:          'Inferring pragma '''
+  - PragmaType:      array_partition
+  - String:          ' type='
+  - Mode:            cyclic
+  - String:          ' factor='
+  - Factor:          '8'
+  - String:          ' dim='
+  - Dim:             '1'
+  - String:          ''' for array '''
+  - Name:            post_spike_times
+  - String:          ''''
+  - String:          ' due to '
+  - String:          pipeline
+  - String:          ' pragma'
+...
+--- !Passed
+Pass:            reflow-array-partition
+Name:            ArrayXform
+DebugLoc:        { File: src/snn_top_hls.cpp, Line: 26, Column: 0 }
+Function:        _Z11snn_top_hls7ap_uintILi32EES0_17learning_params_tRS0_S2_S2_S2_RN3hls6streamINS3_4axisIS0_Lm1ELm1ELm1ELh56ELb0EEELi0EEES8_S8_6ap_intILi8EERS_ILi1EERS_ILi8EERSA_SB_SB_SD_SA_SC_SC_SC_RS_ILi16EESH_SB_SB_
+Args:            
+  - String:          'Applying '
+  - String:          array_partition
+  - String:          ' to '''
+  - UOName:          _ZL16post_spike_times
+  - String:          ''':'
+  - String:          ' '
+  - Mode:            Cyclic
+  - String:          ' partitioning'
+  - String:          ' with factor '
+  - Factor:          '8'
+  - String:          ' on dimension '
+  - Dim:             '1'
+  - String:          .
+...
+--- !Passed
+Pass:            reflow-array-partition
+Name:            ArrayXform
+DebugLoc:        { File: src/snn_top_hls.cpp, Line: 25, Column: 0 }
+Function:        _Z11snn_top_hls7ap_uintILi32EES0_17learning_params_tRS0_S2_S2_S2_RN3hls6streamINS3_4axisIS0_Lm1ELm1ELm1ELh56ELb0EEELi0EEES8_S8_6ap_intILi8EERS_ILi1EERS_ILi8EERSA_SB_SB_SD_SA_SC_SC_SC_RS_ILi16EESH_SB_SB_
+Args:            
+  - String:          'Applying '
+  - String:          array_partition
+  - String:          ' to '''
+  - UOName:          _ZL15pre_spike_times
+  - String:          ''':'
+  - String:          ' '
+  - Mode:            Cyclic
+  - String:          ' partitioning'
+  - String:          ' with factor '
+  - Factor:          '8'
+  - String:          ' on dimension '
+  - Dim:             '1'
+  - String:          .
+...
+--- !Failure
+Pass:            reflow-array-partition
+Name:            WarnArrayXFORMOnIndexCast
+DebugLoc:        { File: src/snn_top_hls.cpp, Line: 88, Column: 5 }
+Function:        _ZL17process_pre_spike7ap_uintILi8EES_ILi32EERK17learning_params_tbRN3hls6streamI15weight_update_tLi0EEE
+Args:            
+  - String:          Array transformation on index using bit extension logic may lead to poor performance. Please use int or long for array index computation to benefit from optimizations.
+...
+--- !Failure
+Pass:            reflow-array-partition
+Name:            WarnArrayXFORMOnIndexCast
+DebugLoc:        { File: src/snn_top_hls.cpp, Line: 129, Column: 5 }
+Function:        _ZL18process_post_spike7ap_uintILi8EES_ILi32EERK17learning_params_tbRN3hls6streamI15weight_update_tLi0EEE
+Args:            
+  - String:          Array transformation on index using bit extension logic may lead to poor performance. Please use int or long for array index computation to benefit from optimizations.
+...
+--- !Missed
+Pass:            inline
+Name:            NeverInline
+DebugLoc:        { File: src/snn_top_hls.cpp, Line: 422, Column: 13 }
+Function:        _Z11snn_top_hls7ap_uintILi32EES0_17learning_params_tRS0_S2_S2_S2_RN3hls6streamINS3_4axisIS0_Lm1ELm1ELm1ELh56ELb0EEELi0EEES8_S8_6ap_intILi8EERS_ILi1EERS_ILi8EERSA_SB_SB_SD_SA_SC_SC_SC_RS_ILi16EESH_SB_SB_
+Args:            
+  - Callee:          'process_pre_spike(ap_uint<8>, ap_uint<32>, learning_params_t const&, bool, hls::stream<weight_update_t, 0>&) (.1)'
+    DebugLoc:        { File: src/snn_top_hls.cpp, Line: 84, Column: 0 }
+  - String:          ' not inlined into '
+  - Caller:          'snn_top_hls(ap_uint<32>, ap_uint<32>, learning_params_t, ap_uint<32>&, ap_uint<32>&, ap_uint<32>&, ap_uint<32>&, hls::stream<hls::axis<ap_uint<32>, 1ul, 1ul, 1ul, (unsigned char)56, false>, 0>&, hls::stream<hls::axis<ap_uint<32>, 1ul, 1ul, 1ul, (unsigned char)56, false>, 0>&, hls::stream<hls::axis<ap_uint<32>, 1ul, 1ul, 1ul, (unsigned char)56, false>, 0>&, ap_int<8>, ap_uint<1>&, ap_uint<8>&, ap_int<8>&, ap_uint<1>, ap_uint<1>, ap_uint<8>, ap_int<8>, ap_uint<1>&, ap_uint<1>&, ap_uint<1>&, ap_uint<16>&, ap_uint<16>&, ap_uint<1>, ap_uint<1>)'
+    DebugLoc:        { File: src/snn_top_hls.cpp, Line: 283, Column: 0 }
+  - String:          ' because it should never be inlined (cost=never)'
+...
+--- !Missed
+Pass:            inline
+Name:            NeverInline
+DebugLoc:        { File: src/snn_top_hls.cpp, Line: 470, Column: 9 }
+Function:        _Z11snn_top_hls7ap_uintILi32EES0_17learning_params_tRS0_S2_S2_S2_RN3hls6streamINS3_4axisIS0_Lm1ELm1ELm1ELh56ELb0EEELi0EEES8_S8_6ap_intILi8EERS_ILi1EERS_ILi8EERSA_SB_SB_SD_SA_SC_SC_SC_RS_ILi16EESH_SB_SB_
+Args:            
+  - Callee:          'decay_eligibility_traces(learning_params_t const&)'
+    DebugLoc:        { File: src/snn_top_hls.cpp, Line: 199, Column: 0 }
+  - String:          ' not inlined into '
+  - Caller:          'snn_top_hls(ap_uint<32>, ap_uint<32>, learning_params_t, ap_uint<32>&, ap_uint<32>&, ap_uint<32>&, ap_uint<32>&, hls::stream<hls::axis<ap_uint<32>, 1ul, 1ul, 1ul, (unsigned char)56, false>, 0>&, hls::stream<hls::axis<ap_uint<32>, 1ul, 1ul, 1ul, (unsigned char)56, false>, 0>&, hls::stream<hls::axis<ap_uint<32>, 1ul, 1ul, 1ul, (unsigned char)56, false>, 0>&, ap_int<8>, ap_uint<1>&, ap_uint<8>&, ap_int<8>&, ap_uint<1>, ap_uint<1>, ap_uint<8>, ap_int<8>, ap_uint<1>&, ap_uint<1>&, ap_uint<1>&, ap_uint<16>&, ap_uint<16>&, ap_uint<1>, ap_uint<1>)'
+    DebugLoc:        { File: src/snn_top_hls.cpp, Line: 283, Column: 0 }
+  - String:          ' because it should never be inlined (cost=never)'
+...
+--- !Missed
+Pass:            inline
+Name:            NeverInline
+DebugLoc:        { File: src/snn_top_hls.cpp, Line: 453, Column: 13 }
+Function:        _Z11snn_top_hls7ap_uintILi32EES0_17learning_params_tRS0_S2_S2_S2_RN3hls6streamINS3_4axisIS0_Lm1ELm1ELm1ELh56ELb0EEELi0EEES8_S8_6ap_intILi8EERS_ILi1EERS_ILi8EERSA_SB_SB_SD_SA_SC_SC_SC_RS_ILi16EESH_SB_SB_
+Args:            
+  - Callee:          'process_post_spike(ap_uint<8>, ap_uint<32>, learning_params_t const&, bool, hls::stream<weight_update_t, 0>&) (.1)'
+    DebugLoc:        { File: src/snn_top_hls.cpp, Line: 125, Column: 0 }
+  - String:          ' not inlined into '
+  - Caller:          'snn_top_hls(ap_uint<32>, ap_uint<32>, learning_params_t, ap_uint<32>&, ap_uint<32>&, ap_uint<32>&, ap_uint<32>&, hls::stream<hls::axis<ap_uint<32>, 1ul, 1ul, 1ul, (unsigned char)56, false>, 0>&, hls::stream<hls::axis<ap_uint<32>, 1ul, 1ul, 1ul, (unsigned char)56, false>, 0>&, hls::stream<hls::axis<ap_uint<32>, 1ul, 1ul, 1ul, (unsigned char)56, false>, 0>&, ap_int<8>, ap_uint<1>&, ap_uint<8>&, ap_int<8>&, ap_uint<1>, ap_uint<1>, ap_uint<8>, ap_int<8>, ap_uint<1>&, ap_uint<1>&, ap_uint<1>&, ap_uint<16>&, ap_uint<16>&, ap_uint<1>, ap_uint<1>)'
+    DebugLoc:        { File: src/snn_top_hls.cpp, Line: 283, Column: 0 }
+  - String:          ' because it should never be inlined (cost=never)'
+...
+--- !Missed
+Pass:            inline
+Name:            NeverInline
+DebugLoc:        { File: src/snn_top_hls.cpp, Line: 461, Column: 9 }
+Function:        _Z11snn_top_hls7ap_uintILi32EES0_17learning_params_tRS0_S2_S2_S2_RN3hls6streamINS3_4axisIS0_Lm1ELm1ELm1ELh56ELb0EEELi0EEES8_S8_6ap_intILi8EERS_ILi1EERS_ILi8EERSA_SB_SB_SD_SA_SC_SC_SC_RS_ILi16EESH_SB_SB_
+Args:            
+  - Callee:          'apply_weight_updates(hls::stream<weight_update_t, 0>&, learning_params_t const&, ap_int<8>) (.1)'
+    DebugLoc:        { File: src/snn_top_hls.cpp, Line: 164, Column: 0 }
+  - String:          ' not inlined into '
+  - Caller:          'snn_top_hls(ap_uint<32>, ap_uint<32>, learning_params_t, ap_uint<32>&, ap_uint<32>&, ap_uint<32>&, ap_uint<32>&, hls::stream<hls::axis<ap_uint<32>, 1ul, 1ul, 1ul, (unsigned char)56, false>, 0>&, hls::stream<hls::axis<ap_uint<32>, 1ul, 1ul, 1ul, (unsigned char)56, false>, 0>&, hls::stream<hls::axis<ap_uint<32>, 1ul, 1ul, 1ul, (unsigned char)56, false>, 0>&, ap_int<8>, ap_uint<1>&, ap_uint<8>&, ap_int<8>&, ap_uint<1>, ap_uint<1>, ap_uint<8>, ap_int<8>, ap_uint<1>&, ap_uint<1>&, ap_uint<1>&, ap_uint<16>&, ap_uint<16>&, ap_uint<1>, ap_uint<1>)'
+    DebugLoc:        { File: src/snn_top_hls.cpp, Line: 283, Column: 0 }
+  - String:          ' because it should never be inlined (cost=never)'
+...
+--- !Missed
+Pass:            inline
+Name:            NeverInline
+DebugLoc:        { File: src/snn_top_hls.cpp, Line: 469, Column: 9 }
+Function:        _Z11snn_top_hls7ap_uintILi32EES0_17learning_params_tRS0_S2_S2_S2_RN3hls6streamINS3_4axisIS0_Lm1ELm1ELm1ELh56ELb0EEELi0EEES8_S8_6ap_intILi8EERS_ILi1EERS_ILi8EERSA_SB_SB_SD_SA_SC_SC_SC_RS_ILi16EESH_SB_SB_
+Args:            
+  - Callee:          'apply_reward_signal(ap_int<8>, learning_params_t const&)'
+    DebugLoc:        { File: src/snn_top_hls.cpp, Line: 216, Column: 0 }
+  - String:          ' not inlined into '
+  - Caller:          'snn_top_hls(ap_uint<32>, ap_uint<32>, learning_params_t, ap_uint<32>&, ap_uint<32>&, ap_uint<32>&, ap_uint<32>&, hls::stream<hls::axis<ap_uint<32>, 1ul, 1ul, 1ul, (unsigned char)56, false>, 0>&, hls::stream<hls::axis<ap_uint<32>, 1ul, 1ul, 1ul, (unsigned char)56, false>, 0>&, hls::stream<hls::axis<ap_uint<32>, 1ul, 1ul, 1ul, (unsigned char)56, false>, 0>&, ap_int<8>, ap_uint<1>&, ap_uint<8>&, ap_int<8>&, ap_uint<1>, ap_uint<1>, ap_uint<8>, ap_int<8>, ap_uint<1>&, ap_uint<1>&, ap_uint<1>&, ap_uint<16>&, ap_uint<16>&, ap_uint<1>, ap_uint<1>)'
+    DebugLoc:        { File: src/snn_top_hls.cpp, Line: 283, Column: 0 }
+  - String:          ' because it should never be inlined (cost=never)'
+...

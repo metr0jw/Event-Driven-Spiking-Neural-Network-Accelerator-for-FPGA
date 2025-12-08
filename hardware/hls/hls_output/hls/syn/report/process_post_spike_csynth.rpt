@@ -1,0 +1,196 @@
+
+
+================================================================
+== Vitis HLS Report for 'process_post_spike'
+================================================================
+* Date:           Mon Dec  8 20:06:23 2025
+
+* Version:        2025.2 (Build 6295257 on Nov 14 2025)
+* Project:        hls_output
+* Solution:       hls (Vivado IP Flow Target)
+* Product family: zynq
+* Target device:  xc7z020-clg400-1
+
+
+================================================================
+== Performance Estimates
+================================================================
++ Timing: 
+    * Summary: 
+    +--------+----------+----------+------------+
+    |  Clock |  Target  | Estimated| Uncertainty|
+    +--------+----------+----------+------------+
+    |ap_clk  |  10.00 ns|  6.852 ns|     2.70 ns|
+    +--------+----------+----------+------------+
+
++ Latency: 
+    * Summary: 
+    +---------+---------+----------+----------+-----+-----+---------+
+    |  Latency (cycles) |  Latency (absolute) |  Interval | Pipeline|
+    |   min   |   max   |    min   |    max   | min | max |   Type  |
+    +---------+---------+----------+----------+-----+-----+---------+
+    |      101|      101|  1.010 us|  1.010 us|  101|  101|       no|
+    +---------+---------+----------+----------+-----+-----+---------+
+
+    + Detail: 
+        * Instance: 
+        +------------------------------------------------------+-------------------------------------------+---------+---------+----------+----------+-----+-----+-------------------+
+        |                                                      |                                           |  Latency (cycles) |  Latency (absolute) |  Interval |      Pipeline     |
+        |                       Instance                       |                   Module                  |   min   |   max   |    min   |    max   | min | max |        Type       |
+        +------------------------------------------------------+-------------------------------------------+---------+---------+----------+----------+-----+-----+-------------------+
+        |grp_process_post_spike_Pipeline_STDP_LTP_LOOP_fu_256  |process_post_spike_Pipeline_STDP_LTP_LOOP  |      100|      100|  1.000 us|  1.000 us|    0|    0|  loop pipeline stp|
+        +------------------------------------------------------+-------------------------------------------+---------+---------+----------+----------+-----+-----+-------------------+
+
+        * Loop: 
+        N/A
+
+
+
+================================================================
+== Utilization Estimates
+================================================================
+* Summary: 
++-----------------+---------+-----+--------+-------+-----+
+|       Name      | BRAM_18K| DSP |   FF   |  LUT  | URAM|
++-----------------+---------+-----+--------+-------+-----+
+|DSP              |        -|    -|       -|      -|    -|
+|Expression       |        -|    -|       -|      -|    -|
+|FIFO             |        -|    -|       -|      -|    -|
+|Instance         |        -|   16|   27323|  23556|    -|
+|Memory           |        -|    -|       -|      -|    -|
+|Multiplexer      |        -|    -|       0|     14|    -|
+|Register         |        -|    -|      19|      -|    -|
++-----------------+---------+-----+--------+-------+-----+
+|Total            |        0|   16|   27342|  23570|    0|
++-----------------+---------+-----+--------+-------+-----+
+|Available        |      280|  220|  106400|  53200|    0|
++-----------------+---------+-----+--------+-------+-----+
+|Utilization (%)  |        0|    7|      25|     44|    0|
++-----------------+---------+-----+--------+-------+-----+
+
++ Detail: 
+    * Instance: 
+    +------------------------------------------------------+-------------------------------------------+---------+----+-------+-------+-----+
+    |                       Instance                       |                   Module                  | BRAM_18K| DSP|   FF  |  LUT  | URAM|
+    +------------------------------------------------------+-------------------------------------------+---------+----+-------+-------+-----+
+    |grp_process_post_spike_Pipeline_STDP_LTP_LOOP_fu_256  |process_post_spike_Pipeline_STDP_LTP_LOOP  |        0|  16|  27323|  23556|    0|
+    +------------------------------------------------------+-------------------------------------------+---------+----+-------+-------+-----+
+    |Total                                                 |                                           |        0|  16|  27323|  23556|    0|
+    +------------------------------------------------------+-------------------------------------------+---------+----+-------+-------+-----+
+
+    * DSP: 
+    N/A
+
+    * Memory: 
+    N/A
+
+    * FIFO: 
+    N/A
+
+    * Expression: 
+    N/A
+
+    * Multiplexer: 
+    +-----------+----+-----------+-----+-----------+
+    |    Name   | LUT| Input Size| Bits| Total Bits|
+    +-----------+----+-----------+-----+-----------+
+    |ap_NS_fsm  |  14|          3|    1|          3|
+    +-----------+----+-----------+-----+-----------+
+    |Total      |  14|          3|    1|          3|
+    +-----------+----+-----------+-----+-----------+
+
+    * Register: 
+    +-------------------------------------------------------------------+---+----+-----+-----------+
+    |                                Name                               | FF| LUT| Bits| Const Bits|
+    +-------------------------------------------------------------------+---+----+-----+-----------+
+    |ap_CS_fsm                                                          |  2|   0|    2|          0|
+    |grp_process_post_spike_Pipeline_STDP_LTP_LOOP_fu_256_ap_start_reg  |  1|   0|    1|          0|
+    |shl_ln2_reg_388                                                    |  8|   0|   16|          8|
+    |shl_ln_reg_383                                                     |  8|   0|   16|          8|
+    +-------------------------------------------------------------------+---+----+-----+-----------+
+    |Total                                                              | 19|   0|   35|         16|
+    +-------------------------------------------------------------------+---+----+-----+-----------+
+
+
+
+================================================================
+== Interface
+================================================================
+* Summary: 
++-----------------------------------+-----+-----+------------+--------------------------+--------------+
+|             RTL Ports             | Dir | Bits|  Protocol  |       Source Object      |    C Type    |
++-----------------------------------+-----+-----+------------+--------------------------+--------------+
+|ap_clk                             |   in|    1|  ap_ctrl_hs|        process_post_spike|  return value|
+|ap_rst                             |   in|    1|  ap_ctrl_hs|        process_post_spike|  return value|
+|ap_start                           |   in|    1|  ap_ctrl_hs|        process_post_spike|  return value|
+|ap_done                            |  out|    1|  ap_ctrl_hs|        process_post_spike|  return value|
+|ap_idle                            |  out|    1|  ap_ctrl_hs|        process_post_spike|  return value|
+|ap_ready                           |  out|    1|  ap_ctrl_hs|        process_post_spike|  return value|
+|post_id                            |   in|    8|     ap_none|                   post_id|        scalar|
+|current_time                       |   in|   32|     ap_none|              current_time|        scalar|
+|params_a_plus_val                  |   in|   16|     ap_none|         params_a_plus_val|        scalar|
+|params_a_minus_val                 |   in|   16|     ap_none|        params_a_minus_val|        scalar|
+|params_tau_plus_val                |   in|    8|     ap_none|       params_tau_plus_val|        scalar|
+|params_tau_minus_val               |   in|    8|     ap_none|      params_tau_minus_val|        scalar|
+|params_stdp_window_val             |   in|   16|     ap_none|    params_stdp_window_val|        scalar|
+|p_ZL16post_spike_times_0_address0  |  out|    3|   ap_memory|  p_ZL16post_spike_times_0|         array|
+|p_ZL16post_spike_times_0_ce0       |  out|    1|   ap_memory|  p_ZL16post_spike_times_0|         array|
+|p_ZL16post_spike_times_0_we0       |  out|    1|   ap_memory|  p_ZL16post_spike_times_0|         array|
+|p_ZL16post_spike_times_0_d0        |  out|   32|   ap_memory|  p_ZL16post_spike_times_0|         array|
+|p_ZL16post_spike_times_1_address0  |  out|    3|   ap_memory|  p_ZL16post_spike_times_1|         array|
+|p_ZL16post_spike_times_1_ce0       |  out|    1|   ap_memory|  p_ZL16post_spike_times_1|         array|
+|p_ZL16post_spike_times_1_we0       |  out|    1|   ap_memory|  p_ZL16post_spike_times_1|         array|
+|p_ZL16post_spike_times_1_d0        |  out|   32|   ap_memory|  p_ZL16post_spike_times_1|         array|
+|p_ZL16post_spike_times_2_address0  |  out|    3|   ap_memory|  p_ZL16post_spike_times_2|         array|
+|p_ZL16post_spike_times_2_ce0       |  out|    1|   ap_memory|  p_ZL16post_spike_times_2|         array|
+|p_ZL16post_spike_times_2_we0       |  out|    1|   ap_memory|  p_ZL16post_spike_times_2|         array|
+|p_ZL16post_spike_times_2_d0        |  out|   32|   ap_memory|  p_ZL16post_spike_times_2|         array|
+|p_ZL16post_spike_times_3_address0  |  out|    3|   ap_memory|  p_ZL16post_spike_times_3|         array|
+|p_ZL16post_spike_times_3_ce0       |  out|    1|   ap_memory|  p_ZL16post_spike_times_3|         array|
+|p_ZL16post_spike_times_3_we0       |  out|    1|   ap_memory|  p_ZL16post_spike_times_3|         array|
+|p_ZL16post_spike_times_3_d0        |  out|   32|   ap_memory|  p_ZL16post_spike_times_3|         array|
+|p_ZL16post_spike_times_4_address0  |  out|    3|   ap_memory|  p_ZL16post_spike_times_4|         array|
+|p_ZL16post_spike_times_4_ce0       |  out|    1|   ap_memory|  p_ZL16post_spike_times_4|         array|
+|p_ZL16post_spike_times_4_we0       |  out|    1|   ap_memory|  p_ZL16post_spike_times_4|         array|
+|p_ZL16post_spike_times_4_d0        |  out|   32|   ap_memory|  p_ZL16post_spike_times_4|         array|
+|p_ZL16post_spike_times_5_address0  |  out|    3|   ap_memory|  p_ZL16post_spike_times_5|         array|
+|p_ZL16post_spike_times_5_ce0       |  out|    1|   ap_memory|  p_ZL16post_spike_times_5|         array|
+|p_ZL16post_spike_times_5_we0       |  out|    1|   ap_memory|  p_ZL16post_spike_times_5|         array|
+|p_ZL16post_spike_times_5_d0        |  out|   32|   ap_memory|  p_ZL16post_spike_times_5|         array|
+|p_ZL16post_spike_times_6_address0  |  out|    3|   ap_memory|  p_ZL16post_spike_times_6|         array|
+|p_ZL16post_spike_times_6_ce0       |  out|    1|   ap_memory|  p_ZL16post_spike_times_6|         array|
+|p_ZL16post_spike_times_6_we0       |  out|    1|   ap_memory|  p_ZL16post_spike_times_6|         array|
+|p_ZL16post_spike_times_6_d0        |  out|   32|   ap_memory|  p_ZL16post_spike_times_6|         array|
+|p_ZL16post_spike_times_7_address0  |  out|    3|   ap_memory|  p_ZL16post_spike_times_7|         array|
+|p_ZL16post_spike_times_7_ce0       |  out|    1|   ap_memory|  p_ZL16post_spike_times_7|         array|
+|p_ZL16post_spike_times_7_we0       |  out|    1|   ap_memory|  p_ZL16post_spike_times_7|         array|
+|p_ZL16post_spike_times_7_d0        |  out|   32|   ap_memory|  p_ZL16post_spike_times_7|         array|
+|p_ZL15pre_spike_times_7_address0   |  out|    3|   ap_memory|   p_ZL15pre_spike_times_7|         array|
+|p_ZL15pre_spike_times_7_ce0        |  out|    1|   ap_memory|   p_ZL15pre_spike_times_7|         array|
+|p_ZL15pre_spike_times_7_q0         |   in|   32|   ap_memory|   p_ZL15pre_spike_times_7|         array|
+|p_ZL15pre_spike_times_6_address0   |  out|    3|   ap_memory|   p_ZL15pre_spike_times_6|         array|
+|p_ZL15pre_spike_times_6_ce0        |  out|    1|   ap_memory|   p_ZL15pre_spike_times_6|         array|
+|p_ZL15pre_spike_times_6_q0         |   in|   32|   ap_memory|   p_ZL15pre_spike_times_6|         array|
+|p_ZL15pre_spike_times_5_address0   |  out|    3|   ap_memory|   p_ZL15pre_spike_times_5|         array|
+|p_ZL15pre_spike_times_5_ce0        |  out|    1|   ap_memory|   p_ZL15pre_spike_times_5|         array|
+|p_ZL15pre_spike_times_5_q0         |   in|   32|   ap_memory|   p_ZL15pre_spike_times_5|         array|
+|p_ZL15pre_spike_times_4_address0   |  out|    3|   ap_memory|   p_ZL15pre_spike_times_4|         array|
+|p_ZL15pre_spike_times_4_ce0        |  out|    1|   ap_memory|   p_ZL15pre_spike_times_4|         array|
+|p_ZL15pre_spike_times_4_q0         |   in|   32|   ap_memory|   p_ZL15pre_spike_times_4|         array|
+|p_ZL15pre_spike_times_3_address0   |  out|    3|   ap_memory|   p_ZL15pre_spike_times_3|         array|
+|p_ZL15pre_spike_times_3_ce0        |  out|    1|   ap_memory|   p_ZL15pre_spike_times_3|         array|
+|p_ZL15pre_spike_times_3_q0         |   in|   32|   ap_memory|   p_ZL15pre_spike_times_3|         array|
+|p_ZL15pre_spike_times_2_address0   |  out|    3|   ap_memory|   p_ZL15pre_spike_times_2|         array|
+|p_ZL15pre_spike_times_2_ce0        |  out|    1|   ap_memory|   p_ZL15pre_spike_times_2|         array|
+|p_ZL15pre_spike_times_2_q0         |   in|   32|   ap_memory|   p_ZL15pre_spike_times_2|         array|
+|p_ZL15pre_spike_times_1_address0   |  out|    3|   ap_memory|   p_ZL15pre_spike_times_1|         array|
+|p_ZL15pre_spike_times_1_ce0        |  out|    1|   ap_memory|   p_ZL15pre_spike_times_1|         array|
+|p_ZL15pre_spike_times_1_q0         |   in|   32|   ap_memory|   p_ZL15pre_spike_times_1|         array|
+|p_ZL15pre_spike_times_0_address0   |  out|    3|   ap_memory|   p_ZL15pre_spike_times_0|         array|
+|p_ZL15pre_spike_times_0_ce0        |  out|    1|   ap_memory|   p_ZL15pre_spike_times_0|         array|
+|p_ZL15pre_spike_times_0_q0         |   in|   32|   ap_memory|   p_ZL15pre_spike_times_0|         array|
+|weight_update_fifo_din             |  out|   64|     ap_fifo|        weight_update_fifo|       pointer|
+|weight_update_fifo_full_n          |   in|    1|     ap_fifo|        weight_update_fifo|       pointer|
+|weight_update_fifo_write           |  out|    1|     ap_fifo|        weight_update_fifo|       pointer|
++-----------------------------------+-----+-----+------------+--------------------------+--------------+
+

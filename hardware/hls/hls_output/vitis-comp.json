@@ -1,0 +1,10 @@
+{
+  "name": "hls_output",
+  "type": "HLS",
+  "configuration": {
+    "componentType": "HLS",
+    "work_dir": ".",
+    "csyn_args": "--part=xc7z020clg400-1 --hls.flow_target=vivado --hls.syn.file=src\/snn_top_hls.cpp --hls.syn.top=snn_top_hls",
+    "configFiles": ["hls_config.cfg"]
+  }
+}

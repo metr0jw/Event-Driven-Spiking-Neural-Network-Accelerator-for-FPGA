@@ -17,21 +17,16 @@
 
 //=============================================================================
 // Weight Memory (On-Chip BRAM)
+// Note: HLS pragmas for these arrays are applied inside the top function
 //=============================================================================
 static weight_t weight_memory[MAX_NEURONS][MAX_NEURONS];
-#pragma HLS BIND_STORAGE variable=weight_memory type=RAM_2P impl=BRAM
-#pragma HLS ARRAY_PARTITION variable=weight_memory cyclic factor=8 dim=2
 
 // Spike time tracking for STDP
 static spike_time_t pre_spike_times[MAX_NEURONS];
 static spike_time_t post_spike_times[MAX_NEURONS];
-#pragma HLS BIND_STORAGE variable=pre_spike_times type=RAM_1P impl=BRAM
-#pragma HLS BIND_STORAGE variable=post_spike_times type=RAM_1P impl=BRAM
 
 // Eligibility traces for R-STDP
 static ap_fixed<16,8> eligibility_traces[MAX_NEURONS][MAX_NEURONS];
-#pragma HLS BIND_STORAGE variable=eligibility_traces type=RAM_2P impl=BRAM
-#pragma HLS ARRAY_PARTITION variable=eligibility_traces cyclic factor=4 dim=2
 
 //=============================================================================
 // STDP Weight Update Calculation
@@ -320,6 +315,16 @@ void snn_top_hls(
     #pragma HLS INTERFACE ap_none port=leak_rate_out
     #pragma HLS INTERFACE ap_none port=snn_ready
     #pragma HLS INTERFACE ap_none port=snn_busy
+    
+    //=========================================================================
+    // Static Array Storage Bindings (must be inside function scope)
+    //=========================================================================
+    #pragma HLS BIND_STORAGE variable=weight_memory type=RAM_2P impl=BRAM
+    #pragma HLS ARRAY_PARTITION variable=weight_memory cyclic factor=8 dim=2
+    #pragma HLS BIND_STORAGE variable=pre_spike_times type=RAM_1P impl=BRAM
+    #pragma HLS BIND_STORAGE variable=post_spike_times type=RAM_1P impl=BRAM
+    #pragma HLS BIND_STORAGE variable=eligibility_traces type=RAM_2P impl=BRAM
+    #pragma HLS ARRAY_PARTITION variable=eligibility_traces cyclic factor=4 dim=2
     
     //=========================================================================
     // Internal State

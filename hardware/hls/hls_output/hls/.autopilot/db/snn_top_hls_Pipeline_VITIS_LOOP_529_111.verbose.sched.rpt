@@ -1,0 +1,195 @@
+
+
+================================================================
+== Vitis HLS Report for 'snn_top_hls_Pipeline_VITIS_LOOP_529_111'
+================================================================
+* Date:           Mon Dec  8 20:06:22 2025
+
+* Version:        2025.2 (Build 6295257 on Nov 14 2025)
+* Project:        hls_output
+* Solution:       hls (Vivado IP Flow Target)
+* Product family: zynq
+* Target device:  xc7z020-clg400-1
+
+
+================================================================
+== Performance Estimates
+================================================================
++ Timing: 
+    * Summary: 
+    +--------+----------+----------+------------+
+    |  Clock |  Target  | Estimated| Uncertainty|
+    +--------+----------+----------+------------+
+    |ap_clk  |  10.00 ns|  5.558 ns|     2.70 ns|
+    +--------+----------+----------+------------+
+
++ Latency: 
+    * Summary: 
+    +---------+---------+----------+----------+-----+-----+-------------------+
+    |  Latency (cycles) |  Latency (absolute) |  Interval |      Pipeline     |
+    |   min   |   max   |    min   |    max   | min | max |        Type       |
+    +---------+---------+----------+----------+-----+-----+-------------------+
+    |       19|       19|  0.190 us|  0.190 us|    0|    0|  loop pipeline stp|
+    +---------+---------+----------+----------+-----+-----+-------------------+
+
+    + Detail: 
+        * Instance: 
+        N/A
+
+        * Loop: 
+        +--------------------+---------+---------+----------+-----------+-----------+------+----------+
+        |                    |  Latency (cycles) | Iteration|  Initiation Interval  | Trip |          |
+        |      Loop Name     |   min   |   max   |  Latency |  achieved |   target  | Count| Pipelined|
+        +--------------------+---------+---------+----------+-----------+-----------+------+----------+
+        |- VITIS_LOOP_529_1  |       17|       17|         3|          1|          1|    16|       yes|
+        +--------------------+---------+---------+----------+-----------+-----------+------+----------+
+
+============================================================
++ Verbose Summary: Synthesis Manager
+============================================================
+InlineROM: 1
+ExposeGlobal: 0
+============================================================
++ Verbose Summary: CDFG Model
+============================================================
+IsTopModel: 0
+ResetActiveHigh: 1
+IsCombinational: 0
+IsDatapathOnly: 0
+HasWiredReturn: 1
+HasMFsm: 2
+HasVarLatency: 1
+IsPipeline: 0
+IsRtlPipelined: 0
+IsInstanceOverlapped: 0
+IsDontTouch: 0
+HasImplIP: 0
+IsGatedGlobalClock: 0
+
++ Individual pipeline summary: 
+  * Pipeline-0: initiation interval (II) = 1, depth = 3
+
+
+============================================================
++ Verbose Summary: Schedule
+============================================================
+* Number of FSM states : 3
+* Pipeline : 1
+  Pipeline-0 : II = 1, D = 3, States = { 1 2 3 }
+* Dataflow Pipeline: 0
+
+* FSM state transitions: 
+1 --> 2 
+2 --> 3 
+3 --> 
+
+* FSM state operations: 
+
+State 1 <SV = 0> <Delay = 4.95>
+ST_1 : Operation 6 [1/1] (0.00ns)   --->   "%weight_sum = alloca i32 1" [src/snn_top_hls.cpp:526]   --->   Operation 6 'alloca' 'weight_sum' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 7 [1/1] (0.00ns)   --->   "%j = alloca i32 1" [src/snn_top_hls.cpp:529]   --->   Operation 7 'alloca' 'j' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 8 [1/1] (0.00ns)   --->   "%specmemcore_ln0 = specmemcore void @_ssdm_op_SpecMemCore, i8 %p_ZL13weight_memory_0, i64 666, i64 22, i64 18446744073709551615, i1 0"   --->   Operation 8 'specmemcore' 'specmemcore_ln0' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 9 [1/1] (0.00ns)   --->   "%specmemcore_ln0 = specmemcore void @_ssdm_op_SpecMemCore, i8 %p_ZL13weight_memory_1, i64 666, i64 22, i64 18446744073709551615, i1 0"   --->   Operation 9 'specmemcore' 'specmemcore_ln0' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 10 [1/1] (0.00ns)   --->   "%specmemcore_ln0 = specmemcore void @_ssdm_op_SpecMemCore, i8 %p_ZL13weight_memory_2, i64 666, i64 22, i64 18446744073709551615, i1 0"   --->   Operation 10 'specmemcore' 'specmemcore_ln0' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 11 [1/1] (0.00ns)   --->   "%specmemcore_ln0 = specmemcore void @_ssdm_op_SpecMemCore, i8 %p_ZL13weight_memory_3, i64 666, i64 22, i64 18446744073709551615, i1 0"   --->   Operation 11 'specmemcore' 'specmemcore_ln0' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 12 [1/1] (0.00ns)   --->   "%specmemcore_ln0 = specmemcore void @_ssdm_op_SpecMemCore, i8 %p_ZL13weight_memory_4, i64 666, i64 22, i64 18446744073709551615, i1 0"   --->   Operation 12 'specmemcore' 'specmemcore_ln0' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 13 [1/1] (0.00ns)   --->   "%specmemcore_ln0 = specmemcore void @_ssdm_op_SpecMemCore, i8 %p_ZL13weight_memory_5, i64 666, i64 22, i64 18446744073709551615, i1 0"   --->   Operation 13 'specmemcore' 'specmemcore_ln0' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 14 [1/1] (0.00ns)   --->   "%specmemcore_ln0 = specmemcore void @_ssdm_op_SpecMemCore, i8 %p_ZL13weight_memory_6, i64 666, i64 22, i64 18446744073709551615, i1 0"   --->   Operation 14 'specmemcore' 'specmemcore_ln0' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 15 [1/1] (0.00ns)   --->   "%specmemcore_ln0 = specmemcore void @_ssdm_op_SpecMemCore, i8 %p_ZL13weight_memory_7, i64 666, i64 22, i64 18446744073709551615, i1 0"   --->   Operation 15 'specmemcore' 'specmemcore_ln0' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 16 [1/1] (0.00ns)   --->   "%weight_sum_20_reload_read = read i16 @_ssdm_op_Read.ap_auto.i16, i16 %weight_sum_20_reload"   --->   Operation 16 'read' 'weight_sum_20_reload_read' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 17 [1/1] (1.58ns)   --->   "%store_ln529 = store i5 0, i5 %j" [src/snn_top_hls.cpp:529]   --->   Operation 17 'store' 'store_ln529' <Predicate = true> <Delay = 1.58>
+ST_1 : Operation 18 [1/1] (1.58ns)   --->   "%store_ln526 = store i16 %weight_sum_20_reload_read, i16 %weight_sum" [src/snn_top_hls.cpp:526]   --->   Operation 18 'store' 'store_ln526' <Predicate = true> <Delay = 1.58>
+ST_1 : Operation 19 [1/1] (0.00ns)   --->   "%br_ln0 = br void %for.inc226.11"   --->   Operation 19 'br' 'br_ln0' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 20 [1/1] (0.00ns)   --->   "%j_11 = load i5 %j" [src/snn_top_hls.cpp:529]   --->   Operation 20 'load' 'j_11' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 21 [1/1] (1.78ns)   --->   "%icmp_ln529 = icmp_eq  i5 %j_11, i5 16" [src/snn_top_hls.cpp:529]   --->   Operation 21 'icmp' 'icmp_ln529' <Predicate = true> <Delay = 1.78> <CoreInst = "Cmp">   --->   Core 9 'Cmp' <Latency = 0> <II = 1> <Delay = 1.78> <FuncUnit> <Opcode : 'seteq' 'setne' 'setle' 'setge' 'setlt' 'setgt'> <InPorts = 2> <OutPorts = 1>
+ST_1 : Operation 22 [1/1] (1.78ns)   --->   "%add_ln529 = add i5 %j_11, i5 1" [src/snn_top_hls.cpp:529]   --->   Operation 22 'add' 'add_ln529' <Predicate = true> <Delay = 1.78> <CoreInst = "Adder">   --->   Core 1 'Adder' <Latency = 0> <II = 1> <Delay = 1.78> <FuncUnit> <Opcode : 'add' 'sub'> <InPorts = 2> <OutPorts = 1>
+ST_1 : Operation 23 [1/1] (0.00ns)   --->   "%br_ln529 = br i1 %icmp_ln529, void %for.inc226.11.split, void %for.inc226.12.preheader.exitStub" [src/snn_top_hls.cpp:529]   --->   Operation 23 'br' 'br_ln529' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 24 [1/1] (0.00ns)   --->   "%trunc_ln529 = trunc i5 %j_11" [src/snn_top_hls.cpp:529]   --->   Operation 24 'trunc' 'trunc_ln529' <Predicate = (!icmp_ln529)> <Delay = 0.00>
+ST_1 : Operation 25 [1/1] (0.00ns)   --->   "%tmp = bitselect i1 @_ssdm_op_BitSelect.i1.i5.i32, i5 %j_11, i32 3" [src/snn_top_hls.cpp:530]   --->   Operation 25 'bitselect' 'tmp' <Predicate = (!icmp_ln529)> <Delay = 0.00>
+ST_1 : Operation 26 [1/1] (0.00ns)   --->   "%zext_ln530 = zext i1 %tmp" [src/snn_top_hls.cpp:530]   --->   Operation 26 'zext' 'zext_ln530' <Predicate = (!icmp_ln529)> <Delay = 0.00>
+ST_1 : Operation 27 [1/1] (0.00ns)   --->   "%tmp_43_cast = bitconcatenate i7 @_ssdm_op_BitConcatenate.i7.i4.i3, i4 11, i3 %zext_ln530" [src/snn_top_hls.cpp:530]   --->   Operation 27 'bitconcatenate' 'tmp_43_cast' <Predicate = (!icmp_ln529)> <Delay = 0.00>
+ST_1 : Operation 28 [1/1] (0.00ns)   --->   "%zext_ln530_7 = zext i7 %tmp_43_cast" [src/snn_top_hls.cpp:530]   --->   Operation 28 'zext' 'zext_ln530_7' <Predicate = (!icmp_ln529)> <Delay = 0.00>
+ST_1 : Operation 29 [1/1] (0.00ns)   --->   "%p_ZL13weight_memory_0_addr = getelementptr i8 %p_ZL13weight_memory_0, i64 0, i64 %zext_ln530_7" [src/snn_top_hls.cpp:530]   --->   Operation 29 'getelementptr' 'p_ZL13weight_memory_0_addr' <Predicate = (!icmp_ln529)> <Delay = 0.00>
+ST_1 : Operation 30 [1/1] (0.00ns)   --->   "%p_ZL13weight_memory_1_addr = getelementptr i8 %p_ZL13weight_memory_1, i64 0, i64 %zext_ln530_7" [src/snn_top_hls.cpp:530]   --->   Operation 30 'getelementptr' 'p_ZL13weight_memory_1_addr' <Predicate = (!icmp_ln529)> <Delay = 0.00>
+ST_1 : Operation 31 [1/1] (0.00ns)   --->   "%p_ZL13weight_memory_2_addr = getelementptr i8 %p_ZL13weight_memory_2, i64 0, i64 %zext_ln530_7" [src/snn_top_hls.cpp:530]   --->   Operation 31 'getelementptr' 'p_ZL13weight_memory_2_addr' <Predicate = (!icmp_ln529)> <Delay = 0.00>
+ST_1 : Operation 32 [1/1] (0.00ns)   --->   "%p_ZL13weight_memory_3_addr = getelementptr i8 %p_ZL13weight_memory_3, i64 0, i64 %zext_ln530_7" [src/snn_top_hls.cpp:530]   --->   Operation 32 'getelementptr' 'p_ZL13weight_memory_3_addr' <Predicate = (!icmp_ln529)> <Delay = 0.00>
+ST_1 : Operation 33 [1/1] (0.00ns)   --->   "%p_ZL13weight_memory_4_addr = getelementptr i8 %p_ZL13weight_memory_4, i64 0, i64 %zext_ln530_7" [src/snn_top_hls.cpp:530]   --->   Operation 33 'getelementptr' 'p_ZL13weight_memory_4_addr' <Predicate = (!icmp_ln529)> <Delay = 0.00>
+ST_1 : Operation 34 [1/1] (0.00ns)   --->   "%p_ZL13weight_memory_5_addr = getelementptr i8 %p_ZL13weight_memory_5, i64 0, i64 %zext_ln530_7" [src/snn_top_hls.cpp:530]   --->   Operation 34 'getelementptr' 'p_ZL13weight_memory_5_addr' <Predicate = (!icmp_ln529)> <Delay = 0.00>
+ST_1 : Operation 35 [1/1] (0.00ns)   --->   "%p_ZL13weight_memory_6_addr = getelementptr i8 %p_ZL13weight_memory_6, i64 0, i64 %zext_ln530_7" [src/snn_top_hls.cpp:530]   --->   Operation 35 'getelementptr' 'p_ZL13weight_memory_6_addr' <Predicate = (!icmp_ln529)> <Delay = 0.00>
+ST_1 : Operation 36 [1/1] (0.00ns)   --->   "%p_ZL13weight_memory_7_addr = getelementptr i8 %p_ZL13weight_memory_7, i64 0, i64 %zext_ln530_7" [src/snn_top_hls.cpp:530]   --->   Operation 36 'getelementptr' 'p_ZL13weight_memory_7_addr' <Predicate = (!icmp_ln529)> <Delay = 0.00>
+ST_1 : Operation 37 [2/2] (3.25ns)   --->   "%p_ZL13weight_memory_0_load = load i9 %p_ZL13weight_memory_0_addr" [src/snn_top_hls.cpp:530]   --->   Operation 37 'load' 'p_ZL13weight_memory_0_load' <Predicate = (!icmp_ln529)> <Delay = 3.25> <CoreInst = "RAM_2P_BRAM">   --->   Core 90 'RAM_2P_BRAM' <Latency = 1> <II = 1> <Delay = 3.25> <Storage> <Opcode : 'load' 'store'> <Ports = 2> <Width = 8> <Depth = 512> <RAM>
+ST_1 : Operation 38 [2/2] (3.25ns)   --->   "%p_ZL13weight_memory_1_load = load i9 %p_ZL13weight_memory_1_addr" [src/snn_top_hls.cpp:530]   --->   Operation 38 'load' 'p_ZL13weight_memory_1_load' <Predicate = (!icmp_ln529)> <Delay = 3.25> <CoreInst = "RAM_2P_BRAM">   --->   Core 90 'RAM_2P_BRAM' <Latency = 1> <II = 1> <Delay = 3.25> <Storage> <Opcode : 'load' 'store'> <Ports = 2> <Width = 8> <Depth = 512> <RAM>
+ST_1 : Operation 39 [2/2] (3.25ns)   --->   "%p_ZL13weight_memory_2_load = load i9 %p_ZL13weight_memory_2_addr" [src/snn_top_hls.cpp:530]   --->   Operation 39 'load' 'p_ZL13weight_memory_2_load' <Predicate = (!icmp_ln529)> <Delay = 3.25> <CoreInst = "RAM_2P_BRAM">   --->   Core 90 'RAM_2P_BRAM' <Latency = 1> <II = 1> <Delay = 3.25> <Storage> <Opcode : 'load' 'store'> <Ports = 2> <Width = 8> <Depth = 512> <RAM>
+ST_1 : Operation 40 [2/2] (3.25ns)   --->   "%p_ZL13weight_memory_3_load = load i9 %p_ZL13weight_memory_3_addr" [src/snn_top_hls.cpp:530]   --->   Operation 40 'load' 'p_ZL13weight_memory_3_load' <Predicate = (!icmp_ln529)> <Delay = 3.25> <CoreInst = "RAM_2P_BRAM">   --->   Core 90 'RAM_2P_BRAM' <Latency = 1> <II = 1> <Delay = 3.25> <Storage> <Opcode : 'load' 'store'> <Ports = 2> <Width = 8> <Depth = 512> <RAM>
+ST_1 : Operation 41 [2/2] (3.25ns)   --->   "%p_ZL13weight_memory_4_load = load i9 %p_ZL13weight_memory_4_addr" [src/snn_top_hls.cpp:530]   --->   Operation 41 'load' 'p_ZL13weight_memory_4_load' <Predicate = (!icmp_ln529)> <Delay = 3.25> <CoreInst = "RAM_2P_BRAM">   --->   Core 90 'RAM_2P_BRAM' <Latency = 1> <II = 1> <Delay = 3.25> <Storage> <Opcode : 'load' 'store'> <Ports = 2> <Width = 8> <Depth = 512> <RAM>
+ST_1 : Operation 42 [2/2] (3.25ns)   --->   "%p_ZL13weight_memory_5_load = load i9 %p_ZL13weight_memory_5_addr" [src/snn_top_hls.cpp:530]   --->   Operation 42 'load' 'p_ZL13weight_memory_5_load' <Predicate = (!icmp_ln529)> <Delay = 3.25> <CoreInst = "RAM_2P_BRAM">   --->   Core 90 'RAM_2P_BRAM' <Latency = 1> <II = 1> <Delay = 3.25> <Storage> <Opcode : 'load' 'store'> <Ports = 2> <Width = 8> <Depth = 512> <RAM>
+ST_1 : Operation 43 [2/2] (3.25ns)   --->   "%p_ZL13weight_memory_6_load = load i9 %p_ZL13weight_memory_6_addr" [src/snn_top_hls.cpp:530]   --->   Operation 43 'load' 'p_ZL13weight_memory_6_load' <Predicate = (!icmp_ln529)> <Delay = 3.25> <CoreInst = "RAM_2P_BRAM">   --->   Core 90 'RAM_2P_BRAM' <Latency = 1> <II = 1> <Delay = 3.25> <Storage> <Opcode : 'load' 'store'> <Ports = 2> <Width = 8> <Depth = 512> <RAM>
+ST_1 : Operation 44 [2/2] (3.25ns)   --->   "%p_ZL13weight_memory_7_load = load i9 %p_ZL13weight_memory_7_addr" [src/snn_top_hls.cpp:530]   --->   Operation 44 'load' 'p_ZL13weight_memory_7_load' <Predicate = (!icmp_ln529)> <Delay = 3.25> <CoreInst = "RAM_2P_BRAM">   --->   Core 90 'RAM_2P_BRAM' <Latency = 1> <II = 1> <Delay = 3.25> <Storage> <Opcode : 'load' 'store'> <Ports = 2> <Width = 8> <Depth = 512> <RAM>
+ST_1 : Operation 45 [1/1] (1.58ns)   --->   "%store_ln529 = store i5 %add_ln529, i5 %j" [src/snn_top_hls.cpp:529]   --->   Operation 45 'store' 'store_ln529' <Predicate = (!icmp_ln529)> <Delay = 1.58>
+
+State 2 <SV = 1> <Delay = 5.55>
+ST_2 : Operation 46 [1/2] ( I:3.25ns O:3.25ns )   --->   "%p_ZL13weight_memory_0_load = load i9 %p_ZL13weight_memory_0_addr" [src/snn_top_hls.cpp:530]   --->   Operation 46 'load' 'p_ZL13weight_memory_0_load' <Predicate = true> <Delay = 3.25> <CoreInst = "RAM_2P_BRAM">   --->   Core 90 'RAM_2P_BRAM' <Latency = 1> <II = 1> <Delay = 3.25> <Storage> <Opcode : 'load' 'store'> <Ports = 2> <Width = 8> <Depth = 512> <RAM>
+ST_2 : Operation 47 [1/2] ( I:3.25ns O:3.25ns )   --->   "%p_ZL13weight_memory_1_load = load i9 %p_ZL13weight_memory_1_addr" [src/snn_top_hls.cpp:530]   --->   Operation 47 'load' 'p_ZL13weight_memory_1_load' <Predicate = true> <Delay = 3.25> <CoreInst = "RAM_2P_BRAM">   --->   Core 90 'RAM_2P_BRAM' <Latency = 1> <II = 1> <Delay = 3.25> <Storage> <Opcode : 'load' 'store'> <Ports = 2> <Width = 8> <Depth = 512> <RAM>
+ST_2 : Operation 48 [1/2] ( I:3.25ns O:3.25ns )   --->   "%p_ZL13weight_memory_2_load = load i9 %p_ZL13weight_memory_2_addr" [src/snn_top_hls.cpp:530]   --->   Operation 48 'load' 'p_ZL13weight_memory_2_load' <Predicate = true> <Delay = 3.25> <CoreInst = "RAM_2P_BRAM">   --->   Core 90 'RAM_2P_BRAM' <Latency = 1> <II = 1> <Delay = 3.25> <Storage> <Opcode : 'load' 'store'> <Ports = 2> <Width = 8> <Depth = 512> <RAM>
+ST_2 : Operation 49 [1/2] ( I:3.25ns O:3.25ns )   --->   "%p_ZL13weight_memory_3_load = load i9 %p_ZL13weight_memory_3_addr" [src/snn_top_hls.cpp:530]   --->   Operation 49 'load' 'p_ZL13weight_memory_3_load' <Predicate = true> <Delay = 3.25> <CoreInst = "RAM_2P_BRAM">   --->   Core 90 'RAM_2P_BRAM' <Latency = 1> <II = 1> <Delay = 3.25> <Storage> <Opcode : 'load' 'store'> <Ports = 2> <Width = 8> <Depth = 512> <RAM>
+ST_2 : Operation 50 [1/2] ( I:3.25ns O:3.25ns )   --->   "%p_ZL13weight_memory_4_load = load i9 %p_ZL13weight_memory_4_addr" [src/snn_top_hls.cpp:530]   --->   Operation 50 'load' 'p_ZL13weight_memory_4_load' <Predicate = true> <Delay = 3.25> <CoreInst = "RAM_2P_BRAM">   --->   Core 90 'RAM_2P_BRAM' <Latency = 1> <II = 1> <Delay = 3.25> <Storage> <Opcode : 'load' 'store'> <Ports = 2> <Width = 8> <Depth = 512> <RAM>
+ST_2 : Operation 51 [1/2] ( I:3.25ns O:3.25ns )   --->   "%p_ZL13weight_memory_5_load = load i9 %p_ZL13weight_memory_5_addr" [src/snn_top_hls.cpp:530]   --->   Operation 51 'load' 'p_ZL13weight_memory_5_load' <Predicate = true> <Delay = 3.25> <CoreInst = "RAM_2P_BRAM">   --->   Core 90 'RAM_2P_BRAM' <Latency = 1> <II = 1> <Delay = 3.25> <Storage> <Opcode : 'load' 'store'> <Ports = 2> <Width = 8> <Depth = 512> <RAM>
+ST_2 : Operation 52 [1/2] ( I:3.25ns O:3.25ns )   --->   "%p_ZL13weight_memory_6_load = load i9 %p_ZL13weight_memory_6_addr" [src/snn_top_hls.cpp:530]   --->   Operation 52 'load' 'p_ZL13weight_memory_6_load' <Predicate = true> <Delay = 3.25> <CoreInst = "RAM_2P_BRAM">   --->   Core 90 'RAM_2P_BRAM' <Latency = 1> <II = 1> <Delay = 3.25> <Storage> <Opcode : 'load' 'store'> <Ports = 2> <Width = 8> <Depth = 512> <RAM>
+ST_2 : Operation 53 [1/2] ( I:3.25ns O:3.25ns )   --->   "%p_ZL13weight_memory_7_load = load i9 %p_ZL13weight_memory_7_addr" [src/snn_top_hls.cpp:530]   --->   Operation 53 'load' 'p_ZL13weight_memory_7_load' <Predicate = true> <Delay = 3.25> <CoreInst = "RAM_2P_BRAM">   --->   Core 90 'RAM_2P_BRAM' <Latency = 1> <II = 1> <Delay = 3.25> <Storage> <Opcode : 'load' 'store'> <Ports = 2> <Width = 8> <Depth = 512> <RAM>
+ST_2 : Operation 54 [1/1] (2.30ns)   --->   "%tmp_s = sparsemux i8 @_ssdm_op_SparseMux.ap_auto.8i8.i8.i3, i3 0, i8 %p_ZL13weight_memory_0_load, i3 1, i8 %p_ZL13weight_memory_1_load, i3 2, i8 %p_ZL13weight_memory_2_load, i3 3, i8 %p_ZL13weight_memory_3_load, i3 4, i8 %p_ZL13weight_memory_4_load, i3 5, i8 %p_ZL13weight_memory_5_load, i3 6, i8 %p_ZL13weight_memory_6_load, i3 7, i8 %p_ZL13weight_memory_7_load, i8 0, i3 %trunc_ln529" [src/snn_top_hls.cpp:530]   --->   Operation 54 'sparsemux' 'tmp_s' <Predicate = true> <Delay = 2.30> <CoreInst = "BinarySparseMux_DontCare">   --->   Core 137 'BinarySparseMux_DontCare' <Latency = 0> <II = 1> <Delay = 2.30> <FuncUnit> <Opcode : 'sparsemux'> <InPorts = 2> <OutPorts = 1>
+ST_2 : Operation 63 [1/1] (0.00ns)   --->   "%weight_sum_load = load i16 %weight_sum"   --->   Operation 63 'load' 'weight_sum_load' <Predicate = (icmp_ln529)> <Delay = 0.00>
+ST_2 : Operation 64 [1/1] (0.00ns)   --->   "%write_ln0 = write void @_ssdm_op_Write.ap_auto.i16P0A, i16 %weight_sum_22_out, i16 %weight_sum_load"   --->   Operation 64 'write' 'write_ln0' <Predicate = (icmp_ln529)> <Delay = 0.00>
+ST_2 : Operation 65 [1/1] (1.58ns)   --->   "%ret_ln0 = ret"   --->   Operation 65 'ret' 'ret_ln0' <Predicate = (icmp_ln529)> <Delay = 1.58>
+
+State 3 <SV = 2> <Delay = 3.66>
+ST_3 : Operation 55 [1/1] (0.00ns)   --->   "%weight_sum_load_11 = load i16 %weight_sum" [src/snn_top_hls.cpp:530]   --->   Operation 55 'load' 'weight_sum_load_11' <Predicate = true> <Delay = 0.00>
+ST_3 : Operation 56 [1/1] (0.00ns)   --->   "%specpipeline_ln526 = specpipeline void @_ssdm_op_SpecPipeline, i32 4294967295, i32 0, i32 0, i32 0, i32 4294967295, void @empty_0" [src/snn_top_hls.cpp:526]   --->   Operation 56 'specpipeline' 'specpipeline_ln526' <Predicate = true> <Delay = 0.00>
+ST_3 : Operation 57 [1/1] (0.00ns)   --->   "%speclooptripcount_ln526 = speclooptripcount void @_ssdm_op_SpecLoopTripCount, i64 16, i64 16, i64 16" [src/snn_top_hls.cpp:526]   --->   Operation 57 'speclooptripcount' 'speclooptripcount_ln526' <Predicate = true> <Delay = 0.00>
+ST_3 : Operation 58 [1/1] (0.00ns)   --->   "%specloopname_ln529 = specloopname void @_ssdm_op_SpecLoopName, void @empty_3" [src/snn_top_hls.cpp:529]   --->   Operation 58 'specloopname' 'specloopname_ln529' <Predicate = true> <Delay = 0.00>
+ST_3 : Operation 59 [1/1] (0.00ns)   --->   "%sext_ln530 = sext i8 %tmp_s" [src/snn_top_hls.cpp:530]   --->   Operation 59 'sext' 'sext_ln530' <Predicate = true> <Delay = 0.00>
+ST_3 : Operation 60 [1/1] (2.07ns)   --->   "%weight_sum_11 = add i16 %sext_ln530, i16 %weight_sum_load_11" [src/snn_top_hls.cpp:530]   --->   Operation 60 'add' 'weight_sum_11' <Predicate = true> <Delay = 2.07> <CoreInst = "Adder">   --->   Core 1 'Adder' <Latency = 0> <II = 1> <Delay = 2.07> <FuncUnit> <Opcode : 'add' 'sub'> <InPorts = 2> <OutPorts = 1>
+ST_3 : Operation 61 [1/1] (1.58ns)   --->   "%store_ln526 = store i16 %weight_sum_11, i16 %weight_sum" [src/snn_top_hls.cpp:526]   --->   Operation 61 'store' 'store_ln526' <Predicate = true> <Delay = 1.58>
+ST_3 : Operation 62 [1/1] (0.00ns)   --->   "%br_ln529 = br void %for.inc226.11" [src/snn_top_hls.cpp:529]   --->   Operation 62 'br' 'br_ln529' <Predicate = true> <Delay = 0.00>
+
+
+============================================================
++ Verbose Summary: Timing violations
+============================================================
+Target clock period: 10.000ns, clock uncertainty: 2.700ns.
+
+ <State 1>: 4.956ns
+The critical path consists of the following:
+	'store' operation ('store_ln529', src/snn_top_hls.cpp:529) of constant 0 5 bit on local variable 'j', src/snn_top_hls.cpp:529 [22]  (1.588 ns)
+	'load' operation 5 bit ('j', src/snn_top_hls.cpp:529) on local variable 'j', src/snn_top_hls.cpp:529 [26]  (0.000 ns)
+	'icmp' operation 1 bit ('icmp_ln529', src/snn_top_hls.cpp:529) [27]  (1.780 ns)
+	'store' operation ('store_ln529', src/snn_top_hls.cpp:529) of variable 'add_ln529', src/snn_top_hls.cpp:529 5 bit on local variable 'j', src/snn_top_hls.cpp:529 [59]  (1.588 ns)
+
+ <State 2>: 5.558ns
+The critical path consists of the following:
+	'load' operation 8 bit ('p_ZL13weight_memory_0_load', src/snn_top_hls.cpp:530) on array 'p_ZL13weight_memory_0' [48]  (3.254 ns)
+	'sparsemux' operation 8 bit ('tmp_s', src/snn_top_hls.cpp:530) [56]  (2.304 ns)
+
+ <State 3>: 3.665ns
+The critical path consists of the following:
+	'load' operation 16 bit ('weight_sum_load_11', src/snn_top_hls.cpp:530) on local variable 'weight_sum', src/snn_top_hls.cpp:526 [31]  (0.000 ns)
+	'add' operation 16 bit ('weight_sum', src/snn_top_hls.cpp:530) [58]  (2.077 ns)
+	'store' operation ('store_ln526', src/snn_top_hls.cpp:526) of variable 'weight_sum', src/snn_top_hls.cpp:530 16 bit on local variable 'weight_sum', src/snn_top_hls.cpp:526 [60]  (1.588 ns)
+
+
+============================================================
++ Verbose Summary: Binding
+============================================================
+N/A
+* FSMD analyzer results:
+  - Output states:
+ - Input state : 
+  - Chain level:
+	State 1
+	State 2
+	State 3
+
+
+============================================================
++ Verbose Summary: Datapath Resource usage 
+============================================================
+N/A

@@ -1,0 +1,60 @@
+<design_size title="Design Size Report">
+    <item name="Total Instructions per Compilation Phase">
+        <table>
+            <keys size="4">Phase, Step, Instructions, Description</keys>
+            <column name="Compile/Link">, 15732, After all functions are compiled and linked into a single design</column>
+            <column name="">, , </column>
+            <column name="Unroll/Inline">, , After user unroll and inline pragmas are applied</column>
+            <column name="">(1) unroll,  4777, user unroll pragmas are applied</column>
+            <column name="">(2) simplification,  2432, simplification of applied user unroll pragmas</column>
+            <column name="">(3) inline,  2284, user inline pragmas are applied</column>
+            <column name="">(4) simplification,  2202, simplification of applied user inline pragmas</column>
+            <column name="">, , </column>
+            <column name="Array/Struct">, , After user array partition and struct aggregate/disaggregate pragmas are applied</column>
+            <column name="">(1) array partition,  2858, user array partition pragmas are applied</column>
+            <column name="">(2) simplification,  2725, simplification of applied user array partition &amp; struct aggregate/disaggregate pragmas</column>
+            <column name="">(3) aggregate/disaggregate,  2725, user struct aggregate/disaggregate pragmas are applied</column>
+            <column name="">(4) array reshape,  2725, apply array reshape pragmas</column>
+            <column name="">(5) access patterns,  2895, array access pattern optmizations</column>
+            <column name="">, , </column>
+            <column name="Performance">, , After transformations are applied to meet performance pragma targets</column>
+            <column name="">(1) loop simplification,  2863, loop and instruction simplification</column>
+            <column name="">(2) parallelization,  2777, loops are unrolled or pipelined to meet performance targets</column>
+            <column name="">(3) array partition,  3288, arrays are partitioned to meet performance targets</column>
+            <column name="">(4) simplification,  2808, simplification of design after performance transformations</column>
+            <column name="">, , </column>
+            <column name="HW Transforms">, , After hardware transfomations</column>
+            <column name="">(1) lowering,  2813, initial conversion to HW specific instructions</column>
+            <column name="">(2) optimizations,  2967, high level synthesis optimizations</column>
+        </table>
+    </item>
+    <item name="Instructions per Function for each Compilation Phase">
+        <hiertable>
+            <header size="7" col0="Function" col1="Location" col2="Compile/Link" col3="Unroll/Inline" col4="Array/Struct" col5="Performance" col6="HW Transforms"/>
+            <rows>
+                <row id="0" col0="snn_top_hls" col1="snn_top_hls.cpp:240" col2="15732" col3="2202" col4="2895" col5="2808" col6="2967">
+                    <row id="7" col0="process_pre_spike" col1="snn_top_hls.cpp:78" col2="3928" col3="716" col4="716" col5="733" col6="809">
+                        <row id="2" col0="calc_stdp_update" col1="snn_top_hls.cpp:34" col2="3769" col3="" col4="" col5="" col6=""/>
+                    </row>
+                    <row id="1" col0="process_post_spike" col1="snn_top_hls.cpp:119" col2="3928" col3="723" col4="723" col5="740" col6="809">
+                        <row id="2" col0="calc_stdp_update" col1="snn_top_hls.cpp:34" col2="3769" col3="" col4="" col5="" col6=""/>
+                    </row>
+                    <row id="4" col0="apply_weight_updates" col1="snn_top_hls.cpp:160" col2="2389" col3="80" col4="146" col5="143" col6="148">
+                        <row id="6" col0="clip_weight" col1="snn_top_hls.cpp:68" col2="74" col3="" col4="" col5="" col6=""/>
+                    </row>
+                    <row id="3" col0="apply_reward_signal" col1="snn_top_hls.cpp:213" col2="1728" col3="57" col4="117" col5="115" col6="124">
+                        <row id="6" col0="clip_weight" col1="snn_top_hls.cpp:68" col2="74" col3="" col4="" col5="" col6=""/>
+                    </row>
+                    <row id="5" col0="decay_eligibility_traces" col1="snn_top_hls.cpp:199" col2="208" col3="24" col4="61" col5="60" col6="68"/>
+                </row>
+            </rows>
+            <notes/>
+        </hiertable>
+    </item>
+    <item name="Design Size Message Settings">
+        <table>
+            <keys size="3">Message Setting, Value, Description</keys>
+            <column name="config_compile -design_size_maximum_warning">100000, Show a warning when total design instructions exceeds this value</column>
+        </table>
+    </item>
+</design_size>

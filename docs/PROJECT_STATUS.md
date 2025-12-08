@@ -1,10 +1,25 @@
 # Project Status - SNN FPGA Accelerator
 
-**Last Updated**: December 5, 2025
+**Last Updated**: December 8, 2025
 
 ## Overview
 
 Event-Driven Spiking Neural Network (SNN) Accelerator for PYNQ-Z2 FPGA with on-chip learning capabilities.
+
+---
+
+## 🎉 HLS Synthesis Complete!
+
+### Resource Utilization (xc7z020-clg400-1)
+| Resource | Used | Available | Utilization |
+|----------|------|-----------|-------------|
+| **BRAM** | 32 | 280 | 11% |
+| **DSP** | 39 | 220 | 17% |
+| **FF** | 58,184 | 106,400 | 54% |
+| **LUT** | 56,644 | 53,200 | 106% ⚠️ |
+
+- **Estimated Fmax**: 126.49 MHz (target: 100 MHz)
+- **IP Location**: `hardware/ip_repo/snn_top_hls/`
 
 ---
 

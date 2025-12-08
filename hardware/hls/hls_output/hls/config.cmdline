@@ -1,0 +1,10 @@
+part=xc7z020clg400-1
+relativeroot=/mnt/wsl/workspace/Event-Driven-Spiking-Neural-Network-Accelerator-for-FPGA/hardware/hls
+original_argv=-c --mode hls --part xc7z020clg400-1 --work_dir ./hls_output --hls.clock 10ns --hls.syn.top snn_top_hls --hls.syn.file src/snn_top_hls.cpp --hls.flow_target vivado 
+
+[hls]
+clock=10ns
+flow_target=vivado
+syn.file=src/snn_top_hls.cpp
+syn.top=snn_top_hls
+

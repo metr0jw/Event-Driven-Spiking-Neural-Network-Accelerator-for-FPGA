@@ -1,0 +1,145 @@
+
+
+================================================================
+== Vitis HLS Report for 'apply_weight_updates'
+================================================================
+* Date:           Mon Dec  8 20:06:21 2025
+
+* Version:        2025.2 (Build 6295257 on Nov 14 2025)
+* Project:        hls_output
+* Solution:       hls (Vivado IP Flow Target)
+* Product family: zynq
+* Target device:  xc7z020-clg400-1
+
+
+================================================================
+== Performance Estimates
+================================================================
++ Timing: 
+    * Summary: 
+    +--------+----------+----------+------------+
+    |  Clock |  Target  | Estimated| Uncertainty|
+    +--------+----------+----------+------------+
+    |ap_clk  |  10.00 ns|  7.906 ns|     2.70 ns|
+    +--------+----------+----------+------------+
+
++ Latency: 
+    * Summary: 
+    +---------+---------+----------+----------+-----+-----+---------+
+    |  Latency (cycles) |  Latency (absolute) |  Interval | Pipeline|
+    |   min   |   max   |    min   |    max   | min | max |   Type  |
+    +---------+---------+----------+----------+-----+-----+---------+
+    |        ?|        ?|         ?|         ?|    ?|    ?|       no|
+    +---------+---------+----------+----------+-----+-----+---------+
+
+    + Detail: 
+        * Instance: 
+        N/A
+
+        * Loop: 
+        N/A
+
+============================================================
++ Verbose Summary: Synthesis Manager
+============================================================
+InlineROM: 1
+ExposeGlobal: 0
+============================================================
++ Verbose Summary: CDFG Model
+============================================================
+IsTopModel: 0
+ResetActiveHigh: 1
+IsCombinational: 0
+IsDatapathOnly: 0
+HasWiredReturn: 1
+HasMFsm: 0
+HasVarLatency: 1
+IsPipeline: 0
+IsRtlPipelined: 0
+IsInstanceOverlapped: 0
+IsDontTouch: 0
+HasImplIP: 0
+IsGatedGlobalClock: 0
+
+
+============================================================
++ Verbose Summary: Schedule
+============================================================
+* Number of FSM states : 2
+* Pipeline : 0
+* Dataflow Pipeline: 0
+
+* FSM state transitions: 
+1 --> 2 
+2 --> 
+
+* FSM state operations: 
+
+State 1 <SV = 0> <Delay = 4.58>
+ST_1 : Operation 3 [1/1] (0.00ns)   --->   "%reward_signal_read = read i8 @_ssdm_op_Read.ap_auto.i8, i8 %reward_signal" [src/snn_top_hls.cpp:163]   --->   Operation 3 'read' 'reward_signal_read' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 4 [1/1] (0.00ns)   --->   "%params_trace_decay_val_read = read i16 @_ssdm_op_Read.ap_auto.i16, i16 %params_trace_decay_val" [src/snn_top_hls.cpp:163]   --->   Operation 4 'read' 'params_trace_decay_val_read' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 5 [1/1] (0.00ns)   --->   "%params_rstdp_enable_val_read = read i1 @_ssdm_op_Read.ap_auto.i1, i1 %params_rstdp_enable_val" [src/snn_top_hls.cpp:163]   --->   Operation 5 'read' 'params_rstdp_enable_val_read' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 6 [1/1] (0.00ns)   --->   "%params_learning_rate_val_read = read i16 @_ssdm_op_Read.ap_auto.i16, i16 %params_learning_rate_val" [src/snn_top_hls.cpp:163]   --->   Operation 6 'read' 'params_learning_rate_val_read' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 7 [1/1] (1.91ns)   --->   "%icmp_ln177 = icmp_ne  i8 %reward_signal_read, i8 0" [src/snn_top_hls.cpp:177]   --->   Operation 7 'icmp' 'icmp_ln177' <Predicate = true> <Delay = 1.91> <CoreInst = "Cmp">   --->   Core 9 'Cmp' <Latency = 0> <II = 1> <Delay = 1.91> <FuncUnit> <Opcode : 'seteq' 'setne' 'setle' 'setge' 'setlt' 'setgt'> <InPorts = 2> <OutPorts = 1>
+ST_1 : Operation 8 [1/1] (0.00ns)   --->   "%shl_ln179_1 = bitconcatenate i24 @_ssdm_op_BitConcatenate.i24.i8.i16, i8 %reward_signal_read, i16 0" [src/snn_top_hls.cpp:179]   --->   Operation 8 'bitconcatenate' 'shl_ln179_1' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 9 [1/1] (0.00ns)   --->   "%sext_ln179 = sext i24 %shl_ln179_1" [src/snn_top_hls.cpp:179]   --->   Operation 9 'sext' 'sext_ln179' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 10 [1/1] (0.00ns)   --->   "%tmp = bitselect i1 @_ssdm_op_BitSelect.i1.i8.i32, i8 %reward_signal_read, i32 7" [src/snn_top_hls.cpp:179]   --->   Operation 10 'bitselect' 'tmp' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 11 [1/1] (2.31ns)   --->   "%sub_ln179 = sub i25 0, i25 %sext_ln179" [src/snn_top_hls.cpp:179]   --->   Operation 11 'sub' 'sub_ln179' <Predicate = true> <Delay = 2.31> <CoreInst = "Adder">   --->   Core 1 'Adder' <Latency = 0> <II = 1> <Delay = 2.31> <FuncUnit> <Opcode : 'add' 'sub'> <InPorts = 2> <OutPorts = 1>
+ST_1 : Operation 12 [1/1] (0.00ns)   --->   "%shl_ln179_2 = bitconcatenate i9 @_ssdm_op_BitConcatenate.i9.i8.i1, i8 %reward_signal_read, i1 0" [src/snn_top_hls.cpp:179]   --->   Operation 12 'bitconcatenate' 'shl_ln179_2' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 13 [1/1] (0.00ns)   --->   "%sext_ln179_1 = sext i9 %shl_ln179_2" [src/snn_top_hls.cpp:179]   --->   Operation 13 'sext' 'sext_ln179_1' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 14 [1/1] (1.82ns)   --->   "%sub_ln179_1 = sub i10 0, i10 %sext_ln179_1" [src/snn_top_hls.cpp:179]   --->   Operation 14 'sub' 'sub_ln179_1' <Predicate = true> <Delay = 1.82> <CoreInst = "Adder">   --->   Core 1 'Adder' <Latency = 0> <II = 1> <Delay = 1.82> <FuncUnit> <Opcode : 'add' 'sub'> <InPorts = 2> <OutPorts = 1>
+ST_1 : Operation 15 [1/1] (0.00ns)   --->   "%tmp_s = partselect i10 @_ssdm_op_PartSelect.i10.i25.i32.i32, i25 %sub_ln179, i32 15, i32 24" [src/snn_top_hls.cpp:179]   --->   Operation 15 'partselect' 'tmp_s' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 16 [1/1] (0.68ns)   --->   "%select_ln179 = select i1 %tmp, i10 %tmp_s, i10 %sub_ln179_1" [src/snn_top_hls.cpp:179]   --->   Operation 16 'select' 'select_ln179' <Predicate = true> <Delay = 0.68> <CoreInst = "Sel">   --->   Core 73 'Sel' <Latency = 0> <II = 1> <Delay = 0.68> <FuncUnit> <Opcode : 'select'> <InPorts = 3> <OutPorts = 1>
+ST_1 : Operation 17 [1/1] (0.97ns)   --->   "%and_ln177 = and i1 %icmp_ln177, i1 %params_rstdp_enable_val_read" [src/snn_top_hls.cpp:177]   --->   Operation 17 'and' 'and_ln177' <Predicate = true> <Delay = 0.97> <CoreInst = "LogicGate">   --->   Core 74 'LogicGate' <Latency = 0> <II = 1> <Delay = 0.97> <FuncUnit> <Opcode : 'and' 'or' 'xor'> <InPorts = 2> <OutPorts = 1>
+ST_1 : Operation 18 [2/2] (1.58ns)   --->   "%call_ln163 = call void @apply_weight_updates_Pipeline_VITIS_LOOP_167_1, i16 %params_learning_rate_val_read, i1 %and_ln177, i10 %select_ln179, i16 %params_trace_decay_val_read, i64 %weight_update_fifo, i8 %p_ZL13weight_memory_0, i8 %p_ZL13weight_memory_1, i8 %p_ZL13weight_memory_2, i8 %p_ZL13weight_memory_3, i8 %p_ZL13weight_memory_4, i8 %p_ZL13weight_memory_5, i8 %p_ZL13weight_memory_6, i8 %p_ZL13weight_memory_7, i16 %p_ZL18eligibility_traces_0, i16 %p_ZL18eligibility_traces_1, i16 %p_ZL18eligibility_traces_2, i16 %p_ZL18eligibility_traces_3" [src/snn_top_hls.cpp:163]   --->   Operation 18 'call' 'call_ln163' <Predicate = true> <Delay = 1.58> <CoreType = "Generic">   --->   Generic Core
+
+State 2 <SV = 1> <Delay = 0.00>
+ST_2 : Operation 19 [1/1] (0.00ns)   --->   "%specmemcore_ln0 = specmemcore void @_ssdm_op_SpecMemCore, i16 %p_ZL18eligibility_traces_0, i64 666, i64 22, i64 18446744073709551615, i1 0"   --->   Operation 19 'specmemcore' 'specmemcore_ln0' <Predicate = true> <Delay = 0.00>
+ST_2 : Operation 20 [1/1] (0.00ns)   --->   "%specmemcore_ln0 = specmemcore void @_ssdm_op_SpecMemCore, i16 %p_ZL18eligibility_traces_1, i64 666, i64 22, i64 18446744073709551615, i1 0"   --->   Operation 20 'specmemcore' 'specmemcore_ln0' <Predicate = true> <Delay = 0.00>
+ST_2 : Operation 21 [1/1] (0.00ns)   --->   "%specmemcore_ln0 = specmemcore void @_ssdm_op_SpecMemCore, i16 %p_ZL18eligibility_traces_2, i64 666, i64 22, i64 18446744073709551615, i1 0"   --->   Operation 21 'specmemcore' 'specmemcore_ln0' <Predicate = true> <Delay = 0.00>
+ST_2 : Operation 22 [1/1] (0.00ns)   --->   "%specmemcore_ln0 = specmemcore void @_ssdm_op_SpecMemCore, i16 %p_ZL18eligibility_traces_3, i64 666, i64 22, i64 18446744073709551615, i1 0"   --->   Operation 22 'specmemcore' 'specmemcore_ln0' <Predicate = true> <Delay = 0.00>
+ST_2 : Operation 23 [1/1] (0.00ns)   --->   "%specmemcore_ln0 = specmemcore void @_ssdm_op_SpecMemCore, i8 %p_ZL13weight_memory_0, i64 666, i64 22, i64 18446744073709551615, i1 0"   --->   Operation 23 'specmemcore' 'specmemcore_ln0' <Predicate = true> <Delay = 0.00>
+ST_2 : Operation 24 [1/1] (0.00ns)   --->   "%specmemcore_ln0 = specmemcore void @_ssdm_op_SpecMemCore, i8 %p_ZL13weight_memory_1, i64 666, i64 22, i64 18446744073709551615, i1 0"   --->   Operation 24 'specmemcore' 'specmemcore_ln0' <Predicate = true> <Delay = 0.00>
+ST_2 : Operation 25 [1/1] (0.00ns)   --->   "%specmemcore_ln0 = specmemcore void @_ssdm_op_SpecMemCore, i8 %p_ZL13weight_memory_2, i64 666, i64 22, i64 18446744073709551615, i1 0"   --->   Operation 25 'specmemcore' 'specmemcore_ln0' <Predicate = true> <Delay = 0.00>
+ST_2 : Operation 26 [1/1] (0.00ns)   --->   "%specmemcore_ln0 = specmemcore void @_ssdm_op_SpecMemCore, i8 %p_ZL13weight_memory_3, i64 666, i64 22, i64 18446744073709551615, i1 0"   --->   Operation 26 'specmemcore' 'specmemcore_ln0' <Predicate = true> <Delay = 0.00>
+ST_2 : Operation 27 [1/1] (0.00ns)   --->   "%specmemcore_ln0 = specmemcore void @_ssdm_op_SpecMemCore, i8 %p_ZL13weight_memory_4, i64 666, i64 22, i64 18446744073709551615, i1 0"   --->   Operation 27 'specmemcore' 'specmemcore_ln0' <Predicate = true> <Delay = 0.00>
+ST_2 : Operation 28 [1/1] (0.00ns)   --->   "%specmemcore_ln0 = specmemcore void @_ssdm_op_SpecMemCore, i8 %p_ZL13weight_memory_5, i64 666, i64 22, i64 18446744073709551615, i1 0"   --->   Operation 28 'specmemcore' 'specmemcore_ln0' <Predicate = true> <Delay = 0.00>
+ST_2 : Operation 29 [1/1] (0.00ns)   --->   "%specmemcore_ln0 = specmemcore void @_ssdm_op_SpecMemCore, i8 %p_ZL13weight_memory_6, i64 666, i64 22, i64 18446744073709551615, i1 0"   --->   Operation 29 'specmemcore' 'specmemcore_ln0' <Predicate = true> <Delay = 0.00>
+ST_2 : Operation 30 [1/1] (0.00ns)   --->   "%specmemcore_ln0 = specmemcore void @_ssdm_op_SpecMemCore, i8 %p_ZL13weight_memory_7, i64 666, i64 22, i64 18446744073709551615, i1 0"   --->   Operation 30 'specmemcore' 'specmemcore_ln0' <Predicate = true> <Delay = 0.00>
+ST_2 : Operation 31 [1/1] (0.00ns)   --->   "%specinterface_ln0 = specinterface void @_ssdm_op_SpecInterface, i64 %weight_update_fifo, void @empty, i32 0, i32 0, void @empty_0, i32 0, i32 0, void @empty_0, void @empty_0, void @empty_0, i32 0, i32 0, i32 0, i32 0, void @empty_0, void @empty_0, i32 4294967295, i32 0, i32 0, i32 0"   --->   Operation 31 'specinterface' 'specinterface_ln0' <Predicate = true> <Delay = 0.00>
+ST_2 : Operation 32 [1/2] (0.00ns)   --->   "%call_ln163 = call void @apply_weight_updates_Pipeline_VITIS_LOOP_167_1, i16 %params_learning_rate_val_read, i1 %and_ln177, i10 %select_ln179, i16 %params_trace_decay_val_read, i64 %weight_update_fifo, i8 %p_ZL13weight_memory_0, i8 %p_ZL13weight_memory_1, i8 %p_ZL13weight_memory_2, i8 %p_ZL13weight_memory_3, i8 %p_ZL13weight_memory_4, i8 %p_ZL13weight_memory_5, i8 %p_ZL13weight_memory_6, i8 %p_ZL13weight_memory_7, i16 %p_ZL18eligibility_traces_0, i16 %p_ZL18eligibility_traces_1, i16 %p_ZL18eligibility_traces_2, i16 %p_ZL18eligibility_traces_3" [src/snn_top_hls.cpp:163]   --->   Operation 32 'call' 'call_ln163' <Predicate = true> <Delay = 0.00> <CoreType = "Generic">   --->   Generic Core
+ST_2 : Operation 33 [1/1] (0.00ns)   --->   "%ret_ln194 = ret" [src/snn_top_hls.cpp:194]   --->   Operation 33 'ret' 'ret_ln194' <Predicate = true> <Delay = 0.00>
+
+
+============================================================
++ Verbose Summary: Timing violations
+============================================================
+Target clock period: 10.000ns, clock uncertainty: 2.700ns.
+
+ <State 1>: 4.590ns
+The critical path consists of the following:
+	wire read operation ('reward_signal_read', src/snn_top_hls.cpp:163) on port 'reward_signal' (src/snn_top_hls.cpp:163) [31]  (0.000 ns)
+	'sub' operation 25 bit ('sub_ln179', src/snn_top_hls.cpp:179) [39]  (2.314 ns)
+	'select' operation 10 bit ('select_ln179', src/snn_top_hls.cpp:179) [44]  (0.687 ns)
+	'call' operation ('call_ln163', src/snn_top_hls.cpp:163) to 'apply_weight_updates_Pipeline_VITIS_LOOP_167_1' [46]  (1.588 ns)
+
+ <State 2>: 0.000ns
+The critical path consists of the following:
+
+
+============================================================
++ Verbose Summary: Binding
+============================================================
+N/A
+* FSMD analyzer results:
+  - Output states:
+ - Input state : 
+  - Chain level:
+	State 1
+	State 2
+
+
+============================================================
++ Verbose Summary: Datapath Resource usage 
+============================================================
+N/A

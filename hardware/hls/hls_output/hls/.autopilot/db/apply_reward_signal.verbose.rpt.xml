@@ -1,0 +1,188 @@
+<profile>
+
+<section name = "Vitis HLS Report for 'apply_reward_signal'" level="0">
+<item name = "Date">Mon Dec  8 20:06:24 2025
+</item>
+<item name = "Version">2025.2 (Build 6295257 on Nov 14 2025)</item>
+<item name = "Project">hls_output</item>
+<item name = "Solution">hls (Vivado IP Flow Target)</item>
+<item name = "Product family">zynq</item>
+<item name = "Target device">xc7z020-clg400-1</item>
+</section>
+
+<section name = "Performance Estimates" level="0">
+<item name = "Timing">
+<section name = "" level="1">
+<item name = "Summary"><table name="" hasTotal="0">
+<keys size="4">Clock, Target, Estimated, Uncertainty</keys>
+<column name="ap_clk">10.00 ns, 7.158 ns, 2.70 ns</column>
+</table>
+</item>
+</section>
+</item>
+<item name = "Latency">
+<section name = "" level="1">
+<item name = "Summary"><table name="" hasTotal="0">
+<keys size="8">, min, max, min, max, min, max, Type</keys>
+<column name="">1, 4104, 10.000 ns, 41.040 us, 1, 4104, no</column>
+</table>
+</item>
+<item name = "Detail">
+<section name = "" level="1">
+<item name = "Instance"><table name="" hasTotal="0">
+<keys size="9">Instance, Module, min, max, min, max, min, max, Type</keys>
+<column name="grp_apply_reward_signal_Pipeline_REWARD_OUTER_REWARD_INNER_fu_78">apply_reward_signal_Pipeline_REWARD_OUTER_REWARD_INNER, 4103, 4103, 41.030 us, 41.030 us, 0, 0, loop pipeline stp</column>
+</table>
+</item>
+<item name = "Loop"><table name="" hasTotal="0">
+<keys size="8">Loop Name, min, max, Latency, achieved, target, Count, Pipelined</keys>
+</table>
+</item>
+</section>
+</item>
+</section>
+</item>
+</section>
+
+<section name = "Utilization Estimates" level="0">
+<item name = "Summary"><table name="" hasTotal="1">
+<keys size="6">Name, BRAM_18K, DSP, FF, LUT, URAM</keys>
+<column name="DSP">-, -, -, -, -</column>
+<column name="Expression">-, -, 0, 72, -</column>
+<column name="FIFO">-, -, -, -, -</column>
+<column name="Instance">-, 3, 982, 763, -</column>
+<column name="Memory">-, -, -, -, -</column>
+<column name="Multiplexer">-, -, 0, 14, -</column>
+<column name="Register">-, -, 13, -, -</column>
+<specialColumn name="Available">280, 220, 106400, 53200, 0</specialColumn>
+<specialColumn name="Utilization (%)">0, 1, ~0, 1, 0</specialColumn>
+</table>
+</item>
+<item name = "Detail">
+<section name = "" level="1">
+<item name = "Instance"><table name="" hasTotal="1">
+<keys size="7">Instance, Module, BRAM_18K, DSP, FF, LUT, URAM</keys>
+<column name="grp_apply_reward_signal_Pipeline_REWARD_OUTER_REWARD_INNER_fu_78">apply_reward_signal_Pipeline_REWARD_OUTER_REWARD_INNER, 0, 3, 982, 763, 0</column>
+</table>
+</item>
+<item name = "DSP"><table name="" hasTotal="0">
+<keys size="3">Instance, Module, Expression</keys>
+</table>
+</item>
+<item name = "Memory"><table name="" hasTotal="1">
+<keys size="10">Memory, Module, BRAM_18K, FF, LUT, URAM, Words, Bits, Banks, W*Bits*Banks</keys>
+</table>
+</item>
+<item name = "FIFO"><table name="" hasTotal="1">
+<keys size="8">Name, BRAM_18K, FF, LUT, URAM, Depth, Bits, Size:D*B</keys>
+</table>
+</item>
+<item name = "Expression"><table name="" hasTotal="1">
+<keys size="7">Variable Name, Operation, DSP, FF, LUT, Bitwidth P0, Bitwidth P1</keys>
+<column name="sub_ln221_1_fu_153_p2">-, 0, 0, 13, 1, 10</column>
+<column name="sub_ln221_fu_135_p2">-, 0, 0, 32, 1, 25</column>
+<column name="ap_block_state2_on_subcall_done">and, 0, 0, 2, 1, 1</column>
+<column name="icmp_ln219_fu_109_p2">icmp, 0, 0, 15, 8, 1</column>
+<column name="reward_factor_fu_169_p3">select, 0, 0, 10, 1, 10</column>
+</table>
+</item>
+<item name = "Multiplexer"><table name="" hasTotal="1">
+<keys size="5">Name, LUT, Input Size, Bits, Total Bits</keys>
+<column name="ap_NS_fsm">14, 3, 1, 3</column>
+</table>
+</item>
+<item name = "Register"><table name="" hasTotal="1">
+<keys size="5">Name, FF, LUT, Bits, Const Bits</keys>
+<column name="ap_CS_fsm">2, 0, 2, 0</column>
+<column name="grp_apply_reward_signal_Pipeline_REWARD_OUTER_REWARD_INNER_fu_78_ap_start_reg">1, 0, 1, 0</column>
+<column name="icmp_ln219_reg_183">1, 0, 1, 0</column>
+<column name="reward_factor_reg_187">9, 0, 10, 1</column>
+</table>
+</item>
+</section>
+</item>
+</section>
+
+<section name = "Interface" level="0">
+<item name = "Summary"><table name="" hasTotal="0">
+<keys size="6">RTL Ports, Dir, Bits, Protocol, Source Object, C Type</keys>
+<column name="ap_clk">in, 1, ap_ctrl_hs, apply_reward_signal, return value</column>
+<column name="ap_rst">in, 1, ap_ctrl_hs, apply_reward_signal, return value</column>
+<column name="ap_start">in, 1, ap_ctrl_hs, apply_reward_signal, return value</column>
+<column name="ap_done">out, 1, ap_ctrl_hs, apply_reward_signal, return value</column>
+<column name="ap_idle">out, 1, ap_ctrl_hs, apply_reward_signal, return value</column>
+<column name="ap_ready">out, 1, ap_ctrl_hs, apply_reward_signal, return value</column>
+<column name="reward_signal">in, 8, ap_none, reward_signal, scalar</column>
+<column name="params_learning_rate_val">in, 16, ap_none, params_learning_rate_val, scalar</column>
+<column name="p_ZL18eligibility_traces_0_address0">out, 10, ap_memory, p_ZL18eligibility_traces_0, array</column>
+<column name="p_ZL18eligibility_traces_0_ce0">out, 1, ap_memory, p_ZL18eligibility_traces_0, array</column>
+<column name="p_ZL18eligibility_traces_0_q0">in, 16, ap_memory, p_ZL18eligibility_traces_0, array</column>
+<column name="p_ZL18eligibility_traces_1_address0">out, 10, ap_memory, p_ZL18eligibility_traces_1, array</column>
+<column name="p_ZL18eligibility_traces_1_ce0">out, 1, ap_memory, p_ZL18eligibility_traces_1, array</column>
+<column name="p_ZL18eligibility_traces_1_q0">in, 16, ap_memory, p_ZL18eligibility_traces_1, array</column>
+<column name="p_ZL18eligibility_traces_2_address0">out, 10, ap_memory, p_ZL18eligibility_traces_2, array</column>
+<column name="p_ZL18eligibility_traces_2_ce0">out, 1, ap_memory, p_ZL18eligibility_traces_2, array</column>
+<column name="p_ZL18eligibility_traces_2_q0">in, 16, ap_memory, p_ZL18eligibility_traces_2, array</column>
+<column name="p_ZL18eligibility_traces_3_address0">out, 10, ap_memory, p_ZL18eligibility_traces_3, array</column>
+<column name="p_ZL18eligibility_traces_3_ce0">out, 1, ap_memory, p_ZL18eligibility_traces_3, array</column>
+<column name="p_ZL18eligibility_traces_3_q0">in, 16, ap_memory, p_ZL18eligibility_traces_3, array</column>
+<column name="p_ZL13weight_memory_0_address0">out, 9, ap_memory, p_ZL13weight_memory_0, array</column>
+<column name="p_ZL13weight_memory_0_ce0">out, 1, ap_memory, p_ZL13weight_memory_0, array</column>
+<column name="p_ZL13weight_memory_0_q0">in, 8, ap_memory, p_ZL13weight_memory_0, array</column>
+<column name="p_ZL13weight_memory_0_address1">out, 9, ap_memory, p_ZL13weight_memory_0, array</column>
+<column name="p_ZL13weight_memory_0_ce1">out, 1, ap_memory, p_ZL13weight_memory_0, array</column>
+<column name="p_ZL13weight_memory_0_we1">out, 1, ap_memory, p_ZL13weight_memory_0, array</column>
+<column name="p_ZL13weight_memory_0_d1">out, 8, ap_memory, p_ZL13weight_memory_0, array</column>
+<column name="p_ZL13weight_memory_1_address0">out, 9, ap_memory, p_ZL13weight_memory_1, array</column>
+<column name="p_ZL13weight_memory_1_ce0">out, 1, ap_memory, p_ZL13weight_memory_1, array</column>
+<column name="p_ZL13weight_memory_1_q0">in, 8, ap_memory, p_ZL13weight_memory_1, array</column>
+<column name="p_ZL13weight_memory_1_address1">out, 9, ap_memory, p_ZL13weight_memory_1, array</column>
+<column name="p_ZL13weight_memory_1_ce1">out, 1, ap_memory, p_ZL13weight_memory_1, array</column>
+<column name="p_ZL13weight_memory_1_we1">out, 1, ap_memory, p_ZL13weight_memory_1, array</column>
+<column name="p_ZL13weight_memory_1_d1">out, 8, ap_memory, p_ZL13weight_memory_1, array</column>
+<column name="p_ZL13weight_memory_2_address0">out, 9, ap_memory, p_ZL13weight_memory_2, array</column>
+<column name="p_ZL13weight_memory_2_ce0">out, 1, ap_memory, p_ZL13weight_memory_2, array</column>
+<column name="p_ZL13weight_memory_2_q0">in, 8, ap_memory, p_ZL13weight_memory_2, array</column>
+<column name="p_ZL13weight_memory_2_address1">out, 9, ap_memory, p_ZL13weight_memory_2, array</column>
+<column name="p_ZL13weight_memory_2_ce1">out, 1, ap_memory, p_ZL13weight_memory_2, array</column>
+<column name="p_ZL13weight_memory_2_we1">out, 1, ap_memory, p_ZL13weight_memory_2, array</column>
+<column name="p_ZL13weight_memory_2_d1">out, 8, ap_memory, p_ZL13weight_memory_2, array</column>
+<column name="p_ZL13weight_memory_3_address0">out, 9, ap_memory, p_ZL13weight_memory_3, array</column>
+<column name="p_ZL13weight_memory_3_ce0">out, 1, ap_memory, p_ZL13weight_memory_3, array</column>
+<column name="p_ZL13weight_memory_3_q0">in, 8, ap_memory, p_ZL13weight_memory_3, array</column>
+<column name="p_ZL13weight_memory_3_address1">out, 9, ap_memory, p_ZL13weight_memory_3, array</column>
+<column name="p_ZL13weight_memory_3_ce1">out, 1, ap_memory, p_ZL13weight_memory_3, array</column>
+<column name="p_ZL13weight_memory_3_we1">out, 1, ap_memory, p_ZL13weight_memory_3, array</column>
+<column name="p_ZL13weight_memory_3_d1">out, 8, ap_memory, p_ZL13weight_memory_3, array</column>
+<column name="p_ZL13weight_memory_4_address0">out, 9, ap_memory, p_ZL13weight_memory_4, array</column>
+<column name="p_ZL13weight_memory_4_ce0">out, 1, ap_memory, p_ZL13weight_memory_4, array</column>
+<column name="p_ZL13weight_memory_4_q0">in, 8, ap_memory, p_ZL13weight_memory_4, array</column>
+<column name="p_ZL13weight_memory_4_address1">out, 9, ap_memory, p_ZL13weight_memory_4, array</column>
+<column name="p_ZL13weight_memory_4_ce1">out, 1, ap_memory, p_ZL13weight_memory_4, array</column>
+<column name="p_ZL13weight_memory_4_we1">out, 1, ap_memory, p_ZL13weight_memory_4, array</column>
+<column name="p_ZL13weight_memory_4_d1">out, 8, ap_memory, p_ZL13weight_memory_4, array</column>
+<column name="p_ZL13weight_memory_5_address0">out, 9, ap_memory, p_ZL13weight_memory_5, array</column>
+<column name="p_ZL13weight_memory_5_ce0">out, 1, ap_memory, p_ZL13weight_memory_5, array</column>
+<column name="p_ZL13weight_memory_5_q0">in, 8, ap_memory, p_ZL13weight_memory_5, array</column>
+<column name="p_ZL13weight_memory_5_address1">out, 9, ap_memory, p_ZL13weight_memory_5, array</column>
+<column name="p_ZL13weight_memory_5_ce1">out, 1, ap_memory, p_ZL13weight_memory_5, array</column>
+<column name="p_ZL13weight_memory_5_we1">out, 1, ap_memory, p_ZL13weight_memory_5, array</column>
+<column name="p_ZL13weight_memory_5_d1">out, 8, ap_memory, p_ZL13weight_memory_5, array</column>
+<column name="p_ZL13weight_memory_6_address0">out, 9, ap_memory, p_ZL13weight_memory_6, array</column>
+<column name="p_ZL13weight_memory_6_ce0">out, 1, ap_memory, p_ZL13weight_memory_6, array</column>
+<column name="p_ZL13weight_memory_6_q0">in, 8, ap_memory, p_ZL13weight_memory_6, array</column>
+<column name="p_ZL13weight_memory_6_address1">out, 9, ap_memory, p_ZL13weight_memory_6, array</column>
+<column name="p_ZL13weight_memory_6_ce1">out, 1, ap_memory, p_ZL13weight_memory_6, array</column>
+<column name="p_ZL13weight_memory_6_we1">out, 1, ap_memory, p_ZL13weight_memory_6, array</column>
+<column name="p_ZL13weight_memory_6_d1">out, 8, ap_memory, p_ZL13weight_memory_6, array</column>
+<column name="p_ZL13weight_memory_7_address0">out, 9, ap_memory, p_ZL13weight_memory_7, array</column>
+<column name="p_ZL13weight_memory_7_ce0">out, 1, ap_memory, p_ZL13weight_memory_7, array</column>
+<column name="p_ZL13weight_memory_7_q0">in, 8, ap_memory, p_ZL13weight_memory_7, array</column>
+<column name="p_ZL13weight_memory_7_address1">out, 9, ap_memory, p_ZL13weight_memory_7, array</column>
+<column name="p_ZL13weight_memory_7_ce1">out, 1, ap_memory, p_ZL13weight_memory_7, array</column>
+<column name="p_ZL13weight_memory_7_we1">out, 1, ap_memory, p_ZL13weight_memory_7, array</column>
+<column name="p_ZL13weight_memory_7_d1">out, 8, ap_memory, p_ZL13weight_memory_7, array</column>
+</table>
+</item>
+</section>
+</profile>

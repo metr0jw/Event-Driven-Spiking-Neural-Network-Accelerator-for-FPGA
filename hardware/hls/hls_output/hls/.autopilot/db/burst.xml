@@ -1,0 +1,3 @@
+<VitisHLS:BurstInfo>
+    <burst group="BURST_VERBOSE_MISSED" fe_name="CouldNotAnalyzeBoundsPatternMissed" src_info="src/snn_top_hls.cpp:167:23" msg_id="214-252" msg_severity="INFO" msg_body="Could not analyze the loop bounds" resolution="214-252" LoopLoc="src/snn_top_hls.cpp:167:23" LoopName="VITIS_LOOP_167_1" ParentFunc="apply_weight_updates(hls::stream&lt;weight_update_t, 0&gt;&amp;, learning_params_t const&amp;, ap_int&lt;8&gt;)"/>
+</VitisHLS:BurstInfo>

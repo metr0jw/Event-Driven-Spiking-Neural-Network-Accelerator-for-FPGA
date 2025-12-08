@@ -1,0 +1,764 @@
+-- ==============================================================
+-- Vitis HLS - High-Level Synthesis from C, C++ and OpenCL v2025.2 (64-bit)
+-- Tool Version Limit: 2025.11
+-- Copyright 1986-2022 Xilinx, Inc. All Rights Reserved.
+-- Copyright 2022-2025 Advanced Micro Devices, Inc. All Rights Reserved.
+-- 
+-- ==============================================================
+library IEEE;
+use IEEE.STD_LOGIC_1164.all;
+use IEEE.NUMERIC_STD.all;
+
+entity snn_top_hls_ctrl_s_axi is
+generic (
+    C_S_AXI_ADDR_WIDTH    : INTEGER := 7;
+    C_S_AXI_DATA_WIDTH    : INTEGER := 32);
+port (
+    ACLK                  :in   STD_LOGIC;
+    ARESET                :in   STD_LOGIC;
+    ACLK_EN               :in   STD_LOGIC;
+    AWADDR                :in   STD_LOGIC_VECTOR(C_S_AXI_ADDR_WIDTH-1 downto 0);
+    AWVALID               :in   STD_LOGIC;
+    AWREADY               :out  STD_LOGIC;
+    WDATA                 :in   STD_LOGIC_VECTOR(C_S_AXI_DATA_WIDTH-1 downto 0);
+    WSTRB                 :in   STD_LOGIC_VECTOR(C_S_AXI_DATA_WIDTH/8-1 downto 0);
+    WVALID                :in   STD_LOGIC;
+    WREADY                :out  STD_LOGIC;
+    BRESP                 :out  STD_LOGIC_VECTOR(1 downto 0);
+    BVALID                :out  STD_LOGIC;
+    BREADY                :in   STD_LOGIC;
+    ARADDR                :in   STD_LOGIC_VECTOR(C_S_AXI_ADDR_WIDTH-1 downto 0);
+    ARVALID               :in   STD_LOGIC;
+    ARREADY               :out  STD_LOGIC;
+    RDATA                 :out  STD_LOGIC_VECTOR(C_S_AXI_DATA_WIDTH-1 downto 0);
+    RRESP                 :out  STD_LOGIC_VECTOR(1 downto 0);
+    RVALID                :out  STD_LOGIC;
+    RREADY                :in   STD_LOGIC;
+    interrupt             :out  STD_LOGIC;
+    ctrl_reg              :out  STD_LOGIC_VECTOR(31 downto 0);
+    config_reg            :out  STD_LOGIC_VECTOR(31 downto 0);
+    learning_params       :out  STD_LOGIC_VECTOR(143 downto 0);
+    status_reg            :in   STD_LOGIC_VECTOR(31 downto 0);
+    status_reg_ap_vld     :in   STD_LOGIC;
+    spike_count_reg       :in   STD_LOGIC_VECTOR(31 downto 0);
+    spike_count_reg_ap_vld :in   STD_LOGIC;
+    weight_sum_reg        :in   STD_LOGIC_VECTOR(31 downto 0);
+    weight_sum_reg_ap_vld :in   STD_LOGIC;
+    version_reg           :in   STD_LOGIC_VECTOR(31 downto 0);
+    version_reg_ap_vld    :in   STD_LOGIC;
+    reward_signal         :out  STD_LOGIC_VECTOR(7 downto 0);
+    ap_start              :out  STD_LOGIC;
+    ap_done               :in   STD_LOGIC;
+    ap_ready              :in   STD_LOGIC;
+    ap_idle               :in   STD_LOGIC
+);
+end entity snn_top_hls_ctrl_s_axi;
+
+-- ------------------------Address Info-------------------
+-- Protocol Used: ap_ctrl_hs
+--
+-- 0x00 : Control signals
+--        bit 0  - ap_start (Read/Write/COH)
+--        bit 1  - ap_done (Read/COR)
+--        bit 2  - ap_idle (Read)
+--        bit 3  - ap_ready (Read/COR)
+--        bit 7  - auto_restart (Read/Write)
+--        bit 9  - interrupt (Read)
+--        others - reserved
+-- 0x04 : Global Interrupt Enable Register
+--        bit 0  - Global Interrupt Enable (Read/Write)
+--        others - reserved
+-- 0x08 : IP Interrupt Enable Register (Read/Write)
+--        bit 0 - enable ap_done interrupt (Read/Write)
+--        bit 1 - enable ap_ready interrupt (Read/Write)
+--        others - reserved
+-- 0x0c : IP Interrupt Status Register (Read/TOW)
+--        bit 0 - ap_done (Read/TOW)
+--        bit 1 - ap_ready (Read/TOW)
+--        others - reserved
+-- 0x10 : Data signal of ctrl_reg
+--        bit 31~0 - ctrl_reg[31:0] (Read/Write)
+-- 0x14 : reserved
+-- 0x18 : Data signal of config_reg
+--        bit 31~0 - config_reg[31:0] (Read/Write)
+-- 0x1c : reserved
+-- 0x20 : Data signal of learning_params
+--        bit 31~0 - learning_params[31:0] (Read/Write)
+-- 0x24 : Data signal of learning_params
+--        bit 31~0 - learning_params[63:32] (Read/Write)
+-- 0x28 : Data signal of learning_params
+--        bit 31~0 - learning_params[95:64] (Read/Write)
+-- 0x2c : Data signal of learning_params
+--        bit 31~0 - learning_params[127:96] (Read/Write)
+-- 0x30 : Data signal of learning_params
+--        bit 15~0 - learning_params[143:128] (Read/Write)
+--        others   - reserved
+-- 0x34 : reserved
+-- 0x38 : Data signal of status_reg
+--        bit 31~0 - status_reg[31:0] (Read)
+-- 0x3c : Control signal of status_reg
+--        bit 0  - status_reg_ap_vld (Read/COR)
+--        others - reserved
+-- 0x48 : Data signal of spike_count_reg
+--        bit 31~0 - spike_count_reg[31:0] (Read)
+-- 0x4c : Control signal of spike_count_reg
+--        bit 0  - spike_count_reg_ap_vld (Read/COR)
+--        others - reserved
+-- 0x58 : Data signal of weight_sum_reg
+--        bit 31~0 - weight_sum_reg[31:0] (Read)
+-- 0x5c : Control signal of weight_sum_reg
+--        bit 0  - weight_sum_reg_ap_vld (Read/COR)
+--        others - reserved
+-- 0x68 : Data signal of version_reg
+--        bit 31~0 - version_reg[31:0] (Read)
+-- 0x6c : Control signal of version_reg
+--        bit 0  - version_reg_ap_vld (Read/COR)
+--        others - reserved
+-- 0x78 : Data signal of reward_signal
+--        bit 7~0 - reward_signal[7:0] (Read/Write)
+--        others  - reserved
+-- 0x7c : reserved
+-- (SC = Self Clear, COR = Clear on Read, TOW = Toggle on Write, COH = Clear on Handshake)
+
+architecture behave of snn_top_hls_ctrl_s_axi is
+attribute DowngradeIPIdentifiedWarnings : STRING;
+attribute DowngradeIPIdentifiedWarnings of behave : architecture is "yes";
+    type states is (wridle, wrdata, wrresp, wrreset, rdidle, rddata, rdreset);  -- read and write fsm states
+    signal wstate  : states := wrreset;
+    signal rstate  : states := rdreset;
+    signal wnext, rnext: states;
+    constant ADDR_AP_CTRL                : INTEGER := 16#00#;
+    constant ADDR_GIE                    : INTEGER := 16#04#;
+    constant ADDR_IER                    : INTEGER := 16#08#;
+    constant ADDR_ISR                    : INTEGER := 16#0c#;
+    constant ADDR_CTRL_REG_DATA_0        : INTEGER := 16#10#;
+    constant ADDR_CTRL_REG_CTRL          : INTEGER := 16#14#;
+    constant ADDR_CONFIG_REG_DATA_0      : INTEGER := 16#18#;
+    constant ADDR_CONFIG_REG_CTRL        : INTEGER := 16#1c#;
+    constant ADDR_LEARNING_PARAMS_DATA_0 : INTEGER := 16#20#;
+    constant ADDR_LEARNING_PARAMS_DATA_1 : INTEGER := 16#24#;
+    constant ADDR_LEARNING_PARAMS_DATA_2 : INTEGER := 16#28#;
+    constant ADDR_LEARNING_PARAMS_DATA_3 : INTEGER := 16#2c#;
+    constant ADDR_LEARNING_PARAMS_DATA_4 : INTEGER := 16#30#;
+    constant ADDR_LEARNING_PARAMS_CTRL   : INTEGER := 16#34#;
+    constant ADDR_STATUS_REG_DATA_0      : INTEGER := 16#38#;
+    constant ADDR_STATUS_REG_CTRL        : INTEGER := 16#3c#;
+    constant ADDR_SPIKE_COUNT_REG_DATA_0 : INTEGER := 16#48#;
+    constant ADDR_SPIKE_COUNT_REG_CTRL   : INTEGER := 16#4c#;
+    constant ADDR_WEIGHT_SUM_REG_DATA_0  : INTEGER := 16#58#;
+    constant ADDR_WEIGHT_SUM_REG_CTRL    : INTEGER := 16#5c#;
+    constant ADDR_VERSION_REG_DATA_0     : INTEGER := 16#68#;
+    constant ADDR_VERSION_REG_CTRL       : INTEGER := 16#6c#;
+    constant ADDR_REWARD_SIGNAL_DATA_0   : INTEGER := 16#78#;
+    constant ADDR_REWARD_SIGNAL_CTRL     : INTEGER := 16#7c#;
+    constant ADDR_BITS         : INTEGER := 7;
+
+    signal AWREADY_t           : STD_LOGIC;
+    signal WREADY_t            : STD_LOGIC;
+    signal ARREADY_t           : STD_LOGIC;
+    signal RVALID_t            : STD_LOGIC;
+    signal BVALID_t            : STD_LOGIC;
+    signal waddr               : UNSIGNED(ADDR_BITS-1 downto 0);
+    signal wmask               : UNSIGNED(C_S_AXI_DATA_WIDTH-1 downto 0);
+    signal aw_hs               : STD_LOGIC;
+    signal w_hs                : STD_LOGIC;
+    signal rdata_data          : UNSIGNED(C_S_AXI_DATA_WIDTH-1 downto 0);
+    signal ar_hs               : STD_LOGIC;
+    signal raddr               : UNSIGNED(ADDR_BITS-1 downto 0);
+    -- internal registers
+    signal int_ap_idle         : STD_LOGIC := '0';
+    signal int_ap_ready        : STD_LOGIC := '0';
+    signal task_ap_ready       : STD_LOGIC;
+    signal int_ap_done         : STD_LOGIC := '0';
+    signal task_ap_done        : STD_LOGIC;
+    signal int_task_ap_done    : STD_LOGIC := '0';
+    signal int_ap_start        : STD_LOGIC := '0';
+    signal int_interrupt       : STD_LOGIC := '0';
+    signal int_auto_restart    : STD_LOGIC := '0';
+    signal auto_restart_status : STD_LOGIC := '0';
+    signal auto_restart_done   : STD_LOGIC;
+    signal int_gie             : STD_LOGIC := '0';
+    signal int_ier             : UNSIGNED(1 downto 0) := (others => '0');
+    signal int_isr             : UNSIGNED(1 downto 0) := (others => '0');
+    signal int_ctrl_reg        : UNSIGNED(31 downto 0) := (others => '0');
+    signal int_config_reg      : UNSIGNED(31 downto 0) := (others => '0');
+    signal int_learning_params : UNSIGNED(143 downto 0) := (others => '0');
+    signal int_status_reg_ap_vld : STD_LOGIC;
+    signal int_status_reg      : UNSIGNED(31 downto 0) := (others => '0');
+    signal int_spike_count_reg_ap_vld : STD_LOGIC;
+    signal int_spike_count_reg : UNSIGNED(31 downto 0) := (others => '0');
+    signal int_weight_sum_reg_ap_vld : STD_LOGIC;
+    signal int_weight_sum_reg  : UNSIGNED(31 downto 0) := (others => '0');
+    signal int_version_reg_ap_vld : STD_LOGIC;
+    signal int_version_reg     : UNSIGNED(31 downto 0) := (others => '0');
+    signal int_reward_signal   : UNSIGNED(7 downto 0) := (others => '0');
+
+
+begin
+-- ----------------------- Instantiation------------------
+
+
+-- ----------------------- AXI WRITE ---------------------
+    AWREADY_t <=  '1' when wstate = wridle else '0';
+    AWREADY   <=  AWREADY_t;
+    WREADY_t  <=  '1' when wstate = wrdata else '0';
+    WREADY    <=  WREADY_t;
+    BVALID_t  <=  '1' when wstate = wrresp else '0';
+    BVALID    <=  BVALID_t;
+    BRESP     <=  "00";  -- OKAY
+    wmask     <=  (31 downto 24 => WSTRB(3), 23 downto 16 => WSTRB(2), 15 downto 8 => WSTRB(1), 7 downto 0 => WSTRB(0));
+    aw_hs     <=  AWVALID and AWREADY_t;
+    w_hs      <=  WVALID and WREADY_t;
+
+    -- write FSM
+    process (ACLK)
+    begin
+        if (ACLK'event and ACLK = '1') then
+            if (ARESET = '1') then
+                wstate <= wrreset;
+            elsif (ACLK_EN = '1') then
+                wstate <= wnext;
+            end if;
+        end if;
+    end process;
+
+    process (wstate, AWVALID, WVALID, BREADY, BVALID_t)
+    begin
+        case (wstate) is
+        when wridle =>
+            if (AWVALID = '1') then
+                wnext <= wrdata;
+            else
+                wnext <= wridle;
+            end if;
+        when wrdata =>
+            if (WVALID = '1') then
+                wnext <= wrresp;
+            else
+                wnext <= wrdata;
+            end if;
+        when wrresp =>
+            if (BREADY = '1' and BVALID_t = '1') then
+                wnext <= wridle;
+            else
+                wnext <= wrresp;
+            end if;
+        when others =>
+            wnext <= wridle;
+        end case;
+    end process;
+
+    waddr_proc : process (ACLK)
+    begin
+        if (ACLK'event and ACLK = '1') then
+            if (ACLK_EN = '1') then
+                if (aw_hs = '1') then
+                    waddr <= UNSIGNED(AWADDR(ADDR_BITS-1 downto 2) & (1 downto 0 => '0'));
+                end if;
+            end if;
+        end if;
+    end process;
+
+-- ----------------------- AXI READ ----------------------
+    ARREADY_t <= '1' when (rstate = rdidle) else '0';
+    ARREADY <= ARREADY_t;
+    RDATA   <= STD_LOGIC_VECTOR(rdata_data);
+    RRESP   <= "00";  -- OKAY
+    RVALID_t  <= '1' when (rstate = rddata) else '0';
+    RVALID    <= RVALID_t;
+    ar_hs   <= ARVALID and ARREADY_t;
+    raddr   <= UNSIGNED(ARADDR(ADDR_BITS-1 downto 0));
+
+    -- read FSM
+    process (ACLK)
+    begin
+        if (ACLK'event and ACLK = '1') then
+            if (ARESET = '1') then
+                rstate <= rdreset;
+            elsif (ACLK_EN = '1') then
+                rstate <= rnext;
+            end if;
+        end if;
+    end process;
+
+    process (rstate, ARVALID, RREADY, RVALID_t)
+    begin
+        case (rstate) is
+        when rdidle =>
+            if (ARVALID = '1') then
+                rnext <= rddata;
+            else
+                rnext <= rdidle;
+            end if;
+        when rddata =>
+            if (RREADY = '1' and RVALID_t = '1') then
+                rnext <= rdidle;
+            else
+                rnext <= rddata;
+            end if;
+        when others =>
+            rnext <= rdidle;
+        end case;
+    end process;
+
+    rdata_proc : process (ACLK)
+    begin
+        if (ACLK'event and ACLK = '1') then
+            if (ACLK_EN = '1') then
+                if (ar_hs = '1') then
+                    rdata_data <= (others => '0');
+                    case (TO_INTEGER(raddr)) is
+                    when ADDR_AP_CTRL =>
+                        rdata_data(9) <= int_interrupt;
+                        rdata_data(7) <= int_auto_restart;
+                        rdata_data(3) <= int_ap_ready;
+                        rdata_data(2) <= int_ap_idle;
+                        rdata_data(1) <= int_task_ap_done;
+                        rdata_data(0) <= int_ap_start;
+                    when ADDR_GIE =>
+                        rdata_data(0) <= int_gie;
+                    when ADDR_IER =>
+                        rdata_data(1 downto 0) <= int_ier;
+                    when ADDR_ISR =>
+                        rdata_data(1 downto 0) <= int_isr;
+                    when ADDR_CTRL_REG_DATA_0 =>
+                        rdata_data <= RESIZE(int_ctrl_reg(31 downto 0), 32);
+                    when ADDR_CONFIG_REG_DATA_0 =>
+                        rdata_data <= RESIZE(int_config_reg(31 downto 0), 32);
+                    when ADDR_LEARNING_PARAMS_DATA_0 =>
+                        rdata_data <= RESIZE(int_learning_params(31 downto 0), 32);
+                    when ADDR_LEARNING_PARAMS_DATA_1 =>
+                        rdata_data <= RESIZE(int_learning_params(63 downto 32), 32);
+                    when ADDR_LEARNING_PARAMS_DATA_2 =>
+                        rdata_data <= RESIZE(int_learning_params(95 downto 64), 32);
+                    when ADDR_LEARNING_PARAMS_DATA_3 =>
+                        rdata_data <= RESIZE(int_learning_params(127 downto 96), 32);
+                    when ADDR_LEARNING_PARAMS_DATA_4 =>
+                        rdata_data <= RESIZE(int_learning_params(143 downto 128), 32);
+                    when ADDR_STATUS_REG_DATA_0 =>
+                        rdata_data <= RESIZE(int_status_reg(31 downto 0), 32);
+                    when ADDR_STATUS_REG_CTRL =>
+                        rdata_data(0) <= int_status_reg_ap_vld;
+                    when ADDR_SPIKE_COUNT_REG_DATA_0 =>
+                        rdata_data <= RESIZE(int_spike_count_reg(31 downto 0), 32);
+                    when ADDR_SPIKE_COUNT_REG_CTRL =>
+                        rdata_data(0) <= int_spike_count_reg_ap_vld;
+                    when ADDR_WEIGHT_SUM_REG_DATA_0 =>
+                        rdata_data <= RESIZE(int_weight_sum_reg(31 downto 0), 32);
+                    when ADDR_WEIGHT_SUM_REG_CTRL =>
+                        rdata_data(0) <= int_weight_sum_reg_ap_vld;
+                    when ADDR_VERSION_REG_DATA_0 =>
+                        rdata_data <= RESIZE(int_version_reg(31 downto 0), 32);
+                    when ADDR_VERSION_REG_CTRL =>
+                        rdata_data(0) <= int_version_reg_ap_vld;
+                    when ADDR_REWARD_SIGNAL_DATA_0 =>
+                        rdata_data <= RESIZE(int_reward_signal(7 downto 0), 32);
+                    when others =>
+                        NULL;
+                    end case;
+                end if;
+            end if;
+        end if;
+    end process;
+
+-- ----------------------- Register logic ----------------
+    interrupt            <= int_interrupt;
+    ap_start             <= int_ap_start;
+    task_ap_done         <= (ap_done and not auto_restart_status) or auto_restart_done;
+    task_ap_ready        <= ap_ready and not int_auto_restart;
+    auto_restart_done    <= auto_restart_status and (ap_idle and not int_ap_idle);
+    ctrl_reg             <= STD_LOGIC_VECTOR(int_ctrl_reg);
+    config_reg           <= STD_LOGIC_VECTOR(int_config_reg);
+    learning_params      <= STD_LOGIC_VECTOR(int_learning_params);
+    reward_signal        <= STD_LOGIC_VECTOR(int_reward_signal);
+
+    process (ACLK)
+    begin
+        if (ACLK'event and ACLK = '1') then
+            if (ARESET = '1') then
+                int_interrupt <= '0';
+            elsif (ACLK_EN = '1') then
+                if (int_gie = '1' and (int_isr(0) or int_isr(1)) = '1') then
+                    int_interrupt <= '1';
+                else
+                    int_interrupt <= '0';
+                end if;
+            end if;
+        end if;
+    end process;
+
+    process (ACLK)
+    begin
+        if (ACLK'event and ACLK = '1') then
+            if (ARESET = '1') then
+                int_ap_start <= '0';
+            elsif (ACLK_EN = '1') then
+                if (w_hs = '1' and waddr = ADDR_AP_CTRL and WSTRB(0) = '1' and WDATA(0) = '1') then
+                    int_ap_start <= '1';
+                elsif (ap_ready = '1') then
+                    int_ap_start <= int_auto_restart; -- clear on handshake/auto restart
+                end if;
+            end if;
+        end if;
+    end process;
+
+    process (ACLK)
+    begin
+        if (ACLK'event and ACLK = '1') then
+            if (ARESET = '1') then
+                int_ap_done <= '0';
+            elsif (ACLK_EN = '1') then
+                if (true) then
+                    int_ap_done <= ap_done;
+                end if;
+            end if;
+        end if;
+    end process;
+
+    process (ACLK)
+    begin
+        if (ACLK'event and ACLK = '1') then
+            if (ARESET = '1') then
+                int_task_ap_done <= '0';
+            elsif (ACLK_EN = '1') then
+                if (task_ap_done = '1') then
+                    int_task_ap_done <= '1';
+                elsif (ar_hs = '1' and raddr = ADDR_AP_CTRL) then
+                    int_task_ap_done <= '0'; -- clear on read
+                end if;
+            end if;
+        end if;
+    end process;
+
+    process (ACLK)
+    begin
+        if (ACLK'event and ACLK = '1') then
+            if (ARESET = '1') then
+                int_ap_idle <= '0';
+            elsif (ACLK_EN = '1') then
+                if (true) then
+                    int_ap_idle <= ap_idle;
+                end if;
+            end if;
+        end if;
+    end process;
+
+    process (ACLK)
+    begin
+        if (ACLK'event and ACLK = '1') then
+            if (ARESET = '1') then
+                int_ap_ready <= '0';
+            elsif (ACLK_EN = '1') then
+                if (task_ap_ready = '1') then
+                    int_ap_ready <= '1';
+                elsif (ar_hs = '1' and raddr = ADDR_AP_CTRL) then
+                    int_ap_ready <= '0';
+                end if;
+            end if;
+        end if;
+    end process;
+
+    process (ACLK)
+    begin
+        if (ACLK'event and ACLK = '1') then
+            if (ARESET = '1') then
+                int_auto_restart <= '0';
+            elsif (ACLK_EN = '1') then
+                if (w_hs = '1' and waddr = ADDR_AP_CTRL and WSTRB(0) = '1') then
+                    int_auto_restart <= WDATA(7);
+                end if;
+            end if;
+        end if;
+    end process;
+
+    process (ACLK)
+    begin
+        if (ACLK'event and ACLK = '1') then
+            if (ARESET = '1') then
+                auto_restart_status <= '0';
+            elsif (ACLK_EN = '1') then
+                if (int_auto_restart = '1') then
+                    auto_restart_status <= '1';
+                elsif (ap_idle = '1') then
+                    auto_restart_status <= '0';
+                end if;
+            end if;
+        end if;
+    end process;
+
+    process (ACLK)
+    begin
+        if (ACLK'event and ACLK = '1') then
+            if (ARESET = '1') then
+                int_gie <= '0';
+            elsif (ACLK_EN = '1') then
+                if (w_hs = '1' and waddr = ADDR_GIE and WSTRB(0) = '1') then
+                    int_gie <= WDATA(0);
+                end if;
+            end if;
+        end if;
+    end process;
+
+    process (ACLK)
+    begin
+        if (ACLK'event and ACLK = '1') then
+            if (ARESET = '1') then
+                int_ier <= (others=>'0');
+            elsif (ACLK_EN = '1') then
+                if (w_hs = '1' and waddr = ADDR_IER and WSTRB(0) = '1') then
+                    int_ier <= UNSIGNED(WDATA(1 downto 0));
+                end if;
+            end if;
+        end if;
+    end process;
+
+    process (ACLK)
+    begin
+        if (ACLK'event and ACLK = '1') then
+            if (ARESET = '1') then
+                int_isr(0) <= '0';
+            elsif (ACLK_EN = '1') then
+                if (int_ier(0) = '1' and ap_done = '1') then
+                    int_isr(0) <= '1';
+                elsif (w_hs = '1' and waddr = ADDR_ISR and WSTRB(0) = '1') then
+                    int_isr(0) <= int_isr(0) xor WDATA(0); -- toggle on write
+                end if;
+            end if;
+        end if;
+    end process;
+
+    process (ACLK)
+    begin
+        if (ACLK'event and ACLK = '1') then
+            if (ARESET = '1') then
+                int_isr(1) <= '0';
+            elsif (ACLK_EN = '1') then
+                if (int_ier(1) = '1' and ap_ready = '1') then
+                    int_isr(1) <= '1';
+                elsif (w_hs = '1' and waddr = ADDR_ISR and WSTRB(0) = '1') then
+                    int_isr(1) <= int_isr(1) xor WDATA(1); -- toggle on write
+                end if;
+            end if;
+        end if;
+    end process;
+
+    process (ACLK)
+    begin
+        if (ACLK'event and ACLK = '1') then
+            if (ARESET = '1') then
+                int_ctrl_reg(31 downto 0) <= (others => '0');
+            elsif (ACLK_EN = '1') then
+                if (w_hs = '1' and waddr = ADDR_CTRL_REG_DATA_0) then
+                    int_ctrl_reg(31 downto 0) <= (UNSIGNED(WDATA(31 downto 0)) and wmask(31 downto 0)) or ((not wmask(31 downto 0)) and int_ctrl_reg(31 downto 0));
+                end if;
+            end if;
+        end if;
+    end process;
+
+    process (ACLK)
+    begin
+        if (ACLK'event and ACLK = '1') then
+            if (ARESET = '1') then
+                int_config_reg(31 downto 0) <= (others => '0');
+            elsif (ACLK_EN = '1') then
+                if (w_hs = '1' and waddr = ADDR_CONFIG_REG_DATA_0) then
+                    int_config_reg(31 downto 0) <= (UNSIGNED(WDATA(31 downto 0)) and wmask(31 downto 0)) or ((not wmask(31 downto 0)) and int_config_reg(31 downto 0));
+                end if;
+            end if;
+        end if;
+    end process;
+
+    process (ACLK)
+    begin
+        if (ACLK'event and ACLK = '1') then
+            if (ARESET = '1') then
+                int_learning_params(31 downto 0) <= (others => '0');
+            elsif (ACLK_EN = '1') then
+                if (w_hs = '1' and waddr = ADDR_LEARNING_PARAMS_DATA_0) then
+                    int_learning_params(31 downto 0) <= (UNSIGNED(WDATA(31 downto 0)) and wmask(31 downto 0)) or ((not wmask(31 downto 0)) and int_learning_params(31 downto 0));
+                end if;
+            end if;
+        end if;
+    end process;
+
+    process (ACLK)
+    begin
+        if (ACLK'event and ACLK = '1') then
+            if (ARESET = '1') then
+                int_learning_params(63 downto 32) <= (others => '0');
+            elsif (ACLK_EN = '1') then
+                if (w_hs = '1' and waddr = ADDR_LEARNING_PARAMS_DATA_1) then
+                    int_learning_params(63 downto 32) <= (UNSIGNED(WDATA(31 downto 0)) and wmask(31 downto 0)) or ((not wmask(31 downto 0)) and int_learning_params(63 downto 32));
+                end if;
+            end if;
+        end if;
+    end process;
+
+    process (ACLK)
+    begin
+        if (ACLK'event and ACLK = '1') then
+            if (ARESET = '1') then
+                int_learning_params(95 downto 64) <= (others => '0');
+            elsif (ACLK_EN = '1') then
+                if (w_hs = '1' and waddr = ADDR_LEARNING_PARAMS_DATA_2) then
+                    int_learning_params(95 downto 64) <= (UNSIGNED(WDATA(31 downto 0)) and wmask(31 downto 0)) or ((not wmask(31 downto 0)) and int_learning_params(95 downto 64));
+                end if;
+            end if;
+        end if;
+    end process;
+
+    process (ACLK)
+    begin
+        if (ACLK'event and ACLK = '1') then
+            if (ARESET = '1') then
+                int_learning_params(127 downto 96) <= (others => '0');
+            elsif (ACLK_EN = '1') then
+                if (w_hs = '1' and waddr = ADDR_LEARNING_PARAMS_DATA_3) then
+                    int_learning_params(127 downto 96) <= (UNSIGNED(WDATA(31 downto 0)) and wmask(31 downto 0)) or ((not wmask(31 downto 0)) and int_learning_params(127 downto 96));
+                end if;
+            end if;
+        end if;
+    end process;
+
+    process (ACLK)
+    begin
+        if (ACLK'event and ACLK = '1') then
+            if (ARESET = '1') then
+                int_learning_params(143 downto 128) <= (others => '0');
+            elsif (ACLK_EN = '1') then
+                if (w_hs = '1' and waddr = ADDR_LEARNING_PARAMS_DATA_4) then
+                    int_learning_params(143 downto 128) <= (UNSIGNED(WDATA(15 downto 0)) and wmask(15 downto 0)) or ((not wmask(15 downto 0)) and int_learning_params(143 downto 128));
+                end if;
+            end if;
+        end if;
+    end process;
+
+    process (ACLK)
+    begin
+        if (ACLK'event and ACLK = '1') then
+            if (ARESET = '1') then
+                int_status_reg <= (others => '0');
+            elsif (ACLK_EN = '1') then
+                if (status_reg_ap_vld = '1') then
+                    int_status_reg <= UNSIGNED(status_reg);
+                end if;
+            end if;
+        end if;
+    end process;
+
+    process (ACLK)
+    begin
+        if (ACLK'event and ACLK = '1') then
+            if (ARESET = '1') then
+                int_status_reg_ap_vld <= '0';
+            elsif (ACLK_EN = '1') then
+                if (status_reg_ap_vld = '1') then
+                    int_status_reg_ap_vld <= '1';
+                elsif (ar_hs = '1' and raddr = ADDR_STATUS_REG_CTRL) then
+                    int_status_reg_ap_vld <= '0'; -- clear on read
+                end if;
+            end if;
+        end if;
+    end process;
+
+    process (ACLK)
+    begin
+        if (ACLK'event and ACLK = '1') then
+            if (ARESET = '1') then
+                int_spike_count_reg <= (others => '0');
+            elsif (ACLK_EN = '1') then
+                if (spike_count_reg_ap_vld = '1') then
+                    int_spike_count_reg <= UNSIGNED(spike_count_reg);
+                end if;
+            end if;
+        end if;
+    end process;
+
+    process (ACLK)
+    begin
+        if (ACLK'event and ACLK = '1') then
+            if (ARESET = '1') then
+                int_spike_count_reg_ap_vld <= '0';
+            elsif (ACLK_EN = '1') then
+                if (spike_count_reg_ap_vld = '1') then
+                    int_spike_count_reg_ap_vld <= '1';
+                elsif (ar_hs = '1' and raddr = ADDR_SPIKE_COUNT_REG_CTRL) then
+                    int_spike_count_reg_ap_vld <= '0'; -- clear on read
+                end if;
+            end if;
+        end if;
+    end process;
+
+    process (ACLK)
+    begin
+        if (ACLK'event and ACLK = '1') then
+            if (ARESET = '1') then
+                int_weight_sum_reg <= (others => '0');
+            elsif (ACLK_EN = '1') then
+                if (weight_sum_reg_ap_vld = '1') then
+                    int_weight_sum_reg <= UNSIGNED(weight_sum_reg);
+                end if;
+            end if;
+        end if;
+    end process;
+
+    process (ACLK)
+    begin
+        if (ACLK'event and ACLK = '1') then
+            if (ARESET = '1') then
+                int_weight_sum_reg_ap_vld <= '0';
+            elsif (ACLK_EN = '1') then
+                if (weight_sum_reg_ap_vld = '1') then
+                    int_weight_sum_reg_ap_vld <= '1';
+                elsif (ar_hs = '1' and raddr = ADDR_WEIGHT_SUM_REG_CTRL) then
+                    int_weight_sum_reg_ap_vld <= '0'; -- clear on read
+                end if;
+            end if;
+        end if;
+    end process;
+
+    process (ACLK)
+    begin
+        if (ACLK'event and ACLK = '1') then
+            if (ARESET = '1') then
+                int_version_reg <= (others => '0');
+            elsif (ACLK_EN = '1') then
+                if (version_reg_ap_vld = '1') then
+                    int_version_reg <= UNSIGNED(version_reg);
+                end if;
+            end if;
+        end if;
+    end process;
+
+    process (ACLK)
+    begin
+        if (ACLK'event and ACLK = '1') then
+            if (ARESET = '1') then
+                int_version_reg_ap_vld <= '0';
+            elsif (ACLK_EN = '1') then
+                if (version_reg_ap_vld = '1') then
+                    int_version_reg_ap_vld <= '1';
+                elsif (ar_hs = '1' and raddr = ADDR_VERSION_REG_CTRL) then
+                    int_version_reg_ap_vld <= '0'; -- clear on read
+                end if;
+            end if;
+        end if;
+    end process;
+
+    process (ACLK)
+    begin
+        if (ACLK'event and ACLK = '1') then
+            if (ARESET = '1') then
+                int_reward_signal(7 downto 0) <= (others => '0');
+            elsif (ACLK_EN = '1') then
+                if (w_hs = '1' and waddr = ADDR_REWARD_SIGNAL_DATA_0) then
+                    int_reward_signal(7 downto 0) <= (UNSIGNED(WDATA(7 downto 0)) and wmask(7 downto 0)) or ((not wmask(7 downto 0)) and int_reward_signal(7 downto 0));
+                end if;
+            end if;
+        end if;
+    end process;
+
+
+-- ----------------------- Memory logic ------------------
+
+end architecture behave;

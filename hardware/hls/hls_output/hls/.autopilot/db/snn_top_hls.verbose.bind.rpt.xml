@@ -1,0 +1,69 @@
+<profile>
+
+<section name = "Vitis HLS Report for 'snn_top_hls'" level="0">
+<item name = "Date">Mon Dec  8 20:06:22 2025
+</item>
+<item name = "Version">2025.2 (Build 6295257 on Nov 14 2025)</item>
+<item name = "Project">hls_output</item>
+<item name = "Solution">hls (Vivado IP Flow Target)</item>
+<item name = "Product family">zynq</item>
+<item name = "Target device">xc7z020-clg400-1</item>
+</section>
+
+<section name = "Performance Estimates" level="0">
+<item name = "Timing">
+<section name = "" level="1">
+<item name = "Summary"><table name="" hasTotal="0">
+<keys size="4">Clock, Target, Estimated, Uncertainty</keys>
+<column name="ap_clk">10.00 ns, 7.906 ns, 2.70 ns</column>
+</table>
+</item>
+</section>
+</item>
+<item name = "Latency">
+<section name = "" level="1">
+<item name = "Summary"><table name="" hasTotal="0">
+<keys size="8">, min, max, min, max, min, max, Type</keys>
+<column name="">?, ?, ?, ?, ?, ?, no</column>
+</table>
+</item>
+<item name = "Detail">
+<section name = "" level="1">
+<item name = "Instance"><table name="" hasTotal="0">
+<keys size="9">Instance, Module, min, max, min, max, min, max, Type</keys>
+<column name="grp_snn_top_hls_Pipeline_RESET_PRE_fu_994">snn_top_hls_Pipeline_RESET_PRE, 10, 10, 0.100 us, 0.100 us, 0, 0, loop pipeline stp</column>
+<column name="grp_snn_top_hls_Pipeline_RESET_TRACE_OUTER_RESET_TRACE_INNER_fu_1030">snn_top_hls_Pipeline_RESET_TRACE_OUTER_RESET_TRACE_INNER, 1027, 1027, 10.270 us, 10.270 us, 0, 0, loop pipeline stp</column>
+<column name="grp_snn_top_hls_Pipeline_INIT_WEIGHT_OUTER_INIT_WEIGHT_INNER_fu_1042">snn_top_hls_Pipeline_INIT_WEIGHT_OUTER_INIT_WEIGHT_INNER, 4099, 4099, 40.990 us, 40.990 us, 0, 0, loop pipeline stp</column>
+<column name="grp_process_pre_spike_fu_1062">process_pre_spike, 101, 101, 1.010 us, 1.010 us, 101, 101, no</column>
+<column name="grp_process_post_spike_fu_1108">process_post_spike, 101, 101, 1.010 us, 1.010 us, 101, 101, no</column>
+<column name="grp_apply_weight_updates_fu_1154">apply_weight_updates, ?, ?, ?, ?, ?, ?, no</column>
+<column name="grp_apply_reward_signal_fu_1188">apply_reward_signal, 1, 4104, 10.000 ns, 41.040 us, 1, 4104, no</column>
+<column name="grp_decay_eligibility_traces_fu_1218">decay_eligibility_traces, 8197, 8197, 81.970 us, 81.970 us, 0, 0, loop pipeline stp</column>
+<column name="grp_snn_top_hls_Pipeline_VITIS_LOOP_529_1_fu_1231">snn_top_hls_Pipeline_VITIS_LOOP_529_1, 19, 19, 0.190 us, 0.190 us, 0, 0, loop pipeline stp</column>
+<column name="grp_snn_top_hls_Pipeline_VITIS_LOOP_529_11_fu_1252">snn_top_hls_Pipeline_VITIS_LOOP_529_11, 19, 19, 0.190 us, 0.190 us, 0, 0, loop pipeline stp</column>
+<column name="grp_snn_top_hls_Pipeline_VITIS_LOOP_529_12_fu_1274">snn_top_hls_Pipeline_VITIS_LOOP_529_12, 19, 19, 0.190 us, 0.190 us, 0, 0, loop pipeline stp</column>
+<column name="grp_snn_top_hls_Pipeline_VITIS_LOOP_529_13_fu_1296">snn_top_hls_Pipeline_VITIS_LOOP_529_13, 19, 19, 0.190 us, 0.190 us, 0, 0, loop pipeline stp</column>
+<column name="grp_snn_top_hls_Pipeline_VITIS_LOOP_529_14_fu_1318">snn_top_hls_Pipeline_VITIS_LOOP_529_14, 19, 19, 0.190 us, 0.190 us, 0, 0, loop pipeline stp</column>
+<column name="grp_snn_top_hls_Pipeline_VITIS_LOOP_529_15_fu_1340">snn_top_hls_Pipeline_VITIS_LOOP_529_15, 19, 19, 0.190 us, 0.190 us, 0, 0, loop pipeline stp</column>
+<column name="grp_snn_top_hls_Pipeline_VITIS_LOOP_529_16_fu_1362">snn_top_hls_Pipeline_VITIS_LOOP_529_16, 19, 19, 0.190 us, 0.190 us, 0, 0, loop pipeline stp</column>
+<column name="grp_snn_top_hls_Pipeline_VITIS_LOOP_529_17_fu_1384">snn_top_hls_Pipeline_VITIS_LOOP_529_17, 19, 19, 0.190 us, 0.190 us, 0, 0, loop pipeline stp</column>
+<column name="grp_snn_top_hls_Pipeline_VITIS_LOOP_529_18_fu_1406">snn_top_hls_Pipeline_VITIS_LOOP_529_18, 19, 19, 0.190 us, 0.190 us, 0, 0, loop pipeline stp</column>
+<column name="grp_snn_top_hls_Pipeline_VITIS_LOOP_529_19_fu_1428">snn_top_hls_Pipeline_VITIS_LOOP_529_19, 19, 19, 0.190 us, 0.190 us, 0, 0, loop pipeline stp</column>
+<column name="grp_snn_top_hls_Pipeline_VITIS_LOOP_529_110_fu_1450">snn_top_hls_Pipeline_VITIS_LOOP_529_110, 19, 19, 0.190 us, 0.190 us, 0, 0, loop pipeline stp</column>
+<column name="grp_snn_top_hls_Pipeline_VITIS_LOOP_529_111_fu_1472">snn_top_hls_Pipeline_VITIS_LOOP_529_111, 19, 19, 0.190 us, 0.190 us, 0, 0, loop pipeline stp</column>
+<column name="grp_snn_top_hls_Pipeline_VITIS_LOOP_529_112_fu_1494">snn_top_hls_Pipeline_VITIS_LOOP_529_112, 19, 19, 0.190 us, 0.190 us, 0, 0, loop pipeline stp</column>
+<column name="grp_snn_top_hls_Pipeline_VITIS_LOOP_529_113_fu_1516">snn_top_hls_Pipeline_VITIS_LOOP_529_113, 19, 19, 0.190 us, 0.190 us, 0, 0, loop pipeline stp</column>
+<column name="grp_snn_top_hls_Pipeline_VITIS_LOOP_529_114_fu_1538">snn_top_hls_Pipeline_VITIS_LOOP_529_114, 19, 19, 0.190 us, 0.190 us, 0, 0, loop pipeline stp</column>
+<column name="grp_snn_top_hls_Pipeline_VITIS_LOOP_529_115_fu_1560">snn_top_hls_Pipeline_VITIS_LOOP_529_115, 19, 19, 0.190 us, 0.190 us, 0, 0, loop pipeline stp</column>
+</table>
+</item>
+<item name = "Loop"><table name="" hasTotal="0">
+<keys size="8">Loop Name, min, max, Latency, achieved, target, Count, Pipelined</keys>
+</table>
+</item>
+</section>
+</item>
+</section>
+</item>
+</section>
+</profile>

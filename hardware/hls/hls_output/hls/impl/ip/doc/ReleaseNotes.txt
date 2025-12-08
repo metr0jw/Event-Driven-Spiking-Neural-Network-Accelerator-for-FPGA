@@ -1,0 +1,6 @@
+
+Family       : zynq
+Device       : xc7z020
+Package      : -clg400
+Speed Grade  : -1
+Clock Period : 10

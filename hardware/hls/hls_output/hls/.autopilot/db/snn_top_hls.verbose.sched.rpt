@@ -1,0 +1,836 @@
+
+
+================================================================
+== Vitis HLS Report for 'snn_top_hls'
+================================================================
+* Date:           Mon Dec  8 20:06:22 2025
+
+* Version:        2025.2 (Build 6295257 on Nov 14 2025)
+* Project:        hls_output
+* Solution:       hls (Vivado IP Flow Target)
+* Product family: zynq
+* Target device:  xc7z020-clg400-1
+
+
+================================================================
+== Performance Estimates
+================================================================
++ Timing: 
+    * Summary: 
+    +--------+----------+----------+------------+
+    |  Clock |  Target  | Estimated| Uncertainty|
+    +--------+----------+----------+------------+
+    |ap_clk  |  10.00 ns|  7.906 ns|     2.70 ns|
+    +--------+----------+----------+------------+
+
++ Latency: 
+    * Summary: 
+    +---------+---------+----------+----------+-----+-----+---------+
+    |  Latency (cycles) |  Latency (absolute) |  Interval | Pipeline|
+    |   min   |   max   |    min   |    max   | min | max |   Type  |
+    +---------+---------+----------+----------+-----+-----+---------+
+    |        ?|        ?|         ?|         ?|    ?|    ?|       no|
+    +---------+---------+----------+----------+-----+-----+---------+
+
+    + Detail: 
+        * Instance: 
+        N/A
+
+        * Loop: 
+        N/A
+
+============================================================
++ Verbose Summary: Synthesis Manager
+============================================================
+InlineROM: 1
+ExposeGlobal: 0
+============================================================
++ Verbose Summary: CDFG Model
+============================================================
+IsTopModel: 1
+ResetActiveHigh: 1
+IsCombinational: 0
+IsDatapathOnly: 0
+HasWiredReturn: 1
+HasMFsm: 0
+HasVarLatency: 1
+IsPipeline: 0
+IsRtlPipelined: 0
+IsInstanceOverlapped: 0
+IsDontTouch: 0
+HasImplIP: 0
+IsGatedGlobalClock: 0
+
+
+============================================================
++ Verbose Summary: Schedule
+============================================================
+* Number of FSM states : 47
+* Pipeline : 0
+* Dataflow Pipeline: 0
+
+* FSM state transitions: 
+1 --> 2 3 
+2 --> 3 
+3 --> 4 
+4 --> 5 
+5 --> 7 6 
+6 --> 7 
+7 --> 8 9 
+8 --> 9 
+9 --> 10 13 
+10 --> 11 
+11 --> 12 
+12 --> 13 
+13 --> 15 14 
+14 --> 15 
+15 --> 16 
+16 --> 17 
+17 --> 18 
+18 --> 19 
+19 --> 20 
+20 --> 21 
+21 --> 22 
+22 --> 23 
+23 --> 24 
+24 --> 25 
+25 --> 26 
+26 --> 27 
+27 --> 28 
+28 --> 29 
+29 --> 30 
+30 --> 31 
+31 --> 32 
+32 --> 33 
+33 --> 34 
+34 --> 35 
+35 --> 36 
+36 --> 37 
+37 --> 38 
+38 --> 39 
+39 --> 40 
+40 --> 41 
+41 --> 42 
+42 --> 43 
+43 --> 44 
+44 --> 45 
+45 --> 46 
+46 --> 47 
+47 --> 
+
+* FSM state operations: 
+
+State 1 <SV = 0> <Delay = 3.56>
+ST_1 : Operation 48 [1/1] (0.00ns)   --->   "%snn_busy_read = read i1 @_ssdm_op_Read.ap_none.i1, i1 %snn_busy"   --->   Operation 48 'read' 'snn_busy_read' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 49 [1/1] (0.00ns)   --->   "%snn_ready_read = read i1 @_ssdm_op_Read.ap_none.i1, i1 %snn_ready"   --->   Operation 49 'read' 'snn_ready_read' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 50 [1/1] (0.00ns)   --->   "%spike_out_weight_read = read i8 @_ssdm_op_Read.ap_none.i8, i8 %spike_out_weight"   --->   Operation 50 'read' 'spike_out_weight_read' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 51 [1/1] (0.00ns)   --->   "%spike_out_neuron_id_read = read i8 @_ssdm_op_Read.ap_none.i8, i8 %spike_out_neuron_id"   --->   Operation 51 'read' 'spike_out_neuron_id_read' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 52 [1/1] (0.00ns)   --->   "%spike_out_valid_read = read i1 @_ssdm_op_Read.ap_none.i1, i1 %spike_out_valid"   --->   Operation 52 'read' 'spike_out_valid_read' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 53 [1/1] (0.00ns)   --->   "%spike_in_ready_read = read i1 @_ssdm_op_Read.ap_none.i1, i1 %spike_in_ready"   --->   Operation 53 'read' 'spike_in_ready_read' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 54 [1/1] (1.00ns)   --->   "%reward_signal_read = read i8 @_ssdm_op_Read.s_axilite.i8, i8 %reward_signal"   --->   Operation 54 'read' 'reward_signal_read' <Predicate = true> <Delay = 1.00> <CoreInst = "s_axilite">   --->   Core 112 's_axilite' <Latency = 0> <II = 1> <Delay = 1.00> <Adapter> <Opcode : 'read' 'write'>
+ST_1 : Operation 55 [1/1] (1.00ns)   --->   "%learning_params_read = read i144 @_ssdm_op_Read.s_axilite.i144, i144 %learning_params"   --->   Operation 55 'read' 'learning_params_read' <Predicate = true> <Delay = 1.00> <CoreInst = "s_axilite">   --->   Core 112 's_axilite' <Latency = 0> <II = 1> <Delay = 1.00> <Adapter> <Opcode : 'read' 'write'>
+ST_1 : Operation 56 [1/1] (1.00ns)   --->   "%config_reg_read = read i32 @_ssdm_op_Read.s_axilite.i32, i32 %config_reg"   --->   Operation 56 'read' 'config_reg_read' <Predicate = true> <Delay = 1.00> <CoreInst = "s_axilite">   --->   Core 112 's_axilite' <Latency = 0> <II = 1> <Delay = 1.00> <Adapter> <Opcode : 'read' 'write'>
+ST_1 : Operation 57 [1/1] (1.00ns)   --->   "%ctrl_reg_read = read i32 @_ssdm_op_Read.s_axilite.i32, i32 %ctrl_reg"   --->   Operation 57 'read' 'ctrl_reg_read' <Predicate = true> <Delay = 1.00> <CoreInst = "s_axilite">   --->   Core 112 's_axilite' <Latency = 0> <II = 1> <Delay = 1.00> <Adapter> <Opcode : 'read' 'write'>
+ST_1 : Operation 58 [1/1] (0.00ns)   --->   "%weight_sum_31_loc = alloca i64 1"   --->   Operation 58 'alloca' 'weight_sum_31_loc' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 59 [1/1] (0.00ns)   --->   "%weight_sum_28_loc = alloca i64 1"   --->   Operation 59 'alloca' 'weight_sum_28_loc' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 60 [1/1] (0.00ns)   --->   "%weight_sum_26_loc = alloca i64 1"   --->   Operation 60 'alloca' 'weight_sum_26_loc' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 61 [1/1] (0.00ns)   --->   "%weight_sum_24_loc = alloca i64 1"   --->   Operation 61 'alloca' 'weight_sum_24_loc' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 62 [1/1] (0.00ns)   --->   "%weight_sum_22_loc = alloca i64 1"   --->   Operation 62 'alloca' 'weight_sum_22_loc' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 63 [1/1] (0.00ns)   --->   "%weight_sum_20_loc = alloca i64 1"   --->   Operation 63 'alloca' 'weight_sum_20_loc' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 64 [1/1] (0.00ns)   --->   "%weight_sum_18_loc = alloca i64 1"   --->   Operation 64 'alloca' 'weight_sum_18_loc' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 65 [1/1] (0.00ns)   --->   "%weight_sum_16_loc = alloca i64 1"   --->   Operation 65 'alloca' 'weight_sum_16_loc' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 66 [1/1] (0.00ns)   --->   "%weight_sum_14_loc = alloca i64 1"   --->   Operation 66 'alloca' 'weight_sum_14_loc' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 67 [1/1] (0.00ns)   --->   "%weight_sum_12_loc = alloca i64 1"   --->   Operation 67 'alloca' 'weight_sum_12_loc' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 68 [1/1] (0.00ns)   --->   "%weight_sum_10_loc = alloca i64 1"   --->   Operation 68 'alloca' 'weight_sum_10_loc' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 69 [1/1] (0.00ns)   --->   "%weight_sum_8_loc = alloca i64 1"   --->   Operation 69 'alloca' 'weight_sum_8_loc' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 70 [1/1] (0.00ns)   --->   "%weight_sum_6_loc = alloca i64 1"   --->   Operation 70 'alloca' 'weight_sum_6_loc' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 71 [1/1] (0.00ns)   --->   "%weight_sum_4_loc = alloca i64 1"   --->   Operation 71 'alloca' 'weight_sum_4_loc' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 72 [1/1] (0.00ns)   --->   "%weight_sum_2_loc = alloca i64 1"   --->   Operation 72 'alloca' 'weight_sum_2_loc' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 73 [1/1] (0.00ns)   --->   "%weight_sum_loc = alloca i64 1"   --->   Operation 73 'alloca' 'weight_sum_loc' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 74 [1/1] (0.00ns)   --->   "%empty = specchannel i32 @_ssdm_op_SpecChannel, void @weight_update_fifo_str, i32 1, void @p_str, void @p_str, i32 64, i32 64, i64 %weight_update_fifo, i64 %weight_update_fifo"   --->   Operation 74 'specchannel' 'empty' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 75 [1/1] (0.00ns)   --->   "%spectopmodule_ln240 = spectopmodule void @_ssdm_op_SpecTopModule, void @empty_4" [src/snn_top_hls.cpp:240]   --->   Operation 75 'spectopmodule' 'spectopmodule_ln240' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 76 [1/1] (0.00ns)   --->   "%specbitsmap_ln0 = specbitsmap void @_ssdm_op_SpecBitsMap, i32 %ctrl_reg"   --->   Operation 76 'specbitsmap' 'specbitsmap_ln0' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 77 [1/1] (0.00ns)   --->   "%specinterface_ln0 = specinterface void @_ssdm_op_SpecInterface, i32 %ctrl_reg, void @empty_1, i32 4294967295, i32 4294967295, void @empty_0, i32 0, i32 0, void @empty_12, void @empty_23, void @empty_0, i32 0, i32 0, i32 0, i32 0, void @empty_0, void @empty_0, i32 4294967295, i32 0, i32 0, i32 0"   --->   Operation 77 'specinterface' 'specinterface_ln0' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 78 [1/1] (0.00ns)   --->   "%specinterface_ln0 = specinterface void @_ssdm_op_SpecInterface, i32 %ctrl_reg, void @empty_14, i32 0, i32 0, void @empty_0, i32 0, i32 0, void @empty_0, void @empty_0, void @empty_0, i32 0, i32 0, i32 0, i32 0, void @empty_0, void @empty_0, i32 4294967295, i32 0, i32 0, i32 0"   --->   Operation 78 'specinterface' 'specinterface_ln0' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 79 [1/1] (0.00ns)   --->   "%specbitsmap_ln0 = specbitsmap void @_ssdm_op_SpecBitsMap, i32 %config_reg"   --->   Operation 79 'specbitsmap' 'specbitsmap_ln0' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 80 [1/1] (0.00ns)   --->   "%specinterface_ln0 = specinterface void @_ssdm_op_SpecInterface, i32 %config_reg, void @empty_1, i32 4294967295, i32 4294967295, void @empty_0, i32 0, i32 0, void @empty_12, void @empty_21, void @empty_0, i32 0, i32 0, i32 0, i32 0, void @empty_0, void @empty_0, i32 4294967295, i32 0, i32 0, i32 0"   --->   Operation 80 'specinterface' 'specinterface_ln0' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 81 [1/1] (0.00ns)   --->   "%specinterface_ln0 = specinterface void @_ssdm_op_SpecInterface, i32 %config_reg, void @empty_14, i32 0, i32 0, void @empty_0, i32 0, i32 0, void @empty_0, void @empty_0, void @empty_0, i32 0, i32 0, i32 0, i32 0, void @empty_0, void @empty_0, i32 4294967295, i32 0, i32 0, i32 0"   --->   Operation 81 'specinterface' 'specinterface_ln0' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 82 [1/1] (0.00ns)   --->   "%specbitsmap_ln0 = specbitsmap void @_ssdm_op_SpecBitsMap, i144 %learning_params"   --->   Operation 82 'specbitsmap' 'specbitsmap_ln0' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 83 [1/1] (0.00ns)   --->   "%specinterface_ln0 = specinterface void @_ssdm_op_SpecInterface, i144 %learning_params, void @empty_1, i32 4294967295, i32 4294967295, void @empty_0, i32 0, i32 0, void @empty_12, void @empty_20, void @empty_0, i32 0, i32 0, i32 0, i32 0, void @empty_0, void @empty_0, i32 4294967295, i32 0, i32 0, i32 0"   --->   Operation 83 'specinterface' 'specinterface_ln0' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 84 [1/1] (0.00ns)   --->   "%specinterface_ln0 = specinterface void @_ssdm_op_SpecInterface, i144 %learning_params, void @empty_14, i32 0, i32 0, void @empty_0, i32 0, i32 0, void @empty_0, void @empty_0, void @empty_0, i32 0, i32 0, i32 0, i32 0, void @empty_0, void @empty_0, i32 4294967295, i32 0, i32 0, i32 0"   --->   Operation 84 'specinterface' 'specinterface_ln0' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 85 [1/1] (0.00ns)   --->   "%specbitsmap_ln0 = specbitsmap void @_ssdm_op_SpecBitsMap, i32 %status_reg"   --->   Operation 85 'specbitsmap' 'specbitsmap_ln0' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 86 [1/1] (0.00ns)   --->   "%specinterface_ln0 = specinterface void @_ssdm_op_SpecInterface, i32 %status_reg, void @empty_1, i32 4294967295, i32 4294967295, void @empty_0, i32 0, i32 0, void @empty_12, void @empty_13, void @empty_0, i32 0, i32 0, i32 0, i32 0, void @empty_0, void @empty_0, i32 4294967295, i32 0, i32 0, i32 0"   --->   Operation 86 'specinterface' 'specinterface_ln0' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 87 [1/1] (0.00ns)   --->   "%specinterface_ln0 = specinterface void @_ssdm_op_SpecInterface, i32 %status_reg, void @empty_14, i32 0, i32 0, void @empty_0, i32 0, i32 0, void @empty_0, void @empty_0, void @empty_0, i32 0, i32 0, i32 0, i32 0, void @empty_0, void @empty_0, i32 4294967295, i32 0, i32 0, i32 0"   --->   Operation 87 'specinterface' 'specinterface_ln0' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 88 [1/1] (0.00ns)   --->   "%specbitsmap_ln0 = specbitsmap void @_ssdm_op_SpecBitsMap, i32 %spike_count_reg"   --->   Operation 88 'specbitsmap' 'specbitsmap_ln0' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 89 [1/1] (0.00ns)   --->   "%specinterface_ln0 = specinterface void @_ssdm_op_SpecInterface, i32 %spike_count_reg, void @empty_1, i32 4294967295, i32 4294967295, void @empty_0, i32 0, i32 0, void @empty_12, void @empty_5, void @empty_0, i32 0, i32 0, i32 0, i32 0, void @empty_0, void @empty_0, i32 4294967295, i32 0, i32 0, i32 0"   --->   Operation 89 'specinterface' 'specinterface_ln0' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 90 [1/1] (0.00ns)   --->   "%specinterface_ln0 = specinterface void @_ssdm_op_SpecInterface, i32 %spike_count_reg, void @empty_14, i32 0, i32 0, void @empty_0, i32 0, i32 0, void @empty_0, void @empty_0, void @empty_0, i32 0, i32 0, i32 0, i32 0, void @empty_0, void @empty_0, i32 4294967295, i32 0, i32 0, i32 0"   --->   Operation 90 'specinterface' 'specinterface_ln0' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 91 [1/1] (0.00ns)   --->   "%specbitsmap_ln0 = specbitsmap void @_ssdm_op_SpecBitsMap, i32 %weight_sum_reg"   --->   Operation 91 'specbitsmap' 'specbitsmap_ln0' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 92 [1/1] (0.00ns)   --->   "%specinterface_ln0 = specinterface void @_ssdm_op_SpecInterface, i32 %weight_sum_reg, void @empty_1, i32 4294967295, i32 4294967295, void @empty_0, i32 0, i32 0, void @empty_12, void @empty_17, void @empty_0, i32 0, i32 0, i32 0, i32 0, void @empty_0, void @empty_0, i32 4294967295, i32 0, i32 0, i32 0"   --->   Operation 92 'specinterface' 'specinterface_ln0' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 93 [1/1] (0.00ns)   --->   "%specinterface_ln0 = specinterface void @_ssdm_op_SpecInterface, i32 %weight_sum_reg, void @empty_14, i32 0, i32 0, void @empty_0, i32 0, i32 0, void @empty_0, void @empty_0, void @empty_0, i32 0, i32 0, i32 0, i32 0, void @empty_0, void @empty_0, i32 4294967295, i32 0, i32 0, i32 0"   --->   Operation 93 'specinterface' 'specinterface_ln0' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 94 [1/1] (0.00ns)   --->   "%specbitsmap_ln0 = specbitsmap void @_ssdm_op_SpecBitsMap, i32 %version_reg"   --->   Operation 94 'specbitsmap' 'specbitsmap_ln0' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 95 [1/1] (0.00ns)   --->   "%specinterface_ln0 = specinterface void @_ssdm_op_SpecInterface, i32 %version_reg, void @empty_1, i32 4294967295, i32 4294967295, void @empty_0, i32 0, i32 0, void @empty_12, void @empty_10, void @empty_0, i32 0, i32 0, i32 0, i32 0, void @empty_0, void @empty_0, i32 4294967295, i32 0, i32 0, i32 0"   --->   Operation 95 'specinterface' 'specinterface_ln0' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 96 [1/1] (0.00ns)   --->   "%specinterface_ln0 = specinterface void @_ssdm_op_SpecInterface, i32 %version_reg, void @empty_14, i32 0, i32 0, void @empty_0, i32 0, i32 0, void @empty_0, void @empty_0, void @empty_0, i32 0, i32 0, i32 0, i32 0, void @empty_0, void @empty_0, i32 4294967295, i32 0, i32 0, i32 0"   --->   Operation 96 'specinterface' 'specinterface_ln0' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 97 [1/1] (0.00ns)   --->   "%specinterface_ln0 = specinterface void @_ssdm_op_SpecInterface, i32 %s_axis_spikes_V_data_V, i4 %s_axis_spikes_V_keep_V, i4 %s_axis_spikes_V_strb_V, i1 %s_axis_spikes_V_user_V, i1 %s_axis_spikes_V_last_V, i1 %s_axis_spikes_V_id_V, i1 %s_axis_spikes_V_dest_V, void @empty_22, i32 1, i32 1, void @empty_6, i32 0, i32 0, void @empty_0, void @empty_0, void @empty_0, i32 0, i32 0, i32 0, i32 0, void @empty_0, void @empty_0, i32 4294967295, i32 0, i32 0, i32 0"   --->   Operation 97 'specinterface' 'specinterface_ln0' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 98 [1/1] (0.00ns)   --->   "%specbitsmap_ln0 = specbitsmap void @_ssdm_op_SpecBitsMap, i32 %s_axis_spikes_V_data_V"   --->   Operation 98 'specbitsmap' 'specbitsmap_ln0' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 99 [1/1] (0.00ns)   --->   "%specbitsmap_ln0 = specbitsmap void @_ssdm_op_SpecBitsMap, i4 %s_axis_spikes_V_keep_V"   --->   Operation 99 'specbitsmap' 'specbitsmap_ln0' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 100 [1/1] (0.00ns)   --->   "%specbitsmap_ln0 = specbitsmap void @_ssdm_op_SpecBitsMap, i4 %s_axis_spikes_V_strb_V"   --->   Operation 100 'specbitsmap' 'specbitsmap_ln0' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 101 [1/1] (0.00ns)   --->   "%specbitsmap_ln0 = specbitsmap void @_ssdm_op_SpecBitsMap, i1 %s_axis_spikes_V_user_V"   --->   Operation 101 'specbitsmap' 'specbitsmap_ln0' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 102 [1/1] (0.00ns)   --->   "%specbitsmap_ln0 = specbitsmap void @_ssdm_op_SpecBitsMap, i1 %s_axis_spikes_V_last_V"   --->   Operation 102 'specbitsmap' 'specbitsmap_ln0' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 103 [1/1] (0.00ns)   --->   "%specbitsmap_ln0 = specbitsmap void @_ssdm_op_SpecBitsMap, i1 %s_axis_spikes_V_id_V"   --->   Operation 103 'specbitsmap' 'specbitsmap_ln0' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 104 [1/1] (0.00ns)   --->   "%specbitsmap_ln0 = specbitsmap void @_ssdm_op_SpecBitsMap, i1 %s_axis_spikes_V_dest_V"   --->   Operation 104 'specbitsmap' 'specbitsmap_ln0' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 105 [1/1] (0.00ns)   --->   "%specinterface_ln0 = specinterface void @_ssdm_op_SpecInterface, i32 %m_axis_spikes_V_data_V, i4 %m_axis_spikes_V_keep_V, i4 %m_axis_spikes_V_strb_V, i1 %m_axis_spikes_V_user_V, i1 %m_axis_spikes_V_last_V, i1 %m_axis_spikes_V_id_V, i1 %m_axis_spikes_V_dest_V, void @empty_22, i32 1, i32 1, void @empty_6, i32 0, i32 0, void @empty_0, void @empty_0, void @empty_0, i32 0, i32 0, i32 0, i32 0, void @empty_0, void @empty_0, i32 4294967295, i32 0, i32 0, i32 0"   --->   Operation 105 'specinterface' 'specinterface_ln0' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 106 [1/1] (0.00ns)   --->   "%specbitsmap_ln0 = specbitsmap void @_ssdm_op_SpecBitsMap, i32 %m_axis_spikes_V_data_V"   --->   Operation 106 'specbitsmap' 'specbitsmap_ln0' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 107 [1/1] (0.00ns)   --->   "%specbitsmap_ln0 = specbitsmap void @_ssdm_op_SpecBitsMap, i4 %m_axis_spikes_V_keep_V"   --->   Operation 107 'specbitsmap' 'specbitsmap_ln0' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 108 [1/1] (0.00ns)   --->   "%specbitsmap_ln0 = specbitsmap void @_ssdm_op_SpecBitsMap, i4 %m_axis_spikes_V_strb_V"   --->   Operation 108 'specbitsmap' 'specbitsmap_ln0' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 109 [1/1] (0.00ns)   --->   "%specbitsmap_ln0 = specbitsmap void @_ssdm_op_SpecBitsMap, i1 %m_axis_spikes_V_user_V"   --->   Operation 109 'specbitsmap' 'specbitsmap_ln0' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 110 [1/1] (0.00ns)   --->   "%specbitsmap_ln0 = specbitsmap void @_ssdm_op_SpecBitsMap, i1 %m_axis_spikes_V_last_V"   --->   Operation 110 'specbitsmap' 'specbitsmap_ln0' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 111 [1/1] (0.00ns)   --->   "%specbitsmap_ln0 = specbitsmap void @_ssdm_op_SpecBitsMap, i1 %m_axis_spikes_V_id_V"   --->   Operation 111 'specbitsmap' 'specbitsmap_ln0' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 112 [1/1] (0.00ns)   --->   "%specbitsmap_ln0 = specbitsmap void @_ssdm_op_SpecBitsMap, i1 %m_axis_spikes_V_dest_V"   --->   Operation 112 'specbitsmap' 'specbitsmap_ln0' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 113 [1/1] (0.00ns)   --->   "%specinterface_ln0 = specinterface void @_ssdm_op_SpecInterface, i32 %m_axis_weights_V_data_V, i4 %m_axis_weights_V_keep_V, i4 %m_axis_weights_V_strb_V, i1 %m_axis_weights_V_user_V, i1 %m_axis_weights_V_last_V, i1 %m_axis_weights_V_id_V, i1 %m_axis_weights_V_dest_V, void @empty_22, i32 1, i32 1, void @empty_6, i32 0, i32 0, void @empty_0, void @empty_0, void @empty_0, i32 0, i32 0, i32 0, i32 0, void @empty_0, void @empty_0, i32 4294967295, i32 0, i32 0, i32 0"   --->   Operation 113 'specinterface' 'specinterface_ln0' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 114 [1/1] (0.00ns)   --->   "%specbitsmap_ln0 = specbitsmap void @_ssdm_op_SpecBitsMap, i32 %m_axis_weights_V_data_V"   --->   Operation 114 'specbitsmap' 'specbitsmap_ln0' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 115 [1/1] (0.00ns)   --->   "%specbitsmap_ln0 = specbitsmap void @_ssdm_op_SpecBitsMap, i4 %m_axis_weights_V_keep_V"   --->   Operation 115 'specbitsmap' 'specbitsmap_ln0' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 116 [1/1] (0.00ns)   --->   "%specbitsmap_ln0 = specbitsmap void @_ssdm_op_SpecBitsMap, i4 %m_axis_weights_V_strb_V"   --->   Operation 116 'specbitsmap' 'specbitsmap_ln0' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 117 [1/1] (0.00ns)   --->   "%specbitsmap_ln0 = specbitsmap void @_ssdm_op_SpecBitsMap, i1 %m_axis_weights_V_user_V"   --->   Operation 117 'specbitsmap' 'specbitsmap_ln0' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 118 [1/1] (0.00ns)   --->   "%specbitsmap_ln0 = specbitsmap void @_ssdm_op_SpecBitsMap, i1 %m_axis_weights_V_last_V"   --->   Operation 118 'specbitsmap' 'specbitsmap_ln0' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 119 [1/1] (0.00ns)   --->   "%specbitsmap_ln0 = specbitsmap void @_ssdm_op_SpecBitsMap, i1 %m_axis_weights_V_id_V"   --->   Operation 119 'specbitsmap' 'specbitsmap_ln0' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 120 [1/1] (0.00ns)   --->   "%specbitsmap_ln0 = specbitsmap void @_ssdm_op_SpecBitsMap, i1 %m_axis_weights_V_dest_V"   --->   Operation 120 'specbitsmap' 'specbitsmap_ln0' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 121 [1/1] (0.00ns)   --->   "%specbitsmap_ln0 = specbitsmap void @_ssdm_op_SpecBitsMap, i8 %reward_signal"   --->   Operation 121 'specbitsmap' 'specbitsmap_ln0' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 122 [1/1] (0.00ns)   --->   "%specinterface_ln0 = specinterface void @_ssdm_op_SpecInterface, i8 %reward_signal, void @empty_1, i32 4294967295, i32 4294967295, void @empty_0, i32 0, i32 0, void @empty_12, void @empty_7, void @empty_0, i32 0, i32 0, i32 0, i32 0, void @empty_0, void @empty_0, i32 4294967295, i32 0, i32 0, i32 0"   --->   Operation 122 'specinterface' 'specinterface_ln0' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 123 [1/1] (0.00ns)   --->   "%specinterface_ln0 = specinterface void @_ssdm_op_SpecInterface, i8 %reward_signal, void @empty_14, i32 0, i32 0, void @empty_0, i32 0, i32 0, void @empty_0, void @empty_0, void @empty_0, i32 0, i32 0, i32 0, i32 0, void @empty_0, void @empty_0, i32 4294967295, i32 0, i32 0, i32 0"   --->   Operation 123 'specinterface' 'specinterface_ln0' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 124 [1/1] (0.00ns)   --->   "%specbitsmap_ln0 = specbitsmap void @_ssdm_op_SpecBitsMap, i1 %spike_in_valid"   --->   Operation 124 'specbitsmap' 'specbitsmap_ln0' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 125 [1/1] (0.00ns)   --->   "%specinterface_ln0 = specinterface void @_ssdm_op_SpecInterface, i1 %spike_in_valid, void @empty_8, i32 4294967295, i32 4294967295, void @empty_0, i32 0, i32 0, void @empty_0, void @empty_0, void @empty_0, i32 0, i32 0, i32 0, i32 0, void @empty_0, void @empty_0, i32 4294967295, i32 0, i32 0, i32 0"   --->   Operation 125 'specinterface' 'specinterface_ln0' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 126 [1/1] (0.00ns)   --->   "%specbitsmap_ln0 = specbitsmap void @_ssdm_op_SpecBitsMap, i8 %spike_in_neuron_id"   --->   Operation 126 'specbitsmap' 'specbitsmap_ln0' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 127 [1/1] (0.00ns)   --->   "%specinterface_ln0 = specinterface void @_ssdm_op_SpecInterface, i8 %spike_in_neuron_id, void @empty_8, i32 4294967295, i32 4294967295, void @empty_0, i32 0, i32 0, void @empty_0, void @empty_0, void @empty_0, i32 0, i32 0, i32 0, i32 0, void @empty_0, void @empty_0, i32 4294967295, i32 0, i32 0, i32 0"   --->   Operation 127 'specinterface' 'specinterface_ln0' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 128 [1/1] (0.00ns)   --->   "%specbitsmap_ln0 = specbitsmap void @_ssdm_op_SpecBitsMap, i8 %spike_in_weight"   --->   Operation 128 'specbitsmap' 'specbitsmap_ln0' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 129 [1/1] (0.00ns)   --->   "%specinterface_ln0 = specinterface void @_ssdm_op_SpecInterface, i8 %spike_in_weight, void @empty_8, i32 4294967295, i32 4294967295, void @empty_0, i32 0, i32 0, void @empty_0, void @empty_0, void @empty_0, i32 0, i32 0, i32 0, i32 0, void @empty_0, void @empty_0, i32 4294967295, i32 0, i32 0, i32 0"   --->   Operation 129 'specinterface' 'specinterface_ln0' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 130 [1/1] (0.00ns)   --->   "%specbitsmap_ln0 = specbitsmap void @_ssdm_op_SpecBitsMap, i1 %spike_in_ready"   --->   Operation 130 'specbitsmap' 'specbitsmap_ln0' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 131 [1/1] (0.00ns)   --->   "%specinterface_ln0 = specinterface void @_ssdm_op_SpecInterface, i1 %spike_in_ready, void @empty_8, i32 4294967295, i32 4294967295, void @empty_0, i32 0, i32 0, void @empty_0, void @empty_0, void @empty_0, i32 0, i32 0, i32 0, i32 0, void @empty_0, void @empty_0, i32 4294967295, i32 0, i32 0, i32 0"   --->   Operation 131 'specinterface' 'specinterface_ln0' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 132 [1/1] (0.00ns)   --->   "%specbitsmap_ln0 = specbitsmap void @_ssdm_op_SpecBitsMap, i1 %spike_out_valid"   --->   Operation 132 'specbitsmap' 'specbitsmap_ln0' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 133 [1/1] (0.00ns)   --->   "%specinterface_ln0 = specinterface void @_ssdm_op_SpecInterface, i1 %spike_out_valid, void @empty_8, i32 4294967295, i32 4294967295, void @empty_0, i32 0, i32 0, void @empty_0, void @empty_0, void @empty_0, i32 0, i32 0, i32 0, i32 0, void @empty_0, void @empty_0, i32 4294967295, i32 0, i32 0, i32 0"   --->   Operation 133 'specinterface' 'specinterface_ln0' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 134 [1/1] (0.00ns)   --->   "%specbitsmap_ln0 = specbitsmap void @_ssdm_op_SpecBitsMap, i8 %spike_out_neuron_id"   --->   Operation 134 'specbitsmap' 'specbitsmap_ln0' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 135 [1/1] (0.00ns)   --->   "%specinterface_ln0 = specinterface void @_ssdm_op_SpecInterface, i8 %spike_out_neuron_id, void @empty_8, i32 4294967295, i32 4294967295, void @empty_0, i32 0, i32 0, void @empty_0, void @empty_0, void @empty_0, i32 0, i32 0, i32 0, i32 0, void @empty_0, void @empty_0, i32 4294967295, i32 0, i32 0, i32 0"   --->   Operation 135 'specinterface' 'specinterface_ln0' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 136 [1/1] (0.00ns)   --->   "%specbitsmap_ln0 = specbitsmap void @_ssdm_op_SpecBitsMap, i8 %spike_out_weight"   --->   Operation 136 'specbitsmap' 'specbitsmap_ln0' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 137 [1/1] (0.00ns)   --->   "%specinterface_ln0 = specinterface void @_ssdm_op_SpecInterface, i8 %spike_out_weight, void @empty_8, i32 4294967295, i32 4294967295, void @empty_0, i32 0, i32 0, void @empty_0, void @empty_0, void @empty_0, i32 0, i32 0, i32 0, i32 0, void @empty_0, void @empty_0, i32 4294967295, i32 0, i32 0, i32 0"   --->   Operation 137 'specinterface' 'specinterface_ln0' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 138 [1/1] (0.00ns)   --->   "%specbitsmap_ln0 = specbitsmap void @_ssdm_op_SpecBitsMap, i1 %spike_out_ready"   --->   Operation 138 'specbitsmap' 'specbitsmap_ln0' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 139 [1/1] (0.00ns)   --->   "%specinterface_ln0 = specinterface void @_ssdm_op_SpecInterface, i1 %spike_out_ready, void @empty_8, i32 4294967295, i32 4294967295, void @empty_0, i32 0, i32 0, void @empty_0, void @empty_0, void @empty_0, i32 0, i32 0, i32 0, i32 0, void @empty_0, void @empty_0, i32 4294967295, i32 0, i32 0, i32 0"   --->   Operation 139 'specinterface' 'specinterface_ln0' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 140 [1/1] (0.00ns)   --->   "%specbitsmap_ln0 = specbitsmap void @_ssdm_op_SpecBitsMap, i1 %snn_enable"   --->   Operation 140 'specbitsmap' 'specbitsmap_ln0' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 141 [1/1] (0.00ns)   --->   "%specinterface_ln0 = specinterface void @_ssdm_op_SpecInterface, i1 %snn_enable, void @empty_8, i32 4294967295, i32 4294967295, void @empty_0, i32 0, i32 0, void @empty_0, void @empty_0, void @empty_0, i32 0, i32 0, i32 0, i32 0, void @empty_0, void @empty_0, i32 4294967295, i32 0, i32 0, i32 0"   --->   Operation 141 'specinterface' 'specinterface_ln0' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 142 [1/1] (0.00ns)   --->   "%specbitsmap_ln0 = specbitsmap void @_ssdm_op_SpecBitsMap, i1 %snn_reset"   --->   Operation 142 'specbitsmap' 'specbitsmap_ln0' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 143 [1/1] (0.00ns)   --->   "%specinterface_ln0 = specinterface void @_ssdm_op_SpecInterface, i1 %snn_reset, void @empty_8, i32 4294967295, i32 4294967295, void @empty_0, i32 0, i32 0, void @empty_0, void @empty_0, void @empty_0, i32 0, i32 0, i32 0, i32 0, void @empty_0, void @empty_0, i32 4294967295, i32 0, i32 0, i32 0"   --->   Operation 143 'specinterface' 'specinterface_ln0' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 144 [1/1] (0.00ns)   --->   "%specbitsmap_ln0 = specbitsmap void @_ssdm_op_SpecBitsMap, i16 %threshold_out"   --->   Operation 144 'specbitsmap' 'specbitsmap_ln0' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 145 [1/1] (0.00ns)   --->   "%specinterface_ln0 = specinterface void @_ssdm_op_SpecInterface, i16 %threshold_out, void @empty_8, i32 4294967295, i32 4294967295, void @empty_0, i32 0, i32 0, void @empty_0, void @empty_0, void @empty_0, i32 0, i32 0, i32 0, i32 0, void @empty_0, void @empty_0, i32 4294967295, i32 0, i32 0, i32 0"   --->   Operation 145 'specinterface' 'specinterface_ln0' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 146 [1/1] (0.00ns)   --->   "%specbitsmap_ln0 = specbitsmap void @_ssdm_op_SpecBitsMap, i16 %leak_rate_out"   --->   Operation 146 'specbitsmap' 'specbitsmap_ln0' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 147 [1/1] (0.00ns)   --->   "%specinterface_ln0 = specinterface void @_ssdm_op_SpecInterface, i16 %leak_rate_out, void @empty_8, i32 4294967295, i32 4294967295, void @empty_0, i32 0, i32 0, void @empty_0, void @empty_0, void @empty_0, i32 0, i32 0, i32 0, i32 0, void @empty_0, void @empty_0, i32 4294967295, i32 0, i32 0, i32 0"   --->   Operation 147 'specinterface' 'specinterface_ln0' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 148 [1/1] (0.00ns)   --->   "%specbitsmap_ln0 = specbitsmap void @_ssdm_op_SpecBitsMap, i1 %snn_ready"   --->   Operation 148 'specbitsmap' 'specbitsmap_ln0' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 149 [1/1] (0.00ns)   --->   "%specinterface_ln0 = specinterface void @_ssdm_op_SpecInterface, i1 %snn_ready, void @empty_8, i32 4294967295, i32 4294967295, void @empty_0, i32 0, i32 0, void @empty_0, void @empty_0, void @empty_0, i32 0, i32 0, i32 0, i32 0, void @empty_0, void @empty_0, i32 4294967295, i32 0, i32 0, i32 0"   --->   Operation 149 'specinterface' 'specinterface_ln0' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 150 [1/1] (0.00ns)   --->   "%specbitsmap_ln0 = specbitsmap void @_ssdm_op_SpecBitsMap, i1 %snn_busy"   --->   Operation 150 'specbitsmap' 'specbitsmap_ln0' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 151 [1/1] (0.00ns)   --->   "%specinterface_ln0 = specinterface void @_ssdm_op_SpecInterface, i1 %snn_busy, void @empty_8, i32 4294967295, i32 4294967295, void @empty_0, i32 0, i32 0, void @empty_0, void @empty_0, void @empty_0, i32 0, i32 0, i32 0, i32 0, void @empty_0, void @empty_0, i32 4294967295, i32 0, i32 0, i32 0"   --->   Operation 151 'specinterface' 'specinterface_ln0' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 152 [1/1] (0.00ns)   --->   "%specinterface_ln0 = specinterface void @_ssdm_op_SpecInterface, i32 0, void @empty_1, i32 0, i32 0, void @empty_0, i32 0, i32 0, void @empty_12, void @empty_0, void @empty_0, i32 0, i32 0, i32 0, i32 0, void @empty_0, void @empty_0, i32 0, i32 0, i32 0, i32 0"   --->   Operation 152 'specinterface' 'specinterface_ln0' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 153 [1/1] (0.00ns)   --->   "%specinterface_ln0 = specinterface void @_ssdm_op_SpecInterface, i64 %weight_update_fifo, void @empty, i32 0, i32 0, void @empty_0, i32 0, i32 0, void @empty_0, void @empty_0, void @empty_0, i32 0, i32 0, i32 0, i32 0, void @empty_0, void @empty_0, i32 4294967295, i32 0, i32 0, i32 0"   --->   Operation 153 'specinterface' 'specinterface_ln0' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 154 [1/1] (0.00ns)   --->   "%learning_params_a_plus = trunc i144 %learning_params_read"   --->   Operation 154 'trunc' 'learning_params_a_plus' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 155 [1/1] (0.00ns)   --->   "%learning_params_a_minus = partselect i16 @_ssdm_op_PartSelect.i16.i144.i144, i144 %learning_params_read, i144 16"   --->   Operation 155 'partselect' 'learning_params_a_minus' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 156 [1/1] (0.00ns)   --->   "%learning_params_tau_plus_cast = partselect i8 @_ssdm_op_PartSelect.i8.i144.i32.i32, i144 %learning_params_read, i32 32, i32 39" [src/snn_top_hls.cpp:244]   --->   Operation 156 'partselect' 'learning_params_tau_plus_cast' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 157 [1/1] (0.00ns)   --->   "%learning_params_tau_minus_cast = partselect i8 @_ssdm_op_PartSelect.i8.i144.i32.i32, i144 %learning_params_read, i32 48, i32 55" [src/snn_top_hls.cpp:244]   --->   Operation 157 'partselect' 'learning_params_tau_minus_cast' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 158 [1/1] (0.00ns)   --->   "%learning_params_stdp_window = partselect i16 @_ssdm_op_PartSelect.i16.i144.i144, i144 %learning_params_read, i144 64"   --->   Operation 158 'partselect' 'learning_params_stdp_window' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 159 [1/1] (0.00ns)   --->   "%learning_params_learning_rate = partselect i16 @_ssdm_op_PartSelect.i16.i144.i144, i144 %learning_params_read, i144 80"   --->   Operation 159 'partselect' 'learning_params_learning_rate' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 160 [1/1] (0.00ns)   --->   "%learning_params_rstdp_enable = bitselect i1 @_ssdm_op_BitSelect.i1.i144.i144, i144 %learning_params_read, i144 96"   --->   Operation 160 'bitselect' 'learning_params_rstdp_enable' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 161 [1/1] (0.00ns)   --->   "%learning_params_trace_decay = partselect i16 @_ssdm_op_PartSelect.i16.i144.i144, i144 %learning_params_read, i144 112"   --->   Operation 161 'partselect' 'learning_params_trace_decay' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 162 [1/1] (0.00ns)   --->   "%specmemcore_ln322 = specmemcore void @_ssdm_op_SpecMemCore, i8 %p_ZL13weight_memory_7, i64 666, i64 22, i64 18446744073709551615, i1 0" [src/snn_top_hls.cpp:322]   --->   Operation 162 'specmemcore' 'specmemcore_ln322' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 163 [1/1] (0.00ns)   --->   "%specmemcore_ln322 = specmemcore void @_ssdm_op_SpecMemCore, i8 %p_ZL13weight_memory_6, i64 666, i64 22, i64 18446744073709551615, i1 0" [src/snn_top_hls.cpp:322]   --->   Operation 163 'specmemcore' 'specmemcore_ln322' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 164 [1/1] (0.00ns)   --->   "%specmemcore_ln322 = specmemcore void @_ssdm_op_SpecMemCore, i8 %p_ZL13weight_memory_5, i64 666, i64 22, i64 18446744073709551615, i1 0" [src/snn_top_hls.cpp:322]   --->   Operation 164 'specmemcore' 'specmemcore_ln322' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 165 [1/1] (0.00ns)   --->   "%specmemcore_ln322 = specmemcore void @_ssdm_op_SpecMemCore, i8 %p_ZL13weight_memory_4, i64 666, i64 22, i64 18446744073709551615, i1 0" [src/snn_top_hls.cpp:322]   --->   Operation 165 'specmemcore' 'specmemcore_ln322' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 166 [1/1] (0.00ns)   --->   "%specmemcore_ln322 = specmemcore void @_ssdm_op_SpecMemCore, i8 %p_ZL13weight_memory_3, i64 666, i64 22, i64 18446744073709551615, i1 0" [src/snn_top_hls.cpp:322]   --->   Operation 166 'specmemcore' 'specmemcore_ln322' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 167 [1/1] (0.00ns)   --->   "%specmemcore_ln322 = specmemcore void @_ssdm_op_SpecMemCore, i8 %p_ZL13weight_memory_2, i64 666, i64 22, i64 18446744073709551615, i1 0" [src/snn_top_hls.cpp:322]   --->   Operation 167 'specmemcore' 'specmemcore_ln322' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 168 [1/1] (0.00ns)   --->   "%specmemcore_ln322 = specmemcore void @_ssdm_op_SpecMemCore, i8 %p_ZL13weight_memory_1, i64 666, i64 22, i64 18446744073709551615, i1 0" [src/snn_top_hls.cpp:322]   --->   Operation 168 'specmemcore' 'specmemcore_ln322' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 169 [1/1] (0.00ns)   --->   "%specmemcore_ln322 = specmemcore void @_ssdm_op_SpecMemCore, i8 %p_ZL13weight_memory_0, i64 666, i64 22, i64 18446744073709551615, i1 0" [src/snn_top_hls.cpp:322]   --->   Operation 169 'specmemcore' 'specmemcore_ln322' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 170 [1/1] (0.00ns)   --->   "%specmemcore_ln324 = specmemcore void @_ssdm_op_SpecMemCore, i32 %p_ZL15pre_spike_times_7, i64 666, i64 18, i64 18446744073709551615, i1 0" [src/snn_top_hls.cpp:324]   --->   Operation 170 'specmemcore' 'specmemcore_ln324' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 171 [1/1] (0.00ns)   --->   "%specmemcore_ln324 = specmemcore void @_ssdm_op_SpecMemCore, i32 %p_ZL15pre_spike_times_6, i64 666, i64 18, i64 18446744073709551615, i1 0" [src/snn_top_hls.cpp:324]   --->   Operation 171 'specmemcore' 'specmemcore_ln324' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 172 [1/1] (0.00ns)   --->   "%specmemcore_ln324 = specmemcore void @_ssdm_op_SpecMemCore, i32 %p_ZL15pre_spike_times_5, i64 666, i64 18, i64 18446744073709551615, i1 0" [src/snn_top_hls.cpp:324]   --->   Operation 172 'specmemcore' 'specmemcore_ln324' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 173 [1/1] (0.00ns)   --->   "%specmemcore_ln324 = specmemcore void @_ssdm_op_SpecMemCore, i32 %p_ZL15pre_spike_times_4, i64 666, i64 18, i64 18446744073709551615, i1 0" [src/snn_top_hls.cpp:324]   --->   Operation 173 'specmemcore' 'specmemcore_ln324' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 174 [1/1] (0.00ns)   --->   "%specmemcore_ln324 = specmemcore void @_ssdm_op_SpecMemCore, i32 %p_ZL15pre_spike_times_3, i64 666, i64 18, i64 18446744073709551615, i1 0" [src/snn_top_hls.cpp:324]   --->   Operation 174 'specmemcore' 'specmemcore_ln324' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 175 [1/1] (0.00ns)   --->   "%specmemcore_ln324 = specmemcore void @_ssdm_op_SpecMemCore, i32 %p_ZL15pre_spike_times_2, i64 666, i64 18, i64 18446744073709551615, i1 0" [src/snn_top_hls.cpp:324]   --->   Operation 175 'specmemcore' 'specmemcore_ln324' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 176 [1/1] (0.00ns)   --->   "%specmemcore_ln324 = specmemcore void @_ssdm_op_SpecMemCore, i32 %p_ZL15pre_spike_times_1, i64 666, i64 18, i64 18446744073709551615, i1 0" [src/snn_top_hls.cpp:324]   --->   Operation 176 'specmemcore' 'specmemcore_ln324' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 177 [1/1] (0.00ns)   --->   "%specmemcore_ln324 = specmemcore void @_ssdm_op_SpecMemCore, i32 %p_ZL15pre_spike_times_0, i64 666, i64 18, i64 18446744073709551615, i1 0" [src/snn_top_hls.cpp:324]   --->   Operation 177 'specmemcore' 'specmemcore_ln324' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 178 [1/1] (0.00ns)   --->   "%specmemcore_ln325 = specmemcore void @_ssdm_op_SpecMemCore, i32 %p_ZL16post_spike_times_7, i64 666, i64 18, i64 18446744073709551615, i1 0" [src/snn_top_hls.cpp:325]   --->   Operation 178 'specmemcore' 'specmemcore_ln325' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 179 [1/1] (0.00ns)   --->   "%specmemcore_ln325 = specmemcore void @_ssdm_op_SpecMemCore, i32 %p_ZL16post_spike_times_6, i64 666, i64 18, i64 18446744073709551615, i1 0" [src/snn_top_hls.cpp:325]   --->   Operation 179 'specmemcore' 'specmemcore_ln325' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 180 [1/1] (0.00ns)   --->   "%specmemcore_ln325 = specmemcore void @_ssdm_op_SpecMemCore, i32 %p_ZL16post_spike_times_5, i64 666, i64 18, i64 18446744073709551615, i1 0" [src/snn_top_hls.cpp:325]   --->   Operation 180 'specmemcore' 'specmemcore_ln325' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 181 [1/1] (0.00ns)   --->   "%specmemcore_ln325 = specmemcore void @_ssdm_op_SpecMemCore, i32 %p_ZL16post_spike_times_4, i64 666, i64 18, i64 18446744073709551615, i1 0" [src/snn_top_hls.cpp:325]   --->   Operation 181 'specmemcore' 'specmemcore_ln325' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 182 [1/1] (0.00ns)   --->   "%specmemcore_ln325 = specmemcore void @_ssdm_op_SpecMemCore, i32 %p_ZL16post_spike_times_3, i64 666, i64 18, i64 18446744073709551615, i1 0" [src/snn_top_hls.cpp:325]   --->   Operation 182 'specmemcore' 'specmemcore_ln325' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 183 [1/1] (0.00ns)   --->   "%specmemcore_ln325 = specmemcore void @_ssdm_op_SpecMemCore, i32 %p_ZL16post_spike_times_2, i64 666, i64 18, i64 18446744073709551615, i1 0" [src/snn_top_hls.cpp:325]   --->   Operation 183 'specmemcore' 'specmemcore_ln325' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 184 [1/1] (0.00ns)   --->   "%specmemcore_ln325 = specmemcore void @_ssdm_op_SpecMemCore, i32 %p_ZL16post_spike_times_1, i64 666, i64 18, i64 18446744073709551615, i1 0" [src/snn_top_hls.cpp:325]   --->   Operation 184 'specmemcore' 'specmemcore_ln325' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 185 [1/1] (0.00ns)   --->   "%specmemcore_ln325 = specmemcore void @_ssdm_op_SpecMemCore, i32 %p_ZL16post_spike_times_0, i64 666, i64 18, i64 18446744073709551615, i1 0" [src/snn_top_hls.cpp:325]   --->   Operation 185 'specmemcore' 'specmemcore_ln325' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 186 [1/1] (0.00ns)   --->   "%specmemcore_ln326 = specmemcore void @_ssdm_op_SpecMemCore, i16 %p_ZL18eligibility_traces_3, i64 666, i64 22, i64 18446744073709551615, i1 0" [src/snn_top_hls.cpp:326]   --->   Operation 186 'specmemcore' 'specmemcore_ln326' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 187 [1/1] (0.00ns)   --->   "%specmemcore_ln326 = specmemcore void @_ssdm_op_SpecMemCore, i16 %p_ZL18eligibility_traces_2, i64 666, i64 22, i64 18446744073709551615, i1 0" [src/snn_top_hls.cpp:326]   --->   Operation 187 'specmemcore' 'specmemcore_ln326' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 188 [1/1] (0.00ns)   --->   "%specmemcore_ln326 = specmemcore void @_ssdm_op_SpecMemCore, i16 %p_ZL18eligibility_traces_1, i64 666, i64 22, i64 18446744073709551615, i1 0" [src/snn_top_hls.cpp:326]   --->   Operation 188 'specmemcore' 'specmemcore_ln326' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 189 [1/1] (0.00ns)   --->   "%specmemcore_ln326 = specmemcore void @_ssdm_op_SpecMemCore, i16 %p_ZL18eligibility_traces_0, i64 666, i64 22, i64 18446744073709551615, i1 0" [src/snn_top_hls.cpp:326]   --->   Operation 189 'specmemcore' 'specmemcore_ln326' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 190 [1/1] (0.00ns)   --->   "%enable = trunc i32 %ctrl_reg_read" [src/snn_top_hls.cpp:344]   --->   Operation 190 'trunc' 'enable' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 191 [1/1] (0.00ns)   --->   "%reset = bitselect i1 @_ssdm_op_BitSelect.i1.i32.i32, i32 %ctrl_reg_read, i32 1" [src/snn_top_hls.cpp:345]   --->   Operation 191 'bitselect' 'reset' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 192 [1/1] (0.00ns)   --->   "%clear_counters = bitselect i1 @_ssdm_op_BitSelect.i1.i32.i32, i32 %ctrl_reg_read, i32 2" [src/snn_top_hls.cpp:346]   --->   Operation 192 'bitselect' 'clear_counters' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 193 [1/1] (0.00ns)   --->   "%learning_enable = bitselect i1 @_ssdm_op_BitSelect.i1.i32.i32, i32 %ctrl_reg_read, i32 3" [src/snn_top_hls.cpp:347]   --->   Operation 193 'bitselect' 'learning_enable' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 194 [1/1] (0.00ns)   --->   "%weight_read_mode = bitselect i1 @_ssdm_op_BitSelect.i1.i32.i32, i32 %ctrl_reg_read, i32 4" [src/snn_top_hls.cpp:348]   --->   Operation 194 'bitselect' 'weight_read_mode' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 195 [1/1] (0.00ns)   --->   "%apply_reward = bitselect i1 @_ssdm_op_BitSelect.i1.i32.i32, i32 %ctrl_reg_read, i32 5" [src/snn_top_hls.cpp:349]   --->   Operation 195 'bitselect' 'apply_reward' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 196 [1/1] (0.00ns)   --->   "%threshold = trunc i32 %config_reg_read" [src/snn_top_hls.cpp:351]   --->   Operation 196 'trunc' 'threshold' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 197 [1/1] (0.00ns)   --->   "%leak_rate = partselect i16 @_ssdm_op_PartSelect.i16.i32.i32, i32 %config_reg_read, i32 16" [src/snn_top_hls.cpp:352]   --->   Operation 197 'partselect' 'leak_rate' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 198 [1/1] (0.00ns)   --->   "%specaxissidechannel_ln357 = specaxissidechannel void @_ssdm_op_SpecAXISSideChannel, i32 %m_axis_spikes_V_data_V, i4 %m_axis_spikes_V_keep_V, i4 %m_axis_spikes_V_strb_V, i1 %m_axis_spikes_V_user_V, i1 %m_axis_spikes_V_last_V, i1 %m_axis_spikes_V_id_V, i1 %m_axis_spikes_V_dest_V, void @empty_2" [src/snn_top_hls.cpp:357]   --->   Operation 198 'specaxissidechannel' 'specaxissidechannel_ln357' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 199 [1/1] (0.00ns)   --->   "%specaxissidechannel_ln357 = specaxissidechannel void @_ssdm_op_SpecAXISSideChannel, i32 %m_axis_weights_V_data_V, i4 %m_axis_weights_V_keep_V, i4 %m_axis_weights_V_strb_V, i1 %m_axis_weights_V_user_V, i1 %m_axis_weights_V_last_V, i1 %m_axis_weights_V_id_V, i1 %m_axis_weights_V_dest_V, void @empty_18" [src/snn_top_hls.cpp:357]   --->   Operation 199 'specaxissidechannel' 'specaxissidechannel_ln357' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 200 [1/1] (0.00ns)   --->   "%specaxissidechannel_ln357 = specaxissidechannel void @_ssdm_op_SpecAXISSideChannel, i32 %s_axis_spikes_V_data_V, i4 %s_axis_spikes_V_keep_V, i4 %s_axis_spikes_V_strb_V, i1 %s_axis_spikes_V_user_V, i1 %s_axis_spikes_V_last_V, i1 %s_axis_spikes_V_id_V, i1 %s_axis_spikes_V_dest_V, void @empty_9" [src/snn_top_hls.cpp:357]   --->   Operation 200 'specaxissidechannel' 'specaxissidechannel_ln357' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 201 [1/1] (0.00ns)   --->   "%initialized_load = load i1 %initialized" [src/snn_top_hls.cpp:357]   --->   Operation 201 'load' 'initialized_load' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 202 [1/1] (0.00ns)   --->   "%timestamp_load = load i32 %timestamp" [src/snn_top_hls.cpp:422]   --->   Operation 202 'load' 'timestamp_load' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 203 [1/1] (0.00ns)   --->   "%spike_counter_load = load i32 %spike_counter" [src/snn_top_hls.cpp:425]   --->   Operation 203 'load' 'spike_counter_load' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 204 [1/1] (0.00ns) (grouped into LUT with out node or_ln357)   --->   "%xor_ln357 = xor i1 %initialized_load, i1 1" [src/snn_top_hls.cpp:357]   --->   Operation 204 'xor' 'xor_ln357' <Predicate = true> <Delay = 0.00> <CoreInst = "LogicGate">   --->   Core 74 'LogicGate' <Latency = 0> <II = 1> <Delay = 0.97> <FuncUnit> <Opcode : 'and' 'or' 'xor'> <InPorts = 2> <OutPorts = 1>
+ST_1 : Operation 205 [1/1] (0.97ns) (out node of the LUT)   --->   "%or_ln357 = or i1 %reset, i1 %xor_ln357" [src/snn_top_hls.cpp:357]   --->   Operation 205 'or' 'or_ln357' <Predicate = true> <Delay = 0.97> <CoreInst = "LogicGate">   --->   Core 74 'LogicGate' <Latency = 0> <II = 1> <Delay = 0.97> <FuncUnit> <Opcode : 'and' 'or' 'xor'> <InPorts = 2> <OutPorts = 1>
+ST_1 : Operation 206 [1/1] (1.58ns)   --->   "%br_ln357 = br i1 %or_ln357, void %if.end81, void %for.inc.preheader" [src/snn_top_hls.cpp:357]   --->   Operation 206 'br' 'br_ln357' <Predicate = true> <Delay = 1.58>
+ST_1 : Operation 207 [2/2] (0.00ns)   --->   "%call_ln0 = call void @snn_top_hls_Pipeline_RESET_PRE, i32 %p_ZL15pre_spike_times_0, i32 %p_ZL15pre_spike_times_1, i32 %p_ZL15pre_spike_times_2, i32 %p_ZL15pre_spike_times_3, i32 %p_ZL15pre_spike_times_4, i32 %p_ZL15pre_spike_times_5, i32 %p_ZL15pre_spike_times_6, i32 %p_ZL15pre_spike_times_7, i32 %p_ZL16post_spike_times_0, i32 %p_ZL16post_spike_times_1, i32 %p_ZL16post_spike_times_2, i32 %p_ZL16post_spike_times_3, i32 %p_ZL16post_spike_times_4, i32 %p_ZL16post_spike_times_5, i32 %p_ZL16post_spike_times_6, i32 %p_ZL16post_spike_times_7"   --->   Operation 207 'call' 'call_ln0' <Predicate = (or_ln357)> <Delay = 0.00> <CoreType = "Generic">   --->   Generic Core
+ST_1 : Operation 208 [2/2] (0.00ns)   --->   "%call_ln0 = call void @snn_top_hls_Pipeline_RESET_TRACE_OUTER_RESET_TRACE_INNER, i16 %p_ZL18eligibility_traces_0, i16 %p_ZL18eligibility_traces_1, i16 %p_ZL18eligibility_traces_2, i16 %p_ZL18eligibility_traces_3"   --->   Operation 208 'call' 'call_ln0' <Predicate = (or_ln357)> <Delay = 0.00> <CoreType = "Generic">   --->   Generic Core
+
+State 2 <SV = 1> <Delay = 3.31>
+ST_2 : Operation 209 [1/2] (3.17ns)   --->   "%call_ln0 = call void @snn_top_hls_Pipeline_RESET_PRE, i32 %p_ZL15pre_spike_times_0, i32 %p_ZL15pre_spike_times_1, i32 %p_ZL15pre_spike_times_2, i32 %p_ZL15pre_spike_times_3, i32 %p_ZL15pre_spike_times_4, i32 %p_ZL15pre_spike_times_5, i32 %p_ZL15pre_spike_times_6, i32 %p_ZL15pre_spike_times_7, i32 %p_ZL16post_spike_times_0, i32 %p_ZL16post_spike_times_1, i32 %p_ZL16post_spike_times_2, i32 %p_ZL16post_spike_times_3, i32 %p_ZL16post_spike_times_4, i32 %p_ZL16post_spike_times_5, i32 %p_ZL16post_spike_times_6, i32 %p_ZL16post_spike_times_7"   --->   Operation 209 'call' 'call_ln0' <Predicate = true> <Delay = 3.17> <CoreType = "Generic">   --->   Generic Core
+ST_2 : Operation 210 [1/2] (3.31ns)   --->   "%call_ln0 = call void @snn_top_hls_Pipeline_RESET_TRACE_OUTER_RESET_TRACE_INNER, i16 %p_ZL18eligibility_traces_0, i16 %p_ZL18eligibility_traces_1, i16 %p_ZL18eligibility_traces_2, i16 %p_ZL18eligibility_traces_3"   --->   Operation 210 'call' 'call_ln0' <Predicate = true> <Delay = 3.31> <CoreType = "Generic">   --->   Generic Core
+ST_2 : Operation 211 [1/1] (0.00ns)   --->   "%br_ln378 = br i1 %initialized_load, void %for.inc75.preheader, void %if.end" [src/snn_top_hls.cpp:378]   --->   Operation 211 'br' 'br_ln378' <Predicate = true> <Delay = 0.00>
+ST_2 : Operation 212 [2/2] (0.00ns)   --->   "%call_ln0 = call void @snn_top_hls_Pipeline_INIT_WEIGHT_OUTER_INIT_WEIGHT_INNER, i8 %p_ZL13weight_memory_0, i8 %p_ZL13weight_memory_1, i8 %p_ZL13weight_memory_2, i8 %p_ZL13weight_memory_3, i8 %p_ZL13weight_memory_4, i8 %p_ZL13weight_memory_5, i8 %p_ZL13weight_memory_6, i8 %p_ZL13weight_memory_7"   --->   Operation 212 'call' 'call_ln0' <Predicate = (!initialized_load)> <Delay = 0.00> <CoreType = "Generic">   --->   Generic Core
+
+State 3 <SV = 2> <Delay = 1.58>
+ST_3 : Operation 213 [1/2] (0.00ns)   --->   "%call_ln0 = call void @snn_top_hls_Pipeline_INIT_WEIGHT_OUTER_INIT_WEIGHT_INNER, i8 %p_ZL13weight_memory_0, i8 %p_ZL13weight_memory_1, i8 %p_ZL13weight_memory_2, i8 %p_ZL13weight_memory_3, i8 %p_ZL13weight_memory_4, i8 %p_ZL13weight_memory_5, i8 %p_ZL13weight_memory_6, i8 %p_ZL13weight_memory_7"   --->   Operation 213 'call' 'call_ln0' <Predicate = (or_ln357 & !initialized_load)> <Delay = 0.00> <CoreType = "Generic">   --->   Generic Core
+ST_3 : Operation 214 [1/1] (0.00ns)   --->   "%store_ln385 = store i1 1, i1 %initialized" [src/snn_top_hls.cpp:385]   --->   Operation 214 'store' 'store_ln385' <Predicate = (or_ln357 & !initialized_load)> <Delay = 0.00>
+ST_3 : Operation 215 [1/1] (0.00ns)   --->   "%br_ln386 = br void %if.end" [src/snn_top_hls.cpp:386]   --->   Operation 215 'br' 'br_ln386' <Predicate = (or_ln357 & !initialized_load)> <Delay = 0.00>
+ST_3 : Operation 216 [1/1] (1.58ns)   --->   "%br_ln387 = br void %if.end81" [src/snn_top_hls.cpp:387]   --->   Operation 216 'br' 'br_ln387' <Predicate = (or_ln357)> <Delay = 1.58>
+ST_3 : Operation 217 [1/1] (0.00ns)   --->   "%write_ln397 = write void @_ssdm_op_Write.ap_none.i1P0A, i1 %snn_enable, i1 %enable" [src/snn_top_hls.cpp:397]   --->   Operation 217 'write' 'write_ln397' <Predicate = true> <Delay = 0.00>
+ST_3 : Operation 218 [1/1] (0.00ns)   --->   "%write_ln398 = write void @_ssdm_op_Write.ap_none.i1P0A, i1 %snn_reset, i1 %reset" [src/snn_top_hls.cpp:398]   --->   Operation 218 'write' 'write_ln398' <Predicate = true> <Delay = 0.00>
+ST_3 : Operation 219 [1/1] (0.00ns)   --->   "%write_ln399 = write void @_ssdm_op_Write.ap_none.i16P0A, i16 %threshold_out, i16 %threshold" [src/snn_top_hls.cpp:399]   --->   Operation 219 'write' 'write_ln399' <Predicate = true> <Delay = 0.00>
+ST_3 : Operation 220 [1/1] (0.00ns)   --->   "%write_ln400 = write void @_ssdm_op_Write.ap_none.i16P0A, i16 %leak_rate_out, i16 %leak_rate" [src/snn_top_hls.cpp:400]   --->   Operation 220 'write' 'write_ln400' <Predicate = true> <Delay = 0.00>
+ST_3 : Operation 221 [1/1] (0.97ns)   --->   "%and_ln409 = and i1 %enable, i1 %spike_in_ready_read" [src/snn_top_hls.cpp:409]   --->   Operation 221 'and' 'and_ln409' <Predicate = true> <Delay = 0.97> <CoreInst = "LogicGate">   --->   Core 74 'LogicGate' <Latency = 0> <II = 1> <Delay = 0.97> <FuncUnit> <Opcode : 'and' 'or' 'xor'> <InPorts = 2> <OutPorts = 1>
+
+State 4 <SV = 3> <Delay = 6.19>
+ST_4 : Operation 222 [1/1] (0.00ns)   --->   "%timestamp_flag_0 = phi i1 1, void %if.end, i1 0, void %entry"   --->   Operation 222 'phi' 'timestamp_flag_0' <Predicate = true> <Delay = 0.00>
+ST_4 : Operation 223 [1/1] (0.00ns)   --->   "%timestamp_loc_0 = phi i32 0, void %if.end, i32 %timestamp_load, void %entry" [src/snn_top_hls.cpp:422]   --->   Operation 223 'phi' 'timestamp_loc_0' <Predicate = true> <Delay = 0.00>
+ST_4 : Operation 224 [1/1] (0.00ns) (grouped into LUT with out node select_ln389)   --->   "%spike_counter_loc_0 = phi i32 0, void %if.end, i32 %spike_counter_load, void %entry" [src/snn_top_hls.cpp:425]   --->   Operation 224 'phi' 'spike_counter_loc_0' <Predicate = (!clear_counters)> <Delay = 0.00>
+ST_4 : Operation 225 [1/1] (0.97ns)   --->   "%or_ln389 = or i1 %clear_counters, i1 %timestamp_flag_0" [src/snn_top_hls.cpp:389]   --->   Operation 225 'or' 'or_ln389' <Predicate = true> <Delay = 0.97> <CoreInst = "LogicGate">   --->   Core 74 'LogicGate' <Latency = 0> <II = 1> <Delay = 0.97> <FuncUnit> <Opcode : 'and' 'or' 'xor'> <InPorts = 2> <OutPorts = 1>
+ST_4 : Operation 226 [1/1] (0.69ns) (out node of the LUT)   --->   "%select_ln389 = select i1 %clear_counters, i32 0, i32 %spike_counter_loc_0" [src/snn_top_hls.cpp:389]   --->   Operation 226 'select' 'select_ln389' <Predicate = true> <Delay = 0.69> <CoreInst = "Sel">   --->   Core 73 'Sel' <Latency = 0> <II = 1> <Delay = 0.69> <FuncUnit> <Opcode : 'select'> <InPorts = 3> <OutPorts = 1>
+ST_4 : Operation 227 [1/1] (1.58ns)   --->   "%br_ln409 = br i1 %and_ln409, void %if.end102, void %land.lhs.true92" [src/snn_top_hls.cpp:409]   --->   Operation 227 'br' 'br_ln409' <Predicate = true> <Delay = 1.58>
+ST_4 : Operation 228 [1/1] ( I:1.29ns O:1.29ns )   --->   "%tmp = nbreadreq i1 @_ssdm_op_NbReadReq.axis.i32P0A.i4P0A.i4P0A.i1P0A.i1P0A.i1P0A.i1P0A, i32 %s_axis_spikes_V_data_V, i4 %s_axis_spikes_V_keep_V, i4 %s_axis_spikes_V_strb_V, i1 %s_axis_spikes_V_user_V, i1 %s_axis_spikes_V_last_V, i1 %s_axis_spikes_V_id_V, i1 %s_axis_spikes_V_dest_V, i32 1" [src/snn_top_hls.cpp:409]   --->   Operation 228 'nbreadreq' 'tmp' <Predicate = (and_ln409)> <Delay = 1.29> <CoreInst = "regslice">   --->   Core 135 'regslice' <Latency = 0> <II = 1> <Delay = 1.86> <Adapter> <Opcode : 'read' 'write'>
+ST_4 : Operation 229 [1/1] (1.58ns)   --->   "%br_ln409 = br i1 %tmp, void %if.end102, void %if.then94" [src/snn_top_hls.cpp:409]   --->   Operation 229 'br' 'br_ln409' <Predicate = (and_ln409)> <Delay = 1.58>
+ST_4 : Operation 230 [1/1] ( I:0.51ns O:0.51ns )   --->   "%empty_50 = read i44 @_ssdm_op_Read.axis.volatile.i32P0A.i4P0A.i4P0A.i1P0A.i1P0A.i1P0A.i1P0A, i32 %s_axis_spikes_V_data_V, i4 %s_axis_spikes_V_keep_V, i4 %s_axis_spikes_V_strb_V, i1 %s_axis_spikes_V_user_V, i1 %s_axis_spikes_V_last_V, i1 %s_axis_spikes_V_id_V, i1 %s_axis_spikes_V_dest_V" [src/snn_top_hls.cpp:410]   --->   Operation 230 'read' 'empty_50' <Predicate = (and_ln409 & tmp)> <Delay = 0.51> <CoreInst = "regslice">   --->   Core 135 'regslice' <Latency = 0> <II = 1> <Delay = 1.86> <Adapter> <Opcode : 'read' 'write'>
+ST_4 : Operation 231 [1/1] (0.00ns)   --->   "%in_pkt_data = extractvalue i44 %empty_50" [src/snn_top_hls.cpp:410]   --->   Operation 231 'extractvalue' 'in_pkt_data' <Predicate = (and_ln409 & tmp)> <Delay = 0.00>
+ST_4 : Operation 232 [1/1] (0.00ns)   --->   "%pre_id = trunc i32 %in_pkt_data" [src/snn_top_hls.cpp:412]   --->   Operation 232 'trunc' 'pre_id' <Predicate = (and_ln409 & tmp)> <Delay = 0.00>
+ST_4 : Operation 233 [1/1] (0.00ns)   --->   "%weight = partselect i8 @_ssdm_op_PartSelect.i8.i32.i32, i32 %in_pkt_data, i32 8" [src/snn_top_hls.cpp:413]   --->   Operation 233 'partselect' 'weight' <Predicate = (and_ln409 & tmp)> <Delay = 0.00>
+ST_4 : Operation 234 [1/1] (0.00ns)   --->   "%br_ln421 = br i1 %learning_enable, void %if.end101, void %if.then99" [src/snn_top_hls.cpp:421]   --->   Operation 234 'br' 'br_ln421' <Predicate = (and_ln409 & tmp)> <Delay = 0.00>
+ST_4 : Operation 235 [2/2] (4.90ns)   --->   "%call_ln422 = call void @process_pre_spike, i8 %pre_id, i32 %timestamp_loc_0, i16 %learning_params_a_plus, i16 %learning_params_a_minus, i8 %learning_params_tau_plus_cast, i8 %learning_params_tau_minus_cast, i16 %learning_params_stdp_window, i32 %p_ZL15pre_spike_times_0, i32 %p_ZL15pre_spike_times_1, i32 %p_ZL15pre_spike_times_2, i32 %p_ZL15pre_spike_times_3, i32 %p_ZL15pre_spike_times_4, i32 %p_ZL15pre_spike_times_5, i32 %p_ZL15pre_spike_times_6, i32 %p_ZL15pre_spike_times_7, i32 %p_ZL16post_spike_times_7, i32 %p_ZL16post_spike_times_6, i32 %p_ZL16post_spike_times_5, i32 %p_ZL16post_spike_times_4, i32 %p_ZL16post_spike_times_3, i32 %p_ZL16post_spike_times_2, i32 %p_ZL16post_spike_times_1, i32 %p_ZL16post_spike_times_0, i64 %weight_update_fifo" [src/snn_top_hls.cpp:422]   --->   Operation 235 'call' 'call_ln422' <Predicate = (and_ln409 & tmp & learning_enable)> <Delay = 4.90> <CoreType = "Generic">   --->   Generic Core
+
+State 5 <SV = 4> <Delay = 4.14>
+ST_5 : Operation 236 [1/2] (0.00ns)   --->   "%call_ln422 = call void @process_pre_spike, i8 %pre_id, i32 %timestamp_loc_0, i16 %learning_params_a_plus, i16 %learning_params_a_minus, i8 %learning_params_tau_plus_cast, i8 %learning_params_tau_minus_cast, i16 %learning_params_stdp_window, i32 %p_ZL15pre_spike_times_0, i32 %p_ZL15pre_spike_times_1, i32 %p_ZL15pre_spike_times_2, i32 %p_ZL15pre_spike_times_3, i32 %p_ZL15pre_spike_times_4, i32 %p_ZL15pre_spike_times_5, i32 %p_ZL15pre_spike_times_6, i32 %p_ZL15pre_spike_times_7, i32 %p_ZL16post_spike_times_7, i32 %p_ZL16post_spike_times_6, i32 %p_ZL16post_spike_times_5, i32 %p_ZL16post_spike_times_4, i32 %p_ZL16post_spike_times_3, i32 %p_ZL16post_spike_times_2, i32 %p_ZL16post_spike_times_1, i32 %p_ZL16post_spike_times_0, i64 %weight_update_fifo" [src/snn_top_hls.cpp:422]   --->   Operation 236 'call' 'call_ln422' <Predicate = (and_ln409 & tmp & learning_enable)> <Delay = 0.00> <CoreType = "Generic">   --->   Generic Core
+ST_5 : Operation 237 [1/1] (0.00ns)   --->   "%br_ln423 = br void %if.end101" [src/snn_top_hls.cpp:423]   --->   Operation 237 'br' 'br_ln423' <Predicate = (and_ln409 & tmp & learning_enable)> <Delay = 0.00>
+ST_5 : Operation 238 [1/1] (2.55ns)   --->   "%add_ln425 = add i32 %select_ln389, i32 1" [src/snn_top_hls.cpp:425]   --->   Operation 238 'add' 'add_ln425' <Predicate = (and_ln409 & tmp)> <Delay = 2.55> <CoreInst = "Adder">   --->   Core 1 'Adder' <Latency = 0> <II = 1> <Delay = 2.55> <FuncUnit> <Opcode : 'add' 'sub'> <InPorts = 2> <OutPorts = 1>
+ST_5 : Operation 239 [1/1] (1.58ns)   --->   "%br_ln426 = br void %if.end102" [src/snn_top_hls.cpp:426]   --->   Operation 239 'br' 'br_ln426' <Predicate = (and_ln409 & tmp)> <Delay = 1.58>
+ST_5 : Operation 240 [1/1] (0.00ns)   --->   "%spike_in_valid_local_0 = phi i1 1, void %if.end101, i1 0, void %land.lhs.true92, i1 0, void %if.end81"   --->   Operation 240 'phi' 'spike_in_valid_local_0' <Predicate = true> <Delay = 0.00>
+ST_5 : Operation 241 [1/1] (0.00ns)   --->   "%spike_in_neuron_id_local_0 = phi i8 %pre_id, void %if.end101, i8 0, void %land.lhs.true92, i8 0, void %if.end81"   --->   Operation 241 'phi' 'spike_in_neuron_id_local_0' <Predicate = true> <Delay = 0.00>
+ST_5 : Operation 242 [1/1] (0.00ns)   --->   "%spike_in_weight_local_0 = phi i8 %weight, void %if.end101, i8 0, void %land.lhs.true92, i8 0, void %if.end81"   --->   Operation 242 'phi' 'spike_in_weight_local_0' <Predicate = true> <Delay = 0.00>
+ST_5 : Operation 243 [1/1] (0.00ns)   --->   "%spike_counter_flag_2 = phi i1 1, void %if.end101, i1 %or_ln389, void %land.lhs.true92, i1 %or_ln389, void %if.end81" [src/snn_top_hls.cpp:389]   --->   Operation 243 'phi' 'spike_counter_flag_2' <Predicate = true> <Delay = 0.00>
+ST_5 : Operation 244 [1/1] (0.00ns)   --->   "%spike_counter_new_2 = phi i32 %add_ln425, void %if.end101, i32 0, void %land.lhs.true92, i32 0, void %if.end81" [src/snn_top_hls.cpp:425]   --->   Operation 244 'phi' 'spike_counter_new_2' <Predicate = true> <Delay = 0.00>
+ST_5 : Operation 245 [1/1] (0.00ns)   --->   "%spike_counter_loc_2 = phi i32 %add_ln425, void %if.end101, i32 %select_ln389, void %land.lhs.true92, i32 %select_ln389, void %if.end81" [src/snn_top_hls.cpp:425]   --->   Operation 245 'phi' 'spike_counter_loc_2' <Predicate = true> <Delay = 0.00>
+ST_5 : Operation 246 [1/1] ( I:1.29ns O:1.29ns )   --->   "%tmp_3 = nbwritereq i1 @_ssdm_op_NbWriteReq.axis.i32P0A.i4P0A.i4P0A.i1P0A.i1P0A.i1P0A.i1P0A, i32 %m_axis_spikes_V_data_V, i4 %m_axis_spikes_V_keep_V, i4 %m_axis_spikes_V_strb_V, i1 %m_axis_spikes_V_user_V, i1 %m_axis_spikes_V_last_V, i1 %m_axis_spikes_V_id_V, i1 %m_axis_spikes_V_dest_V, i32 1" [src/snn_top_hls.cpp:431]   --->   Operation 246 'nbwritereq' 'tmp_3' <Predicate = true> <Delay = 1.29> <CoreInst = "regslice">   --->   Core 135 'regslice' <Latency = 0> <II = 1> <Delay = 1.86> <Adapter> <Opcode : 'read' 'write'>
+ST_5 : Operation 247 [1/1] (0.00ns)   --->   "%write_ln431 = write void @_ssdm_op_Write.ap_none.i1P0A, i1 %spike_out_ready, i1 %tmp_3" [src/snn_top_hls.cpp:431]   --->   Operation 247 'write' 'write_ln431' <Predicate = true> <Delay = 0.00>
+ST_5 : Operation 248 [1/1] (0.00ns)   --->   "%br_ln389 = br i1 %spike_counter_flag_2, void %if.end102.new, void %mergeST2" [src/snn_top_hls.cpp:389]   --->   Operation 248 'br' 'br_ln389' <Predicate = true> <Delay = 0.00>
+ST_5 : Operation 249 [1/1] (0.00ns)   --->   "%store_ln359 = store i32 %spike_counter_new_2, i32 %spike_counter" [src/snn_top_hls.cpp:359]   --->   Operation 249 'store' 'store_ln359' <Predicate = (spike_counter_flag_2)> <Delay = 0.00>
+ST_5 : Operation 250 [1/1] (0.00ns)   --->   "%br_ln0 = br void %if.end102.new"   --->   Operation 250 'br' 'br_ln0' <Predicate = (spike_counter_flag_2)> <Delay = 0.00>
+ST_5 : Operation 251 [1/1] (0.00ns)   --->   "%br_ln433 = br i1 %spike_out_valid_read, void %if.end133, void %land.lhs.true107" [src/snn_top_hls.cpp:433]   --->   Operation 251 'br' 'br_ln433' <Predicate = true> <Delay = 0.00>
+ST_5 : Operation 252 [1/1] ( I:1.29ns O:1.29ns )   --->   "%tmp_4 = nbwritereq i1 @_ssdm_op_NbWriteReq.axis.i32P0A.i4P0A.i4P0A.i1P0A.i1P0A.i1P0A.i1P0A, i32 %m_axis_spikes_V_data_V, i4 %m_axis_spikes_V_keep_V, i4 %m_axis_spikes_V_strb_V, i1 %m_axis_spikes_V_user_V, i1 %m_axis_spikes_V_last_V, i1 %m_axis_spikes_V_id_V, i1 %m_axis_spikes_V_dest_V, i32 1" [src/snn_top_hls.cpp:433]   --->   Operation 252 'nbwritereq' 'tmp_4' <Predicate = (spike_out_valid_read)> <Delay = 1.29> <CoreInst = "regslice">   --->   Core 135 'regslice' <Latency = 0> <II = 1> <Delay = 1.86> <Adapter> <Opcode : 'read' 'write'>
+ST_5 : Operation 253 [1/1] (0.00ns)   --->   "%br_ln433 = br i1 %tmp_4, void %if.end133, void %if.then109" [src/snn_top_hls.cpp:433]   --->   Operation 253 'br' 'br_ln433' <Predicate = (spike_out_valid_read)> <Delay = 0.00>
+ST_5 : Operation 254 [1/1] (0.00ns)   --->   "%trunc_ln442 = trunc i32 %timestamp_loc_0" [src/snn_top_hls.cpp:442]   --->   Operation 254 'trunc' 'trunc_ln442' <Predicate = (spike_out_valid_read & tmp_4)> <Delay = 0.00>
+ST_5 : Operation 255 [1/1] (0.00ns)   --->   "%out_pkt_data = bitconcatenate i32 @_ssdm_op_BitConcatenate.i32.i16.i8.i8, i16 %trunc_ln442, i8 %spike_out_weight_read, i8 %spike_out_neuron_id_read" [src/snn_top_hls.cpp:442]   --->   Operation 255 'bitconcatenate' 'out_pkt_data' <Predicate = (spike_out_valid_read & tmp_4)> <Delay = 0.00>
+ST_5 : Operation 256 [2/2] (1.29ns)   --->   "%write_ln449 = write void @_ssdm_op_Write.axis.volatile.i32P0A.i4P0A.i4P0A.i1P0A.i1P0A.i1P0A.i1P0A, i32 %m_axis_spikes_V_data_V, i4 %m_axis_spikes_V_keep_V, i4 %m_axis_spikes_V_strb_V, i1 %m_axis_spikes_V_user_V, i1 %m_axis_spikes_V_last_V, i1 %m_axis_spikes_V_id_V, i1 %m_axis_spikes_V_dest_V, i32 %out_pkt_data, i4 15, i4 15, i1 0, i1 1, i1 0, i1 0" [src/snn_top_hls.cpp:449]   --->   Operation 256 'write' 'write_ln449' <Predicate = (spike_out_valid_read & tmp_4)> <Delay = 1.29> <CoreInst = "regslice">   --->   Core 135 'regslice' <Latency = 0> <II = 1> <Delay = 1.86> <Adapter> <Opcode : 'read' 'write'>
+
+State 6 <SV = 5> <Delay = 4.90>
+ST_6 : Operation 257 [1/2] ( I:1.29ns O:1.29ns )   --->   "%write_ln449 = write void @_ssdm_op_Write.axis.volatile.i32P0A.i4P0A.i4P0A.i1P0A.i1P0A.i1P0A.i1P0A, i32 %m_axis_spikes_V_data_V, i4 %m_axis_spikes_V_keep_V, i4 %m_axis_spikes_V_strb_V, i1 %m_axis_spikes_V_user_V, i1 %m_axis_spikes_V_last_V, i1 %m_axis_spikes_V_id_V, i1 %m_axis_spikes_V_dest_V, i32 %out_pkt_data, i4 15, i4 15, i1 0, i1 1, i1 0, i1 0" [src/snn_top_hls.cpp:449]   --->   Operation 257 'write' 'write_ln449' <Predicate = true> <Delay = 1.29> <CoreInst = "regslice">   --->   Core 135 'regslice' <Latency = 0> <II = 1> <Delay = 1.86> <Adapter> <Opcode : 'read' 'write'>
+ST_6 : Operation 258 [1/1] (0.00ns)   --->   "%br_ln452 = br i1 %learning_enable, void %if.end132, void %if.then129" [src/snn_top_hls.cpp:452]   --->   Operation 258 'br' 'br_ln452' <Predicate = true> <Delay = 0.00>
+ST_6 : Operation 259 [2/2] (4.90ns)   --->   "%call_ln453 = call void @process_post_spike, i8 %spike_out_neuron_id_read, i32 %timestamp_loc_0, i16 %learning_params_a_plus, i16 %learning_params_a_minus, i8 %learning_params_tau_plus_cast, i8 %learning_params_tau_minus_cast, i16 %learning_params_stdp_window, i32 %p_ZL16post_spike_times_0, i32 %p_ZL16post_spike_times_1, i32 %p_ZL16post_spike_times_2, i32 %p_ZL16post_spike_times_3, i32 %p_ZL16post_spike_times_4, i32 %p_ZL16post_spike_times_5, i32 %p_ZL16post_spike_times_6, i32 %p_ZL16post_spike_times_7, i32 %p_ZL15pre_spike_times_7, i32 %p_ZL15pre_spike_times_6, i32 %p_ZL15pre_spike_times_5, i32 %p_ZL15pre_spike_times_4, i32 %p_ZL15pre_spike_times_3, i32 %p_ZL15pre_spike_times_2, i32 %p_ZL15pre_spike_times_1, i32 %p_ZL15pre_spike_times_0, i64 %weight_update_fifo" [src/snn_top_hls.cpp:453]   --->   Operation 259 'call' 'call_ln453' <Predicate = (learning_enable)> <Delay = 4.90> <CoreType = "Generic">   --->   Generic Core
+
+State 7 <SV = 6> <Delay = 0.00>
+ST_7 : Operation 260 [1/2] (0.00ns)   --->   "%call_ln453 = call void @process_post_spike, i8 %spike_out_neuron_id_read, i32 %timestamp_loc_0, i16 %learning_params_a_plus, i16 %learning_params_a_minus, i8 %learning_params_tau_plus_cast, i8 %learning_params_tau_minus_cast, i16 %learning_params_stdp_window, i32 %p_ZL16post_spike_times_0, i32 %p_ZL16post_spike_times_1, i32 %p_ZL16post_spike_times_2, i32 %p_ZL16post_spike_times_3, i32 %p_ZL16post_spike_times_4, i32 %p_ZL16post_spike_times_5, i32 %p_ZL16post_spike_times_6, i32 %p_ZL16post_spike_times_7, i32 %p_ZL15pre_spike_times_7, i32 %p_ZL15pre_spike_times_6, i32 %p_ZL15pre_spike_times_5, i32 %p_ZL15pre_spike_times_4, i32 %p_ZL15pre_spike_times_3, i32 %p_ZL15pre_spike_times_2, i32 %p_ZL15pre_spike_times_1, i32 %p_ZL15pre_spike_times_0, i64 %weight_update_fifo" [src/snn_top_hls.cpp:453]   --->   Operation 260 'call' 'call_ln453' <Predicate = (learning_enable & spike_out_valid_read & tmp_4)> <Delay = 0.00> <CoreType = "Generic">   --->   Generic Core
+ST_7 : Operation 261 [1/1] (0.00ns)   --->   "%br_ln454 = br void %if.end132" [src/snn_top_hls.cpp:454]   --->   Operation 261 'br' 'br_ln454' <Predicate = (learning_enable & spike_out_valid_read & tmp_4)> <Delay = 0.00>
+ST_7 : Operation 262 [1/1] (0.00ns)   --->   "%br_ln455 = br void %if.end133" [src/snn_top_hls.cpp:455]   --->   Operation 262 'br' 'br_ln455' <Predicate = (spike_out_valid_read & tmp_4)> <Delay = 0.00>
+ST_7 : Operation 263 [1/1] (0.00ns)   --->   "%br_ln460 = br i1 %learning_enable, void %if.end136, void %if.then134" [src/snn_top_hls.cpp:460]   --->   Operation 263 'br' 'br_ln460' <Predicate = true> <Delay = 0.00>
+
+State 8 <SV = 7> <Delay = 5.83>
+ST_8 : Operation 264 [1/1] (1.24ns)   --->   "%select_ln462 = select i1 %learning_params_rstdp_enable, i8 %reward_signal_read, i8 0" [src/snn_top_hls.cpp:462]   --->   Operation 264 'select' 'select_ln462' <Predicate = true> <Delay = 1.24> <CoreInst = "Sel">   --->   Core 73 'Sel' <Latency = 0> <II = 1> <Delay = 1.24> <FuncUnit> <Opcode : 'select'> <InPorts = 3> <OutPorts = 1>
+ST_8 : Operation 265 [2/2] (4.58ns)   --->   "%call_ln461 = call void @apply_weight_updates, i16 %learning_params_learning_rate, i1 %learning_params_rstdp_enable, i16 %learning_params_trace_decay, i8 %select_ln462, i64 %weight_update_fifo, i8 %p_ZL13weight_memory_0, i8 %p_ZL13weight_memory_1, i8 %p_ZL13weight_memory_2, i8 %p_ZL13weight_memory_3, i8 %p_ZL13weight_memory_4, i8 %p_ZL13weight_memory_5, i8 %p_ZL13weight_memory_6, i8 %p_ZL13weight_memory_7, i16 %p_ZL18eligibility_traces_0, i16 %p_ZL18eligibility_traces_1, i16 %p_ZL18eligibility_traces_2, i16 %p_ZL18eligibility_traces_3" [src/snn_top_hls.cpp:461]   --->   Operation 265 'call' 'call_ln461' <Predicate = true> <Delay = 4.58> <CoreType = "Generic">   --->   Generic Core
+
+State 9 <SV = 8> <Delay = 0.97>
+ST_9 : Operation 266 [1/2] (0.00ns)   --->   "%call_ln461 = call void @apply_weight_updates, i16 %learning_params_learning_rate, i1 %learning_params_rstdp_enable, i16 %learning_params_trace_decay, i8 %select_ln462, i64 %weight_update_fifo, i8 %p_ZL13weight_memory_0, i8 %p_ZL13weight_memory_1, i8 %p_ZL13weight_memory_2, i8 %p_ZL13weight_memory_3, i8 %p_ZL13weight_memory_4, i8 %p_ZL13weight_memory_5, i8 %p_ZL13weight_memory_6, i8 %p_ZL13weight_memory_7, i16 %p_ZL18eligibility_traces_0, i16 %p_ZL18eligibility_traces_1, i16 %p_ZL18eligibility_traces_2, i16 %p_ZL18eligibility_traces_3" [src/snn_top_hls.cpp:461]   --->   Operation 266 'call' 'call_ln461' <Predicate = (learning_enable)> <Delay = 0.00> <CoreType = "Generic">   --->   Generic Core
+ST_9 : Operation 267 [1/1] (0.00ns)   --->   "%br_ln463 = br void %if.end136" [src/snn_top_hls.cpp:463]   --->   Operation 267 'br' 'br_ln463' <Predicate = (learning_enable)> <Delay = 0.00>
+ST_9 : Operation 268 [1/1] (0.97ns)   --->   "%and_ln468 = and i1 %apply_reward, i1 %learning_params_rstdp_enable" [src/snn_top_hls.cpp:468]   --->   Operation 268 'and' 'and_ln468' <Predicate = true> <Delay = 0.97> <CoreInst = "LogicGate">   --->   Core 74 'LogicGate' <Latency = 0> <II = 1> <Delay = 0.97> <FuncUnit> <Opcode : 'and' 'or' 'xor'> <InPorts = 2> <OutPorts = 1>
+ST_9 : Operation 269 [1/1] (0.00ns)   --->   "%br_ln468 = br i1 %and_ln468, void %if.end141, void %if.then139" [src/snn_top_hls.cpp:468]   --->   Operation 269 'br' 'br_ln468' <Predicate = true> <Delay = 0.00>
+
+State 10 <SV = 9> <Delay = 3.00>
+ST_10 : Operation 270 [2/2] (3.00ns)   --->   "%call_ln469 = call void @apply_reward_signal, i8 %reward_signal_read, i16 %learning_params_learning_rate, i16 %p_ZL18eligibility_traces_0, i16 %p_ZL18eligibility_traces_1, i16 %p_ZL18eligibility_traces_2, i16 %p_ZL18eligibility_traces_3, i8 %p_ZL13weight_memory_0, i8 %p_ZL13weight_memory_1, i8 %p_ZL13weight_memory_2, i8 %p_ZL13weight_memory_3, i8 %p_ZL13weight_memory_4, i8 %p_ZL13weight_memory_5, i8 %p_ZL13weight_memory_6, i8 %p_ZL13weight_memory_7" [src/snn_top_hls.cpp:469]   --->   Operation 270 'call' 'call_ln469' <Predicate = true> <Delay = 3.00> <CoreType = "Generic">   --->   Generic Core
+
+State 11 <SV = 10> <Delay = 0.00>
+ST_11 : Operation 271 [1/2] (0.00ns)   --->   "%call_ln469 = call void @apply_reward_signal, i8 %reward_signal_read, i16 %learning_params_learning_rate, i16 %p_ZL18eligibility_traces_0, i16 %p_ZL18eligibility_traces_1, i16 %p_ZL18eligibility_traces_2, i16 %p_ZL18eligibility_traces_3, i8 %p_ZL13weight_memory_0, i8 %p_ZL13weight_memory_1, i8 %p_ZL13weight_memory_2, i8 %p_ZL13weight_memory_3, i8 %p_ZL13weight_memory_4, i8 %p_ZL13weight_memory_5, i8 %p_ZL13weight_memory_6, i8 %p_ZL13weight_memory_7" [src/snn_top_hls.cpp:469]   --->   Operation 271 'call' 'call_ln469' <Predicate = true> <Delay = 0.00> <CoreType = "Generic">   --->   Generic Core
+
+State 12 <SV = 11> <Delay = 0.00>
+ST_12 : Operation 272 [2/2] (0.00ns)   --->   "%call_ln470 = call void @decay_eligibility_traces, i16 %learning_params_trace_decay, i16 %p_ZL18eligibility_traces_0, i16 %p_ZL18eligibility_traces_1, i16 %p_ZL18eligibility_traces_2, i16 %p_ZL18eligibility_traces_3" [src/snn_top_hls.cpp:470]   --->   Operation 272 'call' 'call_ln470' <Predicate = true> <Delay = 0.00> <CoreType = "Generic">   --->   Generic Core
+
+State 13 <SV = 12> <Delay = 3.25>
+ST_13 : Operation 273 [1/2] (0.00ns)   --->   "%call_ln470 = call void @decay_eligibility_traces, i16 %learning_params_trace_decay, i16 %p_ZL18eligibility_traces_0, i16 %p_ZL18eligibility_traces_1, i16 %p_ZL18eligibility_traces_2, i16 %p_ZL18eligibility_traces_3" [src/snn_top_hls.cpp:470]   --->   Operation 273 'call' 'call_ln470' <Predicate = (and_ln468)> <Delay = 0.00> <CoreType = "Generic">   --->   Generic Core
+ST_13 : Operation 274 [1/1] (0.00ns)   --->   "%br_ln471 = br void %if.end141" [src/snn_top_hls.cpp:471]   --->   Operation 274 'br' 'br_ln471' <Predicate = (and_ln468)> <Delay = 0.00>
+ST_13 : Operation 275 [1/1] (0.00ns)   --->   "%br_ln476 = br i1 %weight_read_mode, void %if.end190, void %land.lhs.true142" [src/snn_top_hls.cpp:476]   --->   Operation 275 'br' 'br_ln476' <Predicate = true> <Delay = 0.00>
+ST_13 : Operation 276 [1/1] ( I:1.29ns O:1.29ns )   --->   "%tmp_7 = nbwritereq i1 @_ssdm_op_NbWriteReq.axis.i32P0A.i4P0A.i4P0A.i1P0A.i1P0A.i1P0A.i1P0A, i32 %m_axis_weights_V_data_V, i4 %m_axis_weights_V_keep_V, i4 %m_axis_weights_V_strb_V, i1 %m_axis_weights_V_user_V, i1 %m_axis_weights_V_last_V, i1 %m_axis_weights_V_id_V, i1 %m_axis_weights_V_dest_V, i32 1" [src/snn_top_hls.cpp:476]   --->   Operation 276 'nbwritereq' 'tmp_7' <Predicate = (weight_read_mode)> <Delay = 1.29> <CoreInst = "regslice">   --->   Core 135 'regslice' <Latency = 0> <II = 1> <Delay = 1.86> <Adapter> <Opcode : 'read' 'write'>
+ST_13 : Operation 277 [1/1] (0.00ns)   --->   "%br_ln476 = br i1 %tmp_7, void %if.end190, void %init.end150" [src/snn_top_hls.cpp:476]   --->   Operation 277 'br' 'br_ln476' <Predicate = (weight_read_mode)> <Delay = 0.00>
+ST_13 : Operation 278 [1/1] (0.00ns)   --->   "%read_row_load = load i6 %read_row" [src/snn_top_hls.cpp:482]   --->   Operation 278 'load' 'read_row_load' <Predicate = (weight_read_mode & tmp_7)> <Delay = 0.00>
+ST_13 : Operation 279 [1/1] (0.00ns)   --->   "%read_col_load = load i6 %read_col" [src/snn_top_hls.cpp:483]   --->   Operation 279 'load' 'read_col_load' <Predicate = (weight_read_mode & tmp_7)> <Delay = 0.00>
+ST_13 : Operation 280 [1/1] (0.00ns)   --->   "%trunc_ln484 = trunc i6 %read_col_load" [src/snn_top_hls.cpp:484]   --->   Operation 280 'trunc' 'trunc_ln484' <Predicate = (weight_read_mode & tmp_7)> <Delay = 0.00>
+ST_13 : Operation 281 [1/1] (0.00ns)   --->   "%lshr_ln3 = partselect i3 @_ssdm_op_PartSelect.i3.i6.i32.i32, i6 %read_col_load, i32 3, i32 5" [src/snn_top_hls.cpp:484]   --->   Operation 281 'partselect' 'lshr_ln3' <Predicate = (weight_read_mode & tmp_7)> <Delay = 0.00>
+ST_13 : Operation 282 [1/1] (0.00ns)   --->   "%tmp_9 = bitconcatenate i9 @_ssdm_op_BitConcatenate.i9.i6.i3, i6 %read_row_load, i3 %lshr_ln3" [src/snn_top_hls.cpp:484]   --->   Operation 282 'bitconcatenate' 'tmp_9' <Predicate = (weight_read_mode & tmp_7)> <Delay = 0.00>
+ST_13 : Operation 283 [1/1] (0.00ns)   --->   "%zext_ln484_2 = zext i9 %tmp_9" [src/snn_top_hls.cpp:484]   --->   Operation 283 'zext' 'zext_ln484_2' <Predicate = (weight_read_mode & tmp_7)> <Delay = 0.00>
+ST_13 : Operation 284 [1/1] (0.00ns)   --->   "%p_ZL13weight_memory_0_addr = getelementptr i8 %p_ZL13weight_memory_0, i64 0, i64 %zext_ln484_2" [src/snn_top_hls.cpp:484]   --->   Operation 284 'getelementptr' 'p_ZL13weight_memory_0_addr' <Predicate = (weight_read_mode & tmp_7)> <Delay = 0.00>
+ST_13 : Operation 285 [1/1] (0.00ns)   --->   "%p_ZL13weight_memory_1_addr = getelementptr i8 %p_ZL13weight_memory_1, i64 0, i64 %zext_ln484_2" [src/snn_top_hls.cpp:484]   --->   Operation 285 'getelementptr' 'p_ZL13weight_memory_1_addr' <Predicate = (weight_read_mode & tmp_7)> <Delay = 0.00>
+ST_13 : Operation 286 [1/1] (0.00ns)   --->   "%p_ZL13weight_memory_2_addr = getelementptr i8 %p_ZL13weight_memory_2, i64 0, i64 %zext_ln484_2" [src/snn_top_hls.cpp:484]   --->   Operation 286 'getelementptr' 'p_ZL13weight_memory_2_addr' <Predicate = (weight_read_mode & tmp_7)> <Delay = 0.00>
+ST_13 : Operation 287 [1/1] (0.00ns)   --->   "%p_ZL13weight_memory_3_addr = getelementptr i8 %p_ZL13weight_memory_3, i64 0, i64 %zext_ln484_2" [src/snn_top_hls.cpp:484]   --->   Operation 287 'getelementptr' 'p_ZL13weight_memory_3_addr' <Predicate = (weight_read_mode & tmp_7)> <Delay = 0.00>
+ST_13 : Operation 288 [1/1] (0.00ns)   --->   "%p_ZL13weight_memory_4_addr = getelementptr i8 %p_ZL13weight_memory_4, i64 0, i64 %zext_ln484_2" [src/snn_top_hls.cpp:484]   --->   Operation 288 'getelementptr' 'p_ZL13weight_memory_4_addr' <Predicate = (weight_read_mode & tmp_7)> <Delay = 0.00>
+ST_13 : Operation 289 [1/1] (0.00ns)   --->   "%p_ZL13weight_memory_5_addr = getelementptr i8 %p_ZL13weight_memory_5, i64 0, i64 %zext_ln484_2" [src/snn_top_hls.cpp:484]   --->   Operation 289 'getelementptr' 'p_ZL13weight_memory_5_addr' <Predicate = (weight_read_mode & tmp_7)> <Delay = 0.00>
+ST_13 : Operation 290 [1/1] (0.00ns)   --->   "%p_ZL13weight_memory_6_addr = getelementptr i8 %p_ZL13weight_memory_6, i64 0, i64 %zext_ln484_2" [src/snn_top_hls.cpp:484]   --->   Operation 290 'getelementptr' 'p_ZL13weight_memory_6_addr' <Predicate = (weight_read_mode & tmp_7)> <Delay = 0.00>
+ST_13 : Operation 291 [1/1] (0.00ns)   --->   "%p_ZL13weight_memory_7_addr = getelementptr i8 %p_ZL13weight_memory_7, i64 0, i64 %zext_ln484_2" [src/snn_top_hls.cpp:484]   --->   Operation 291 'getelementptr' 'p_ZL13weight_memory_7_addr' <Predicate = (weight_read_mode & tmp_7)> <Delay = 0.00>
+ST_13 : Operation 292 [2/2] (3.25ns)   --->   "%p_ZL13weight_memory_0_load = load i9 %p_ZL13weight_memory_0_addr" [src/snn_top_hls.cpp:484]   --->   Operation 292 'load' 'p_ZL13weight_memory_0_load' <Predicate = (weight_read_mode & tmp_7)> <Delay = 3.25> <CoreInst = "RAM_2P_BRAM">   --->   Core 90 'RAM_2P_BRAM' <Latency = 1> <II = 1> <Delay = 3.25> <Storage> <Opcode : 'load' 'store'> <Ports = 2> <Width = 8> <Depth = 512> <RAM>
+ST_13 : Operation 293 [2/2] (3.25ns)   --->   "%p_ZL13weight_memory_1_load = load i9 %p_ZL13weight_memory_1_addr" [src/snn_top_hls.cpp:484]   --->   Operation 293 'load' 'p_ZL13weight_memory_1_load' <Predicate = (weight_read_mode & tmp_7)> <Delay = 3.25> <CoreInst = "RAM_2P_BRAM">   --->   Core 90 'RAM_2P_BRAM' <Latency = 1> <II = 1> <Delay = 3.25> <Storage> <Opcode : 'load' 'store'> <Ports = 2> <Width = 8> <Depth = 512> <RAM>
+ST_13 : Operation 294 [2/2] (3.25ns)   --->   "%p_ZL13weight_memory_2_load = load i9 %p_ZL13weight_memory_2_addr" [src/snn_top_hls.cpp:484]   --->   Operation 294 'load' 'p_ZL13weight_memory_2_load' <Predicate = (weight_read_mode & tmp_7)> <Delay = 3.25> <CoreInst = "RAM_2P_BRAM">   --->   Core 90 'RAM_2P_BRAM' <Latency = 1> <II = 1> <Delay = 3.25> <Storage> <Opcode : 'load' 'store'> <Ports = 2> <Width = 8> <Depth = 512> <RAM>
+ST_13 : Operation 295 [2/2] (3.25ns)   --->   "%p_ZL13weight_memory_3_load = load i9 %p_ZL13weight_memory_3_addr" [src/snn_top_hls.cpp:484]   --->   Operation 295 'load' 'p_ZL13weight_memory_3_load' <Predicate = (weight_read_mode & tmp_7)> <Delay = 3.25> <CoreInst = "RAM_2P_BRAM">   --->   Core 90 'RAM_2P_BRAM' <Latency = 1> <II = 1> <Delay = 3.25> <Storage> <Opcode : 'load' 'store'> <Ports = 2> <Width = 8> <Depth = 512> <RAM>
+ST_13 : Operation 296 [2/2] (3.25ns)   --->   "%p_ZL13weight_memory_4_load = load i9 %p_ZL13weight_memory_4_addr" [src/snn_top_hls.cpp:484]   --->   Operation 296 'load' 'p_ZL13weight_memory_4_load' <Predicate = (weight_read_mode & tmp_7)> <Delay = 3.25> <CoreInst = "RAM_2P_BRAM">   --->   Core 90 'RAM_2P_BRAM' <Latency = 1> <II = 1> <Delay = 3.25> <Storage> <Opcode : 'load' 'store'> <Ports = 2> <Width = 8> <Depth = 512> <RAM>
+ST_13 : Operation 297 [2/2] (3.25ns)   --->   "%p_ZL13weight_memory_5_load = load i9 %p_ZL13weight_memory_5_addr" [src/snn_top_hls.cpp:484]   --->   Operation 297 'load' 'p_ZL13weight_memory_5_load' <Predicate = (weight_read_mode & tmp_7)> <Delay = 3.25> <CoreInst = "RAM_2P_BRAM">   --->   Core 90 'RAM_2P_BRAM' <Latency = 1> <II = 1> <Delay = 3.25> <Storage> <Opcode : 'load' 'store'> <Ports = 2> <Width = 8> <Depth = 512> <RAM>
+ST_13 : Operation 298 [2/2] (3.25ns)   --->   "%p_ZL13weight_memory_6_load = load i9 %p_ZL13weight_memory_6_addr" [src/snn_top_hls.cpp:484]   --->   Operation 298 'load' 'p_ZL13weight_memory_6_load' <Predicate = (weight_read_mode & tmp_7)> <Delay = 3.25> <CoreInst = "RAM_2P_BRAM">   --->   Core 90 'RAM_2P_BRAM' <Latency = 1> <II = 1> <Delay = 3.25> <Storage> <Opcode : 'load' 'store'> <Ports = 2> <Width = 8> <Depth = 512> <RAM>
+ST_13 : Operation 299 [2/2] (3.25ns)   --->   "%p_ZL13weight_memory_7_load = load i9 %p_ZL13weight_memory_7_addr" [src/snn_top_hls.cpp:484]   --->   Operation 299 'load' 'p_ZL13weight_memory_7_load' <Predicate = (weight_read_mode & tmp_7)> <Delay = 3.25> <CoreInst = "RAM_2P_BRAM">   --->   Core 90 'RAM_2P_BRAM' <Latency = 1> <II = 1> <Delay = 3.25> <Storage> <Opcode : 'load' 'store'> <Ports = 2> <Width = 8> <Depth = 512> <RAM>
+
+State 14 <SV = 13> <Delay = 6.84>
+ST_14 : Operation 300 [1/1] (0.00ns)   --->   "%zext_ln483 = zext i6 %read_row_load" [src/snn_top_hls.cpp:483]   --->   Operation 300 'zext' 'zext_ln483' <Predicate = true> <Delay = 0.00>
+ST_14 : Operation 301 [1/1] (0.00ns)   --->   "%zext_ln484 = zext i6 %read_col_load" [src/snn_top_hls.cpp:484]   --->   Operation 301 'zext' 'zext_ln484' <Predicate = true> <Delay = 0.00>
+ST_14 : Operation 302 [1/2] ( I:3.25ns O:3.25ns )   --->   "%p_ZL13weight_memory_0_load = load i9 %p_ZL13weight_memory_0_addr" [src/snn_top_hls.cpp:484]   --->   Operation 302 'load' 'p_ZL13weight_memory_0_load' <Predicate = true> <Delay = 3.25> <CoreInst = "RAM_2P_BRAM">   --->   Core 90 'RAM_2P_BRAM' <Latency = 1> <II = 1> <Delay = 3.25> <Storage> <Opcode : 'load' 'store'> <Ports = 2> <Width = 8> <Depth = 512> <RAM>
+ST_14 : Operation 303 [1/2] ( I:3.25ns O:3.25ns )   --->   "%p_ZL13weight_memory_1_load = load i9 %p_ZL13weight_memory_1_addr" [src/snn_top_hls.cpp:484]   --->   Operation 303 'load' 'p_ZL13weight_memory_1_load' <Predicate = true> <Delay = 3.25> <CoreInst = "RAM_2P_BRAM">   --->   Core 90 'RAM_2P_BRAM' <Latency = 1> <II = 1> <Delay = 3.25> <Storage> <Opcode : 'load' 'store'> <Ports = 2> <Width = 8> <Depth = 512> <RAM>
+ST_14 : Operation 304 [1/2] ( I:3.25ns O:3.25ns )   --->   "%p_ZL13weight_memory_2_load = load i9 %p_ZL13weight_memory_2_addr" [src/snn_top_hls.cpp:484]   --->   Operation 304 'load' 'p_ZL13weight_memory_2_load' <Predicate = true> <Delay = 3.25> <CoreInst = "RAM_2P_BRAM">   --->   Core 90 'RAM_2P_BRAM' <Latency = 1> <II = 1> <Delay = 3.25> <Storage> <Opcode : 'load' 'store'> <Ports = 2> <Width = 8> <Depth = 512> <RAM>
+ST_14 : Operation 305 [1/2] ( I:3.25ns O:3.25ns )   --->   "%p_ZL13weight_memory_3_load = load i9 %p_ZL13weight_memory_3_addr" [src/snn_top_hls.cpp:484]   --->   Operation 305 'load' 'p_ZL13weight_memory_3_load' <Predicate = true> <Delay = 3.25> <CoreInst = "RAM_2P_BRAM">   --->   Core 90 'RAM_2P_BRAM' <Latency = 1> <II = 1> <Delay = 3.25> <Storage> <Opcode : 'load' 'store'> <Ports = 2> <Width = 8> <Depth = 512> <RAM>
+ST_14 : Operation 306 [1/2] ( I:3.25ns O:3.25ns )   --->   "%p_ZL13weight_memory_4_load = load i9 %p_ZL13weight_memory_4_addr" [src/snn_top_hls.cpp:484]   --->   Operation 306 'load' 'p_ZL13weight_memory_4_load' <Predicate = true> <Delay = 3.25> <CoreInst = "RAM_2P_BRAM">   --->   Core 90 'RAM_2P_BRAM' <Latency = 1> <II = 1> <Delay = 3.25> <Storage> <Opcode : 'load' 'store'> <Ports = 2> <Width = 8> <Depth = 512> <RAM>
+ST_14 : Operation 307 [1/2] ( I:3.25ns O:3.25ns )   --->   "%p_ZL13weight_memory_5_load = load i9 %p_ZL13weight_memory_5_addr" [src/snn_top_hls.cpp:484]   --->   Operation 307 'load' 'p_ZL13weight_memory_5_load' <Predicate = true> <Delay = 3.25> <CoreInst = "RAM_2P_BRAM">   --->   Core 90 'RAM_2P_BRAM' <Latency = 1> <II = 1> <Delay = 3.25> <Storage> <Opcode : 'load' 'store'> <Ports = 2> <Width = 8> <Depth = 512> <RAM>
+ST_14 : Operation 308 [1/2] ( I:3.25ns O:3.25ns )   --->   "%p_ZL13weight_memory_6_load = load i9 %p_ZL13weight_memory_6_addr" [src/snn_top_hls.cpp:484]   --->   Operation 308 'load' 'p_ZL13weight_memory_6_load' <Predicate = true> <Delay = 3.25> <CoreInst = "RAM_2P_BRAM">   --->   Core 90 'RAM_2P_BRAM' <Latency = 1> <II = 1> <Delay = 3.25> <Storage> <Opcode : 'load' 'store'> <Ports = 2> <Width = 8> <Depth = 512> <RAM>
+ST_14 : Operation 309 [1/2] ( I:3.25ns O:3.25ns )   --->   "%p_ZL13weight_memory_7_load = load i9 %p_ZL13weight_memory_7_addr" [src/snn_top_hls.cpp:484]   --->   Operation 309 'load' 'p_ZL13weight_memory_7_load' <Predicate = true> <Delay = 3.25> <CoreInst = "RAM_2P_BRAM">   --->   Core 90 'RAM_2P_BRAM' <Latency = 1> <II = 1> <Delay = 3.25> <Storage> <Opcode : 'load' 'store'> <Ports = 2> <Width = 8> <Depth = 512> <RAM>
+ST_14 : Operation 310 [1/1] (2.30ns)   --->   "%tmp_s = sparsemux i8 @_ssdm_op_SparseMux.ap_auto.8i8.i8.i3, i3 0, i8 %p_ZL13weight_memory_0_load, i3 1, i8 %p_ZL13weight_memory_1_load, i3 2, i8 %p_ZL13weight_memory_2_load, i3 3, i8 %p_ZL13weight_memory_3_load, i3 4, i8 %p_ZL13weight_memory_4_load, i3 5, i8 %p_ZL13weight_memory_5_load, i3 6, i8 %p_ZL13weight_memory_6_load, i3 7, i8 %p_ZL13weight_memory_7_load, i8 0, i3 %trunc_ln484" [src/snn_top_hls.cpp:484]   --->   Operation 310 'sparsemux' 'tmp_s' <Predicate = true> <Delay = 2.30> <CoreInst = "BinarySparseMux_DontCare">   --->   Core 137 'BinarySparseMux_DontCare' <Latency = 0> <II = 1> <Delay = 2.30> <FuncUnit> <Opcode : 'sparsemux'> <InPorts = 2> <OutPorts = 1>
+ST_14 : Operation 311 [1/1] (0.00ns)   --->   "%w_pkt_data = bitconcatenate i24 @_ssdm_op_BitConcatenate.i24.i8.i8.i8, i8 %tmp_s, i8 %zext_ln484, i8 %zext_ln483" [src/snn_top_hls.cpp:484]   --->   Operation 311 'bitconcatenate' 'w_pkt_data' <Predicate = true> <Delay = 0.00>
+ST_14 : Operation 312 [1/1] (0.00ns)   --->   "%zext_ln484_3 = zext i24 %w_pkt_data" [src/snn_top_hls.cpp:484]   --->   Operation 312 'zext' 'zext_ln484_3' <Predicate = true> <Delay = 0.00>
+ST_14 : Operation 313 [1/1] (1.82ns)   --->   "%icmp_ln487 = icmp_eq  i6 %read_row_load, i6 63" [src/snn_top_hls.cpp:487]   --->   Operation 313 'icmp' 'icmp_ln487' <Predicate = true> <Delay = 1.82> <CoreInst = "Cmp">   --->   Core 9 'Cmp' <Latency = 0> <II = 1> <Delay = 1.82> <FuncUnit> <Opcode : 'seteq' 'setne' 'setle' 'setge' 'setlt' 'setgt'> <InPorts = 2> <OutPorts = 1>
+ST_14 : Operation 314 [1/1] (1.82ns)   --->   "%icmp_ln487_1 = icmp_eq  i6 %read_col_load, i6 63" [src/snn_top_hls.cpp:487]   --->   Operation 314 'icmp' 'icmp_ln487_1' <Predicate = true> <Delay = 1.82> <CoreInst = "Cmp">   --->   Core 9 'Cmp' <Latency = 0> <II = 1> <Delay = 1.82> <FuncUnit> <Opcode : 'seteq' 'setne' 'setle' 'setge' 'setlt' 'setgt'> <InPorts = 2> <OutPorts = 1>
+ST_14 : Operation 315 [1/1] (0.97ns)   --->   "%w_pkt_last = and i1 %icmp_ln487, i1 %icmp_ln487_1" [src/snn_top_hls.cpp:487]   --->   Operation 315 'and' 'w_pkt_last' <Predicate = true> <Delay = 0.97> <CoreInst = "LogicGate">   --->   Core 74 'LogicGate' <Latency = 0> <II = 1> <Delay = 0.97> <FuncUnit> <Opcode : 'and' 'or' 'xor'> <InPorts = 2> <OutPorts = 1>
+ST_14 : Operation 316 [2/2] (1.29ns)   --->   "%write_ln491 = write void @_ssdm_op_Write.axis.volatile.i32P0A.i4P0A.i4P0A.i1P0A.i1P0A.i1P0A.i1P0A, i32 %m_axis_weights_V_data_V, i4 %m_axis_weights_V_keep_V, i4 %m_axis_weights_V_strb_V, i1 %m_axis_weights_V_user_V, i1 %m_axis_weights_V_last_V, i1 %m_axis_weights_V_id_V, i1 %m_axis_weights_V_dest_V, i32 %zext_ln484_3, i4 15, i4 15, i1 0, i1 %w_pkt_last, i1 0, i1 0" [src/snn_top_hls.cpp:491]   --->   Operation 316 'write' 'write_ln491' <Predicate = true> <Delay = 1.29> <CoreInst = "regslice">   --->   Core 135 'regslice' <Latency = 0> <II = 1> <Delay = 1.86> <Adapter> <Opcode : 'read' 'write'>
+
+State 15 <SV = 14> <Delay = 3.41>
+ST_15 : Operation 317 [1/1] (0.00ns)   --->   "%zext_ln483_1 = zext i6 %read_row_load" [src/snn_top_hls.cpp:483]   --->   Operation 317 'zext' 'zext_ln483_1' <Predicate = (weight_read_mode & tmp_7)> <Delay = 0.00>
+ST_15 : Operation 318 [1/1] (0.00ns)   --->   "%zext_ln484_1 = zext i6 %read_col_load" [src/snn_top_hls.cpp:484]   --->   Operation 318 'zext' 'zext_ln484_1' <Predicate = (weight_read_mode & tmp_7)> <Delay = 0.00>
+ST_15 : Operation 319 [1/2] ( I:1.29ns O:1.29ns )   --->   "%write_ln491 = write void @_ssdm_op_Write.axis.volatile.i32P0A.i4P0A.i4P0A.i1P0A.i1P0A.i1P0A.i1P0A, i32 %m_axis_weights_V_data_V, i4 %m_axis_weights_V_keep_V, i4 %m_axis_weights_V_strb_V, i1 %m_axis_weights_V_user_V, i1 %m_axis_weights_V_last_V, i1 %m_axis_weights_V_id_V, i1 %m_axis_weights_V_dest_V, i32 %zext_ln484_3, i4 15, i4 15, i1 0, i1 %w_pkt_last, i1 0, i1 0" [src/snn_top_hls.cpp:491]   --->   Operation 319 'write' 'write_ln491' <Predicate = (weight_read_mode & tmp_7)> <Delay = 1.29> <CoreInst = "regslice">   --->   Core 135 'regslice' <Latency = 0> <II = 1> <Delay = 1.86> <Adapter> <Opcode : 'read' 'write'>
+ST_15 : Operation 320 [1/1] (1.82ns)   --->   "%add_ln493 = add i7 %zext_ln484_1, i7 1" [src/snn_top_hls.cpp:493]   --->   Operation 320 'add' 'add_ln493' <Predicate = (weight_read_mode & tmp_7)> <Delay = 1.82> <CoreInst = "Adder">   --->   Core 1 'Adder' <Latency = 0> <II = 1> <Delay = 1.82> <FuncUnit> <Opcode : 'add' 'sub'> <InPorts = 2> <OutPorts = 1>
+ST_15 : Operation 321 [1/1] (0.00ns)   --->   "%trunc_ln494 = trunc i7 %add_ln493" [src/snn_top_hls.cpp:494]   --->   Operation 321 'trunc' 'trunc_ln494' <Predicate = (weight_read_mode & tmp_7)> <Delay = 0.00>
+ST_15 : Operation 322 [1/1] (0.00ns)   --->   "%tmp_11 = bitselect i1 @_ssdm_op_BitSelect.i1.i7.i32, i7 %add_ln493, i32 6" [src/snn_top_hls.cpp:494]   --->   Operation 322 'bitselect' 'tmp_11' <Predicate = (weight_read_mode & tmp_7)> <Delay = 0.00>
+ST_15 : Operation 323 [1/1] (1.58ns)   --->   "%br_ln494 = br i1 %tmp_11, void %mergeST3, void %if.then182" [src/snn_top_hls.cpp:494]   --->   Operation 323 'br' 'br_ln494' <Predicate = (weight_read_mode & tmp_7)> <Delay = 1.58>
+ST_15 : Operation 324 [1/1] (1.82ns)   --->   "%add_ln496 = add i7 %zext_ln483_1, i7 1" [src/snn_top_hls.cpp:496]   --->   Operation 324 'add' 'add_ln496' <Predicate = (weight_read_mode & tmp_7 & tmp_11)> <Delay = 1.82> <CoreInst = "Adder">   --->   Core 1 'Adder' <Latency = 0> <II = 1> <Delay = 1.82> <FuncUnit> <Opcode : 'add' 'sub'> <InPorts = 2> <OutPorts = 1>
+ST_15 : Operation 325 [1/1] (0.00ns)   --->   "%trunc_ln497 = trunc i7 %add_ln496" [src/snn_top_hls.cpp:497]   --->   Operation 325 'trunc' 'trunc_ln497' <Predicate = (weight_read_mode & tmp_7 & tmp_11)> <Delay = 0.00>
+ST_15 : Operation 326 [1/1] (0.00ns)   --->   "%tmp_12 = bitselect i1 @_ssdm_op_BitSelect.i1.i7.i32, i7 %add_ln496, i32 6" [src/snn_top_hls.cpp:497]   --->   Operation 326 'bitselect' 'tmp_12' <Predicate = (weight_read_mode & tmp_7 & tmp_11)> <Delay = 0.00>
+ST_15 : Operation 327 [1/1] (1.18ns)   --->   "%select_ln497 = select i1 %tmp_12, i6 0, i6 %trunc_ln497" [src/snn_top_hls.cpp:497]   --->   Operation 327 'select' 'select_ln497' <Predicate = (weight_read_mode & tmp_7 & tmp_11)> <Delay = 1.18> <CoreInst = "Sel">   --->   Core 73 'Sel' <Latency = 0> <II = 1> <Delay = 1.18> <FuncUnit> <Opcode : 'select'> <InPorts = 3> <OutPorts = 1>
+ST_15 : Operation 328 [1/1] (0.00ns)   --->   "%store_ln497 = store i6 %select_ln497, i6 %read_row" [src/snn_top_hls.cpp:497]   --->   Operation 328 'store' 'store_ln497' <Predicate = (weight_read_mode & tmp_7 & tmp_11)> <Delay = 0.00>
+ST_15 : Operation 329 [1/1] (1.58ns)   --->   "%br_ln500 = br void %mergeST3" [src/snn_top_hls.cpp:500]   --->   Operation 329 'br' 'br_ln500' <Predicate = (weight_read_mode & tmp_7 & tmp_11)> <Delay = 1.58>
+ST_15 : Operation 330 [1/1] (0.00ns)   --->   "%read_col_new_0 = phi i6 0, void %if.then182, i6 %trunc_ln494, void %init.end150" [src/snn_top_hls.cpp:494]   --->   Operation 330 'phi' 'read_col_new_0' <Predicate = (weight_read_mode & tmp_7)> <Delay = 0.00>
+ST_15 : Operation 331 [1/1] (0.00ns)   --->   "%store_ln493 = store i6 %read_col_new_0, i6 %read_col" [src/snn_top_hls.cpp:493]   --->   Operation 331 'store' 'store_ln493' <Predicate = (weight_read_mode & tmp_7)> <Delay = 0.00>
+ST_15 : Operation 332 [1/1] (0.00ns)   --->   "%br_ln501 = br void %if.end190" [src/snn_top_hls.cpp:501]   --->   Operation 332 'br' 'br_ln501' <Predicate = (weight_read_mode & tmp_7)> <Delay = 0.00>
+ST_15 : Operation 333 [1/1] (2.55ns)   --->   "%add_ln507 = add i32 %timestamp_loc_0, i32 1" [src/snn_top_hls.cpp:507]   --->   Operation 333 'add' 'add_ln507' <Predicate = (enable)> <Delay = 2.55> <CoreInst = "Adder">   --->   Core 1 'Adder' <Latency = 0> <II = 1> <Delay = 2.55> <FuncUnit> <Opcode : 'add' 'sub'> <InPorts = 2> <OutPorts = 1>
+ST_15 : Operation 334 [1/1] (0.97ns)   --->   "%or_ln506 = or i1 %enable, i1 %timestamp_flag_0" [src/snn_top_hls.cpp:506]   --->   Operation 334 'or' 'or_ln506' <Predicate = true> <Delay = 0.97> <CoreInst = "LogicGate">   --->   Core 74 'LogicGate' <Latency = 0> <II = 1> <Delay = 0.97> <FuncUnit> <Opcode : 'and' 'or' 'xor'> <InPorts = 2> <OutPorts = 1>
+ST_15 : Operation 335 [1/1] (0.69ns)   --->   "%select_ln506 = select i1 %enable, i32 %add_ln507, i32 0" [src/snn_top_hls.cpp:506]   --->   Operation 335 'select' 'select_ln506' <Predicate = true> <Delay = 0.69> <CoreInst = "Sel">   --->   Core 73 'Sel' <Latency = 0> <II = 1> <Delay = 0.69> <FuncUnit> <Opcode : 'select'> <InPorts = 3> <OutPorts = 1>
+ST_15 : Operation 336 [1/1] ( I:0.00ns O:0.00ns )   --->   "%tmp_1 = nbreadreq i1 @_ssdm_op_NbReadReq.ap_fifo.i64P0A, i64 %weight_update_fifo, i32 1" [src/snn_top_hls.cpp:517]   --->   Operation 336 'nbreadreq' 'tmp_1' <Predicate = true> <Delay = 0.00> <CoreInst = "FIFO">   --->   Core 77 'FIFO' <Latency = 0> <II = 1> <Delay = 3.56> <Storage> <Opcode : 'read' 'write' 'nbread' 'nbwrite'> <Ports = 0> <Width = 64> <Depth = 64> <FIFO>
+ST_15 : Operation 337 [1/1] (0.00ns)   --->   "%status = bitconcatenate i5 @_ssdm_op_BitConcatenate.i5.i1.i1.i1.i1.i1, i1 %learning_params_rstdp_enable, i1 %tmp_1, i1 %learning_enable, i1 %snn_busy_read, i1 %snn_ready_read" [src/snn_top_hls.cpp:518]   --->   Operation 337 'bitconcatenate' 'status' <Predicate = true> <Delay = 0.00>
+ST_15 : Operation 338 [1/1] (0.00ns)   --->   "%zext_ln519 = zext i5 %status" [src/snn_top_hls.cpp:519]   --->   Operation 338 'zext' 'zext_ln519' <Predicate = true> <Delay = 0.00>
+ST_15 : Operation 339 [1/1] (1.00ns)   --->   "%write_ln521 = write void @_ssdm_op_Write.s_axilite.i32P0A, i32 %status_reg, i32 %zext_ln519" [src/snn_top_hls.cpp:521]   --->   Operation 339 'write' 'write_ln521' <Predicate = true> <Delay = 1.00> <CoreInst = "s_axilite">   --->   Core 112 's_axilite' <Latency = 0> <II = 1> <Delay = 1.00> <Adapter> <Opcode : 'read' 'write'>
+ST_15 : Operation 340 [1/1] (1.00ns)   --->   "%write_ln522 = write void @_ssdm_op_Write.s_axilite.i32P0A, i32 %spike_count_reg, i32 %spike_counter_loc_2" [src/snn_top_hls.cpp:522]   --->   Operation 340 'write' 'write_ln522' <Predicate = true> <Delay = 1.00> <CoreInst = "s_axilite">   --->   Core 112 's_axilite' <Latency = 0> <II = 1> <Delay = 1.00> <Adapter> <Opcode : 'read' 'write'>
+ST_15 : Operation 341 [1/1] (1.00ns)   --->   "%write_ln523 = write void @_ssdm_op_Write.s_axilite.i32P0A, i32 %version_reg, i32 539300357" [src/snn_top_hls.cpp:523]   --->   Operation 341 'write' 'write_ln523' <Predicate = true> <Delay = 1.00> <CoreInst = "s_axilite">   --->   Core 112 's_axilite' <Latency = 0> <II = 1> <Delay = 1.00> <Adapter> <Opcode : 'read' 'write'>
+ST_15 : Operation 342 [1/1] (0.00ns)   --->   "%br_ln506 = br i1 %or_ln506, void %if.end193.new, void %mergeST" [src/snn_top_hls.cpp:506]   --->   Operation 342 'br' 'br_ln506' <Predicate = true> <Delay = 0.00>
+ST_15 : Operation 343 [1/1] (0.00ns)   --->   "%store_ln358 = store i32 %select_ln506, i32 %timestamp" [src/snn_top_hls.cpp:358]   --->   Operation 343 'store' 'store_ln358' <Predicate = (or_ln506)> <Delay = 0.00>
+ST_15 : Operation 344 [1/1] (0.00ns)   --->   "%br_ln0 = br void %if.end193.new"   --->   Operation 344 'br' 'br_ln0' <Predicate = (or_ln506)> <Delay = 0.00>
+ST_15 : Operation 345 [2/2] (0.00ns)   --->   "%call_ln0 = call void @snn_top_hls_Pipeline_VITIS_LOOP_529_1, i12 %weight_sum_loc, i8 %p_ZL13weight_memory_0, i8 %p_ZL13weight_memory_1, i8 %p_ZL13weight_memory_2, i8 %p_ZL13weight_memory_3, i8 %p_ZL13weight_memory_4, i8 %p_ZL13weight_memory_5, i8 %p_ZL13weight_memory_6, i8 %p_ZL13weight_memory_7"   --->   Operation 345 'call' 'call_ln0' <Predicate = true> <Delay = 0.00> <CoreType = "Generic">   --->   Generic Core
+ST_15 : Operation 346 [1/1] (0.00ns)   --->   "%write_ln0 = write void @_ssdm_op_Write.ap_none.i1P0A, i1 %spike_in_valid, i1 %spike_in_valid_local_0"   --->   Operation 346 'write' 'write_ln0' <Predicate = true> <Delay = 0.00>
+ST_15 : Operation 347 [1/1] (0.00ns)   --->   "%write_ln412 = write void @_ssdm_op_Write.ap_none.i8P0A, i8 %spike_in_neuron_id, i8 %spike_in_neuron_id_local_0" [src/snn_top_hls.cpp:412]   --->   Operation 347 'write' 'write_ln412' <Predicate = true> <Delay = 0.00>
+ST_15 : Operation 348 [1/1] (0.00ns)   --->   "%write_ln413 = write void @_ssdm_op_Write.ap_none.i8P0A, i8 %spike_in_weight, i8 %spike_in_weight_local_0" [src/snn_top_hls.cpp:413]   --->   Operation 348 'write' 'write_ln413' <Predicate = true> <Delay = 0.00>
+
+State 16 <SV = 15> <Delay = 0.00>
+ST_16 : Operation 349 [1/2] (0.00ns)   --->   "%call_ln0 = call void @snn_top_hls_Pipeline_VITIS_LOOP_529_1, i12 %weight_sum_loc, i8 %p_ZL13weight_memory_0, i8 %p_ZL13weight_memory_1, i8 %p_ZL13weight_memory_2, i8 %p_ZL13weight_memory_3, i8 %p_ZL13weight_memory_4, i8 %p_ZL13weight_memory_5, i8 %p_ZL13weight_memory_6, i8 %p_ZL13weight_memory_7"   --->   Operation 349 'call' 'call_ln0' <Predicate = true> <Delay = 0.00> <CoreType = "Generic">   --->   Generic Core
+
+State 17 <SV = 16> <Delay = 1.58>
+ST_17 : Operation 350 [1/1] (0.00ns)   --->   "%weight_sum_loc_load = load i12 %weight_sum_loc"   --->   Operation 350 'load' 'weight_sum_loc_load' <Predicate = true> <Delay = 0.00>
+ST_17 : Operation 351 [2/2] (1.58ns)   --->   "%call_ln0 = call void @snn_top_hls_Pipeline_VITIS_LOOP_529_11, i12 %weight_sum_loc_load, i13 %weight_sum_2_loc, i8 %p_ZL13weight_memory_0, i8 %p_ZL13weight_memory_1, i8 %p_ZL13weight_memory_2, i8 %p_ZL13weight_memory_3, i8 %p_ZL13weight_memory_4, i8 %p_ZL13weight_memory_5, i8 %p_ZL13weight_memory_6, i8 %p_ZL13weight_memory_7"   --->   Operation 351 'call' 'call_ln0' <Predicate = true> <Delay = 1.58> <CoreType = "Generic">   --->   Generic Core
+
+State 18 <SV = 17> <Delay = 0.00>
+ST_18 : Operation 352 [1/2] (0.00ns)   --->   "%call_ln0 = call void @snn_top_hls_Pipeline_VITIS_LOOP_529_11, i12 %weight_sum_loc_load, i13 %weight_sum_2_loc, i8 %p_ZL13weight_memory_0, i8 %p_ZL13weight_memory_1, i8 %p_ZL13weight_memory_2, i8 %p_ZL13weight_memory_3, i8 %p_ZL13weight_memory_4, i8 %p_ZL13weight_memory_5, i8 %p_ZL13weight_memory_6, i8 %p_ZL13weight_memory_7"   --->   Operation 352 'call' 'call_ln0' <Predicate = true> <Delay = 0.00> <CoreType = "Generic">   --->   Generic Core
+
+State 19 <SV = 18> <Delay = 1.58>
+ST_19 : Operation 353 [1/1] (0.00ns)   --->   "%weight_sum_2_loc_load = load i13 %weight_sum_2_loc"   --->   Operation 353 'load' 'weight_sum_2_loc_load' <Predicate = true> <Delay = 0.00>
+ST_19 : Operation 354 [2/2] (1.58ns)   --->   "%call_ln0 = call void @snn_top_hls_Pipeline_VITIS_LOOP_529_12, i13 %weight_sum_2_loc_load, i14 %weight_sum_4_loc, i8 %p_ZL13weight_memory_0, i8 %p_ZL13weight_memory_1, i8 %p_ZL13weight_memory_2, i8 %p_ZL13weight_memory_3, i8 %p_ZL13weight_memory_4, i8 %p_ZL13weight_memory_5, i8 %p_ZL13weight_memory_6, i8 %p_ZL13weight_memory_7"   --->   Operation 354 'call' 'call_ln0' <Predicate = true> <Delay = 1.58> <CoreType = "Generic">   --->   Generic Core
+
+State 20 <SV = 19> <Delay = 0.00>
+ST_20 : Operation 355 [1/2] (0.00ns)   --->   "%call_ln0 = call void @snn_top_hls_Pipeline_VITIS_LOOP_529_12, i13 %weight_sum_2_loc_load, i14 %weight_sum_4_loc, i8 %p_ZL13weight_memory_0, i8 %p_ZL13weight_memory_1, i8 %p_ZL13weight_memory_2, i8 %p_ZL13weight_memory_3, i8 %p_ZL13weight_memory_4, i8 %p_ZL13weight_memory_5, i8 %p_ZL13weight_memory_6, i8 %p_ZL13weight_memory_7"   --->   Operation 355 'call' 'call_ln0' <Predicate = true> <Delay = 0.00> <CoreType = "Generic">   --->   Generic Core
+
+State 21 <SV = 20> <Delay = 1.58>
+ST_21 : Operation 356 [1/1] (0.00ns)   --->   "%weight_sum_4_loc_load = load i14 %weight_sum_4_loc"   --->   Operation 356 'load' 'weight_sum_4_loc_load' <Predicate = true> <Delay = 0.00>
+ST_21 : Operation 357 [2/2] (1.58ns)   --->   "%call_ln0 = call void @snn_top_hls_Pipeline_VITIS_LOOP_529_13, i14 %weight_sum_4_loc_load, i14 %weight_sum_6_loc, i8 %p_ZL13weight_memory_0, i8 %p_ZL13weight_memory_1, i8 %p_ZL13weight_memory_2, i8 %p_ZL13weight_memory_3, i8 %p_ZL13weight_memory_4, i8 %p_ZL13weight_memory_5, i8 %p_ZL13weight_memory_6, i8 %p_ZL13weight_memory_7"   --->   Operation 357 'call' 'call_ln0' <Predicate = true> <Delay = 1.58> <CoreType = "Generic">   --->   Generic Core
+
+State 22 <SV = 21> <Delay = 0.00>
+ST_22 : Operation 358 [1/2] (0.00ns)   --->   "%call_ln0 = call void @snn_top_hls_Pipeline_VITIS_LOOP_529_13, i14 %weight_sum_4_loc_load, i14 %weight_sum_6_loc, i8 %p_ZL13weight_memory_0, i8 %p_ZL13weight_memory_1, i8 %p_ZL13weight_memory_2, i8 %p_ZL13weight_memory_3, i8 %p_ZL13weight_memory_4, i8 %p_ZL13weight_memory_5, i8 %p_ZL13weight_memory_6, i8 %p_ZL13weight_memory_7"   --->   Operation 358 'call' 'call_ln0' <Predicate = true> <Delay = 0.00> <CoreType = "Generic">   --->   Generic Core
+
+State 23 <SV = 22> <Delay = 1.58>
+ST_23 : Operation 359 [1/1] (0.00ns)   --->   "%weight_sum_6_loc_load = load i14 %weight_sum_6_loc"   --->   Operation 359 'load' 'weight_sum_6_loc_load' <Predicate = true> <Delay = 0.00>
+ST_23 : Operation 360 [2/2] (1.58ns)   --->   "%call_ln0 = call void @snn_top_hls_Pipeline_VITIS_LOOP_529_14, i14 %weight_sum_6_loc_load, i15 %weight_sum_8_loc, i8 %p_ZL13weight_memory_0, i8 %p_ZL13weight_memory_1, i8 %p_ZL13weight_memory_2, i8 %p_ZL13weight_memory_3, i8 %p_ZL13weight_memory_4, i8 %p_ZL13weight_memory_5, i8 %p_ZL13weight_memory_6, i8 %p_ZL13weight_memory_7"   --->   Operation 360 'call' 'call_ln0' <Predicate = true> <Delay = 1.58> <CoreType = "Generic">   --->   Generic Core
+
+State 24 <SV = 23> <Delay = 0.00>
+ST_24 : Operation 361 [1/2] (0.00ns)   --->   "%call_ln0 = call void @snn_top_hls_Pipeline_VITIS_LOOP_529_14, i14 %weight_sum_6_loc_load, i15 %weight_sum_8_loc, i8 %p_ZL13weight_memory_0, i8 %p_ZL13weight_memory_1, i8 %p_ZL13weight_memory_2, i8 %p_ZL13weight_memory_3, i8 %p_ZL13weight_memory_4, i8 %p_ZL13weight_memory_5, i8 %p_ZL13weight_memory_6, i8 %p_ZL13weight_memory_7"   --->   Operation 361 'call' 'call_ln0' <Predicate = true> <Delay = 0.00> <CoreType = "Generic">   --->   Generic Core
+
+State 25 <SV = 24> <Delay = 1.58>
+ST_25 : Operation 362 [1/1] (0.00ns)   --->   "%weight_sum_8_loc_load = load i15 %weight_sum_8_loc"   --->   Operation 362 'load' 'weight_sum_8_loc_load' <Predicate = true> <Delay = 0.00>
+ST_25 : Operation 363 [2/2] (1.58ns)   --->   "%call_ln0 = call void @snn_top_hls_Pipeline_VITIS_LOOP_529_15, i15 %weight_sum_8_loc_load, i15 %weight_sum_10_loc, i8 %p_ZL13weight_memory_0, i8 %p_ZL13weight_memory_1, i8 %p_ZL13weight_memory_2, i8 %p_ZL13weight_memory_3, i8 %p_ZL13weight_memory_4, i8 %p_ZL13weight_memory_5, i8 %p_ZL13weight_memory_6, i8 %p_ZL13weight_memory_7"   --->   Operation 363 'call' 'call_ln0' <Predicate = true> <Delay = 1.58> <CoreType = "Generic">   --->   Generic Core
+
+State 26 <SV = 25> <Delay = 0.00>
+ST_26 : Operation 364 [1/2] (0.00ns)   --->   "%call_ln0 = call void @snn_top_hls_Pipeline_VITIS_LOOP_529_15, i15 %weight_sum_8_loc_load, i15 %weight_sum_10_loc, i8 %p_ZL13weight_memory_0, i8 %p_ZL13weight_memory_1, i8 %p_ZL13weight_memory_2, i8 %p_ZL13weight_memory_3, i8 %p_ZL13weight_memory_4, i8 %p_ZL13weight_memory_5, i8 %p_ZL13weight_memory_6, i8 %p_ZL13weight_memory_7"   --->   Operation 364 'call' 'call_ln0' <Predicate = true> <Delay = 0.00> <CoreType = "Generic">   --->   Generic Core
+
+State 27 <SV = 26> <Delay = 1.58>
+ST_27 : Operation 365 [1/1] (0.00ns)   --->   "%weight_sum_10_loc_load = load i15 %weight_sum_10_loc"   --->   Operation 365 'load' 'weight_sum_10_loc_load' <Predicate = true> <Delay = 0.00>
+ST_27 : Operation 366 [2/2] (1.58ns)   --->   "%call_ln0 = call void @snn_top_hls_Pipeline_VITIS_LOOP_529_16, i15 %weight_sum_10_loc_load, i15 %weight_sum_12_loc, i8 %p_ZL13weight_memory_0, i8 %p_ZL13weight_memory_1, i8 %p_ZL13weight_memory_2, i8 %p_ZL13weight_memory_3, i8 %p_ZL13weight_memory_4, i8 %p_ZL13weight_memory_5, i8 %p_ZL13weight_memory_6, i8 %p_ZL13weight_memory_7"   --->   Operation 366 'call' 'call_ln0' <Predicate = true> <Delay = 1.58> <CoreType = "Generic">   --->   Generic Core
+
+State 28 <SV = 27> <Delay = 0.00>
+ST_28 : Operation 367 [1/2] (0.00ns)   --->   "%call_ln0 = call void @snn_top_hls_Pipeline_VITIS_LOOP_529_16, i15 %weight_sum_10_loc_load, i15 %weight_sum_12_loc, i8 %p_ZL13weight_memory_0, i8 %p_ZL13weight_memory_1, i8 %p_ZL13weight_memory_2, i8 %p_ZL13weight_memory_3, i8 %p_ZL13weight_memory_4, i8 %p_ZL13weight_memory_5, i8 %p_ZL13weight_memory_6, i8 %p_ZL13weight_memory_7"   --->   Operation 367 'call' 'call_ln0' <Predicate = true> <Delay = 0.00> <CoreType = "Generic">   --->   Generic Core
+
+State 29 <SV = 28> <Delay = 1.58>
+ST_29 : Operation 368 [1/1] (0.00ns)   --->   "%weight_sum_12_loc_load = load i15 %weight_sum_12_loc"   --->   Operation 368 'load' 'weight_sum_12_loc_load' <Predicate = true> <Delay = 0.00>
+ST_29 : Operation 369 [2/2] (1.58ns)   --->   "%call_ln0 = call void @snn_top_hls_Pipeline_VITIS_LOOP_529_17, i15 %weight_sum_12_loc_load, i15 %weight_sum_14_loc, i8 %p_ZL13weight_memory_0, i8 %p_ZL13weight_memory_1, i8 %p_ZL13weight_memory_2, i8 %p_ZL13weight_memory_3, i8 %p_ZL13weight_memory_4, i8 %p_ZL13weight_memory_5, i8 %p_ZL13weight_memory_6, i8 %p_ZL13weight_memory_7"   --->   Operation 369 'call' 'call_ln0' <Predicate = true> <Delay = 1.58> <CoreType = "Generic">   --->   Generic Core
+
+State 30 <SV = 29> <Delay = 0.00>
+ST_30 : Operation 370 [1/2] (0.00ns)   --->   "%call_ln0 = call void @snn_top_hls_Pipeline_VITIS_LOOP_529_17, i15 %weight_sum_12_loc_load, i15 %weight_sum_14_loc, i8 %p_ZL13weight_memory_0, i8 %p_ZL13weight_memory_1, i8 %p_ZL13weight_memory_2, i8 %p_ZL13weight_memory_3, i8 %p_ZL13weight_memory_4, i8 %p_ZL13weight_memory_5, i8 %p_ZL13weight_memory_6, i8 %p_ZL13weight_memory_7"   --->   Operation 370 'call' 'call_ln0' <Predicate = true> <Delay = 0.00> <CoreType = "Generic">   --->   Generic Core
+
+State 31 <SV = 30> <Delay = 1.58>
+ST_31 : Operation 371 [1/1] (0.00ns)   --->   "%weight_sum_14_loc_load = load i15 %weight_sum_14_loc"   --->   Operation 371 'load' 'weight_sum_14_loc_load' <Predicate = true> <Delay = 0.00>
+ST_31 : Operation 372 [2/2] (1.58ns)   --->   "%call_ln0 = call void @snn_top_hls_Pipeline_VITIS_LOOP_529_18, i15 %weight_sum_14_loc_load, i16 %weight_sum_16_loc, i8 %p_ZL13weight_memory_0, i8 %p_ZL13weight_memory_1, i8 %p_ZL13weight_memory_2, i8 %p_ZL13weight_memory_3, i8 %p_ZL13weight_memory_4, i8 %p_ZL13weight_memory_5, i8 %p_ZL13weight_memory_6, i8 %p_ZL13weight_memory_7"   --->   Operation 372 'call' 'call_ln0' <Predicate = true> <Delay = 1.58> <CoreType = "Generic">   --->   Generic Core
+
+State 32 <SV = 31> <Delay = 0.00>
+ST_32 : Operation 373 [1/2] (0.00ns)   --->   "%call_ln0 = call void @snn_top_hls_Pipeline_VITIS_LOOP_529_18, i15 %weight_sum_14_loc_load, i16 %weight_sum_16_loc, i8 %p_ZL13weight_memory_0, i8 %p_ZL13weight_memory_1, i8 %p_ZL13weight_memory_2, i8 %p_ZL13weight_memory_3, i8 %p_ZL13weight_memory_4, i8 %p_ZL13weight_memory_5, i8 %p_ZL13weight_memory_6, i8 %p_ZL13weight_memory_7"   --->   Operation 373 'call' 'call_ln0' <Predicate = true> <Delay = 0.00> <CoreType = "Generic">   --->   Generic Core
+
+State 33 <SV = 32> <Delay = 1.58>
+ST_33 : Operation 374 [1/1] (0.00ns)   --->   "%weight_sum_16_loc_load = load i16 %weight_sum_16_loc"   --->   Operation 374 'load' 'weight_sum_16_loc_load' <Predicate = true> <Delay = 0.00>
+ST_33 : Operation 375 [2/2] (1.58ns)   --->   "%call_ln0 = call void @snn_top_hls_Pipeline_VITIS_LOOP_529_19, i16 %weight_sum_16_loc_load, i16 %weight_sum_18_loc, i8 %p_ZL13weight_memory_0, i8 %p_ZL13weight_memory_1, i8 %p_ZL13weight_memory_2, i8 %p_ZL13weight_memory_3, i8 %p_ZL13weight_memory_4, i8 %p_ZL13weight_memory_5, i8 %p_ZL13weight_memory_6, i8 %p_ZL13weight_memory_7"   --->   Operation 375 'call' 'call_ln0' <Predicate = true> <Delay = 1.58> <CoreType = "Generic">   --->   Generic Core
+
+State 34 <SV = 33> <Delay = 0.00>
+ST_34 : Operation 376 [1/2] (0.00ns)   --->   "%call_ln0 = call void @snn_top_hls_Pipeline_VITIS_LOOP_529_19, i16 %weight_sum_16_loc_load, i16 %weight_sum_18_loc, i8 %p_ZL13weight_memory_0, i8 %p_ZL13weight_memory_1, i8 %p_ZL13weight_memory_2, i8 %p_ZL13weight_memory_3, i8 %p_ZL13weight_memory_4, i8 %p_ZL13weight_memory_5, i8 %p_ZL13weight_memory_6, i8 %p_ZL13weight_memory_7"   --->   Operation 376 'call' 'call_ln0' <Predicate = true> <Delay = 0.00> <CoreType = "Generic">   --->   Generic Core
+
+State 35 <SV = 34> <Delay = 1.58>
+ST_35 : Operation 377 [1/1] (0.00ns)   --->   "%weight_sum_18_loc_load = load i16 %weight_sum_18_loc"   --->   Operation 377 'load' 'weight_sum_18_loc_load' <Predicate = true> <Delay = 0.00>
+ST_35 : Operation 378 [2/2] (1.58ns)   --->   "%call_ln0 = call void @snn_top_hls_Pipeline_VITIS_LOOP_529_110, i16 %weight_sum_18_loc_load, i16 %weight_sum_20_loc, i8 %p_ZL13weight_memory_0, i8 %p_ZL13weight_memory_1, i8 %p_ZL13weight_memory_2, i8 %p_ZL13weight_memory_3, i8 %p_ZL13weight_memory_4, i8 %p_ZL13weight_memory_5, i8 %p_ZL13weight_memory_6, i8 %p_ZL13weight_memory_7"   --->   Operation 378 'call' 'call_ln0' <Predicate = true> <Delay = 1.58> <CoreType = "Generic">   --->   Generic Core
+
+State 36 <SV = 35> <Delay = 0.00>
+ST_36 : Operation 379 [1/2] (0.00ns)   --->   "%call_ln0 = call void @snn_top_hls_Pipeline_VITIS_LOOP_529_110, i16 %weight_sum_18_loc_load, i16 %weight_sum_20_loc, i8 %p_ZL13weight_memory_0, i8 %p_ZL13weight_memory_1, i8 %p_ZL13weight_memory_2, i8 %p_ZL13weight_memory_3, i8 %p_ZL13weight_memory_4, i8 %p_ZL13weight_memory_5, i8 %p_ZL13weight_memory_6, i8 %p_ZL13weight_memory_7"   --->   Operation 379 'call' 'call_ln0' <Predicate = true> <Delay = 0.00> <CoreType = "Generic">   --->   Generic Core
+
+State 37 <SV = 36> <Delay = 1.58>
+ST_37 : Operation 380 [1/1] (0.00ns)   --->   "%weight_sum_20_loc_load = load i16 %weight_sum_20_loc"   --->   Operation 380 'load' 'weight_sum_20_loc_load' <Predicate = true> <Delay = 0.00>
+ST_37 : Operation 381 [2/2] (1.58ns)   --->   "%call_ln0 = call void @snn_top_hls_Pipeline_VITIS_LOOP_529_111, i16 %weight_sum_20_loc_load, i16 %weight_sum_22_loc, i8 %p_ZL13weight_memory_0, i8 %p_ZL13weight_memory_1, i8 %p_ZL13weight_memory_2, i8 %p_ZL13weight_memory_3, i8 %p_ZL13weight_memory_4, i8 %p_ZL13weight_memory_5, i8 %p_ZL13weight_memory_6, i8 %p_ZL13weight_memory_7"   --->   Operation 381 'call' 'call_ln0' <Predicate = true> <Delay = 1.58> <CoreType = "Generic">   --->   Generic Core
+
+State 38 <SV = 37> <Delay = 0.00>
+ST_38 : Operation 382 [1/2] (0.00ns)   --->   "%call_ln0 = call void @snn_top_hls_Pipeline_VITIS_LOOP_529_111, i16 %weight_sum_20_loc_load, i16 %weight_sum_22_loc, i8 %p_ZL13weight_memory_0, i8 %p_ZL13weight_memory_1, i8 %p_ZL13weight_memory_2, i8 %p_ZL13weight_memory_3, i8 %p_ZL13weight_memory_4, i8 %p_ZL13weight_memory_5, i8 %p_ZL13weight_memory_6, i8 %p_ZL13weight_memory_7"   --->   Operation 382 'call' 'call_ln0' <Predicate = true> <Delay = 0.00> <CoreType = "Generic">   --->   Generic Core
+
+State 39 <SV = 38> <Delay = 1.58>
+ST_39 : Operation 383 [1/1] (0.00ns)   --->   "%weight_sum_22_loc_load = load i16 %weight_sum_22_loc"   --->   Operation 383 'load' 'weight_sum_22_loc_load' <Predicate = true> <Delay = 0.00>
+ST_39 : Operation 384 [2/2] (1.58ns)   --->   "%call_ln0 = call void @snn_top_hls_Pipeline_VITIS_LOOP_529_112, i16 %weight_sum_22_loc_load, i16 %weight_sum_24_loc, i8 %p_ZL13weight_memory_0, i8 %p_ZL13weight_memory_1, i8 %p_ZL13weight_memory_2, i8 %p_ZL13weight_memory_3, i8 %p_ZL13weight_memory_4, i8 %p_ZL13weight_memory_5, i8 %p_ZL13weight_memory_6, i8 %p_ZL13weight_memory_7"   --->   Operation 384 'call' 'call_ln0' <Predicate = true> <Delay = 1.58> <CoreType = "Generic">   --->   Generic Core
+
+State 40 <SV = 39> <Delay = 0.00>
+ST_40 : Operation 385 [1/2] (0.00ns)   --->   "%call_ln0 = call void @snn_top_hls_Pipeline_VITIS_LOOP_529_112, i16 %weight_sum_22_loc_load, i16 %weight_sum_24_loc, i8 %p_ZL13weight_memory_0, i8 %p_ZL13weight_memory_1, i8 %p_ZL13weight_memory_2, i8 %p_ZL13weight_memory_3, i8 %p_ZL13weight_memory_4, i8 %p_ZL13weight_memory_5, i8 %p_ZL13weight_memory_6, i8 %p_ZL13weight_memory_7"   --->   Operation 385 'call' 'call_ln0' <Predicate = true> <Delay = 0.00> <CoreType = "Generic">   --->   Generic Core
+
+State 41 <SV = 40> <Delay = 1.58>
+ST_41 : Operation 386 [1/1] (0.00ns)   --->   "%weight_sum_24_loc_load = load i16 %weight_sum_24_loc"   --->   Operation 386 'load' 'weight_sum_24_loc_load' <Predicate = true> <Delay = 0.00>
+ST_41 : Operation 387 [2/2] (1.58ns)   --->   "%call_ln0 = call void @snn_top_hls_Pipeline_VITIS_LOOP_529_113, i16 %weight_sum_24_loc_load, i16 %weight_sum_26_loc, i8 %p_ZL13weight_memory_0, i8 %p_ZL13weight_memory_1, i8 %p_ZL13weight_memory_2, i8 %p_ZL13weight_memory_3, i8 %p_ZL13weight_memory_4, i8 %p_ZL13weight_memory_5, i8 %p_ZL13weight_memory_6, i8 %p_ZL13weight_memory_7"   --->   Operation 387 'call' 'call_ln0' <Predicate = true> <Delay = 1.58> <CoreType = "Generic">   --->   Generic Core
+
+State 42 <SV = 41> <Delay = 0.00>
+ST_42 : Operation 388 [1/2] (0.00ns)   --->   "%call_ln0 = call void @snn_top_hls_Pipeline_VITIS_LOOP_529_113, i16 %weight_sum_24_loc_load, i16 %weight_sum_26_loc, i8 %p_ZL13weight_memory_0, i8 %p_ZL13weight_memory_1, i8 %p_ZL13weight_memory_2, i8 %p_ZL13weight_memory_3, i8 %p_ZL13weight_memory_4, i8 %p_ZL13weight_memory_5, i8 %p_ZL13weight_memory_6, i8 %p_ZL13weight_memory_7"   --->   Operation 388 'call' 'call_ln0' <Predicate = true> <Delay = 0.00> <CoreType = "Generic">   --->   Generic Core
+
+State 43 <SV = 42> <Delay = 1.58>
+ST_43 : Operation 389 [1/1] (0.00ns)   --->   "%weight_sum_26_loc_load = load i16 %weight_sum_26_loc"   --->   Operation 389 'load' 'weight_sum_26_loc_load' <Predicate = true> <Delay = 0.00>
+ST_43 : Operation 390 [2/2] (1.58ns)   --->   "%call_ln0 = call void @snn_top_hls_Pipeline_VITIS_LOOP_529_114, i16 %weight_sum_26_loc_load, i16 %weight_sum_28_loc, i8 %p_ZL13weight_memory_0, i8 %p_ZL13weight_memory_1, i8 %p_ZL13weight_memory_2, i8 %p_ZL13weight_memory_3, i8 %p_ZL13weight_memory_4, i8 %p_ZL13weight_memory_5, i8 %p_ZL13weight_memory_6, i8 %p_ZL13weight_memory_7"   --->   Operation 390 'call' 'call_ln0' <Predicate = true> <Delay = 1.58> <CoreType = "Generic">   --->   Generic Core
+
+State 44 <SV = 43> <Delay = 0.00>
+ST_44 : Operation 391 [1/2] (0.00ns)   --->   "%call_ln0 = call void @snn_top_hls_Pipeline_VITIS_LOOP_529_114, i16 %weight_sum_26_loc_load, i16 %weight_sum_28_loc, i8 %p_ZL13weight_memory_0, i8 %p_ZL13weight_memory_1, i8 %p_ZL13weight_memory_2, i8 %p_ZL13weight_memory_3, i8 %p_ZL13weight_memory_4, i8 %p_ZL13weight_memory_5, i8 %p_ZL13weight_memory_6, i8 %p_ZL13weight_memory_7"   --->   Operation 391 'call' 'call_ln0' <Predicate = true> <Delay = 0.00> <CoreType = "Generic">   --->   Generic Core
+
+State 45 <SV = 44> <Delay = 1.58>
+ST_45 : Operation 392 [1/1] (0.00ns)   --->   "%weight_sum_28_loc_load = load i16 %weight_sum_28_loc"   --->   Operation 392 'load' 'weight_sum_28_loc_load' <Predicate = true> <Delay = 0.00>
+ST_45 : Operation 393 [2/2] (1.58ns)   --->   "%call_ln0 = call void @snn_top_hls_Pipeline_VITIS_LOOP_529_115, i16 %weight_sum_28_loc_load, i16 %weight_sum_31_loc, i8 %p_ZL13weight_memory_0, i8 %p_ZL13weight_memory_1, i8 %p_ZL13weight_memory_2, i8 %p_ZL13weight_memory_3, i8 %p_ZL13weight_memory_4, i8 %p_ZL13weight_memory_5, i8 %p_ZL13weight_memory_6, i8 %p_ZL13weight_memory_7"   --->   Operation 393 'call' 'call_ln0' <Predicate = true> <Delay = 1.58> <CoreType = "Generic">   --->   Generic Core
+
+State 46 <SV = 45> <Delay = 0.00>
+ST_46 : Operation 394 [1/2] (0.00ns)   --->   "%call_ln0 = call void @snn_top_hls_Pipeline_VITIS_LOOP_529_115, i16 %weight_sum_28_loc_load, i16 %weight_sum_31_loc, i8 %p_ZL13weight_memory_0, i8 %p_ZL13weight_memory_1, i8 %p_ZL13weight_memory_2, i8 %p_ZL13weight_memory_3, i8 %p_ZL13weight_memory_4, i8 %p_ZL13weight_memory_5, i8 %p_ZL13weight_memory_6, i8 %p_ZL13weight_memory_7"   --->   Operation 394 'call' 'call_ln0' <Predicate = true> <Delay = 0.00> <CoreType = "Generic">   --->   Generic Core
+
+State 47 <SV = 46> <Delay = 1.00>
+ST_47 : Operation 395 [1/1] (0.00ns)   --->   "%weight_sum_31_loc_load = load i16 %weight_sum_31_loc"   --->   Operation 395 'load' 'weight_sum_31_loc_load' <Predicate = true> <Delay = 0.00>
+ST_47 : Operation 396 [1/1] (0.00ns)   --->   "%sext_ln529 = sext i16 %weight_sum_31_loc_load" [src/snn_top_hls.cpp:529]   --->   Operation 396 'sext' 'sext_ln529' <Predicate = true> <Delay = 0.00>
+ST_47 : Operation 397 [1/1] (1.00ns)   --->   "%write_ln533 = write void @_ssdm_op_Write.s_axilite.i32P0A, i32 %weight_sum_reg, i32 %sext_ln529" [src/snn_top_hls.cpp:533]   --->   Operation 397 'write' 'write_ln533' <Predicate = true> <Delay = 1.00> <CoreInst = "s_axilite">   --->   Core 112 's_axilite' <Latency = 0> <II = 1> <Delay = 1.00> <Adapter> <Opcode : 'read' 'write'>
+ST_47 : Operation 398 [1/1] (0.00ns)   --->   "%ret_ln534 = ret" [src/snn_top_hls.cpp:534]   --->   Operation 398 'ret' 'ret_ln534' <Predicate = true> <Delay = 0.00>
+
+
+============================================================
++ Verbose Summary: Timing violations
+============================================================
+Target clock period: 10.000ns, clock uncertainty: 2.700ns.
+
+ <State 1>: 3.566ns
+The critical path consists of the following:
+	s_axi read operation ('ctrl_reg_read') on port 'ctrl_reg' [87]  (1.000 ns)
+	'or' operation 1 bit ('or_ln357', src/snn_top_hls.cpp:357) [235]  (0.978 ns)
+	multiplexor before 'phi' operation 1 bit ('timestamp_flag_0') [248]  (1.588 ns)
+	'br' operation ('br_ln357', src/snn_top_hls.cpp:357) [236]  (1.588 ns)
+
+ <State 2>: 3.319ns
+The critical path consists of the following:
+	'call' operation ('call_ln0') to 'snn_top_hls_Pipeline_RESET_TRACE_OUTER_RESET_TRACE_INNER' [239]  (3.319 ns)
+
+ <State 3>: 1.588ns
+The critical path consists of the following:
+	multiplexor before 'phi' operation 1 bit ('timestamp_flag_0') [248]  (1.588 ns)
+	'br' operation ('br_ln387', src/snn_top_hls.cpp:387) [246]  (1.588 ns)
+
+ <State 4>: 6.194ns
+The critical path consists of the following:
+	axis request operation ('tmp', src/snn_top_hls.cpp:409) on port 's_axis_spikes_V_data_V' (src/snn_top_hls.cpp:409) [260]  (1.290 ns)
+	'call' operation ('call_ln422', src/snn_top_hls.cpp:422) to 'process_pre_spike' [269]  (4.904 ns)
+
+ <State 5>: 4.140ns
+The critical path consists of the following:
+	'add' operation 32 bit ('add_ln425', src/snn_top_hls.cpp:425) [272]  (2.552 ns)
+	multiplexor before 'phi' operation 32 bit ('spike_counter_new_2', src/snn_top_hls.cpp:425) with incoming values : ('add_ln425', src/snn_top_hls.cpp:425) [279]  (1.588 ns)
+	'phi' operation 32 bit ('spike_counter_new_2', src/snn_top_hls.cpp:425) with incoming values : ('add_ln425', src/snn_top_hls.cpp:425) [279]  (0.000 ns)
+	'store' operation ('store_ln359', src/snn_top_hls.cpp:359) of variable 'spike_counter_new_2', src/snn_top_hls.cpp:425 32 bit on static variable 'spike_counter' [285]  (0.000 ns)
+
+ <State 6>: 4.904ns
+The critical path consists of the following:
+	'call' operation ('call_ln453', src/snn_top_hls.cpp:453) to 'process_post_spike' [298]  (4.904 ns)
+
+ <State 7>: 0.000ns
+The critical path consists of the following:
+
+ <State 8>: 5.838ns
+The critical path consists of the following:
+	'select' operation 8 bit ('select_ln462', src/snn_top_hls.cpp:462) [305]  (1.248 ns)
+	'call' operation ('call_ln461', src/snn_top_hls.cpp:461) to 'apply_weight_updates' [306]  (4.590 ns)
+
+ <State 9>: 0.978ns
+The critical path consists of the following:
+	'and' operation 1 bit ('and_ln468', src/snn_top_hls.cpp:468) [309]  (0.978 ns)
+
+ <State 10>: 3.002ns
+The critical path consists of the following:
+	'call' operation ('call_ln469', src/snn_top_hls.cpp:469) to 'apply_reward_signal' [312]  (3.002 ns)
+
+ <State 11>: 0.000ns
+The critical path consists of the following:
+
+ <State 12>: 0.000ns
+The critical path consists of the following:
+
+ <State 13>: 3.254ns
+The critical path consists of the following:
+	'load' operation 6 bit ('read_row_load', src/snn_top_hls.cpp:482) on static variable 'read_row' [321]  (0.000 ns)
+	'getelementptr' operation 9 bit ('p_ZL13weight_memory_0_addr', src/snn_top_hls.cpp:484) [331]  (0.000 ns)
+	'load' operation 8 bit ('p_ZL13weight_memory_0_load', src/snn_top_hls.cpp:484) on array 'p_ZL13weight_memory_0' [339]  (3.254 ns)
+
+ <State 14>: 6.848ns
+The critical path consists of the following:
+	'load' operation 8 bit ('p_ZL13weight_memory_0_load', src/snn_top_hls.cpp:484) on array 'p_ZL13weight_memory_0' [339]  (3.254 ns)
+	'sparsemux' operation 8 bit ('tmp_s', src/snn_top_hls.cpp:484) [347]  (2.304 ns)
+	axis write operation ('write_ln491', src/snn_top_hls.cpp:491) on port 'm_axis_weights_V_data_V' (src/snn_top_hls.cpp:491) [353]  (0.000 ns)
+	blocking operation 1.29 ns on control path)
+
+ <State 15>: 3.413ns
+The critical path consists of the following:
+	'add' operation 7 bit ('add_ln493', src/snn_top_hls.cpp:493) [354]  (1.825 ns)
+	multiplexor before 'phi' operation 6 bit ('read_col_new_0', src/snn_top_hls.cpp:494) with incoming values : ('trunc_ln494', src/snn_top_hls.cpp:494) [366]  (1.588 ns)
+	'phi' operation 6 bit ('read_col_new_0', src/snn_top_hls.cpp:494) with incoming values : ('trunc_ln494', src/snn_top_hls.cpp:494) [366]  (0.000 ns)
+
+ <State 16>: 0.000ns
+The critical path consists of the following:
+
+ <State 17>: 1.588ns
+The critical path consists of the following:
+	'load' operation 12 bit ('weight_sum_loc_load') on local variable 'weight_sum_loc' [385]  (0.000 ns)
+	'call' operation ('call_ln0') to 'snn_top_hls_Pipeline_VITIS_LOOP_529_11' [386]  (1.588 ns)
+
+ <State 18>: 0.000ns
+The critical path consists of the following:
+
+ <State 19>: 1.588ns
+The critical path consists of the following:
+	'load' operation 13 bit ('weight_sum_2_loc_load') on local variable 'weight_sum_2_loc' [387]  (0.000 ns)
+	'call' operation ('call_ln0') to 'snn_top_hls_Pipeline_VITIS_LOOP_529_12' [388]  (1.588 ns)
+
+ <State 20>: 0.000ns
+The critical path consists of the following:
+
+ <State 21>: 1.588ns
+The critical path consists of the following:
+	'load' operation 14 bit ('weight_sum_4_loc_load') on local variable 'weight_sum_4_loc' [389]  (0.000 ns)
+	'call' operation ('call_ln0') to 'snn_top_hls_Pipeline_VITIS_LOOP_529_13' [390]  (1.588 ns)
+
+ <State 22>: 0.000ns
+The critical path consists of the following:
+
+ <State 23>: 1.588ns
+The critical path consists of the following:
+	'load' operation 14 bit ('weight_sum_6_loc_load') on local variable 'weight_sum_6_loc' [391]  (0.000 ns)
+	'call' operation ('call_ln0') to 'snn_top_hls_Pipeline_VITIS_LOOP_529_14' [392]  (1.588 ns)
+
+ <State 24>: 0.000ns
+The critical path consists of the following:
+
+ <State 25>: 1.588ns
+The critical path consists of the following:
+	'load' operation 15 bit ('weight_sum_8_loc_load') on local variable 'weight_sum_8_loc' [393]  (0.000 ns)
+	'call' operation ('call_ln0') to 'snn_top_hls_Pipeline_VITIS_LOOP_529_15' [394]  (1.588 ns)
+
+ <State 26>: 0.000ns
+The critical path consists of the following:
+
+ <State 27>: 1.588ns
+The critical path consists of the following:
+	'load' operation 15 bit ('weight_sum_10_loc_load') on local variable 'weight_sum_10_loc' [395]  (0.000 ns)
+	'call' operation ('call_ln0') to 'snn_top_hls_Pipeline_VITIS_LOOP_529_16' [396]  (1.588 ns)
+
+ <State 28>: 0.000ns
+The critical path consists of the following:
+
+ <State 29>: 1.588ns
+The critical path consists of the following:
+	'load' operation 15 bit ('weight_sum_12_loc_load') on local variable 'weight_sum_12_loc' [397]  (0.000 ns)
+	'call' operation ('call_ln0') to 'snn_top_hls_Pipeline_VITIS_LOOP_529_17' [398]  (1.588 ns)
+
+ <State 30>: 0.000ns
+The critical path consists of the following:
+
+ <State 31>: 1.588ns
+The critical path consists of the following:
+	'load' operation 15 bit ('weight_sum_14_loc_load') on local variable 'weight_sum_14_loc' [399]  (0.000 ns)
+	'call' operation ('call_ln0') to 'snn_top_hls_Pipeline_VITIS_LOOP_529_18' [400]  (1.588 ns)
+
+ <State 32>: 0.000ns
+The critical path consists of the following:
+
+ <State 33>: 1.588ns
+The critical path consists of the following:
+	'load' operation 16 bit ('weight_sum_16_loc_load') on local variable 'weight_sum_16_loc' [401]  (0.000 ns)
+	'call' operation ('call_ln0') to 'snn_top_hls_Pipeline_VITIS_LOOP_529_19' [402]  (1.588 ns)
+
+ <State 34>: 0.000ns
+The critical path consists of the following:
+
+ <State 35>: 1.588ns
+The critical path consists of the following:
+	'load' operation 16 bit ('weight_sum_18_loc_load') on local variable 'weight_sum_18_loc' [403]  (0.000 ns)
+	'call' operation ('call_ln0') to 'snn_top_hls_Pipeline_VITIS_LOOP_529_110' [404]  (1.588 ns)
+
+ <State 36>: 0.000ns
+The critical path consists of the following:
+
+ <State 37>: 1.588ns
+The critical path consists of the following:
+	'load' operation 16 bit ('weight_sum_20_loc_load') on local variable 'weight_sum_20_loc' [405]  (0.000 ns)
+	'call' operation ('call_ln0') to 'snn_top_hls_Pipeline_VITIS_LOOP_529_111' [406]  (1.588 ns)
+
+ <State 38>: 0.000ns
+The critical path consists of the following:
+
+ <State 39>: 1.588ns
+The critical path consists of the following:
+	'load' operation 16 bit ('weight_sum_22_loc_load') on local variable 'weight_sum_22_loc' [407]  (0.000 ns)
+	'call' operation ('call_ln0') to 'snn_top_hls_Pipeline_VITIS_LOOP_529_112' [408]  (1.588 ns)
+
+ <State 40>: 0.000ns
+The critical path consists of the following:
+
+ <State 41>: 1.588ns
+The critical path consists of the following:
+	'load' operation 16 bit ('weight_sum_24_loc_load') on local variable 'weight_sum_24_loc' [409]  (0.000 ns)
+	'call' operation ('call_ln0') to 'snn_top_hls_Pipeline_VITIS_LOOP_529_113' [410]  (1.588 ns)
+
+ <State 42>: 0.000ns
+The critical path consists of the following:
+
+ <State 43>: 1.588ns
+The critical path consists of the following:
+	'load' operation 16 bit ('weight_sum_26_loc_load') on local variable 'weight_sum_26_loc' [411]  (0.000 ns)
+	'call' operation ('call_ln0') to 'snn_top_hls_Pipeline_VITIS_LOOP_529_114' [412]  (1.588 ns)
+
+ <State 44>: 0.000ns
+The critical path consists of the following:
+
+ <State 45>: 1.588ns
+The critical path consists of the following:
+	'load' operation 16 bit ('weight_sum_28_loc_load') on local variable 'weight_sum_28_loc' [413]  (0.000 ns)
+	'call' operation ('call_ln0') to 'snn_top_hls_Pipeline_VITIS_LOOP_529_115' [414]  (1.588 ns)
+
+ <State 46>: 0.000ns
+The critical path consists of the following:
+
+ <State 47>: 1.000ns
+The critical path consists of the following:
+	'load' operation 16 bit ('weight_sum_31_loc_load') on local variable 'weight_sum_31_loc' [415]  (0.000 ns)
+	s_axi write operation ('write_ln533', src/snn_top_hls.cpp:533) on port 'weight_sum_reg' (src/snn_top_hls.cpp:533) [417]  (1.000 ns)
+
+
+============================================================
++ Verbose Summary: Binding
+============================================================
+N/A
+* FSMD analyzer results:
+  - Output states:
+ - Input state : 
+  - Chain level:
+	State 1
+	State 2
+	State 3
+	State 4
+	State 5
+	State 6
+	State 7
+	State 8
+	State 9
+	State 10
+	State 11
+	State 12
+	State 13
+	State 14
+	State 15
+	State 16
+	State 17
+	State 18
+	State 19
+	State 20
+	State 21
+	State 22
+	State 23
+	State 24
+	State 25
+	State 26
+	State 27
+	State 28
+	State 29
+	State 30
+	State 31
+	State 32
+	State 33
+	State 34
+	State 35
+	State 36
+	State 37
+	State 38
+	State 39
+	State 40
+	State 41
+	State 42
+	State 43
+	State 44
+	State 45
+	State 46
+	State 47
+
+
+============================================================
++ Verbose Summary: Datapath Resource usage 
+============================================================
+N/A

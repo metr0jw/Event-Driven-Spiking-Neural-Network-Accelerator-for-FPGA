@@ -1,0 +1,118 @@
+{
+  "0": {
+    "basicblocks": 73,
+    "calls": "5 3 2 4 1",
+    "control_depth": 0,
+    "def_use_depth": 6,
+    "file": "snn_top_hls.cpp",
+    "fileloc": 240,
+    "instructions": 684,
+    "loads": {
+      "G": 27,
+      "L": 1
+    },
+    "memory_accesses": 41,
+    "name": "snn_top_hls",
+    "stores": {
+      "G": 37,
+      "L": 55,
+      "T": 15
+    },
+    "total_instructions": 2284
+  },
+  "1": {
+    "basicblocks": 7,
+    "calls": "",
+    "control_depth": 2,
+    "def_use_depth": 4,
+    "file": "snn_top_hls.cpp",
+    "fileloc": 199,
+    "instructions": 24,
+    "loads": {
+      "G": 1,
+      "L": 1
+    },
+    "memory_accesses": 3,
+    "name": "decay_eligibility_traces",
+    "stores": {
+      "G": 2
+    },
+    "total_instructions": 24
+  },
+  "2": {
+    "basicblocks": 12,
+    "calls": "",
+    "control_depth": 3,
+    "def_use_depth": 18,
+    "file": "snn_top_hls.cpp",
+    "fileloc": 160,
+    "instructions": 80,
+    "loads": {
+      "G": 2,
+      "L": 3
+    },
+    "memory_accesses": 8,
+    "name": "apply_weight_updates",
+    "stores": {
+      "G": 3
+    },
+    "total_instructions": 80
+  },
+  "3": {
+    "basicblocks": 147,
+    "calls": "",
+    "control_depth": 9,
+    "def_use_depth": 17,
+    "file": "snn_top_hls.cpp",
+    "fileloc": 119,
+    "instructions": 723,
+    "loads": {
+      "G": 8,
+      "L": 5
+    },
+    "memory_accesses": 24,
+    "name": "process_post_spike",
+    "stores": {
+      "G": 1
+    },
+    "total_instructions": 723
+  },
+  "4": {
+    "basicblocks": 11,
+    "calls": "",
+    "control_depth": 2,
+    "def_use_depth": 13,
+    "file": "snn_top_hls.cpp",
+    "fileloc": 213,
+    "instructions": 57,
+    "loads": {
+      "G": 2,
+      "L": 1
+    },
+    "memory_accesses": 3,
+    "name": "apply_reward_signal",
+    "stores": {
+      "G": 1
+    },
+    "total_instructions": 57
+  },
+  "5": {
+    "basicblocks": 147,
+    "calls": "",
+    "control_depth": 9,
+    "def_use_depth": 17,
+    "file": "snn_top_hls.cpp",
+    "fileloc": 78,
+    "instructions": 716,
+    "loads": {
+      "G": 8,
+      "L": 5
+    },
+    "memory_accesses": 24,
+    "name": "process_pre_spike",
+    "stores": {
+      "G": 1
+    },
+    "total_instructions": 716
+  }
+}

@@ -1,0 +1,234 @@
+<xilinx:hls_fe_msgs>
+    <msg msg_groups="PRAGMA_VERBOSE_DUMP" msg_id="207-6999" msg_severity="WARNING" msg_loc="src/snn_top_hls.cpp:39:1" msg_body="HLS pragma dump">
+        <args ARG_PragmaContext="hls" ARG_PragmaFunction="calc_stdp_update" ARG_PragmaIsValid="1" ARG_PragmaType="inline" ClangWarningOption="dump-hls-pragmas"/>
+    </msg>
+    <msg msg_groups="PRAGMA_VERBOSE_DUMP" msg_id="207-6999" msg_severity="WARNING" msg_loc="src/snn_top_hls.cpp:69:1" msg_body="HLS pragma dump">
+        <args ARG_PragmaContext="hls" ARG_PragmaFunction="clip_weight" ARG_PragmaIsValid="1" ARG_PragmaType="inline" ClangWarningOption="dump-hls-pragmas"/>
+    </msg>
+    <msg msg_groups="PRAGMA_VERBOSE_DUMP" msg_id="207-6999" msg_severity="WARNING" msg_loc="src/snn_top_hls.cpp:85:1" msg_body="HLS pragma dump">
+        <args ARG_PragmaContext="hls" ARG_PragmaFunction="process_pre_spike" ARG_PragmaIsValid="1" ARG_PragmaOptions="off" ARG_PragmaType="inline" ClangWarningOption="dump-hls-pragmas"/>
+    </msg>
+    <msg msg_groups="PRAGMA_VERBOSE_DUMP" msg_id="207-6999" msg_severity="WARNING" msg_loc="src/snn_top_hls.cpp:94:1" msg_body="HLS pragma dump">
+        <args ARG_PragmaContext="hls" ARG_PragmaFunction="process_pre_spike" ARG_PragmaIsValid="1" ARG_PragmaOptions="II=1" ARG_PragmaType="pipeline" ClangWarningOption="dump-hls-pragmas"/>
+    </msg>
+    <msg msg_groups="PRAGMA_VERBOSE_DUMP" msg_id="207-6999" msg_severity="WARNING" msg_loc="src/snn_top_hls.cpp:95:1" msg_body="HLS pragma dump">
+        <args ARG_PragmaContext="hls" ARG_PragmaFunction="process_pre_spike" ARG_PragmaIsValid="1" ARG_PragmaOptions="factor=8" ARG_PragmaType="unroll" ClangWarningOption="dump-hls-pragmas"/>
+    </msg>
+    <msg msg_groups="PRAGMA_VERBOSE_DUMP" msg_id="207-6999" msg_severity="WARNING" msg_loc="src/snn_top_hls.cpp:126:1" msg_body="HLS pragma dump">
+        <args ARG_PragmaContext="hls" ARG_PragmaFunction="process_post_spike" ARG_PragmaIsValid="1" ARG_PragmaOptions="off" ARG_PragmaType="inline" ClangWarningOption="dump-hls-pragmas"/>
+    </msg>
+    <msg msg_groups="PRAGMA_VERBOSE_DUMP" msg_id="207-6999" msg_severity="WARNING" msg_loc="src/snn_top_hls.cpp:135:1" msg_body="HLS pragma dump">
+        <args ARG_PragmaContext="hls" ARG_PragmaFunction="process_post_spike" ARG_PragmaIsValid="1" ARG_PragmaOptions="II=1" ARG_PragmaType="pipeline" ClangWarningOption="dump-hls-pragmas"/>
+    </msg>
+    <msg msg_groups="PRAGMA_VERBOSE_DUMP" msg_id="207-6999" msg_severity="WARNING" msg_loc="src/snn_top_hls.cpp:136:1" msg_body="HLS pragma dump">
+        <args ARG_PragmaContext="hls" ARG_PragmaFunction="process_post_spike" ARG_PragmaIsValid="1" ARG_PragmaOptions="factor=8" ARG_PragmaType="unroll" ClangWarningOption="dump-hls-pragmas"/>
+    </msg>
+    <msg msg_groups="PRAGMA_VERBOSE_DUMP" msg_id="207-6999" msg_severity="WARNING" msg_loc="src/snn_top_hls.cpp:165:1" msg_body="HLS pragma dump">
+        <args ARG_PragmaContext="hls" ARG_PragmaFunction="apply_weight_updates" ARG_PragmaIsValid="1" ARG_PragmaOptions="off" ARG_PragmaType="inline" ClangWarningOption="dump-hls-pragmas"/>
+    </msg>
+    <msg msg_groups="PRAGMA_VERBOSE_DUMP" msg_id="207-6999" msg_severity="WARNING" msg_loc="src/snn_top_hls.cpp:168:1" msg_body="HLS pragma dump">
+        <args ARG_PragmaContext="hls" ARG_PragmaFunction="apply_weight_updates" ARG_PragmaIsValid="1" ARG_PragmaOptions="II=2" ARG_PragmaType="pipeline" ClangWarningOption="dump-hls-pragmas"/>
+    </msg>
+    <msg msg_groups="PRAGMA_VERBOSE_DUMP" msg_id="207-6999" msg_severity="WARNING" msg_loc="src/snn_top_hls.cpp:200:1" msg_body="HLS pragma dump">
+        <args ARG_PragmaContext="hls" ARG_PragmaFunction="decay_eligibility_traces" ARG_PragmaIsValid="1" ARG_PragmaOptions="off" ARG_PragmaType="inline" ClangWarningOption="dump-hls-pragmas"/>
+    </msg>
+    <msg msg_groups="PRAGMA_VERBOSE_DUMP" msg_id="207-6999" msg_severity="WARNING" msg_loc="src/snn_top_hls.cpp:204:1" msg_body="HLS pragma dump">
+        <args ARG_PragmaContext="hls" ARG_PragmaFunction="decay_eligibility_traces" ARG_PragmaIsValid="1" ARG_PragmaOptions="II=1" ARG_PragmaType="pipeline" ClangWarningOption="dump-hls-pragmas"/>
+    </msg>
+    <msg msg_groups="PRAGMA_VERBOSE_DUMP" msg_id="207-6999" msg_severity="WARNING" msg_loc="src/snn_top_hls.cpp:217:1" msg_body="HLS pragma dump">
+        <args ARG_PragmaContext="hls" ARG_PragmaFunction="apply_reward_signal" ARG_PragmaIsValid="1" ARG_PragmaOptions="off" ARG_PragmaType="inline" ClangWarningOption="dump-hls-pragmas"/>
+    </msg>
+    <msg msg_groups="PRAGMA_VERBOSE_DUMP" msg_id="207-6999" msg_severity="WARNING" msg_loc="src/snn_top_hls.cpp:225:1" msg_body="HLS pragma dump">
+        <args ARG_PragmaContext="hls" ARG_PragmaFunction="apply_reward_signal" ARG_PragmaIsValid="1" ARG_PragmaOptions="II=1" ARG_PragmaType="pipeline" ClangWarningOption="dump-hls-pragmas"/>
+    </msg>
+    <msg msg_groups="PRAGMA_VERBOSE_DUMP" msg_id="207-6999" msg_severity="WARNING" msg_loc="directive:1:1" msg_body="HLS pragma dump">
+        <args ARG_PragmaContext="directive" ARG_PragmaFunction="snn_top_hls" ARG_PragmaIsValid="1" ARG_PragmaOptions="name=snn_top_hls" ARG_PragmaType="top" ClangWarningOption="dump-hls-pragmas"/>
+    </msg>
+    <msg msg_groups="PRAGMA_VERBOSE_DUMP" msg_id="207-6999" msg_severity="WARNING" msg_loc="src/snn_top_hls.cpp:288:1" msg_body="HLS pragma dump">
+        <args ARG_PragmaContext="hls" ARG_PragmaFunction="snn_top_hls" ARG_PragmaIsValid="1" ARG_PragmaOptions="s_axilite port=ctrl_reg bundle=ctrl" ARG_PragmaType="interface" ClangWarningOption="dump-hls-pragmas"/>
+    </msg>
+    <msg msg_groups="PRAGMA_VERBOSE_DUMP" msg_id="207-6999" msg_severity="WARNING" msg_loc="src/snn_top_hls.cpp:289:1" msg_body="HLS pragma dump">
+        <args ARG_PragmaContext="hls" ARG_PragmaFunction="snn_top_hls" ARG_PragmaIsValid="1" ARG_PragmaOptions="s_axilite port=config_reg bundle=ctrl" ARG_PragmaType="interface" ClangWarningOption="dump-hls-pragmas"/>
+    </msg>
+    <msg msg_groups="PRAGMA_VERBOSE_DUMP" msg_id="207-6999" msg_severity="WARNING" msg_loc="src/snn_top_hls.cpp:290:1" msg_body="HLS pragma dump">
+        <args ARG_PragmaContext="hls" ARG_PragmaFunction="snn_top_hls" ARG_PragmaIsValid="1" ARG_PragmaOptions="s_axilite port=learning_params bundle=ctrl" ARG_PragmaType="interface" ClangWarningOption="dump-hls-pragmas"/>
+    </msg>
+    <msg msg_groups="PRAGMA_VERBOSE_DUMP" msg_id="207-6999" msg_severity="WARNING" msg_loc="src/snn_top_hls.cpp:291:1" msg_body="HLS pragma dump">
+        <args ARG_PragmaContext="hls" ARG_PragmaFunction="snn_top_hls" ARG_PragmaIsValid="1" ARG_PragmaOptions="s_axilite port=status_reg bundle=ctrl" ARG_PragmaType="interface" ClangWarningOption="dump-hls-pragmas"/>
+    </msg>
+    <msg msg_groups="PRAGMA_VERBOSE_DUMP" msg_id="207-6999" msg_severity="WARNING" msg_loc="src/snn_top_hls.cpp:292:1" msg_body="HLS pragma dump">
+        <args ARG_PragmaContext="hls" ARG_PragmaFunction="snn_top_hls" ARG_PragmaIsValid="1" ARG_PragmaOptions="s_axilite port=spike_count_reg bundle=ctrl" ARG_PragmaType="interface" ClangWarningOption="dump-hls-pragmas"/>
+    </msg>
+    <msg msg_groups="PRAGMA_VERBOSE_DUMP" msg_id="207-6999" msg_severity="WARNING" msg_loc="src/snn_top_hls.cpp:293:1" msg_body="HLS pragma dump">
+        <args ARG_PragmaContext="hls" ARG_PragmaFunction="snn_top_hls" ARG_PragmaIsValid="1" ARG_PragmaOptions="s_axilite port=weight_sum_reg bundle=ctrl" ARG_PragmaType="interface" ClangWarningOption="dump-hls-pragmas"/>
+    </msg>
+    <msg msg_groups="PRAGMA_VERBOSE_DUMP" msg_id="207-6999" msg_severity="WARNING" msg_loc="src/snn_top_hls.cpp:294:1" msg_body="HLS pragma dump">
+        <args ARG_PragmaContext="hls" ARG_PragmaFunction="snn_top_hls" ARG_PragmaIsValid="1" ARG_PragmaOptions="s_axilite port=version_reg bundle=ctrl" ARG_PragmaType="interface" ClangWarningOption="dump-hls-pragmas"/>
+    </msg>
+    <msg msg_groups="PRAGMA_VERBOSE_DUMP" msg_id="207-6999" msg_severity="WARNING" msg_loc="src/snn_top_hls.cpp:295:1" msg_body="HLS pragma dump">
+        <args ARG_PragmaContext="hls" ARG_PragmaFunction="snn_top_hls" ARG_PragmaIsValid="1" ARG_PragmaOptions="s_axilite port=reward_signal bundle=ctrl" ARG_PragmaType="interface" ClangWarningOption="dump-hls-pragmas"/>
+    </msg>
+    <msg msg_groups="PRAGMA_VERBOSE_DUMP" msg_id="207-6999" msg_severity="WARNING" msg_loc="src/snn_top_hls.cpp:296:1" msg_body="HLS pragma dump">
+        <args ARG_PragmaContext="hls" ARG_PragmaFunction="snn_top_hls" ARG_PragmaIsValid="1" ARG_PragmaOptions="s_axilite port=return bundle=ctrl" ARG_PragmaType="interface" ClangWarningOption="dump-hls-pragmas"/>
+    </msg>
+    <msg msg_groups="PRAGMA_VERBOSE_DUMP" msg_id="207-6999" msg_severity="WARNING" msg_loc="src/snn_top_hls.cpp:299:1" msg_body="HLS pragma dump">
+        <args ARG_PragmaContext="hls" ARG_PragmaFunction="snn_top_hls" ARG_PragmaIsValid="1" ARG_PragmaOptions="axis port=s_axis_spikes" ARG_PragmaType="interface" ClangWarningOption="dump-hls-pragmas"/>
+    </msg>
+    <msg msg_groups="PRAGMA_VERBOSE_DUMP" msg_id="207-6999" msg_severity="WARNING" msg_loc="src/snn_top_hls.cpp:300:1" msg_body="HLS pragma dump">
+        <args ARG_PragmaContext="hls" ARG_PragmaFunction="snn_top_hls" ARG_PragmaIsValid="1" ARG_PragmaOptions="axis port=m_axis_spikes" ARG_PragmaType="interface" ClangWarningOption="dump-hls-pragmas"/>
+    </msg>
+    <msg msg_groups="PRAGMA_VERBOSE_DUMP" msg_id="207-6999" msg_severity="WARNING" msg_loc="src/snn_top_hls.cpp:301:1" msg_body="HLS pragma dump">
+        <args ARG_PragmaContext="hls" ARG_PragmaFunction="snn_top_hls" ARG_PragmaIsValid="1" ARG_PragmaOptions="axis port=m_axis_weights" ARG_PragmaType="interface" ClangWarningOption="dump-hls-pragmas"/>
+    </msg>
+    <msg msg_groups="PRAGMA_VERBOSE_DUMP" msg_id="207-6999" msg_severity="WARNING" msg_loc="src/snn_top_hls.cpp:304:1" msg_body="HLS pragma dump">
+        <args ARG_PragmaContext="hls" ARG_PragmaFunction="snn_top_hls" ARG_PragmaIsValid="1" ARG_PragmaOptions="ap_none port=spike_in_valid" ARG_PragmaType="interface" ClangWarningOption="dump-hls-pragmas"/>
+    </msg>
+    <msg msg_groups="PRAGMA_VERBOSE_DUMP" msg_id="207-6999" msg_severity="WARNING" msg_loc="src/snn_top_hls.cpp:305:1" msg_body="HLS pragma dump">
+        <args ARG_PragmaContext="hls" ARG_PragmaFunction="snn_top_hls" ARG_PragmaIsValid="1" ARG_PragmaOptions="ap_none port=spike_in_neuron_id" ARG_PragmaType="interface" ClangWarningOption="dump-hls-pragmas"/>
+    </msg>
+    <msg msg_groups="PRAGMA_VERBOSE_DUMP" msg_id="207-6999" msg_severity="WARNING" msg_loc="src/snn_top_hls.cpp:306:1" msg_body="HLS pragma dump">
+        <args ARG_PragmaContext="hls" ARG_PragmaFunction="snn_top_hls" ARG_PragmaIsValid="1" ARG_PragmaOptions="ap_none port=spike_in_weight" ARG_PragmaType="interface" ClangWarningOption="dump-hls-pragmas"/>
+    </msg>
+    <msg msg_groups="PRAGMA_VERBOSE_DUMP" msg_id="207-6999" msg_severity="WARNING" msg_loc="src/snn_top_hls.cpp:307:1" msg_body="HLS pragma dump">
+        <args ARG_PragmaContext="hls" ARG_PragmaFunction="snn_top_hls" ARG_PragmaIsValid="1" ARG_PragmaOptions="ap_none port=spike_in_ready" ARG_PragmaType="interface" ClangWarningOption="dump-hls-pragmas"/>
+    </msg>
+    <msg msg_groups="PRAGMA_VERBOSE_DUMP" msg_id="207-6999" msg_severity="WARNING" msg_loc="src/snn_top_hls.cpp:308:1" msg_body="HLS pragma dump">
+        <args ARG_PragmaContext="hls" ARG_PragmaFunction="snn_top_hls" ARG_PragmaIsValid="1" ARG_PragmaOptions="ap_none port=spike_out_valid" ARG_PragmaType="interface" ClangWarningOption="dump-hls-pragmas"/>
+    </msg>
+    <msg msg_groups="PRAGMA_VERBOSE_DUMP" msg_id="207-6999" msg_severity="WARNING" msg_loc="src/snn_top_hls.cpp:309:1" msg_body="HLS pragma dump">
+        <args ARG_PragmaContext="hls" ARG_PragmaFunction="snn_top_hls" ARG_PragmaIsValid="1" ARG_PragmaOptions="ap_none port=spike_out_neuron_id" ARG_PragmaType="interface" ClangWarningOption="dump-hls-pragmas"/>
+    </msg>
+    <msg msg_groups="PRAGMA_VERBOSE_DUMP" msg_id="207-6999" msg_severity="WARNING" msg_loc="src/snn_top_hls.cpp:310:1" msg_body="HLS pragma dump">
+        <args ARG_PragmaContext="hls" ARG_PragmaFunction="snn_top_hls" ARG_PragmaIsValid="1" ARG_PragmaOptions="ap_none port=spike_out_weight" ARG_PragmaType="interface" ClangWarningOption="dump-hls-pragmas"/>
+    </msg>
+    <msg msg_groups="PRAGMA_VERBOSE_DUMP" msg_id="207-6999" msg_severity="WARNING" msg_loc="src/snn_top_hls.cpp:311:1" msg_body="HLS pragma dump">
+        <args ARG_PragmaContext="hls" ARG_PragmaFunction="snn_top_hls" ARG_PragmaIsValid="1" ARG_PragmaOptions="ap_none port=spike_out_ready" ARG_PragmaType="interface" ClangWarningOption="dump-hls-pragmas"/>
+    </msg>
+    <msg msg_groups="PRAGMA_VERBOSE_DUMP" msg_id="207-6999" msg_severity="WARNING" msg_loc="src/snn_top_hls.cpp:312:1" msg_body="HLS pragma dump">
+        <args ARG_PragmaContext="hls" ARG_PragmaFunction="snn_top_hls" ARG_PragmaIsValid="1" ARG_PragmaOptions="ap_none port=snn_enable" ARG_PragmaType="interface" ClangWarningOption="dump-hls-pragmas"/>
+    </msg>
+    <msg msg_groups="PRAGMA_VERBOSE_DUMP" msg_id="207-6999" msg_severity="WARNING" msg_loc="src/snn_top_hls.cpp:313:1" msg_body="HLS pragma dump">
+        <args ARG_PragmaContext="hls" ARG_PragmaFunction="snn_top_hls" ARG_PragmaIsValid="1" ARG_PragmaOptions="ap_none port=snn_reset" ARG_PragmaType="interface" ClangWarningOption="dump-hls-pragmas"/>
+    </msg>
+    <msg msg_groups="PRAGMA_VERBOSE_DUMP" msg_id="207-6999" msg_severity="WARNING" msg_loc="src/snn_top_hls.cpp:314:1" msg_body="HLS pragma dump">
+        <args ARG_PragmaContext="hls" ARG_PragmaFunction="snn_top_hls" ARG_PragmaIsValid="1" ARG_PragmaOptions="ap_none port=threshold_out" ARG_PragmaType="interface" ClangWarningOption="dump-hls-pragmas"/>
+    </msg>
+    <msg msg_groups="PRAGMA_VERBOSE_DUMP" msg_id="207-6999" msg_severity="WARNING" msg_loc="src/snn_top_hls.cpp:315:1" msg_body="HLS pragma dump">
+        <args ARG_PragmaContext="hls" ARG_PragmaFunction="snn_top_hls" ARG_PragmaIsValid="1" ARG_PragmaOptions="ap_none port=leak_rate_out" ARG_PragmaType="interface" ClangWarningOption="dump-hls-pragmas"/>
+    </msg>
+    <msg msg_groups="PRAGMA_VERBOSE_DUMP" msg_id="207-6999" msg_severity="WARNING" msg_loc="src/snn_top_hls.cpp:316:1" msg_body="HLS pragma dump">
+        <args ARG_PragmaContext="hls" ARG_PragmaFunction="snn_top_hls" ARG_PragmaIsValid="1" ARG_PragmaOptions="ap_none port=snn_ready" ARG_PragmaType="interface" ClangWarningOption="dump-hls-pragmas"/>
+    </msg>
+    <msg msg_groups="PRAGMA_VERBOSE_DUMP" msg_id="207-6999" msg_severity="WARNING" msg_loc="src/snn_top_hls.cpp:317:1" msg_body="HLS pragma dump">
+        <args ARG_PragmaContext="hls" ARG_PragmaFunction="snn_top_hls" ARG_PragmaIsValid="1" ARG_PragmaOptions="ap_none port=snn_busy" ARG_PragmaType="interface" ClangWarningOption="dump-hls-pragmas"/>
+    </msg>
+    <msg msg_groups="PRAGMA_VERBOSE_DUMP" msg_id="207-6999" msg_severity="WARNING" msg_loc="src/snn_top_hls.cpp:322:1" msg_body="HLS pragma dump">
+        <args ARG_PragmaContext="hls" ARG_PragmaFunction="snn_top_hls" ARG_PragmaIsValid="1" ARG_PragmaOptions="variable=weight_memory type=RAM_2P impl=BRAM" ARG_PragmaType="bind_storage" ClangWarningOption="dump-hls-pragmas"/>
+    </msg>
+    <msg msg_groups="PRAGMA_VERBOSE_DUMP" msg_id="207-6999" msg_severity="WARNING" msg_loc="src/snn_top_hls.cpp:323:1" msg_body="HLS pragma dump">
+        <args ARG_PragmaContext="hls" ARG_PragmaFunction="snn_top_hls" ARG_PragmaIsValid="1" ARG_PragmaOptions="variable=weight_memory cyclic factor=8 dim=2" ARG_PragmaType="array_partition" ClangWarningOption="dump-hls-pragmas"/>
+    </msg>
+    <msg msg_groups="PRAGMA_VERBOSE_DUMP" msg_id="207-6999" msg_severity="WARNING" msg_loc="src/snn_top_hls.cpp:324:1" msg_body="HLS pragma dump">
+        <args ARG_PragmaContext="hls" ARG_PragmaFunction="snn_top_hls" ARG_PragmaIsValid="1" ARG_PragmaOptions="variable=pre_spike_times type=RAM_1P impl=BRAM" ARG_PragmaType="bind_storage" ClangWarningOption="dump-hls-pragmas"/>
+    </msg>
+    <msg msg_groups="PRAGMA_VERBOSE_DUMP" msg_id="207-6999" msg_severity="WARNING" msg_loc="src/snn_top_hls.cpp:325:1" msg_body="HLS pragma dump">
+        <args ARG_PragmaContext="hls" ARG_PragmaFunction="snn_top_hls" ARG_PragmaIsValid="1" ARG_PragmaOptions="variable=post_spike_times type=RAM_1P impl=BRAM" ARG_PragmaType="bind_storage" ClangWarningOption="dump-hls-pragmas"/>
+    </msg>
+    <msg msg_groups="PRAGMA_VERBOSE_DUMP" msg_id="207-6999" msg_severity="WARNING" msg_loc="src/snn_top_hls.cpp:326:1" msg_body="HLS pragma dump">
+        <args ARG_PragmaContext="hls" ARG_PragmaFunction="snn_top_hls" ARG_PragmaIsValid="1" ARG_PragmaOptions="variable=eligibility_traces type=RAM_2P impl=BRAM" ARG_PragmaType="bind_storage" ClangWarningOption="dump-hls-pragmas"/>
+    </msg>
+    <msg msg_groups="PRAGMA_VERBOSE_DUMP" msg_id="207-6999" msg_severity="WARNING" msg_loc="src/snn_top_hls.cpp:327:1" msg_body="HLS pragma dump">
+        <args ARG_PragmaContext="hls" ARG_PragmaFunction="snn_top_hls" ARG_PragmaIsValid="1" ARG_PragmaOptions="variable=eligibility_traces cyclic factor=4 dim=2" ARG_PragmaType="array_partition" ClangWarningOption="dump-hls-pragmas"/>
+    </msg>
+    <msg msg_groups="PRAGMA_VERBOSE_DUMP" msg_id="207-6999" msg_severity="WARNING" msg_loc="src/snn_top_hls.cpp:339:1" msg_body="HLS pragma dump">
+        <args ARG_PragmaContext="hls" ARG_PragmaFunction="snn_top_hls" ARG_PragmaIsValid="1" ARG_PragmaOptions="variable=weight_update_fifo depth=64" ARG_PragmaType="stream" ClangWarningOption="dump-hls-pragmas"/>
+    </msg>
+    <msg msg_groups="PRAGMA_VERBOSE_DUMP" msg_id="207-6999" msg_severity="WARNING" msg_loc="src/snn_top_hls.cpp:364:1" msg_body="HLS pragma dump">
+        <args ARG_PragmaContext="hls" ARG_PragmaFunction="snn_top_hls" ARG_PragmaIsValid="1" ARG_PragmaOptions="factor=8" ARG_PragmaType="unroll" ClangWarningOption="dump-hls-pragmas"/>
+    </msg>
+    <msg msg_groups="PRAGMA_VERBOSE_DUMP" msg_id="207-6999" msg_severity="WARNING" msg_loc="src/snn_top_hls.cpp:372:1" msg_body="HLS pragma dump">
+        <args ARG_PragmaContext="hls" ARG_PragmaFunction="snn_top_hls" ARG_PragmaIsValid="1" ARG_PragmaOptions="factor=8" ARG_PragmaType="unroll" ClangWarningOption="dump-hls-pragmas"/>
+    </msg>
+    <msg msg_groups="PRAGMA_VERBOSE_DUMP" msg_id="207-6999" msg_severity="WARNING" msg_loc="src/snn_top_hls.cpp:381:1" msg_body="HLS pragma dump">
+        <args ARG_PragmaContext="hls" ARG_PragmaFunction="snn_top_hls" ARG_PragmaIsValid="1" ARG_PragmaOptions="II=1" ARG_PragmaType="pipeline" ClangWarningOption="dump-hls-pragmas"/>
+    </msg>
+    <msg msg_groups="PRAGMA_VERBOSE_DUMP" msg_id="207-6999" msg_severity="WARNING" msg_loc="src/snn_top_hls.cpp:528:1" msg_body="HLS pragma dump">
+        <args ARG_PragmaContext="hls" ARG_PragmaFunction="snn_top_hls" ARG_PragmaIsValid="1" ARG_PragmaType="unroll" ClangWarningOption="dump-hls-pragmas"/>
+    </msg>
+    <msg msg_groups="PRAGMA_VERBOSE_DUMP" msg_id="207-6999" msg_severity="WARNING" msg_loc="src/snn_top_hls.cpp:544:1" msg_body="HLS pragma dump">
+        <args ARG_PragmaContext="hls" ARG_PragmaFunction="write_weight" ARG_PragmaIsValid="1" ARG_PragmaType="inline" ClangWarningOption="dump-hls-pragmas"/>
+    </msg>
+    <msg msg_groups="PRAGMA_VERBOSE_DUMP" msg_id="207-6999" msg_severity="WARNING" msg_loc="src/snn_top_hls.cpp:552:1" msg_body="HLS pragma dump">
+        <args ARG_PragmaContext="hls" ARG_PragmaFunction="read_weight" ARG_PragmaIsValid="1" ARG_PragmaType="inline" ClangWarningOption="dump-hls-pragmas"/>
+    </msg>
+    <msg msg_groups="PRAGMA_VERBOSE_DUMP" msg_id="207-6999" msg_severity="WARNING" msg_loc="src/snn_top_hls.cpp:563:1" msg_body="HLS pragma dump">
+        <args ARG_PragmaContext="hls" ARG_PragmaFunction="load_weights_from_stream" ARG_PragmaIsValid="1" ARG_PragmaOptions="off" ARG_PragmaType="inline" ClangWarningOption="dump-hls-pragmas"/>
+    </msg>
+    <msg msg_groups="PRAGMA_VERBOSE_DUMP" msg_id="207-6999" msg_severity="WARNING" msg_loc="src/snn_top_hls.cpp:566:1" msg_body="HLS pragma dump">
+        <args ARG_PragmaContext="hls" ARG_PragmaFunction="load_weights_from_stream" ARG_PragmaIsValid="1" ARG_PragmaOptions="II=1" ARG_PragmaType="pipeline" ClangWarningOption="dump-hls-pragmas"/>
+    </msg>
+    <msg msg_groups="CODE_UNSUPPORTED" msg_id="214-131" msg_severity="INFO" msg_loc="src/snn_top_hls.cpp:100:32" msg_body="Inlining function 'calc_stdp_update(ap_uint&lt;32&gt;, ap_uint&lt;32&gt;, learning_params_t const&amp;)' into 'process_pre_spike(ap_uint&lt;8&gt;, ap_uint&lt;32&gt;, learning_params_t const&amp;, bool, hls::stream&lt;weight_update_t, 0&gt;&amp;)'">
+        <args Callee="calc_stdp_update(ap_uint&lt;32&gt;, ap_uint&lt;32&gt;, learning_params_t const&amp;)" Callee-DebugLoc="File src/snn_top_hls.cpp Line 38 Column 0" Caller="process_pre_spike(ap_uint&lt;8&gt;, ap_uint&lt;32&gt;, learning_params_t const&amp;, bool, hls::stream&lt;weight_update_t, 0&gt;&amp;)" Caller-DebugLoc="File src/snn_top_hls.cpp Line 84 Column 0"/>
+    </msg>
+    <msg msg_groups="CODE_UNSUPPORTED" msg_id="214-131" msg_severity="INFO" msg_loc="src/snn_top_hls.cpp:141:32" msg_body="Inlining function 'calc_stdp_update(ap_uint&lt;32&gt;, ap_uint&lt;32&gt;, learning_params_t const&amp;)' into 'process_post_spike(ap_uint&lt;8&gt;, ap_uint&lt;32&gt;, learning_params_t const&amp;, bool, hls::stream&lt;weight_update_t, 0&gt;&amp;)'">
+        <args Callee="calc_stdp_update(ap_uint&lt;32&gt;, ap_uint&lt;32&gt;, learning_params_t const&amp;)" Callee-DebugLoc="File src/snn_top_hls.cpp Line 38 Column 0" Caller="process_post_spike(ap_uint&lt;8&gt;, ap_uint&lt;32&gt;, learning_params_t const&amp;, bool, hls::stream&lt;weight_update_t, 0&gt;&amp;)" Caller-DebugLoc="File src/snn_top_hls.cpp Line 125 Column 0"/>
+    </msg>
+    <msg msg_groups="CODE_UNSUPPORTED" msg_id="214-131" msg_severity="INFO" msg_loc="src/snn_top_hls.cpp:192:56" msg_body="Inlining function 'clip_weight(ap_int&lt;16&gt;)' into 'apply_weight_updates(hls::stream&lt;weight_update_t, 0&gt;&amp;, learning_params_t const&amp;, ap_int&lt;8&gt;)'">
+        <args Callee="clip_weight(ap_int&lt;16&gt;)" Callee-DebugLoc="File src/snn_top_hls.cpp Line 68 Column 0" Caller="apply_weight_updates(hls::stream&lt;weight_update_t, 0&gt;&amp;, learning_params_t const&amp;, ap_int&lt;8&gt;)" Caller-DebugLoc="File src/snn_top_hls.cpp Line 164 Column 0"/>
+    </msg>
+    <msg msg_groups="CODE_UNSUPPORTED" msg_id="214-131" msg_severity="INFO" msg_loc="src/snn_top_hls.cpp:231:39" msg_body="Inlining function 'clip_weight(ap_int&lt;16&gt;)' into 'apply_reward_signal(ap_int&lt;8&gt;, learning_params_t const&amp;)'">
+        <args Callee="clip_weight(ap_int&lt;16&gt;)" Callee-DebugLoc="File src/snn_top_hls.cpp Line 68 Column 0" Caller="apply_reward_signal(ap_int&lt;8&gt;, learning_params_t const&amp;)" Caller-DebugLoc="File src/snn_top_hls.cpp Line 216 Column 0"/>
+    </msg>
+    <msg msg_groups="PRAGMA_UNROLL" msg_id="214-186" msg_severity="INFO" msg_loc="src/snn_top_hls.cpp:283:0" msg_body="Unrolling loop 'WEIGHT_SUM' (src/snn_top_hls.cpp:527:17) in function 'snn_top_hls' completely with a factor of 16">
+        <args Factor="16" LoopLoc="src/snn_top_hls.cpp:527:17" LoopName="WEIGHT_SUM"/>
+    </msg>
+    <msg msg_groups="PRAGMA_UNROLL" msg_id="214-188" msg_severity="INFO" msg_loc="src/snn_top_hls.cpp:283:0" msg_body="Unrolling loop 'RESET_TRACE_INNER' (src/snn_top_hls.cpp:371:32) in function 'snn_top_hls' partially with a factor of 8">
+        <args Factor="8" LoopLoc="src/snn_top_hls.cpp:371:32" LoopName="RESET_TRACE_INNER"/>
+    </msg>
+    <msg msg_groups="PRAGMA_UNROLL" msg_id="214-188" msg_severity="INFO" msg_loc="src/snn_top_hls.cpp:283:0" msg_body="Unrolling loop 'RESET_PRE' (src/snn_top_hls.cpp:363:20) in function 'snn_top_hls' partially with a factor of 8">
+        <args Factor="8" LoopLoc="src/snn_top_hls.cpp:363:20" LoopName="RESET_PRE"/>
+    </msg>
+    <msg msg_groups="PRAGMA_UNROLL" msg_id="214-188" msg_severity="INFO" msg_loc="src/snn_top_hls.cpp:125:0" msg_body="Unrolling loop 'STDP_LTP_LOOP' (src/snn_top_hls.cpp:134:20) in function 'process_post_spike' partially with a factor of 8">
+        <args Factor="8" LoopLoc="src/snn_top_hls.cpp:134:20" LoopName="STDP_LTP_LOOP"/>
+    </msg>
+    <msg msg_groups="PRAGMA_UNROLL" msg_id="214-188" msg_severity="INFO" msg_loc="src/snn_top_hls.cpp:84:0" msg_body="Unrolling loop 'STDP_LTD_LOOP' (src/snn_top_hls.cpp:93:20) in function 'process_pre_spike' partially with a factor of 8">
+        <args Factor="8" LoopLoc="src/snn_top_hls.cpp:93:20" LoopName="STDP_LTD_LOOP"/>
+    </msg>
+    <msg msg_groups="PRAGMA_MISC" msg_id="214-248" msg_severity="INFO" msg_loc="src/snn_top_hls.cpp:22:0" msg_body="Applying array_partition to '_ZL13weight_memory': Cyclic partitioning with factor 8 on dimension 2.">
+        <args Dim="2" Factor="8" Mode="Cyclic" UOName="_ZL13weight_memory"/>
+    </msg>
+    <msg msg_groups="PRAGMA_MISC" msg_id="214-248" msg_severity="INFO" msg_loc="src/snn_top_hls.cpp:29:0" msg_body="Applying array_partition to '_ZL18eligibility_traces': Cyclic partitioning with factor 4 on dimension 2.">
+        <args Dim="2" Factor="4" Mode="Cyclic" UOName="_ZL18eligibility_traces"/>
+    </msg>
+    <msg msg_groups="PRAGMA_MISC" msg_id="214-358" msg_severity="WARNING" msg_loc="src/snn_top_hls.cpp:173:35" msg_body="Array transformation on index using bit extension logic may lead to poor performance. Please use int or long for array index computation to benefit from optimizations."/>
+    <msg msg_groups="PRAGMA_MISC" msg_id="214-358" msg_severity="WARNING" msg_loc="src/snn_top_hls.cpp:484:28" msg_body="Array transformation on index using bit extension logic may lead to poor performance. Please use int or long for array index computation to benefit from optimizations."/>
+    <msg msg_groups="AUTOMATION_VERBOSE_PASSED" msg_id="214-335" msg_severity="INFO" msg_loc="src/snn_top_hls.cpp:363:20" msg_body="pipeline   1 snn_top_hls config_compile -pipeline_loops 64RESET_PRE src/snn_top_hls.cpp:363:20">
+        <args LoopLoc="src/snn_top_hls.cpp:363:20" LoopLoc-DebugLoc="File src/snn_top_hls.cpp Line 363 Column 20" LoopName="RESET_PRE" PragmaFunction="snn_top_hls" PragmaInferReason="config_compile -pipeline_loops 64" PragmaIsAuto="1" PragmaType="pipeline"/>
+    </msg>
+    <msg msg_groups="AUTOMATION_VERBOSE_PASSED" msg_id="214-335" msg_severity="INFO" msg_loc="src/snn_top_hls.cpp:371:32" msg_body="pipeline   1 snn_top_hls config_compile -pipeline_loops 64RESET_TRACE_INNER src/snn_top_hls.cpp:371:32">
+        <args LoopLoc="src/snn_top_hls.cpp:371:32" LoopLoc-DebugLoc="File src/snn_top_hls.cpp Line 371 Column 32" LoopName="RESET_TRACE_INNER" PragmaFunction="snn_top_hls" PragmaInferReason="config_compile -pipeline_loops 64" PragmaIsAuto="1" PragmaType="pipeline"/>
+    </msg>
+    <msg msg_groups="AUTOMATION_VERBOSE_PASSED" msg_id="214-335" msg_severity="INFO" msg_loc="src/snn_top_hls.cpp:529:27" msg_body="pipeline   1 snn_top_hls config_compile -pipeline_loops 64VITIS_LOOP_529_1 src/snn_top_hls.cpp:529:27">
+        <args LoopLoc="src/snn_top_hls.cpp:529:27" LoopLoc-DebugLoc="File src/snn_top_hls.cpp Line 529 Column 27" LoopName="VITIS_LOOP_529_1" PragmaFunction="snn_top_hls" PragmaInferReason="config_compile -pipeline_loops 64" PragmaIsAuto="1" PragmaType="pipeline"/>
+    </msg>
+    <msg msg_groups="AUTOMATION_VERBOSE_PASSED" msg_id="214-335" msg_severity="INFO" msg_loc="src/snn_top_hls.cpp:25:0" msg_body="array_partition dim=1 type=cyclic factor=8 variable=pre_spike_times 1 snn_top_hls src/snn_top_hls.cpp:25:0 pre_spike_times">
+        <args PragmaFunction="snn_top_hls" PragmaIsAuto="1" PragmaOptions="dim=1 type=cyclic factor=8 variable=pre_spike_times" PragmaType="array_partition" VarLoc="src/snn_top_hls.cpp:25:0" VarName="pre_spike_times"/>
+    </msg>
+    <msg msg_groups="AUTOMATION PRAGMA_MISC" msg_id="214-270" msg_severity="INFO" msg_loc="src/snn_top_hls.cpp:25:0" msg_body="Inferring pragma 'array_partition type=cyclic factor=8 dim=1' for array 'pre_spike_times' due to pipeline pragma">
+        <args Dim="1" Factor="8" Mode="cyclic" Name="pre_spike_times" PragmaType="array_partition"/>
+    </msg>
+    <msg msg_groups="AUTOMATION_VERBOSE_PASSED" msg_id="214-335" msg_severity="INFO" msg_loc="src/snn_top_hls.cpp:26:0" msg_body="array_partition dim=1 type=cyclic factor=8 variable=post_spike_times 1 snn_top_hls src/snn_top_hls.cpp:26:0 post_spike_times">
+        <args PragmaFunction="snn_top_hls" PragmaIsAuto="1" PragmaOptions="dim=1 type=cyclic factor=8 variable=post_spike_times" PragmaType="array_partition" VarLoc="src/snn_top_hls.cpp:26:0" VarName="post_spike_times"/>
+    </msg>
+    <msg msg_groups="AUTOMATION PRAGMA_MISC" msg_id="214-270" msg_severity="INFO" msg_loc="src/snn_top_hls.cpp:26:0" msg_body="Inferring pragma 'array_partition type=cyclic factor=8 dim=1' for array 'post_spike_times' due to pipeline pragma">
+        <args Dim="1" Factor="8" Mode="cyclic" Name="post_spike_times" PragmaType="array_partition"/>
+    </msg>
+    <msg msg_groups="PRAGMA_MISC" msg_id="214-248" msg_severity="INFO" msg_loc="src/snn_top_hls.cpp:26:0" msg_body="Applying array_partition to '_ZL16post_spike_times': Cyclic partitioning with factor 8 on dimension 1.">
+        <args Dim="1" Factor="8" Mode="Cyclic" UOName="_ZL16post_spike_times"/>
+    </msg>
+    <msg msg_groups="PRAGMA_MISC" msg_id="214-248" msg_severity="INFO" msg_loc="src/snn_top_hls.cpp:25:0" msg_body="Applying array_partition to '_ZL15pre_spike_times': Cyclic partitioning with factor 8 on dimension 1.">
+        <args Dim="1" Factor="8" Mode="Cyclic" UOName="_ZL15pre_spike_times"/>
+    </msg>
+    <msg msg_groups="PRAGMA_MISC" msg_id="214-358" msg_severity="WARNING" msg_loc="src/snn_top_hls.cpp:88:5" msg_body="Array transformation on index using bit extension logic may lead to poor performance. Please use int or long for array index computation to benefit from optimizations."/>
+    <msg msg_groups="PRAGMA_MISC" msg_id="214-358" msg_severity="WARNING" msg_loc="src/snn_top_hls.cpp:129:5" msg_body="Array transformation on index using bit extension logic may lead to poor performance. Please use int or long for array index computation to benefit from optimizations."/>
+</xilinx:hls_fe_msgs>
