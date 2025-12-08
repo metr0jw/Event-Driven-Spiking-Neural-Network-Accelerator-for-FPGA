@@ -58,10 +58,6 @@ run_test "Spike Encoder" tb_encoder
 g++ -std=c++11 -I../include tb_weight_updater.cpp -o tb_weight
 run_test "Weight Updater" tb_weight
 
-# Spike Decoder Test
-g++ -std=c++11 -I../include tb_spike_decoder.cpp -o tb_decoder
-run_test "Spike Decoder" tb_decoder
-
 # Summary
 echo ""
 echo "======================================"

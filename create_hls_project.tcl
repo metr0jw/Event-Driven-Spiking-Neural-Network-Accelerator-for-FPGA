@@ -6,7 +6,6 @@ set_top network_controller
 add_files hardware/hls/src/network_controller.cpp
 add_files hardware/hls/src/snn_learning_engine.cpp
 add_files hardware/hls/src/spike_encoder.cpp
-add_files hardware/hls/src/spike_decoder.cpp
 add_files hardware/hls/src/weight_updater.cpp
 add_files hardware/hls/src/pc_interface.cpp
 
@@ -16,7 +15,6 @@ add_files hardware/hls/include/snn_types.h
 add_files hardware/hls/include/snn_config.h
 add_files hardware/hls/include/snn_learning_engine.h
 add_files hardware/hls/include/spike_encoder.h
-add_files hardware/hls/include/spike_decoder.h
 add_files hardware/hls/include/weight_updater.h
 add_files hardware/hls/include/axi_interfaces.h
 add_files hardware/hls/include/pc_interface.h
@@ -26,7 +24,6 @@ add_files hardware/hls/include/sh_utils.h
 add_files -tb hardware/hls/test/tb_network_controller.cpp
 add_files -tb hardware/hls/test/tb_snn_learning_engine.cpp
 add_files -tb hardware/hls/test/tb_spike_encoder.cpp
-add_files -tb hardware/hls/test/tb_spike_decoder.cpp
 add_files -tb hardware/hls/test/tb_weight_updater.cpp
 add_files -tb hardware/hls/test/test_utils.h
 

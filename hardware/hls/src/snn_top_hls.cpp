@@ -29,7 +29,7 @@ static spike_time_t post_spike_times[MAX_NEURONS];
 static ap_fixed<16,8> eligibility_traces[MAX_NEURONS][MAX_NEURONS];
 
 //=============================================================================
-// STDP Weight Update Calculation
+// STDP Weight Update Calculation (Shift/AC with DSP)
 //=============================================================================
 static weight_delta_t calc_stdp_update(
     spike_time_t pre_time,
@@ -37,25 +37,39 @@ static weight_delta_t calc_stdp_update(
     const learning_params_t &params
 ) {
     #pragma HLS INLINE
+    #pragma HLS ALLOCATION operation instances=mul limit=0
     
     if (pre_time == 0 || post_time == 0) return 0;
     
     ap_int<32> dt = (ap_int<32>)post_time - (ap_int<32>)pre_time;
     weight_delta_t delta = 0;
     
-    if (dt > 0 && dt < (ap_int<32>)params.stdp_window) {
-        // LTP: pre before post
-        ap_fixed<16,8> dt_ratio = (ap_fixed<16,8>)dt / (ap_fixed<16,8>)params.tau_plus;
-        ap_fixed<16,8> exp_decay = ap_fixed<16,8>(1.0) - dt_ratio;
-        if (exp_decay > 0) {
-            delta = (weight_delta_t)(params.a_plus * exp_decay * WEIGHT_SCALE);
-        }
-    } else if (dt < 0 && (-dt) < (ap_int<32>)params.stdp_window) {
-        // LTD: post before pre
-        ap_fixed<16,8> dt_ratio = (ap_fixed<16,8>)dt / (ap_fixed<16,8>)params.tau_minus;
-        ap_fixed<16,8> exp_decay = ap_fixed<16,8>(1.0) + dt_ratio;
-        if (exp_decay > 0) {
-            delta = (weight_delta_t)(-params.a_minus * exp_decay * WEIGHT_SCALE);
+    // Pure shift/add STDP implementation
+    // Decay approximation: window - |dt| scaled by shifts only
+    // a_plus/a_minus assumed to be power-of-2 friendly (0.5, 0.25, etc.)
+    
+    ap_int<16> abs_dt = (dt >= 0) ? (ap_int<16>)dt : (ap_int<16>)(-dt);
+    ap_int<16> window = (ap_int<16>)params.stdp_window;
+    
+    if (abs_dt < window && abs_dt > 0) {
+        // Linear decay: (window - abs_dt) >> 4 gives normalized decay factor
+        ap_int<16> decay = (window - abs_dt) >> 4;
+        
+        // Scale by learning amplitude using shifts only
+        // Approximate a_plus/a_minus as shift amounts (e.g., 0.5 = >>1, 0.25 = >>2)
+        // decay >> 2 for base amplitude, then adjust
+        ap_int<16> base_delta = decay >> 2;  // Base scaling
+        
+        // Add fractional components: x + (x>>1) + (x>>2) ≈ x*1.75
+        ap_int<16> scaled_delta = base_delta + (base_delta >> 1);
+        
+        if (dt > 0) {
+            // LTP: pre before post (positive delta)
+            delta = (weight_delta_t)scaled_delta;
+        } else {
+            // LTD: post before pre (negative delta)
+            // Slightly smaller magnitude for LTD
+            delta = (weight_delta_t)(-(base_delta + (base_delta >> 2)));
         }
     }
     
@@ -92,7 +106,7 @@ static void process_pre_spike(
     // STDP: Check all post-synaptic neurons for LTD
     STDP_LTD_LOOP: for (int post_id = 0; post_id < MAX_NEURONS; post_id++) {
         #pragma HLS PIPELINE II=1
-        #pragma HLS UNROLL factor=8
+        #pragma HLS UNROLL factor=4
         
         spike_time_t post_time = post_spike_times[post_id];
         if (post_time == 0) continue;
@@ -133,7 +147,7 @@ static void process_post_spike(
     // STDP: Check all pre-synaptic neurons for LTP
     STDP_LTP_LOOP: for (int pre_id = 0; pre_id < MAX_NEURONS; pre_id++) {
         #pragma HLS PIPELINE II=1
-        #pragma HLS UNROLL factor=8
+        #pragma HLS UNROLL factor=4
         
         spike_time_t pre_time = pre_spike_times[pre_id];
         if (pre_time == 0) continue;
@@ -155,7 +169,7 @@ static void process_post_spike(
 }
 
 //=============================================================================
-// Apply Weight Updates
+// Apply Weight Updates (Shift/Add only - minimizes LUT, uses BRAM/DSP)
 //=============================================================================
 static void apply_weight_updates(
     hls::stream<weight_update_t> &weight_updates,
@@ -163,73 +177,138 @@ static void apply_weight_updates(
     ap_int<8> reward_signal  // For R-STDP
 ) {
     #pragma HLS INLINE off
+    #pragma HLS ALLOCATION operation instances=mul limit=1
     
-    while (!weight_updates.empty()) {
+    // Process limited updates per cycle to bound resource usage
+    int update_count = 0;
+    const int MAX_UPDATES_PER_CYCLE = 8;
+    
+    while (!weight_updates.empty() && update_count < MAX_UPDATES_PER_CYCLE) {
         #pragma HLS PIPELINE II=2
+        #pragma HLS LOOP_TRIPCOUNT min=0 max=8
         
         weight_update_t update = weight_updates.read();
+        update_count++;
         
-        // Read current weight
+        // Read current weight from BRAM
         weight_t current_weight = weight_memory[update.pre_id][update.post_id];
         
-        // Apply R-STDP modulation if reward signal provided
-        weight_delta_t modulated_delta = update.delta;
+        // Apply R-STDP modulation using shifts only
+        ap_int<16> modulated_delta = (ap_int<16>)update.delta;
+        
         if (params.rstdp_enable && reward_signal != 0) {
-            // Scale delta by reward signal
-            ap_fixed<16,8> reward_factor = (ap_fixed<16,8>)reward_signal / ap_fixed<16,8>(128.0);
-            modulated_delta = (weight_delta_t)((ap_fixed<16,8>)update.delta * reward_factor);
+            // Reward scaling: delta * (reward/128) ≈ (delta * reward) >> 7
+            // But avoid multiply: use conditional shifts based on reward magnitude
+            ap_int<8> abs_reward = (reward_signal >= 0) ? reward_signal : (ap_int<8>)(-reward_signal);
             
-            // Update eligibility trace
-            eligibility_traces[update.pre_id][update.post_id] += 
-                (ap_fixed<16,8>)update.delta * params.trace_decay;
+            // Approximate scaling by reward using shifts
+            // reward ~64-127 -> delta >> 1, reward ~32-63 -> delta >> 2, etc.
+            ap_int<16> reward_scaled;
+            if (abs_reward >= 64) {
+                reward_scaled = modulated_delta - (modulated_delta >> 2);  // ~0.75x
+            } else if (abs_reward >= 32) {
+                reward_scaled = modulated_delta >> 1;  // 0.5x
+            } else if (abs_reward >= 16) {
+                reward_scaled = modulated_delta >> 2;  // 0.25x
+            } else {
+                reward_scaled = modulated_delta >> 3;  // 0.125x
+            }
+            
+            // Apply sign of reward
+            modulated_delta = (reward_signal >= 0) ? reward_scaled : -reward_scaled;
+            
+            // Update eligibility trace using shift
+            ap_fixed<16,8> trace_update = (ap_fixed<16,8>)update.delta >> 2;
+            eligibility_traces[update.pre_id][update.post_id] += trace_update;
         }
         
-        // Calculate new weight with learning rate
-        ap_int<16> new_weight = (ap_int<16>)current_weight + 
-            (ap_int<16>)(modulated_delta * params.learning_rate);
+        // Apply learning rate using shifts: lr * delta
+        // Approximate learning_rate (0.01-1.0) with shift: >>4 for ~0.0625, >>3 for ~0.125
+        ap_int<16> lr_scaled = (modulated_delta >> 3) + (modulated_delta >> 5);  // ~0.156
         
-        // Clip and store
+        // Update weight
+        ap_int<16> new_weight = (ap_int<16>)current_weight + lr_scaled;
+        
+        // Clip and store to BRAM
         weight_memory[update.pre_id][update.post_id] = clip_weight(new_weight);
     }
 }
 
 //=============================================================================
-// Decay Eligibility Traces (For R-STDP)
+// Decay Eligibility Traces (For R-STDP) - Shift-based decay
 //=============================================================================
 static void decay_eligibility_traces(const learning_params_t &params) {
     #pragma HLS INLINE off
+    #pragma HLS ALLOCATION operation instances=mul limit=0
     
     DECAY_OUTER: for (int i = 0; i < MAX_NEURONS; i++) {
         DECAY_INNER: for (int j = 0; j < MAX_NEURONS; j++) {
             #pragma HLS PIPELINE II=1
-            eligibility_traces[i][j] *= params.trace_decay;
+            #pragma HLS UNROLL factor=4
+            
+            // Decay using shift: trace = trace - (trace >> 3) ≈ trace * 0.875
+            ap_fixed<16,8> trace = eligibility_traces[i][j];
+            ap_fixed<16,8> decay_amount = trace >> 3;  // 12.5% decay
+            eligibility_traces[i][j] = trace - decay_amount;
         }
     }
 }
 
 //=============================================================================
-// Apply Reward Signal (R-STDP)
+// Apply Reward Signal (R-STDP) - Pure Shift/Add Operations
 //=============================================================================
 static void apply_reward_signal(
     ap_int<8> reward_signal,
     const learning_params_t &params
 ) {
     #pragma HLS INLINE off
+    #pragma HLS ALLOCATION operation instances=mul limit=0
     
     if (reward_signal == 0) return;
     
-    ap_fixed<16,8> reward_factor = (ap_fixed<16,8>)reward_signal / ap_fixed<16,8>(128.0);
+    // Precompute reward sign and magnitude
+    bool reward_positive = (reward_signal >= 0);
+    ap_uint<8> reward_mag = reward_positive ? (ap_uint<8>)reward_signal : (ap_uint<8>)(-reward_signal);
+    
+    // Determine shift amount based on reward magnitude
+    ap_uint<3> reward_shift;
+    if (reward_mag >= 64) reward_shift = 1;       // ~0.5x
+    else if (reward_mag >= 32) reward_shift = 2;  // ~0.25x
+    else if (reward_mag >= 16) reward_shift = 3;  // ~0.125x
+    else reward_shift = 4;                         // ~0.0625x
     
     REWARD_OUTER: for (int i = 0; i < MAX_NEURONS; i++) {
         REWARD_INNER: for (int j = 0; j < MAX_NEURONS; j++) {
             #pragma HLS PIPELINE II=1
+            #pragma HLS UNROLL factor=4
             
             ap_fixed<16,8> trace = eligibility_traces[i][j];
-            if (trace != 0) {
-                weight_t current = weight_memory[i][j];
-                ap_int<16> delta = (ap_int<16>)(trace * reward_factor * params.learning_rate * WEIGHT_SCALE);
-                weight_memory[i][j] = clip_weight((ap_int<16>)current + delta);
+            
+            // Skip zero traces (most common case)
+            if (trace == 0) continue;
+            
+            weight_t current = weight_memory[i][j];
+            
+            // Scale trace by reward using precomputed shift
+            ap_int<16> trace_int = (ap_int<16>)trace;
+            ap_int<16> scaled_trace;
+            
+            // Manual shift selection to avoid variable shift (saves LUT)
+            switch (reward_shift) {
+                case 1: scaled_trace = trace_int >> 1; break;
+                case 2: scaled_trace = trace_int >> 2; break;
+                case 3: scaled_trace = trace_int >> 3; break;
+                default: scaled_trace = trace_int >> 4; break;
             }
+            
+            // Apply learning rate: another shift (>> 3 ≈ 0.125)
+            ap_int<16> delta = scaled_trace >> 3;
+            
+            // Apply reward sign
+            if (!reward_positive) delta = -delta;
+            
+            // Update weight
+            weight_memory[i][j] = clip_weight((ap_int<16>)current + delta);
         }
     }
 }
@@ -318,11 +397,14 @@ void snn_top_hls(
     
     //=========================================================================
     // Static Array Storage Bindings (must be inside function scope)
+    // Increased BRAM usage to reduce LUT - factor=4 matches UNROLL
     //=========================================================================
     #pragma HLS BIND_STORAGE variable=weight_memory type=RAM_2P impl=BRAM
-    #pragma HLS ARRAY_PARTITION variable=weight_memory cyclic factor=8 dim=2
-    #pragma HLS BIND_STORAGE variable=pre_spike_times type=RAM_1P impl=BRAM
-    #pragma HLS BIND_STORAGE variable=post_spike_times type=RAM_1P impl=BRAM
+    #pragma HLS ARRAY_PARTITION variable=weight_memory cyclic factor=4 dim=2
+    #pragma HLS BIND_STORAGE variable=pre_spike_times type=RAM_2P impl=BRAM
+    #pragma HLS ARRAY_PARTITION variable=pre_spike_times cyclic factor=4
+    #pragma HLS BIND_STORAGE variable=post_spike_times type=RAM_2P impl=BRAM
+    #pragma HLS ARRAY_PARTITION variable=post_spike_times cyclic factor=4
     #pragma HLS BIND_STORAGE variable=eligibility_traces type=RAM_2P impl=BRAM
     #pragma HLS ARRAY_PARTITION variable=eligibility_traces cyclic factor=4 dim=2
     
@@ -361,7 +443,7 @@ void snn_top_hls(
         
         // Clear spike times
         RESET_PRE: for (int i = 0; i < MAX_NEURONS; i++) {
-            #pragma HLS UNROLL factor=8
+            #pragma HLS PIPELINE II=1
             pre_spike_times[i] = 0;
             post_spike_times[i] = 0;
         }
@@ -369,7 +451,7 @@ void snn_top_hls(
         // Clear eligibility traces
         RESET_TRACE_OUTER: for (int i = 0; i < MAX_NEURONS; i++) {
             RESET_TRACE_INNER: for (int j = 0; j < MAX_NEURONS; j++) {
-                #pragma HLS UNROLL factor=8
+                #pragma HLS PIPELINE II=1
                 eligibility_traces[i][j] = 0;
             }
         }
@@ -522,11 +604,11 @@ void snn_top_hls(
     spike_count_reg = spike_counter;
     version_reg = VERSION_ID;
     
-    // Calculate weight sum for monitoring
+    // Calculate weight sum for monitoring (reduced sampling to save LUTs)
     ap_int<32> weight_sum = 0;
-    WEIGHT_SUM: for (int i = 0; i < 16; i++) {  // Sample subset
-        #pragma HLS UNROLL
-        for (int j = 0; j < 16; j++) {
+    WEIGHT_SUM: for (int i = 0; i < 8; i++) {  // Reduced sample subset
+        #pragma HLS PIPELINE II=1
+        for (int j = 0; j < 8; j++) {
             weight_sum += weight_memory[i][j];
         }
     }

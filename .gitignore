@@ -51,6 +51,20 @@ xsim_*.backup.*
 *.pb
 *.sdb
 *.rlx
+
+# Vitis HLS output (v++ generated)
+hardware/hls/hls_output/hls/.autopilot/
+hardware/hls/hls_output/hls/.tcls/
+hardware/hls/hls_output/hls/.debug/
+hardware/hls/hls_output/hls/syn/
+hardware/hls/hls_output/hls/impl/
+hardware/hls/hls_output/hls/*.db
+hardware/hls/hls_output/hls/*.log
+hardware/hls/hls_output/hls/*.xml
+hardware/hls/hls_output/hls/*.json
+hardware/hls/hls_output/hls/config.cmdline
+hardware/hls/.Xil/
+
 # HLS compiled test binaries
 hardware/hls/test/tb_active_tracking
 hardware/hls/test/tb_baseline

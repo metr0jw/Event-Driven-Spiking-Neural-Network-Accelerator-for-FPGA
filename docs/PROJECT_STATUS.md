@@ -43,11 +43,13 @@ Event-Driven Spiking Neural Network (SNN) Accelerator for PYNQ-Z2 FPGA with on-c
 ### 2. HLS Implementation
 | Module | Status | Notes |
 |--------|--------|-------|
-| `snn_top_hls.cpp` | ✅ Complete | C-simulation passed |
+| `snn_top_hls.cpp` | ✅ Complete | HLS synthesized with v++ (LUT optimized) |
 | `learning_engine.cpp` | ✅ Complete | STDP/R-STDP with eligibility traces |
 | `spike_encoder.cpp` | ✅ Complete | Rate/Temporal encoding |
-| `spike_decoder.cpp` | ✅ Complete | Population decoding |
 | `weight_update.cpp` | ✅ Complete | Batch weight updates |
+| `pc_interface.cpp` | ✅ Complete | Spike/Weight/Membrane potential I/O |
+
+> Note: `spike_decoder.cpp` removed - decoding handled in software on PC side
 
 ### 3. Python Software
 | Component | Status | Tests |

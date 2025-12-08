@@ -71,12 +71,6 @@ export_ip_core \
     "PYNQ-Z2-SNN"
 
 export_ip_core \
-    "spike_decoder_prj" \
-    "spike_decoder" \
-    "1.0" \
-    "PYNQ-Z2-SNN"
-
-export_ip_core \
     "network_controller_prj" \
     "network_controller" \
     "1.0" \

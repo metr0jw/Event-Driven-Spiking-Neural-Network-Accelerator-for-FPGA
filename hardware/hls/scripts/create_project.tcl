@@ -81,13 +81,6 @@ create_hls_project \
     {weight_updater.cpp} \
     {tb_weight_updater.cpp test_utils.h}
 
-# Create Spike Decoder project
-create_hls_project \
-    "spike_decoder_prj" \
-    "spike_decoder" \
-    {spike_decoder.cpp} \
-    {tb_spike_decoder.cpp test_utils.h}
-
 # Create Network Controller project
 create_hls_project \
     "network_controller_prj" \

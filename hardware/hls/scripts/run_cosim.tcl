@@ -70,9 +70,6 @@ run_cosim_for_project "spike_encoder_prj" $basic_opts
 # Weight Updater - verify memory access patterns
 run_cosim_for_project "weight_updater_prj" $wave_opts
 
-# Spike Decoder - basic verification
-run_cosim_for_project "spike_decoder_prj" $basic_opts
-
 # Network Controller - verify control flow
 run_cosim_for_project "network_controller_prj" $basic_opts
 
