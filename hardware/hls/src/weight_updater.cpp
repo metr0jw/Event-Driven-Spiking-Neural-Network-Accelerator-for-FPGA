@@ -52,31 +52,34 @@ void weight_updater(
     if (!updates_in.empty()) {
         weight_update_t update = updates_in.read();
         
-        // Calculate memory address
-        ap_uint<32> addr = (update.pre_id * MAX_NEURONS) + update.post_id;
-        
-        if (addr < MAX_SYNAPSES) {
-            // Read current weight
-            weight_t current_weight = weight_memory[addr];
+        // Validate neuron IDs
+        if (update.pre_id < MAX_NEURONS && update.post_id < MAX_NEURONS) {
+            // Calculate memory address
+            ap_uint<32> addr = (update.pre_id * MAX_NEURONS) + update.post_id;
             
-            // Apply update with bounds checking
-            ap_int<16> new_weight = current_weight + update.delta;
-            
-            // Apply weight bounds
-            if (new_weight > config.max_weight) {
-                new_weight = config.max_weight;
-            } else if (new_weight < config.min_weight) {
-                new_weight = config.min_weight;
+            if (addr < MAX_SYNAPSES) {
+                // Read current weight
+                weight_t current_weight = weight_memory[addr];
+                
+                // Apply update with bounds checking
+                ap_int<16> new_weight = current_weight + update.delta;
+                
+                // Apply weight bounds
+                if (new_weight > config.max_weight) {
+                    new_weight = config.max_weight;
+                } else if (new_weight < config.min_weight) {
+                    new_weight = config.min_weight;
+                }
+                
+                // Apply weight decay if enabled
+                if (config.enable_decay) {
+                    new_weight = apply_decay(new_weight, config.decay_rate);
+                }
+                
+                // Write back updated weight
+                weight_memory[addr] = new_weight;
+                update_counter++;
             }
-            
-            // Apply weight decay if enabled
-            if (config.enable_decay) {
-                new_weight = apply_decay(new_weight, config.decay_rate);
-            }
-            
-            // Write back updated weight
-            weight_memory[addr] = new_weight;
-            update_counter++;
         }
     }
     
@@ -91,13 +94,16 @@ weight_t apply_decay(weight_t weight, ap_uint<8> decay_rate) {
     
     // Decay towards zero
     ap_int<16> decayed = weight;
-    ap_int<16> decay_amount = (weight * decay_rate) >> 8;
     
     if (weight > 0) {
+        // Positive weights decay toward zero
+        ap_int<16> decay_amount = (weight * decay_rate) >> 8;
         decayed = weight - decay_amount;
         if (decayed < 0) decayed = 0;
     } else {
-        decayed = weight + decay_amount;
+        // Negative weights decay toward zero (subtract from negative = move toward zero)
+        ap_int<16> decay_amount = ((-weight) * decay_rate) >> 8;
+        decayed = weight + decay_amount;  // Adding positive to negative moves toward zero
         if (decayed > 0) decayed = 0;
     }
     

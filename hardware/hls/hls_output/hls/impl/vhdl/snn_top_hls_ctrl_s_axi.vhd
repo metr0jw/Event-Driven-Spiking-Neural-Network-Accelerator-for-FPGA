@@ -40,7 +40,7 @@ port (
     mode_reg              :out  STD_LOGIC_VECTOR(31 downto 0);
     time_steps_reg        :out  STD_LOGIC_VECTOR(31 downto 0);
     learning_params       :out  STD_LOGIC_VECTOR(143 downto 0);
-    encoder_config        :out  STD_LOGIC_VECTOR(111 downto 0);
+    encoder_config        :out  STD_LOGIC_VECTOR(143 downto 0);
     status_reg            :in   STD_LOGIC_VECTOR(31 downto 0);
     status_reg_ap_vld     :in   STD_LOGIC;
     spike_count_reg       :in   STD_LOGIC_VECTOR(31 downto 0);
@@ -110,33 +110,35 @@ end entity snn_top_hls_ctrl_s_axi;
 -- 0x50 : Data signal of encoder_config
 --        bit 31~0 - encoder_config[95:64] (Read/Write)
 -- 0x54 : Data signal of encoder_config
---        bit 15~0 - encoder_config[111:96] (Read/Write)
+--        bit 31~0 - encoder_config[127:96] (Read/Write)
+-- 0x58 : Data signal of encoder_config
+--        bit 15~0 - encoder_config[143:128] (Read/Write)
 --        others   - reserved
--- 0x58 : reserved
--- 0x5c : Data signal of status_reg
+-- 0x5c : reserved
+-- 0x60 : Data signal of status_reg
 --        bit 31~0 - status_reg[31:0] (Read)
--- 0x60 : Control signal of status_reg
+-- 0x64 : Control signal of status_reg
 --        bit 0  - status_reg_ap_vld (Read/COR)
 --        others - reserved
--- 0x6c : Data signal of spike_count_reg
+-- 0x70 : Data signal of spike_count_reg
 --        bit 31~0 - spike_count_reg[31:0] (Read)
--- 0x70 : Control signal of spike_count_reg
+-- 0x74 : Control signal of spike_count_reg
 --        bit 0  - spike_count_reg_ap_vld (Read/COR)
 --        others - reserved
--- 0x7c : Data signal of weight_sum_reg
+-- 0x80 : Data signal of weight_sum_reg
 --        bit 31~0 - weight_sum_reg[31:0] (Read)
--- 0x80 : Control signal of weight_sum_reg
+-- 0x84 : Control signal of weight_sum_reg
 --        bit 0  - weight_sum_reg_ap_vld (Read/COR)
 --        others - reserved
--- 0x8c : Data signal of version_reg
+-- 0x90 : Data signal of version_reg
 --        bit 31~0 - version_reg[31:0] (Read)
--- 0x90 : Control signal of version_reg
+-- 0x94 : Control signal of version_reg
 --        bit 0  - version_reg_ap_vld (Read/COR)
 --        others - reserved
--- 0x9c : Data signal of reward_signal
+-- 0xa0 : Data signal of reward_signal
 --        bit 7~0 - reward_signal[7:0] (Read/Write)
 --        others  - reserved
--- 0xa0 : reserved
+-- 0xa4 : reserved
 -- (SC = Self Clear, COR = Clear on Read, TOW = Toggle on Write, COH = Clear on Handshake)
 
 architecture behave of snn_top_hls_ctrl_s_axi is
@@ -168,17 +170,18 @@ attribute DowngradeIPIdentifiedWarnings of behave : architecture is "yes";
     constant ADDR_ENCODER_CONFIG_DATA_1  : INTEGER := 16#4c#;
     constant ADDR_ENCODER_CONFIG_DATA_2  : INTEGER := 16#50#;
     constant ADDR_ENCODER_CONFIG_DATA_3  : INTEGER := 16#54#;
-    constant ADDR_ENCODER_CONFIG_CTRL    : INTEGER := 16#58#;
-    constant ADDR_STATUS_REG_DATA_0      : INTEGER := 16#5c#;
-    constant ADDR_STATUS_REG_CTRL        : INTEGER := 16#60#;
-    constant ADDR_SPIKE_COUNT_REG_DATA_0 : INTEGER := 16#6c#;
-    constant ADDR_SPIKE_COUNT_REG_CTRL   : INTEGER := 16#70#;
-    constant ADDR_WEIGHT_SUM_REG_DATA_0  : INTEGER := 16#7c#;
-    constant ADDR_WEIGHT_SUM_REG_CTRL    : INTEGER := 16#80#;
-    constant ADDR_VERSION_REG_DATA_0     : INTEGER := 16#8c#;
-    constant ADDR_VERSION_REG_CTRL       : INTEGER := 16#90#;
-    constant ADDR_REWARD_SIGNAL_DATA_0   : INTEGER := 16#9c#;
-    constant ADDR_REWARD_SIGNAL_CTRL     : INTEGER := 16#a0#;
+    constant ADDR_ENCODER_CONFIG_DATA_4  : INTEGER := 16#58#;
+    constant ADDR_ENCODER_CONFIG_CTRL    : INTEGER := 16#5c#;
+    constant ADDR_STATUS_REG_DATA_0      : INTEGER := 16#60#;
+    constant ADDR_STATUS_REG_CTRL        : INTEGER := 16#64#;
+    constant ADDR_SPIKE_COUNT_REG_DATA_0 : INTEGER := 16#70#;
+    constant ADDR_SPIKE_COUNT_REG_CTRL   : INTEGER := 16#74#;
+    constant ADDR_WEIGHT_SUM_REG_DATA_0  : INTEGER := 16#80#;
+    constant ADDR_WEIGHT_SUM_REG_CTRL    : INTEGER := 16#84#;
+    constant ADDR_VERSION_REG_DATA_0     : INTEGER := 16#90#;
+    constant ADDR_VERSION_REG_CTRL       : INTEGER := 16#94#;
+    constant ADDR_REWARD_SIGNAL_DATA_0   : INTEGER := 16#a0#;
+    constant ADDR_REWARD_SIGNAL_CTRL     : INTEGER := 16#a4#;
     constant ADDR_BITS         : INTEGER := 8;
 
     signal AWREADY_t           : STD_LOGIC;
@@ -213,7 +216,7 @@ attribute DowngradeIPIdentifiedWarnings of behave : architecture is "yes";
     signal int_mode_reg        : UNSIGNED(31 downto 0) := (others => '0');
     signal int_time_steps_reg  : UNSIGNED(31 downto 0) := (others => '0');
     signal int_learning_params : UNSIGNED(143 downto 0) := (others => '0');
-    signal int_encoder_config  : UNSIGNED(111 downto 0) := (others => '0');
+    signal int_encoder_config  : UNSIGNED(143 downto 0) := (others => '0');
     signal int_status_reg_ap_vld : STD_LOGIC;
     signal int_status_reg      : UNSIGNED(31 downto 0) := (others => '0');
     signal int_spike_count_reg_ap_vld : STD_LOGIC;
@@ -377,7 +380,9 @@ begin
                     when ADDR_ENCODER_CONFIG_DATA_2 =>
                         rdata_data <= RESIZE(int_encoder_config(95 downto 64), 32);
                     when ADDR_ENCODER_CONFIG_DATA_3 =>
-                        rdata_data <= RESIZE(int_encoder_config(111 downto 96), 32);
+                        rdata_data <= RESIZE(int_encoder_config(127 downto 96), 32);
+                    when ADDR_ENCODER_CONFIG_DATA_4 =>
+                        rdata_data <= RESIZE(int_encoder_config(143 downto 128), 32);
                     when ADDR_STATUS_REG_DATA_0 =>
                         rdata_data <= RESIZE(int_status_reg(31 downto 0), 32);
                     when ADDR_STATUS_REG_CTRL =>
@@ -748,10 +753,23 @@ begin
     begin
         if (ACLK'event and ACLK = '1') then
             if (ARESET = '1') then
-                int_encoder_config(111 downto 96) <= (others => '0');
+                int_encoder_config(127 downto 96) <= (others => '0');
             elsif (ACLK_EN = '1') then
                 if (w_hs = '1' and waddr = ADDR_ENCODER_CONFIG_DATA_3) then
-                    int_encoder_config(111 downto 96) <= (UNSIGNED(WDATA(15 downto 0)) and wmask(15 downto 0)) or ((not wmask(15 downto 0)) and int_encoder_config(111 downto 96));
+                    int_encoder_config(127 downto 96) <= (UNSIGNED(WDATA(31 downto 0)) and wmask(31 downto 0)) or ((not wmask(31 downto 0)) and int_encoder_config(127 downto 96));
+                end if;
+            end if;
+        end if;
+    end process;
+
+    process (ACLK)
+    begin
+        if (ACLK'event and ACLK = '1') then
+            if (ARESET = '1') then
+                int_encoder_config(143 downto 128) <= (others => '0');
+            elsif (ACLK_EN = '1') then
+                if (w_hs = '1' and waddr = ADDR_ENCODER_CONFIG_DATA_4) then
+                    int_encoder_config(143 downto 128) <= (UNSIGNED(WDATA(15 downto 0)) and wmask(15 downto 0)) or ((not wmask(15 downto 0)) and int_encoder_config(143 downto 128));
                 end if;
             end if;
         end if;

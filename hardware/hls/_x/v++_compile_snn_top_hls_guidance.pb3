@@ -1,0 +1,3 @@
+
+Ý
+v++_compile_snn_top_hls$e598dbd5-5dae-43fc-98d0-f015e1f30c7b"›/home/jwlee/tools/2025.2/Vitis/bin/unwrapped/lnx64.o/v++  --vivado.prop "run.__KERNEL__.{STEPS.SYNTH_DESIGN.ARGS.MORE OPTIONS}={-directive sdx_optimization_effort_high}" --advanced.misc "report=type report_timing_summary name impl_report_timing_summary_route_design_summary steps {route_design} runs {impl_1} options {-max_paths 10}" --advanced.misc "report=type report_timing_summary name impl_report_timing_summary_post_route_phys_opt_design_summary steps {post_route_phys_opt_design} runs {impl_1} options {-max_paths 10}" -c -t hw --platform xilinx_u50_gen3x16_xdma_5_202210_1 --kernel snn_top_hls -Isrc -Iinclude src/snn_top_hls.cpp -o hls_output/snn_top_hls.xo 

@@ -8,6 +8,9 @@
 ## Description   : Creates Zynq block design for PYNQ-Z2
 ##-----------------------------------------------------------------------------
 
+# Get script directory
+set script_dir [file dirname [info script]]
+
 # Create block design
 create_bd_design "system"
 
@@ -17,18 +20,26 @@ create_bd_cell -type ip -vlnv xilinx.com:ip:processing_system7:5.5 processing_sy
 # Apply board automation first
 apply_bd_automation -rule xilinx.com:bd_rule:processing_system7 -config {make_external "FIXED_IO, DDR" apply_board_preset "0" Master "Disable" Slave "Disable" } [get_bd_cells processing_system7_0]
 
-# Now apply PYNQ-Z2 specific configuration
+# Load PYNQ-Z2 specific configuration from preset file
 source "$script_dir/pynq_z2_ps_config.tcl"
 
-# Apply the configuration to the PS
+# Apply the PYNQ-Z2 preset configuration
+set ps_config [apply_preset processing_system7_0]
 set_property -dict $ps_config [get_bd_cells processing_system7_0]
 
-# Configure PS for PYNQ-Z2 specific settings
+# Configure PS for accelerator-specific settings
 set_property -dict [list \
     CONFIG.PCW_FPGA0_PERIPHERAL_FREQMHZ {100} \
     CONFIG.PCW_USE_M_AXI_GP0 {1} \
-    CONFIG.PCW_M_AXI_GP0_ENABLE_STATIC_REMAP {0} \
+    CONFIG.PCW_USE_M_AXI_GP1 {0} \
+    CONFIG.PCW_USE_S_AXI_GP0 {0} \
+    CONFIG.PCW_USE_S_AXI_GP1 {0} \
+    CONFIG.PCW_USE_S_AXI_ACP {0} \
     CONFIG.PCW_USE_S_AXI_HP0 {1} \
+    CONFIG.PCW_USE_S_AXI_HP1 {0} \
+    CONFIG.PCW_USE_S_AXI_HP2 {0} \
+    CONFIG.PCW_USE_S_AXI_HP3 {0} \
+    CONFIG.PCW_M_AXI_GP0_ENABLE_STATIC_REMAP {0} \
     CONFIG.PCW_S_AXI_HP0_DATA_WIDTH {64} \
     CONFIG.PCW_USE_FABRIC_INTERRUPT {1} \
     CONFIG.PCW_IRQ_F2P_INTR {1} \
@@ -59,20 +70,16 @@ set_property -dict [list CONFIG.SINGLE_PORT_BRAM {1}] [get_bd_cells axi_bram_ctr
 # Add Block Memory Generator
 create_bd_cell -type ip -vlnv xilinx.com:ip:blk_mem_gen:8.4 blk_mem_gen_0
 set_property -dict [list \
-    CONFIG.Memory_Type {Simple_Dual_Port_RAM} \
-    CONFIG.Enable_32bit_Address {false} \
+    CONFIG.Memory_Type {True_Dual_Port_RAM} \
     CONFIG.Use_Byte_Write_Enable {true} \
     CONFIG.Byte_Size {8} \
     CONFIG.Write_Width_A {32} \
     CONFIG.Write_Depth_A {16384} \
     CONFIG.Read_Width_A {32} \
-    CONFIG.Enable_A {Always_Enabled} \
     CONFIG.Write_Width_B {32} \
     CONFIG.Read_Width_B {32} \
-    CONFIG.Enable_B {Always_Enabled} \
     CONFIG.Register_PortA_Output_of_Memory_Primitives {false} \
-    CONFIG.Register_PortB_Output_of_Memory_Primitives {true} \
-    CONFIG.Load_Init_File {false} \
+    CONFIG.Register_PortB_Output_of_Memory_Primitives {false} \
 ] [get_bd_cells blk_mem_gen_0]
 
 # Connect AXI interfaces
@@ -120,13 +127,9 @@ apply_bd_automation -rule xilinx.com:bd_rule:axi4 -config { \
 # Connect BRAM
 connect_bd_intf_net [get_bd_intf_pins axi_bram_ctrl_0/BRAM_PORTA] [get_bd_intf_pins blk_mem_gen_0/BRAM_PORTA]
 
-# Create external ports for SNN accelerator connections
-create_bd_intf_port -mode Master -vlnv xilinx.com:interface:axis_rtl:1.0 M_AXIS_TO_SNN
-create_bd_intf_port -mode Slave -vlnv xilinx.com:interface:axis_rtl:1.0 S_AXIS_FROM_SNN
-
-# Connect DMA streams to external ports
-connect_bd_intf_net [get_bd_intf_pins axi_dma_0/M_AXIS_MM2S] [get_bd_intf_ports M_AXIS_TO_SNN]
-connect_bd_intf_net [get_bd_intf_ports S_AXIS_FROM_SNN] [get_bd_intf_pins axi_dma_0/S_AXIS_S2MM]
+# Create DMA loopback for testing (no external ports to avoid DRC errors)
+# Connect MM2S directly to S2MM for loopback test
+connect_bd_intf_net [get_bd_intf_pins axi_dma_0/M_AXIS_MM2S] [get_bd_intf_pins axi_dma_0/S_AXIS_S2MM]
 
 # Add interrupt concat
 create_bd_cell -type ip -vlnv xilinx.com:ip:xlconcat:2.1 xlconcat_0

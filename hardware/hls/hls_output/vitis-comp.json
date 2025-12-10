@@ -4,7 +4,7 @@
   "configuration": {
     "componentType": "HLS",
     "work_dir": ".",
-    "csyn_args": "--part=xc7z020clg400-1 --hls.flow_target=vivado --hls.syn.file=src\/snn_top_hls.cpp --hls.syn.top=snn_top_hls",
+    "csyn_args": "--part=xc7z020clg400-1 --hls.flow_target=vivado --hls.sim.rtl=verilog --hls.syn.file=src\/snn_top_hls.cpp --hls.syn.top=snn_top_hls --hls.tb.file=test\/test_snn_top_hls.cpp",
     "configFiles": ["hls_config.cfg"]
   }
 }

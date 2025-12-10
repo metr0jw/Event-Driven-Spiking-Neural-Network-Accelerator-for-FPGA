@@ -18,7 +18,7 @@
 #include "snn_top_hls.h"
 
 //=============================================================================
-// Simple On-Chip Spike Encoder (self contained to avoid header conflicts)
+// Simple On-Chip Spike Encoder
 //=============================================================================
 // Local axis word for encoder stream (avoid ap_axiu on non-port streams)
 typedef struct {
@@ -448,6 +448,7 @@ static void apply_rstdp_reward(
     
     // Apply reward modulated by eligibility traces
     // W[i][j] += reward * pre_elig[i] * post_elig[j] (approximated with shifts)
+    // OPTIMIZED: Sequential outer loop avoids memory port conflicts (II=64 issue)
     RSTDP_OUTER: for (int i = 0; i < MAX_NEURONS; i++) {
         #pragma HLS LOOP_FLATTEN off
         
@@ -455,8 +456,7 @@ static void apply_rstdp_reward(
         if (pre_elig == 0) continue;  // Skip inactive pre-neurons
         
         RSTDP_INNER: for (int j = 0; j < MAX_NEURONS; j++) {
-            #pragma HLS PIPELINE II=2
-            #pragma HLS UNROLL factor=4
+            #pragma HLS PIPELINE II=1
             
             ap_int<8> post_elig = post_eligibility[j];
             if (post_elig == 0) continue;  // Skip inactive post-neurons
@@ -550,6 +550,9 @@ void snn_top_hls(
     // AXI4-Stream Raw Data Input (for on-chip encoder)
     hls::stream<input_data_t> &s_axis_data,
     
+    // AXI4-Stream Weight Write (for loading weights)
+    hls::stream<axis_weight_t> &s_axis_weights,
+    
     // AXI4-Stream Spike Output (to PS)
     hls::stream<axis_spike_t> &m_axis_spikes,
     
@@ -601,6 +604,7 @@ void snn_top_hls(
     // AXI4-Stream interfaces
     #pragma HLS INTERFACE axis port=s_axis_spikes
     #pragma HLS INTERFACE axis port=s_axis_data
+    #pragma HLS INTERFACE axis port=s_axis_weights
     #pragma HLS INTERFACE axis port=m_axis_spikes
     #pragma HLS INTERFACE axis port=m_axis_weights
     
@@ -624,6 +628,7 @@ void snn_top_hls(
     // Static Array Storage Bindings (must be inside function scope)
     // Per-Neuron architecture: O(N+M) instead of O(N*M)
     //=========================================================================
+    // Weight Memory - BRAM is more resource-efficient than LUTRAM for large arrays
     #pragma HLS BIND_STORAGE variable=weight_memory type=RAM_2P impl=BRAM
     #pragma HLS ARRAY_PARTITION variable=weight_memory cyclic factor=4 dim=2
     
@@ -668,6 +673,7 @@ void snn_top_hls(
     bool learning_enable = ctrl_reg[3];
     bool weight_read_mode = ctrl_reg[4];
     bool apply_reward = ctrl_reg[5];
+    bool weight_load_mode = ctrl_reg[6];  // New: enable weight loading from s_axis_weights
     ap_uint<2> op_mode = mode_reg(1, 0);
     bool encoder_enable = mode_reg[8];
     bool checkpoint_mode = (op_mode == MODE_CHECKPOINT);
@@ -714,19 +720,29 @@ void snn_top_hls(
         }
         
         // Initialize weights
-        // NOTE: Weight loading from DDR/PS can be done via checkpoint mode in reverse:
-        //       Host streams weights via m_axis_weights interface, this writes to weight_memory
-        //       For now, initialize to zero on first reset
         if (!initialized) {
             INIT_WEIGHT_OUTER: for (int i = 0; i < MAX_NEURONS; i++) {
                 INIT_WEIGHT_INNER: for (int j = 0; j < MAX_NEURONS; j++) {
                     #pragma HLS PIPELINE II=1
-                    // Initialize to zero; actual weights loaded via Python API
-                    // using checkpoint streaming in future updates
+                    // Default to zero; will be overwritten if weight_load_mode is set
                     weight_memory[i][j] = 0;
                 }
             }
             initialized = true;
+        }
+    }
+    
+    // Weight Loading Mode: Stream weights from s_axis_weights to weight_memory
+    // Host should set ctrl_reg[6] = 1, then stream MAX_NEURONS * MAX_NEURONS weights
+    // Format: axis_weight_t.data[23:16] = weight, [15:8] = col, [7:0] = row
+    if (weight_load_mode && !s_axis_weights.empty()) {
+        axis_weight_t w_pkt = s_axis_weights.read();
+        ap_uint<8> row = w_pkt.data(7, 0);
+        ap_uint<8> col = w_pkt.data(15, 8);
+        weight_t weight_val = w_pkt.data(23, 16);
+        
+        if (row < MAX_NEURONS && col < MAX_NEURONS) {
+            weight_memory[row][col] = weight_val;
         }
     }
     

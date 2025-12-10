@@ -209,9 +209,9 @@ int main() {
     
     ap_uint<32> prev_count = updates_applied;
     
-    // Try to update beyond valid range
-    update.pre_id = 255; // Invalid
-    update.post_id = 255;
+    // Try to update beyond valid range (NUM_NEURONS=256, so valid IDs are 0-255)
+    update.pre_id = 512; // Definitely invalid - well beyond MAX_NEURONS
+    update.post_id = 512;
     update.delta = 50;
     updates_in.write(update);
     

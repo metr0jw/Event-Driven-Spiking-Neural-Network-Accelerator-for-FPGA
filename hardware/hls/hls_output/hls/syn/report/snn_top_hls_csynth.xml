@@ -22,14 +22,14 @@
 </SummaryOfTimingAnalysis>
 <SummaryOfOverallLatency>
 <unit>clock cycles</unit>
-<Best-caseLatency>29</Best-caseLatency>
-<Average-caseLatency>155922488</Average-caseLatency>
-<Worst-caseLatency>2374859326</Worst-caseLatency>
-<Best-caseRealTimeLatency>0.290 us</Best-caseRealTimeLatency>
-<Average-caseRealTimeLatency>1.559 sec</Average-caseRealTimeLatency>
-<Worst-caseRealTimeLatency>23.749 sec</Worst-caseRealTimeLatency>
-<Interval-min>30</Interval-min>
-<Interval-max>2374859327</Interval-max>
+<Best-caseLatency>30</Best-caseLatency>
+<Average-caseLatency>294428598</Average-caseLatency>
+<Worst-caseLatency>4590401072</Worst-caseLatency>
+<Best-caseRealTimeLatency>0.300 us</Best-caseRealTimeLatency>
+<Average-caseRealTimeLatency>2.944 sec</Average-caseRealTimeLatency>
+<Worst-caseRealTimeLatency>45.904 sec</Worst-caseRealTimeLatency>
+<Interval-min>31</Interval-min>
+<Interval-max>4590401073</Interval-max>
 <PerformancePragma>-</PerformancePragma>
 </SummaryOfOverallLatency>
 <SummaryOfLoopLatency>
@@ -45,19 +45,19 @@
 <Latency>
 <range>
 <min>0</min>
-<max>2374791795</max>
+<max>4590333540</max>
 </range>
 </Latency>
 <AbsoluteTimeLatency>
 <range>
 <min>0</min>
-<max>23747917950</max>
+<max>45903335400</max>
 </range>
 </AbsoluteTimeLatency>
 <IterationLatency>
 <range>
 <min>6</min>
-<max>36237</max>
+<max>70044</max>
 </range>
 </IterationLatency>
 <PerformancePragma>-</PerformancePragma>
@@ -68,13 +68,13 @@
 <SummaryOfViolations>
 <IssueType>-</IssueType>
 <ViolationType>-</ViolationType>
-<SourceLocation>src/snn_top_hls.cpp:450</SourceLocation>
+<SourceLocation>src/snn_top_hls.cpp:534</SourceLocation>
 <SummaryOfLoopViolations>
 <TIME_LOOP>
 <Name>TIME_LOOP</Name>
 <IssueType>-</IssueType>
 <ViolationType>-</ViolationType>
-<SourceLocation>src/snn_top_hls.cpp:682</SourceLocation>
+<SourceLocation>src/snn_top_hls.cpp:782</SourceLocation>
 </TIME_LOOP>
 </SummaryOfLoopViolations>
 </SummaryOfViolations>
@@ -83,9 +83,9 @@
 <AreaEstimates>
 <Resources>
 <BRAM_18K>108</BRAM_18K>
-<DSP>24</DSP>
-<FF>18795</FF>
-<LUT>31639</LUT>
+<DSP>48</DSP>
+<FF>25793</FF>
+<LUT>40537</LUT>
 <URAM>0</URAM>
 </Resources>
 <AvailableResources>
@@ -460,6 +460,114 @@
 <Dir>out</Dir>
 <Bits>1</Bits>
 <Attribute>control</Attribute>
+<CType>int</CType>
+</RtlPorts>
+<RtlPorts>
+<name>s_axis_weights_TDATA</name>
+<Object>s_axis_weights_V_data_V</Object>
+<Type>pointer</Type>
+<Scope></Scope>
+<IOProtocol>axis</IOProtocol>
+<IOConfig>register, both mode</IOConfig>
+<Dir>in</Dir>
+<Bits>32</Bits>
+<Attribute>data</Attribute>
+<CType>int</CType>
+</RtlPorts>
+<RtlPorts>
+<name>s_axis_weights_TVALID</name>
+<Object>s_axis_weights_V_dest_V</Object>
+<Type>pointer</Type>
+<Scope></Scope>
+<IOProtocol>axis</IOProtocol>
+<IOConfig>register, both mode</IOConfig>
+<Dir>in</Dir>
+<Bits>1</Bits>
+<Attribute>control</Attribute>
+<CType>int</CType>
+</RtlPorts>
+<RtlPorts>
+<name>s_axis_weights_TREADY</name>
+<Object>s_axis_weights_V_dest_V</Object>
+<Type>pointer</Type>
+<Scope></Scope>
+<IOProtocol>axis</IOProtocol>
+<IOConfig>register, both mode</IOConfig>
+<Dir>out</Dir>
+<Bits>1</Bits>
+<Attribute>control</Attribute>
+<CType>int</CType>
+</RtlPorts>
+<RtlPorts>
+<name>s_axis_weights_TDEST</name>
+<Object>s_axis_weights_V_dest_V</Object>
+<Type>pointer</Type>
+<Scope></Scope>
+<IOProtocol>axis</IOProtocol>
+<IOConfig>register, both mode</IOConfig>
+<Dir>in</Dir>
+<Bits>1</Bits>
+<Attribute>data</Attribute>
+<CType>int</CType>
+</RtlPorts>
+<RtlPorts>
+<name>s_axis_weights_TKEEP</name>
+<Object>s_axis_weights_V_keep_V</Object>
+<Type>pointer</Type>
+<Scope></Scope>
+<IOProtocol>axis</IOProtocol>
+<IOConfig>register, both mode</IOConfig>
+<Dir>in</Dir>
+<Bits>4</Bits>
+<Attribute>data</Attribute>
+<CType>int</CType>
+</RtlPorts>
+<RtlPorts>
+<name>s_axis_weights_TSTRB</name>
+<Object>s_axis_weights_V_strb_V</Object>
+<Type>pointer</Type>
+<Scope></Scope>
+<IOProtocol>axis</IOProtocol>
+<IOConfig>register, both mode</IOConfig>
+<Dir>in</Dir>
+<Bits>4</Bits>
+<Attribute>data</Attribute>
+<CType>int</CType>
+</RtlPorts>
+<RtlPorts>
+<name>s_axis_weights_TUSER</name>
+<Object>s_axis_weights_V_user_V</Object>
+<Type>pointer</Type>
+<Scope></Scope>
+<IOProtocol>axis</IOProtocol>
+<IOConfig>register, both mode</IOConfig>
+<Dir>in</Dir>
+<Bits>1</Bits>
+<Attribute>data</Attribute>
+<CType>int</CType>
+</RtlPorts>
+<RtlPorts>
+<name>s_axis_weights_TLAST</name>
+<Object>s_axis_weights_V_last_V</Object>
+<Type>pointer</Type>
+<Scope></Scope>
+<IOProtocol>axis</IOProtocol>
+<IOConfig>register, both mode</IOConfig>
+<Dir>in</Dir>
+<Bits>1</Bits>
+<Attribute>data</Attribute>
+<CType>int</CType>
+</RtlPorts>
+<RtlPorts>
+<name>s_axis_weights_TID</name>
+<Object>s_axis_weights_V_id_V</Object>
+<Type>pointer</Type>
+<Scope></Scope>
+<IOProtocol>axis</IOProtocol>
+<IOConfig>register, both mode</IOConfig>
+<Dir>in</Dir>
+<Bits>1</Bits>
+<Attribute>data</Attribute>
 <CType>int</CType>
 </RtlPorts>
 <RtlPorts>

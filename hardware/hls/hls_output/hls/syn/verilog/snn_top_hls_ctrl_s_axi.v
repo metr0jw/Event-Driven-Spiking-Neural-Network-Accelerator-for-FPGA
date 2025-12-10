@@ -37,7 +37,7 @@
     output wire [31:0]                   mode_reg,
     output wire [31:0]                   time_steps_reg,
     output wire [143:0]                  learning_params,
-    output wire [111:0]                  encoder_config,
+    output wire [143:0]                  encoder_config,
     input  wire [31:0]                   status_reg,
     input  wire                          status_reg_ap_vld,
     input  wire [31:0]                   spike_count_reg,
@@ -105,33 +105,35 @@
 // 0x50 : Data signal of encoder_config
 //        bit 31~0 - encoder_config[95:64] (Read/Write)
 // 0x54 : Data signal of encoder_config
-//        bit 15~0 - encoder_config[111:96] (Read/Write)
+//        bit 31~0 - encoder_config[127:96] (Read/Write)
+// 0x58 : Data signal of encoder_config
+//        bit 15~0 - encoder_config[143:128] (Read/Write)
 //        others   - reserved
-// 0x58 : reserved
-// 0x5c : Data signal of status_reg
+// 0x5c : reserved
+// 0x60 : Data signal of status_reg
 //        bit 31~0 - status_reg[31:0] (Read)
-// 0x60 : Control signal of status_reg
+// 0x64 : Control signal of status_reg
 //        bit 0  - status_reg_ap_vld (Read/COR)
 //        others - reserved
-// 0x6c : Data signal of spike_count_reg
+// 0x70 : Data signal of spike_count_reg
 //        bit 31~0 - spike_count_reg[31:0] (Read)
-// 0x70 : Control signal of spike_count_reg
+// 0x74 : Control signal of spike_count_reg
 //        bit 0  - spike_count_reg_ap_vld (Read/COR)
 //        others - reserved
-// 0x7c : Data signal of weight_sum_reg
+// 0x80 : Data signal of weight_sum_reg
 //        bit 31~0 - weight_sum_reg[31:0] (Read)
-// 0x80 : Control signal of weight_sum_reg
+// 0x84 : Control signal of weight_sum_reg
 //        bit 0  - weight_sum_reg_ap_vld (Read/COR)
 //        others - reserved
-// 0x8c : Data signal of version_reg
+// 0x90 : Data signal of version_reg
 //        bit 31~0 - version_reg[31:0] (Read)
-// 0x90 : Control signal of version_reg
+// 0x94 : Control signal of version_reg
 //        bit 0  - version_reg_ap_vld (Read/COR)
 //        others - reserved
-// 0x9c : Data signal of reward_signal
+// 0xa0 : Data signal of reward_signal
 //        bit 7~0 - reward_signal[7:0] (Read/Write)
 //        others  - reserved
-// 0xa0 : reserved
+// 0xa4 : reserved
 // (SC = Self Clear, COR = Clear on Read, TOW = Toggle on Write, COH = Clear on Handshake)
 
 //------------------------Parameter----------------------
@@ -158,17 +160,18 @@ localparam
     ADDR_ENCODER_CONFIG_DATA_1  = 8'h4c,
     ADDR_ENCODER_CONFIG_DATA_2  = 8'h50,
     ADDR_ENCODER_CONFIG_DATA_3  = 8'h54,
-    ADDR_ENCODER_CONFIG_CTRL    = 8'h58,
-    ADDR_STATUS_REG_DATA_0      = 8'h5c,
-    ADDR_STATUS_REG_CTRL        = 8'h60,
-    ADDR_SPIKE_COUNT_REG_DATA_0 = 8'h6c,
-    ADDR_SPIKE_COUNT_REG_CTRL   = 8'h70,
-    ADDR_WEIGHT_SUM_REG_DATA_0  = 8'h7c,
-    ADDR_WEIGHT_SUM_REG_CTRL    = 8'h80,
-    ADDR_VERSION_REG_DATA_0     = 8'h8c,
-    ADDR_VERSION_REG_CTRL       = 8'h90,
-    ADDR_REWARD_SIGNAL_DATA_0   = 8'h9c,
-    ADDR_REWARD_SIGNAL_CTRL     = 8'ha0,
+    ADDR_ENCODER_CONFIG_DATA_4  = 8'h58,
+    ADDR_ENCODER_CONFIG_CTRL    = 8'h5c,
+    ADDR_STATUS_REG_DATA_0      = 8'h60,
+    ADDR_STATUS_REG_CTRL        = 8'h64,
+    ADDR_SPIKE_COUNT_REG_DATA_0 = 8'h70,
+    ADDR_SPIKE_COUNT_REG_CTRL   = 8'h74,
+    ADDR_WEIGHT_SUM_REG_DATA_0  = 8'h80,
+    ADDR_WEIGHT_SUM_REG_CTRL    = 8'h84,
+    ADDR_VERSION_REG_DATA_0     = 8'h90,
+    ADDR_VERSION_REG_CTRL       = 8'h94,
+    ADDR_REWARD_SIGNAL_DATA_0   = 8'ha0,
+    ADDR_REWARD_SIGNAL_CTRL     = 8'ha4,
     WRIDLE                      = 2'd0,
     WRDATA                      = 2'd1,
     WRRESP                      = 2'd2,
@@ -210,7 +213,7 @@ localparam
     reg  [31:0]                   int_mode_reg = 'b0;
     reg  [31:0]                   int_time_steps_reg = 'b0;
     reg  [143:0]                  int_learning_params = 'b0;
-    reg  [111:0]                  int_encoder_config = 'b0;
+    reg  [143:0]                  int_encoder_config = 'b0;
     reg                           int_status_reg_ap_vld;
     reg  [31:0]                   int_status_reg = 'b0;
     reg                           int_spike_count_reg_ap_vld;
@@ -366,7 +369,10 @@ always @(posedge ACLK) begin
                     rdata <= int_encoder_config[95:64];
                 end
                 ADDR_ENCODER_CONFIG_DATA_3: begin
-                    rdata <= int_encoder_config[111:96];
+                    rdata <= int_encoder_config[127:96];
+                end
+                ADDR_ENCODER_CONFIG_DATA_4: begin
+                    rdata <= int_encoder_config[143:128];
                 end
                 ADDR_STATUS_REG_DATA_0: begin
                     rdata <= int_status_reg[31:0];
@@ -666,13 +672,23 @@ always @(posedge ACLK) begin
     end
 end
 
-// int_encoder_config[111:96]
+// int_encoder_config[127:96]
 always @(posedge ACLK) begin
     if (ARESET)
-        int_encoder_config[111:96] <= 0;
+        int_encoder_config[127:96] <= 0;
     else if (ACLK_EN) begin
         if (w_hs && waddr == ADDR_ENCODER_CONFIG_DATA_3)
-            int_encoder_config[111:96] <= (WDATA[31:0] & wmask) | (int_encoder_config[111:96] & ~wmask);
+            int_encoder_config[127:96] <= (WDATA[31:0] & wmask) | (int_encoder_config[127:96] & ~wmask);
+    end
+end
+
+// int_encoder_config[143:128]
+always @(posedge ACLK) begin
+    if (ARESET)
+        int_encoder_config[143:128] <= 0;
+    else if (ACLK_EN) begin
+        if (w_hs && waddr == ADDR_ENCODER_CONFIG_DATA_4)
+            int_encoder_config[143:128] <= (WDATA[31:0] & wmask) | (int_encoder_config[143:128] & ~wmask);
     end
 end
 

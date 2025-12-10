@@ -381,22 +381,13 @@ void snn_learning_engine(
     #pragma HLS INTERFACE axis port=weight_updates
     #pragma HLS INTERFACE s_axilite port=return bundle=ctrl
     
-    #pragma HLS DATAFLOW
-    
     // Shared spike time arrays
     static spike_time_t pre_spike_times[MAX_NEURONS];
     static spike_time_t post_spike_times[MAX_NEURONS];
-    static ap_uint<32> pre_counter = 0;
-    static ap_uint<32> post_counter = 0;
+    static ap_uint<32> update_counter = 0;
     
     #pragma HLS ARRAY_PARTITION variable=pre_spike_times cyclic factor=8
     #pragma HLS ARRAY_PARTITION variable=post_spike_times cyclic factor=8
-    
-    // Internal update streams
-    static hls::stream<weight_update_t> pre_updates("pre_updates");
-    static hls::stream<weight_update_t> post_updates("post_updates");
-    #pragma HLS STREAM variable=pre_updates depth=32
-    #pragma HLS STREAM variable=post_updates depth=32
     
     if (reset) {
         RESET_LOOP: for (int i = 0; i < MAX_NEURONS; i++) {
@@ -404,8 +395,7 @@ void snn_learning_engine(
             pre_spike_times[i] = 0;
             post_spike_times[i] = 0;
         }
-        pre_counter = 0;
-        post_counter = 0;
+        update_counter = 0;
         status = 0;
         return;
     }
@@ -415,12 +405,83 @@ void snn_learning_engine(
         return;
     }
     
-    // Parallel processing with dataflow
-    process_pre_spikes(pre_spikes, post_spike_times, config, pre_updates, pre_counter, pre_spike_times);
-    process_post_spikes(post_spikes, pre_spike_times, config, post_updates, post_counter, post_spike_times);
-    merge_weight_updates(pre_updates, post_updates, weight_updates);
+    // Process pre-synaptic spikes (generates LTD)
+    if (!pre_spikes.empty()) {
+        spike_event_t pre_event = pre_spikes.read();
+        neuron_id_t pre_id = pre_event.neuron_id;
+        spike_time_t pre_time = pre_event.timestamp;
+        
+        if (pre_id < MAX_NEURONS) {
+            pre_spike_times[pre_id] = pre_time;
+            
+            // Check for recent post spikes (LTD)
+            LTD_LOOP: for (int post_id = 0; post_id < MAX_NEURONS; post_id++) {
+                #pragma HLS PIPELINE II=1
+                #pragma HLS LOOP_TRIPCOUNT min=64 max=256 avg=128
+                
+                spike_time_t post_time = post_spike_times[post_id];
+                
+                if (post_time > 0) {
+                    ap_int<32> dt = pre_time - post_time;
+                    
+                    if (dt > 0 && dt < config.stdp_window) {
+                        weight_delta_t delta = calculate_ltd(dt, config);
+                        
+                        if (delta != 0) {
+                            weight_update_t update;
+                            update.pre_id = pre_id;
+                            update.post_id = post_id;
+                            update.delta = delta;
+                            update.timestamp = pre_time;
+                            
+                            weight_updates.write(update);
+                            update_counter++;
+                        }
+                    }
+                }
+            }
+        }
+    }
     
-    status = pre_counter + post_counter;
+    // Process post-synaptic spikes (generates LTP)
+    if (!post_spikes.empty()) {
+        spike_event_t post_event = post_spikes.read();
+        neuron_id_t post_id = post_event.neuron_id;
+        spike_time_t post_time = post_event.timestamp;
+        
+        if (post_id < MAX_NEURONS) {
+            post_spike_times[post_id] = post_time;
+            
+            // Check for recent pre spikes (LTP)
+            LTP_LOOP: for (int pre_id = 0; pre_id < MAX_NEURONS; pre_id++) {
+                #pragma HLS PIPELINE II=1
+                #pragma HLS LOOP_TRIPCOUNT min=64 max=256 avg=128
+                
+                spike_time_t pre_time = pre_spike_times[pre_id];
+                
+                if (pre_time > 0) {
+                    ap_int<32> dt = post_time - pre_time;
+                    
+                    if (dt > 0 && dt < config.stdp_window) {
+                        weight_delta_t delta = calculate_ltp(dt, config);
+                        
+                        if (delta != 0) {
+                            weight_update_t update;
+                            update.pre_id = pre_id;
+                            update.post_id = post_id;
+                            update.delta = delta;
+                            update.timestamp = post_time;
+                            
+                            weight_updates.write(update);
+                            update_counter++;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    status = update_counter;
 }
 
 #endif // OPT_STRATEGY_DATAFLOW

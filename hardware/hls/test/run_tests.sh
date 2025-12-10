@@ -10,6 +10,13 @@
 ## Description   : Runs all HLS testbenches
 #-----------------------------------------------------------------------------
 
+# Source Vitis HLS environment for ap_int.h and other HLS headers
+if [ -f "/tools/Xilinx/2025.2/Vitis/settings64.sh" ]; then
+    source /tools/Xilinx/2025.2/Vitis/settings64.sh
+else
+    echo "Warning: Vitis HLS environment not found. Tests may fail."
+fi
+
 # Color codes
 GREEN='\033[0;32m'
 RED='\033[0;31m'
@@ -25,13 +32,14 @@ echo "======================================"
 
 # Function to run a test
 run_test() {
-    local test_name=$1
-    local tb_file=$2
+    local test_name="$1"
+    local tb_file="$2"
+    local log_file="${test_name// /_}_output.log"
     
     echo -e "\nRunning $test_name..."
     
     # Run the testbench
-    ./$tb_file > ${test_name}_output.log 2>&1
+    "./$tb_file" > "$log_file" 2>&1
     
     if [ $? -eq 0 ]; then
         echo -e "${GREEN}[PASS]${NC} $test_name"
@@ -39,24 +47,50 @@ run_test() {
     else
         echo -e "${RED}[FAIL]${NC} $test_name"
         ((FAILED++))
-        echo "  See ${test_name}_output.log for details"
+        echo "  See $log_file for details"
     fi
 }
 
 # Compile and run each testbench
 echo "Compiling testbenches..."
 
+# Get HLS include path
+HLS_INCLUDE=""
+if [ -n "$XILINX_HLS" ]; then
+    HLS_INCLUDE="-I$XILINX_HLS/include"
+elif [ -n "$XILINX_VITIS" ]; then
+    HLS_INCLUDE="-I$XILINX_VITIS/include"
+fi
+
 # Learning Engine Test
-g++ -std=c++11 -I../include tb_snn_learning_engine.cpp -o tb_learning
-run_test "Learning Engine" tb_learning
+echo "Compiling Learning Engine testbench..."
+g++ -std=c++11 -I../include $HLS_INCLUDE tb_snn_learning_engine.cpp ../src/snn_learning_engine.cpp -o tb_learning
+if [ $? -eq 0 ]; then
+    run_test "Learning Engine" tb_learning
+else
+    echo -e "${RED}[FAIL]${NC} Learning Engine (compilation failed)"
+    ((FAILED++))
+fi
 
 # Spike Encoder Test
-g++ -std=c++11 -I../include tb_spike_encoder.cpp -o tb_encoder
-run_test "Spike Encoder" tb_encoder
+echo "Compiling Spike Encoder testbench..."
+g++ -std=c++11 -I../include $HLS_INCLUDE tb_spike_encoder.cpp ../src/spike_encoder.cpp -o tb_encoder
+if [ $? -eq 0 ]; then
+    run_test "Spike Encoder" tb_encoder
+else
+    echo -e "${RED}[FAIL]${NC} Spike Encoder (compilation failed)"
+    ((FAILED++))
+fi
 
 # Weight Updater Test
-g++ -std=c++11 -I../include tb_weight_updater.cpp -o tb_weight
-run_test "Weight Updater" tb_weight
+echo "Compiling Weight Updater testbench..."
+g++ -std=c++11 -I../include $HLS_INCLUDE -DNUM_NEURONS=256 tb_weight_updater.cpp ../src/weight_updater.cpp -o tb_weight
+if [ $? -eq 0 ]; then
+    run_test "Weight Updater" tb_weight
+else
+    echo -e "${RED}[FAIL]${NC} Weight Updater (compilation failed)"
+    ((FAILED++))
+fi
 
 # Summary
 echo ""

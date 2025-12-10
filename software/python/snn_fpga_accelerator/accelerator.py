@@ -40,6 +40,16 @@ except Exception:  # pragma: no cover - keep import optional
     XRTBackend = None  # type: ignore
     RegisterMap = None  # type: ignore
 
+from .exceptions import (
+    FPGAError,
+    TimeoutError as AcceleratorTimeoutError,
+    WeightLoadError,
+    ConfigurationError,
+    CommunicationError,
+    BitstreamError,
+    KernelExecutionError,
+    validate_parameter,
+)
 from .learning import RSTDPLearning, STDPLearning
 from .pytorch_interface import SNNModel, simulate_snn_inference
 from .spike_encoding import SpikeEvent
@@ -247,6 +257,112 @@ class SNNAccelerator:
         self._xrt_regmap = reg_map or RegisterMap()
         logger.info("XRT backend configured with xclbin %s", xclbin_path)
     
+    def configure_encoder(
+        self,
+        encoding_type: str = "rate_poisson",
+        num_steps: int = 100,
+        two_neuron_enable: bool = False,
+        baseline: int = 128,
+        **encoder_params
+    ) -> None:
+        """Configure on-chip spike encoder parameters.
+        
+        Maps Python encoder configuration to HLS register writes via XRT backend.
+        
+        Args:
+            encoding_type: Encoding method - "none", "rate_poisson", "latency", "delta_sigma"
+            num_steps: Total simulation timesteps (for rate/latency normalization)
+            two_neuron_enable: Enable ON/OFF neuron polarity split (doubles channels)
+            baseline: Baseline value for two-neuron encoding (default 128 for uint8)
+            **encoder_params: Additional encoder-specific parameters:
+                - rate_scale: Rate coding threshold scale (default 256)
+                - latency_window: Latency coding time window in timesteps (default num_steps)
+                - delta_threshold: Delta-sigma integration threshold (default 1000)
+                - delta_decay: Delta-sigma decay rate (default 10)
+                - num_channels: Number of input channels (default 784 for MNIST)
+                - default_weight: Default spike weight 0-255 (default 127)
+        
+        Raises:
+            ConfigurationError: If encoding_type is invalid or parameters out of range
+            CommunicationError: If XRT backend communication fails
+        
+        Example:
+            >>> accel.configure_xrt("snn.xclbin")
+            >>> accel.configure_encoder(
+            ...     encoding_type="rate_poisson",
+            ...     num_steps=100,
+            ...     two_neuron_enable=True,
+            ...     rate_scale=256,
+            ...     num_channels=784
+            ... )
+        """
+        # Encoding type mapping
+        enc_type_map = {
+            "none": 0,
+            "rate_poisson": 1,
+            "latency": 2,
+            "delta_sigma": 3
+        }
+        
+        # Validate encoding type
+        try:
+            validate_parameter(
+                encoding_type,
+                valid_options=list(enc_type_map.keys()),
+                parameter_name="encoding_type"
+            )
+        except ValueError as e:
+            raise ConfigurationError(
+                str(e),
+                parameter="encoding_type",
+                value=encoding_type,
+                error_code=4010
+            ) from e
+        
+        enc_type_code = enc_type_map[encoding_type]
+        
+        # Extract encoder parameters with defaults
+        rate_scale = encoder_params.get('rate_scale', 256)
+        latency_window = encoder_params.get('latency_window', num_steps)
+        delta_threshold = encoder_params.get('delta_threshold', 1000)
+        delta_decay = encoder_params.get('delta_decay', 10)
+        num_channels = encoder_params.get('num_channels', 784)
+        default_weight = encoder_params.get('default_weight', 127)
+        
+        # Configure via XRT if available
+        if self.use_xrt and self._xrt_backend is not None:
+            self._xrt_backend.set_encoder_config(
+                encoding_type=enc_type_code,
+                two_neuron_enable=two_neuron_enable,
+                baseline=baseline,
+                num_steps=num_steps,
+                rate_scale=rate_scale,
+                latency_window=latency_window,
+                delta_threshold=delta_threshold,
+                delta_decay=delta_decay,
+                num_channels=num_channels,
+                default_weight=default_weight
+            )
+            logger.info(
+                f"Configured on-chip encoder: type={encoding_type}, "
+                f"num_steps={num_steps}, two_neuron={two_neuron_enable}, "
+                f"channels={num_channels}"
+            )
+        elif self._hardware_backend is not None:
+            # PYNQ path: Write to registers directly
+            # This would require PYNQ IP driver implementation
+            logger.warning("PYNQ encoder configuration not yet implemented")
+        else:
+            # Simulation mode: Store config for software encoder
+            logger.info(f"Simulation mode: Encoder config stored (type={encoding_type})")
+            self.encoder_config = {
+                'encoding_type': encoding_type,
+                'num_steps': num_steps,
+                'two_neuron_enable': two_neuron_enable,
+                'baseline': baseline,
+                **encoder_params
+            }
+    
     def _run_simulation_xrt(self, duration: float, input_spikes: List[SpikeEvent],
                            encoding_type: int = 0, two_neuron_enable: bool = False,
                            baseline: int = 128, encoder_params: Optional[dict] = None) -> List[SpikeEvent]:
@@ -338,6 +454,57 @@ class SNNAccelerator:
         if self._hardware_backend is not None:
             self._hardware_backend._initialize()
     
+    def initialize(
+        self,
+        neurons_per_layer: List[int],
+        weights: Optional[List[np.ndarray]] = None,
+    ) -> None:
+        """
+        Initialize a simple feedforward SNN with specified layer sizes.
+        
+        This is a convenience method for quickly setting up a network topology.
+        For more control, use configure_network() with an SNNModel directly.
+        
+        Parameters
+        ----------
+        neurons_per_layer:
+            List of neuron counts for each layer (including input and output).
+            E.g., [784, 128, 10] creates a 3-layer network.
+        weights:
+            Optional list of weight matrices. If None, random weights are used.
+        """
+        from .pytorch_interface import SNNModel, SNNLayer
+        
+        model = SNNModel(name=f"feedforward_{len(neurons_per_layer)}_layer")
+        
+        for i in range(len(neurons_per_layer) - 1):
+            input_size = neurons_per_layer[i]
+            output_size = neurons_per_layer[i + 1]
+            
+            # Use provided weights or initialize randomly
+            if weights is not None and i < len(weights):
+                layer_weights = weights[i]
+            else:
+                # Xavier/Glorot initialization
+                limit = np.sqrt(6.0 / (input_size + output_size))
+                layer_weights = np.random.uniform(-limit, limit, (input_size, output_size))
+            
+            layer = SNNLayer(
+                input_size=input_size,
+                output_size=output_size,
+                layer_type="fully_connected",
+                weights=layer_weights,
+            )
+            model.add_layer(layer)
+        
+        # Configure the network with the created model
+        self.configure_network(model)
+        logger.info(
+            "Initialized %d-layer network: %s",
+            len(neurons_per_layer) - 1,
+            " -> ".join(map(str, neurons_per_layer))
+        )
+    
     def configure_network(
         self,
         config: Optional[Union[SNNModel, Dict, str, Path]] = None,
@@ -396,11 +563,34 @@ class SNNAccelerator:
         logger.info("Network configured: %d neurons", self.num_neurons)
     
     def _load_weights(self, weights: np.ndarray) -> None:
-        """Load synaptic weights to FPGA memory."""
+        """Load synaptic weights to FPGA memory.
+        
+        Raises:
+            WeightLoadError: If weight validation or transfer fails
+            CommunicationError: If DMA communication fails
+        """
         if self.simulation_mode:
             logger.debug("Simulation mode: skipping hardware weight load (%d weights)", weights.size)
             return
 
+        # XRT path: Use s_axis_weights stream
+        if self.use_xrt and self._xrt_backend is not None:
+            try:
+                # Convert weights to uint8 [0, 255] range
+                weight_data = np.clip(weights * 127 + 128, 0, 255).astype(np.uint8)
+                self._xrt_backend.load_weights(weight_data)
+                logger.info("Uploaded %dx%d weights to FPGA via XRT", weight_data.shape[0], weight_data.shape[1])
+                return
+            except (WeightLoadError, CommunicationError):
+                raise
+            except Exception as e:
+                raise WeightLoadError(
+                    f"Failed to load weights: {e}",
+                    weight_shape=weights.shape,
+                    error_code=3010
+                ) from e
+
+        # PYNQ DMA path (legacy)
         if self._hardware_backend is None or self._hardware_backend.dma is None:
             raise RuntimeError("Hardware DMA engine not initialised")
 
@@ -836,10 +1026,29 @@ class SNNAccelerator:
 
         raise TypeError("Unsupported spike input type")
 
-    @staticmethod
-    def _spike_events_to_rates(events: List[SpikeEvent], duration: float) -> np.ndarray:
-        """Convert spike events to firing rates."""
+    def _spike_events_to_rates(self, events: List[SpikeEvent], duration: float) -> np.ndarray:
+        """Convert spike events to firing rates.
+        
+        When an SNN model is configured, only return firing rates for output layer neurons.
+        Otherwise return rates for all neurons.
+        """
 
+        # If we have a model, filter for output layer neurons only
+        if self.snn_model and self.snn_model.layers:
+            output_size = self.snn_model.layers[-1].output_size
+            output_layer_start, _ = self.snn_model.get_layer_neuron_ids(len(self.snn_model.layers) - 1)
+            
+            # Count spikes only from output layer neurons
+            counts = np.zeros(output_size, dtype=np.float32)
+            for event in events:
+                if output_layer_start <= event.neuron_id < output_layer_start + output_size:
+                    local_id = event.neuron_id - output_layer_start
+                    counts[local_id] += 1
+            
+            rates = counts / max(duration, 1e-6)
+            return rates
+        
+        # No model configured - return all neuron rates
         if not events:
             return np.array([])
 

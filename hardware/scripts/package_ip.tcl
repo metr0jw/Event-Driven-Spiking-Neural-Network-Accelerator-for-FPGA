@@ -30,13 +30,14 @@ create_project $temp_proj_name $temp_proj_dir -part xc7z020clg400-1 -force
 # Add source files
 set hdl_dir "$proj_root/hardware/hdl"
 
-# Add all RTL sources
-add_files -norecurse [glob -nocomplain $hdl_dir/rtl/top/*.v]
-add_files -norecurse [glob -nocomplain $hdl_dir/rtl/neurons/*.v]
-add_files -norecurse [glob -nocomplain $hdl_dir/rtl/synapses/*.v]
-add_files -norecurse [glob -nocomplain $hdl_dir/rtl/router/*.v]
-add_files -norecurse [glob -nocomplain $hdl_dir/rtl/interfaces/*.v]
-add_files -norecurse [glob -nocomplain $hdl_dir/rtl/common/*.v]
+# Add all RTL sources (only from directories that exist)
+foreach dir {top neurons synapses router common layers} {
+    set files [glob -nocomplain $hdl_dir/rtl/$dir/*.v]
+    if {[llength $files] > 0} {
+        add_files -norecurse $files
+        puts "Added [llength $files] files from rtl/$dir/"
+    }
+}
 
 # Set top module
 set_property top snn_accelerator_top [current_fileset]

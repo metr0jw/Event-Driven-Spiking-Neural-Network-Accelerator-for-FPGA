@@ -288,7 +288,7 @@ class TemporalDecoder(SpikeDecoder):
 
 
 def encode_mnist_image(image: np.ndarray, encoder_type: str = "poisson",
-                      duration: float = 0.1, **kwargs) -> List[SpikeEvent]:
+                      duration: float = 0.1, seed: Optional[int] = None, **kwargs) -> List[SpikeEvent]:
     """
     Convenience function to encode MNIST images to spikes.
     
@@ -296,6 +296,7 @@ def encode_mnist_image(image: np.ndarray, encoder_type: str = "poisson",
         image: MNIST image (28x28)
         encoder_type: Type of encoder ("poisson", "temporal", "rate")
         duration: Encoding duration
+        seed: Random seed for reproducible encoding (Poisson encoder only)
         **kwargs: Additional encoder parameters
         
     Returns:
@@ -307,7 +308,7 @@ def encode_mnist_image(image: np.ndarray, encoder_type: str = "poisson",
     
     # Select encoder
     if encoder_type == "poisson":
-        encoder = PoissonEncoder(num_pixels, duration, **kwargs)
+        encoder = PoissonEncoder(num_pixels, duration, seed=seed, **kwargs)
     elif encoder_type == "temporal":
         encoder = TemporalEncoder(num_pixels, duration)
     elif encoder_type == "rate":

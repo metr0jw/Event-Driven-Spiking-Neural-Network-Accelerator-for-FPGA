@@ -2,62 +2,65 @@
     <item name="Total Instructions per Compilation Phase">
         <table>
             <keys size="4">Phase, Step, Instructions, Description</keys>
-            <column name="Compile/Link">, 14018, After all functions are compiled and linked into a single design</column>
+            <column name="Compile/Link">, 20318, After all functions are compiled and linked into a single design</column>
             <column name="">, , </column>
             <column name="Unroll/Inline">, , After user unroll and inline pragmas are applied</column>
-            <column name="">(1) unroll,  4557, user unroll pragmas are applied</column>
-            <column name="">(2) simplification,  3931, simplification of applied user unroll pragmas</column>
-            <column name="">(3) inline,  3882, user inline pragmas are applied</column>
-            <column name="">(4) simplification,  3738, simplification of applied user inline pragmas</column>
+            <column name="">(1) unroll,  7004, user unroll pragmas are applied</column>
+            <column name="">(2) simplification,  5938, simplification of applied user unroll pragmas</column>
+            <column name="">(3) inline,  5818, user inline pragmas are applied</column>
+            <column name="">(4) simplification,  5610, simplification of applied user inline pragmas</column>
             <column name="">, , </column>
             <column name="Array/Struct">, , After user array partition and struct aggregate/disaggregate pragmas are applied</column>
-            <column name="">(1) array partition,  6119, user array partition pragmas are applied</column>
-            <column name="">(2) simplification,  4641, simplification of applied user array partition &amp; struct aggregate/disaggregate pragmas</column>
-            <column name="">(3) aggregate/disaggregate,  4667, user struct aggregate/disaggregate pragmas are applied</column>
-            <column name="">(4) array reshape,  5336, apply array reshape pragmas</column>
-            <column name="">(5) access patterns,  5463, array access pattern optmizations</column>
+            <column name="">(1) array partition,  9372, user array partition pragmas are applied</column>
+            <column name="">(2) simplification,  6474, simplification of applied user array partition &amp; struct aggregate/disaggregate pragmas</column>
+            <column name="">(3) aggregate/disaggregate,  6548, user struct aggregate/disaggregate pragmas are applied</column>
+            <column name="">(4) array reshape,  8513, apply array reshape pragmas</column>
+            <column name="">(5) access patterns,  8645, array access pattern optmizations</column>
             <column name="">, , </column>
             <column name="Performance">, , After transformations are applied to meet performance pragma targets</column>
-            <column name="">(1) loop simplification,  5428, loop and instruction simplification</column>
-            <column name="">(2) parallelization,  5347, loops are unrolled or pipelined to meet performance targets</column>
-            <column name="">(3) array partition,  5743, arrays are partitioned to meet performance targets</column>
-            <column name="">(4) simplification,  5475, simplification of design after performance transformations</column>
+            <column name="">(1) loop simplification,  8597, loop and instruction simplification</column>
+            <column name="">(2) parallelization,  8507, loops are unrolled or pipelined to meet performance targets</column>
+            <column name="">(3) array partition,  8949, arrays are partitioned to meet performance targets</column>
+            <column name="">(4) simplification,  8658, simplification of design after performance transformations</column>
             <column name="">, , </column>
-            <column name="HW Transforms">,  5278, After hardware transfomations</column>
+            <column name="HW Transforms">, , After hardware transfomations</column>
+            <column name="">(1) lowering,  8042, initial conversion to HW specific instructions</column>
+            <column name="">(2) optimizations,  7684, high level synthesis optimizations</column>
         </table>
     </item>
     <item name="Instructions per Function for each Compilation Phase">
         <hiertable>
             <header size="7" col0="Function" col1="Location" col2="Compile/Link" col3="Unroll/Inline" col4="Array/Struct" col5="Performance" col6="HW Transforms"/>
             <rows>
-                <row id="0" col0="snn_top_hls" col1="snn_top_hls.cpp:450" col2="14018" col3="3738" col4="5463" col5="5475" col6="5278">
-                    <row id="4" col0="encoder_reset_temporal_state" col1="snn_top_hls.cpp:45" col2="34" col2_disp="   34 (2 calls)" col3="22" col3_disp="  22 (2 calls)" col4="136" col4_disp=" 136 (2 calls)" col5="134" col5_disp=" 134 (2 calls)" col6="134" col6_disp=" 134 (2 calls)"/>
-                    <row id="10" col0="run_encoder_once" col1="snn_top_hls.cpp:132" col2="3055" col3="977" col4="1673" col5="1665" col6="1473">
-                        <row id="6" col0="encoder_rate_coding" col1="snn_top_hls.cpp:76" col2="1400" col3="" col4="" col5="" col6="">
-                            <row id="8" col0="encoder_lfsr_random" col1="snn_top_hls.cpp:37" col2="664" col3="" col4="" col5="" col6=""/>
-                            <row id="12" col0="encoder_write_axis_spike" col1="snn_top_hls.cpp:54" col2="429" col3="" col4="" col5="" col6=""/>
+                <row id="0" col0="snn_top_hls" col1="snn_top_hls.cpp:534" col2="20318" col3="5610" col4="8645" col5="8658" col6="7684">
+                    <row id="13" col0="encoder_reset_temporal_state" col1="snn_top_hls.cpp:45" col2="34" col2_disp="   34 (2 calls)" col3="22" col3_disp="  22 (2 calls)" col4="136" col4_disp=" 136 (2 calls)" col5="134" col5_disp=" 134 (2 calls)" col6="144" col6_disp=" 144 (2 calls)"/>
+                    <row id="3" col0="run_encoder_once" col1="snn_top_hls.cpp:167" col2="8816" col3="2866" col4="4836" col5="4812" col6="3890">
+                        <row id="7" col0="encoder_two_neuron_split" col1="snn_top_hls.cpp:57" col2="325" col3="" col4="" col5="" col6=""/>
+                        <row id="16" col0="encoder_rate_poisson" col1="snn_top_hls.cpp:95" col2="3903" col2_disp="3,903 (3 calls)" col3="" col4="" col5="" col6="">
+                            <row id="5" col0="encoder_lfsr_random" col1="snn_top_hls.cpp:37" col2="1992" col2_disp="1,992 (3 calls)" col3="" col4="" col5="" col6=""/>
+                            <row id="8" col0="encoder_write_axis_spike" col1="snn_top_hls.cpp:73" col2="1287" col2_disp="1,287 (3 calls)" col3="" col4="" col5="" col6=""/>
                         </row>
-                        <row id="5" col0="encoder_temporal_coding" col1="snn_top_hls.cpp:92" col2="907" col3="" col4="" col5="" col6="">
-                            <row id="12" col0="encoder_write_axis_spike" col1="snn_top_hls.cpp:54" col2="429" col3="" col4="" col5="" col6=""/>
+                        <row id="15" col0="encoder_latency" col1="snn_top_hls.cpp:114" col2="2721" col2_disp="2,721 (3 calls)" col3="" col4="" col5="" col6="">
+                            <row id="8" col0="encoder_write_axis_spike" col1="snn_top_hls.cpp:73" col2="1287" col2_disp="1,287 (3 calls)" col3="" col4="" col5="" col6=""/>
                         </row>
-                        <row id="15" col0="encoder_phase_coding" col1="snn_top_hls.cpp:115" col2="669" col3="" col4="" col5="" col6="">
-                            <row id="12" col0="encoder_write_axis_spike" col1="snn_top_hls.cpp:54" col2="429" col3="" col4="" col5="" col6=""/>
+                        <row id="10" col0="encoder_delta_sigma" col1="snn_top_hls.cpp:142" col2="1692" col2_disp="1,692 (3 calls)" col3="" col4="" col5="" col6="">
+                            <row id="8" col0="encoder_write_axis_spike" col1="snn_top_hls.cpp:73" col2="1287" col2_disp="1,287 (3 calls)" col3="" col4="" col5="" col6=""/>
                         </row>
                     </row>
-                    <row id="3" col0="process_pre_spike_aer" col1="snn_top_hls.cpp:248" col2="1880" col3="176" col4="263" col5="309" col6="309">
-                        <row id="7" col0="compute_decayed_trace" col1="snn_top_hls.cpp:209" col2="960" col2_disp="  960 (2 calls)" col3="" col4="" col5="" col6=""/>
-                        <row id="9" col0="clip_weight" col1="snn_top_hls.cpp:234" col2="74" col3="" col4="" col5="" col6=""/>
+                    <row id="11" col0="process_pre_spike_aer" col1="snn_top_hls.cpp:332" col2="1880" col3="176" col4="263" col5="309" col6="308">
+                        <row id="1" col0="compute_decayed_trace" col1="snn_top_hls.cpp:293" col2="960" col2_disp="  960 (2 calls)" col3="" col4="" col5="" col6=""/>
+                        <row id="14" col0="clip_weight" col1="snn_top_hls.cpp:318" col2="74" col3="" col4="" col5="" col6=""/>
                     </row>
-                    <row id="14" col0="update_eligibility_on_pre_spike" col1="snn_top_hls.cpp:433" col2="306" col3="" col4="" col5="" col6=""/>
-                    <row id="13" col0="apply_rstdp_reward" col1="snn_top_hls.cpp:346" col2="1463" col3="155" col4="192" col5="239" col6="238">
-                        <row id="9" col0="clip_weight" col1="snn_top_hls.cpp:234" col2="74" col3="" col4="" col5="" col6=""/>
+                    <row id="9" col0="update_eligibility_on_pre_spike" col1="snn_top_hls.cpp:517" col2="306" col3="" col4="" col5="" col6=""/>
+                    <row id="6" col0="apply_rstdp_reward" col1="snn_top_hls.cpp:430" col2="1463" col3="65" col4="126" col5="170" col6="177">
+                        <row id="14" col0="clip_weight" col1="snn_top_hls.cpp:318" col2="74" col3="" col4="" col5="" col6=""/>
                     </row>
-                    <row id="2" col0="decay_eligibility_traces" col1="snn_top_hls.cpp:406" col2="415" col3="105" col4="109" col5="109" col6="109"/>
-                    <row id="1" col0="process_post_spike_aer" col1="snn_top_hls.cpp:296" col2="1727" col3="172" col4="331" col5="331" col6="331">
-                        <row id="7" col0="compute_decayed_trace" col1="snn_top_hls.cpp:209" col2="960" col2_disp="  960 (2 calls)" col3="" col4="" col5="" col6=""/>
-                        <row id="9" col0="clip_weight" col1="snn_top_hls.cpp:234" col2="74" col3="" col4="" col5="" col6=""/>
+                    <row id="12" col0="decay_eligibility_traces" col1="snn_top_hls.cpp:490" col2="415" col3="105" col4="109" col5="109" col6="118"/>
+                    <row id="4" col0="process_post_spike_aer" col1="snn_top_hls.cpp:380" col2="1727" col3="172" col4="331" col5="331" col6="336">
+                        <row id="1" col0="compute_decayed_trace" col1="snn_top_hls.cpp:293" col2="960" col2_disp="  960 (2 calls)" col3="" col4="" col5="" col6=""/>
+                        <row id="14" col0="clip_weight" col1="snn_top_hls.cpp:318" col2="74" col3="" col4="" col5="" col6=""/>
                     </row>
-                    <row id="11" col0="update_eligibility_on_post_spike" col1="snn_top_hls.cpp:440" col2="306" col3="" col4="" col5="" col6=""/>
+                    <row id="2" col0="update_eligibility_on_post_spike" col1="snn_top_hls.cpp:524" col2="306" col3="" col4="" col5="" col6=""/>
                 </row>
             </rows>
             <notes/>

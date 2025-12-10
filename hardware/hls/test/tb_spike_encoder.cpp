@@ -141,16 +141,14 @@ int main() {
     //-------------------------------------------------------------------------
     // Test 2: Temporal Coding
     //-------------------------------------------------------------------------
-    cout << "\nTest 2: Temporal Coding\n";
+    cout << "\nTest 3: Phase Coding\n";
     cout << "----------------------------------------\n";
     
-    config.encoding_type = TEMPORAL_CODING;
+    config.encoding_type = PHASE_CODING;
+    config.phase_scale = 256;       // Higher scale for more spikes (target 0.01-0.5 rate)
+    config.phase_threshold = 1024;
     
-    // Clear streams
-    while (!spikes_out.empty()) spikes_out.read();
-    spike_count = 0;
-    
-    // Test with known pattern
+    // Test with constant input
     generate_test_image(test_data, 1); // All max values
     data_in.write(test_data);
     

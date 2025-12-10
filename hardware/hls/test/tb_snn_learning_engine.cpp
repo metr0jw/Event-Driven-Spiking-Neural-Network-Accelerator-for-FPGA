@@ -75,8 +75,8 @@ int main() {
     
     // Configuration
     learning_config_t config;
-    config.a_plus = 0.01;
-    config.a_minus = 0.01;
+    config.a_plus = 0.1;      // Increased from 0.01 for visible weight changes
+    config.a_minus = 0.1;     // With WEIGHT_SCALE=128, 0.1 * 128 * exp(-1) ≈ 4.7
     config.tau_plus = 20.0;
     config.tau_minus = 20.0;
     config.stdp_window = 100;
@@ -241,10 +241,10 @@ int main() {
                        weight_updates, status);
     reset = false;
     
-    // Generate multiple pre spikes
+    // Generate multiple pre spikes with shorter intervals for stronger deltas
     for (int i = 0; i < 5; i++) {
         pre_spike.neuron_id = i;
-        pre_spike.timestamp = 500 + i * 10;
+        pre_spike.timestamp = 500 + i * 8;  // Shorter interval (8 vs 10) for stronger updates
         pre_spikes.write(pre_spike);
     }
     

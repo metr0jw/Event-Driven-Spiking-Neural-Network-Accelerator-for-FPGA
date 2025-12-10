@@ -123,7 +123,10 @@ void snn_top_hls(
     // AXI4-Lite Control Interface
     ap_uint<32> ctrl_reg,
     ap_uint<32> config_reg,
+    ap_uint<32> mode_reg,
+    ap_uint<32> time_steps_reg,
     learning_params_t learning_params,
+    encoder_config_t encoder_config,
     ap_uint<32> &status_reg,
     ap_uint<32> &spike_count_reg,
     ap_uint<32> &weight_sum_reg,
@@ -131,6 +134,12 @@ void snn_top_hls(
     
     // AXI4-Stream Spike Input (from PS)
     hls::stream<axis_spike_t> &s_axis_spikes,
+    
+    // AXI4-Stream Raw Data Input (for on-chip encoder)
+    hls::stream<input_data_t> &s_axis_data,
+    
+    // AXI4-Stream Weight Write (for loading weights)
+    hls::stream<axis_weight_t> &s_axis_weights,
     
     // AXI4-Stream Spike Output (to PS)
     hls::stream<axis_spike_t> &m_axis_spikes,

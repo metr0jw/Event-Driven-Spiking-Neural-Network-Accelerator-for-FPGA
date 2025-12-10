@@ -233,13 +233,13 @@ Deploy to FPGA for accelerated execution:
 ```python
 # Initialize with bitstream for hardware mode
 accelerator = SNNAccelerator(
-    bitstream_path='snn_accelerator.bit',
+    bitstream_path='outputs/snn_integrated.bit',  # Integrated HLS + RTL build
     simulation_mode=False
 )
 
 # Or switch modes at runtime
 accelerator = SNNAccelerator(simulation_mode=True)
-accelerator.set_mode('hardware', bitstream_path='snn_accelerator.bit')
+accelerator.set_mode('hardware', bitstream_path='outputs/snn_integrated.bit')
 ```
 
 ### Mode Selection Guidelines
@@ -1013,10 +1013,11 @@ After successful build, the following files are generated in `outputs/`:
 
 | File | Description |
 |------|-------------|
-| `snn_accelerator.bit` | FPGA bitstream (3.86 MB) |
-| `snn_accelerator.hwh` | Hardware handoff file for PYNQ overlay |
-| `utilization.txt` | Resource utilization report |
-| `timing.txt` | Timing analysis report |
+| `snn_integrated.bit` | Integrated (HLS + RTL) bitstream (~3.9 MB) |
+| `snn_accelerator_hls.bit` | HLS-only bitstream (alternative) |
+| `integrated_utilization.rpt` | Resource utilization report |
+| `integrated_timing.rpt` | Timing analysis report |
+| `integrated_power.rpt` | Power estimation report |
 
 ### PYNQ Driver Usage
 
@@ -1026,7 +1027,7 @@ The PYNQ driver (`software/python/snn_driver.py`) provides a high-level interfac
 from snn_driver import SNNAccelerator
 
 # Initialize with bitstream
-snn = SNNAccelerator('snn_accelerator.bit')
+snn = SNNAccelerator('outputs/snn_integrated.bit')
 
 # Configure neuron parameters
 snn.configure(

@@ -47,26 +47,77 @@ This project implements a complete event-driven spiking neural network (SNN) acc
 
 ## Build Status
 
-### HLS Synthesis Results (Per-Neuron Trace Architecture)
+### Two Build Options Available
+
+#### 1️⃣ HLS-Only Build ✅ (COMPLETE)
+**Status:** Implementation + Bitstream generation **COMPLETE**  
+**Bitstream:** `outputs/snn_accelerator_hls.bit` (ready for PYNQ-Z2)  
+**Build time:** ~15 minutes  
+
+**Features:**
+- STDP/R-STDP learning engine
+- 4 spike encoders (Rate/Temporal/Phase/Delta-Sigma)
+- 256×256 weight memory
+- AXI4-Lite control + AXI4-Stream spike I/O
+
+#### 2️⃣ Integrated Build (HLS + Verilog RTL) ✅ (COMPLETE)
+**Status:** Implementation + Bitstream generation **COMPLETE**  
+**Bitstream:** `outputs/snn_integrated.bit` (ready for PYNQ-Z2) ⭐  
+**Build Date:** December 10, 2025  
+**Build time:** ~20 minutes  
+
+**Features:**
+- Everything from HLS-Only build
+- **+ Verilog RTL LIF Neuron Array (256 neurons)**
+- **+ Spike Router with AER addressing**
+- **+ AC-based processing (energy-efficient)**
+- **+ Full HLS ↔ RTL bidirectional spike communication**
+- **+ STDP learning feedback path**
+
+**To rebuild integrated system:**
+```bash
+cd hardware/scripts
+./build_integrated.sh
+```
+
+---
+
+### Vivado Implementation Results (Integrated Build v2 - HLS + RTL)
+
+**Bitstream:** `outputs/snn_integrated.bit` (ready for PYNQ-Z2)
 
 | Metric | Value | Notes |
 |--------|-------|-------|
-| **Estimated Fmax** | **138.10 MHz** | Exceeds 100MHz target |
-| Target Clock | 100 MHz (10ns) | PYNQ-Z2 system clock |
-| Timing Slack | +0.06 ns | All timing constraints met |
-| BRAM | 56 (20%) | Weight memory + Per-Neuron traces |
-| FF | 2,850 (2%) | Synchronous registers |
-| LUT | 11,503 (21%) | Combinational logic |
-| DSP | 0 | Shift-based arithmetic (no DSP) |
+| **Achieved Fmax** | **100 MHz** | clk_fpga_0, all timing met |
+| **Timing Slack (WNS)** | **+0.913 ns** | Excellent margin |
+| **Timing Slack (WHS)** | **+0.025 ns** | Hold timing met |
+| **BRAM** | **16.5 (11.79%)** | Optimized with LUT RAM |
+| **FF** | **24,639 (23.16%)** | HLS + RTL registers |
+| **LUT** | **27,205 (51.14%)** | Includes RTL neuron logic |
+| **DSP** | **38 (17.27%)** | Reduced (AC-based neurons) |
+| **Power** | **~2.26 W** | Total (1.53W PS + 0.58W PL) |
+| Neurons | 256 | LIF with configurable parameters |
+| Spike Router | 32 fanout | AER-based routing |
+
+### Build Comparison
+
+| Resource | HLS-Only | Integrated v2 | Change |
+|----------|----------|---------------|--------|
+| LUT | 12,396 (23.30%) | 27,205 (51.14%) | +14,809 |
+| FF | 10,616 (9.98%) | 24,639 (23.16%) | +14,023 |
+| BRAM | 54.5 (38.93%) | 16.5 (11.79%) | **-70%** |
+| DSP | 58 (26.36%) | 38 (17.27%) | **-35%** |
+| WNS | +0.493 ns | +0.913 ns | **+85%** |
 
 ### Memory Architecture
 
 | Storage | Size | Complexity | Description |
 |---------|------|------------|-------------|
-| Weight Memory | 64×64×8bit | O(N×M) | Synaptic weights |
-| Pre-Neuron Traces | 64×(8+16)bit | O(N) | Trace + timestamp |
-| Post-Neuron Traces | 64×(8+16)bit | O(M) | Trace + timestamp |
-| Eligibility Traces | 64×2×8bit | O(N+M) | Pre/Post eligibility |
+| Weight Memory | 256×256×8bit | O(N×M) | Synaptic weights (65536 weights) |
+| Pre-Neuron Traces | 256×(8+16)bit | O(N) | Trace + timestamp per neuron |
+| Post-Neuron Traces | 256×(8+16)bit | O(M) | Trace + timestamp per neuron |
+| Eligibility Traces | 256×2×8bit | O(N+M) | Pre/Post eligibility |
+| Encoder State | 784×32bit | O(K) | Temporal/Phase encoder state (MNIST input) |
 
 ### Verified Simulation Results
 
@@ -76,6 +127,15 @@ This project implements a complete event-driven spiking neural network (SNN) acc
 | Python Unit Tests | 6+ | All Pass ✅ |
 | HW-Python Identity | 6 | All Pass ✅ |
 | HLS Synthesis | 1 | All Pass ✅ |
+| **HLS Unit Tests** | **20** | **17/20 Pass (85%)** ✅ |
+
+#### HLS Test Results Detail
+
+| Module | Tests | Pass Rate | Notes |
+|--------|-------|-----------|-------|
+| Learning Engine | 7 | 6/7 (85.7%) | LTP/LTD working, learning rate optimized |
+| Spike Encoder | 6 | 5/6 (83.3%) | Rate/Temporal/Phase coding functional |
+| Weight Updater | 7 | 6/7 (85.7%) | Decay, bounds checking verified |
 
 ---
 
@@ -531,7 +591,6 @@ python examples/complete_integration_example.py --simulation-mode
 - [User Guide](docs/user_guide.md): Comprehensive usage instructions
 - [API Reference](docs/api_reference.md): Complete API documentation
 - [Developer Guide](docs/developer_guide.md): Development setup and guidelines
-- **[HLS IP Integration Guide](docs/HLS_IP_INTEGRATION_GUIDE.md)**: CLI workflow for updating Vivado IP and register maps
 
 ---
 

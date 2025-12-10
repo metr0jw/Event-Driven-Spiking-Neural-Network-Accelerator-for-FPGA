@@ -49,13 +49,13 @@
 <SummaryOfViolations>
 <IssueType>-</IssueType>
 <ViolationType>-</ViolationType>
-<SourceLocation>src/snn_top_hls.cpp:638</SourceLocation>
+<SourceLocation>src/snn_top_hls.cpp:725</SourceLocation>
 <SummaryOfLoopViolations>
 <INIT_WEIGHT_OUTER_INIT_WEIGHT_INNER>
 <Name>INIT_WEIGHT_OUTER_INIT_WEIGHT_INNER</Name>
 <IssueType>-</IssueType>
 <ViolationType>-</ViolationType>
-<SourceLocation>src/snn_top_hls.cpp:637</SourceLocation>
+<SourceLocation>src/snn_top_hls.cpp:724</SourceLocation>
 </INIT_WEIGHT_OUTER_INIT_WEIGHT_INNER>
 </SummaryOfLoopViolations>
 </SummaryOfViolations>

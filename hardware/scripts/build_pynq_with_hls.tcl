@@ -8,6 +8,15 @@
 # Description   : Builds bitstream integrating HLS-based on-chip learning
 #-----------------------------------------------------------------------------
 
+# Parse command line arguments
+set num_jobs 8
+if {$argc >= 2} {
+    if {[lindex $argv 0] == "-jobs"} {
+        set num_jobs [lindex $argv 1]
+        puts "Using $num_jobs parallel jobs"
+    }
+}
+
 # Get script directory
 set script_dir [file dirname [file normalize [info script]]]
 set proj_root [file normalize "$script_dir/../.."]
@@ -36,10 +45,11 @@ set hls_output_path "$proj_root/hardware/hls/hls_output"
 set hls_ip_path "$hls_ip_dir/snn_top_hls_1_0"
 
 if {[file exists "$hls_output_path/hls/impl/ip"]} {
-    set hls_ip_path "$hls_output_path/hls/impl/ip"
-    puts "  Found v++ HLS IP: $hls_ip_path"
+    set hls_ip_dir "$hls_output_path/hls/impl/ip"
+    puts "  Found v++ HLS IP: $hls_ip_dir"
 } elseif {[file exists $hls_ip_path]} {
-    puts "  Found legacy HLS IP: $hls_ip_path"
+    set hls_ip_dir $hls_ip_path
+    puts "  Found legacy HLS IP: $hls_ip_dir"
 } else {
     puts "ERROR: HLS IP not found"
     puts "Please run HLS synthesis first:"
@@ -71,14 +81,35 @@ puts "Step 3: Adding Verilog RTL sources..."
 
 set rtl_dir "$proj_root/hardware/hdl/rtl"
 
-# Add all Verilog files
-add_files -norecurse [glob -nocomplain $rtl_dir/neurons/*.v]
-add_files -norecurse [glob -nocomplain $rtl_dir/synapses/*.v]
-add_files -norecurse [glob -nocomplain $rtl_dir/layers/*.v]
-add_files -norecurse [glob -nocomplain $rtl_dir/router/*.v]
-add_files -norecurse [glob -nocomplain $rtl_dir/common/*.v]
-# Note: Skip interfaces/ - using HLS instead
-# add_files -norecurse [glob -nocomplain $rtl_dir/interfaces/*.v]
+# Add all Verilog source files to project
+set rtl_files [list]
+lappend rtl_files {*}[glob -nocomplain $rtl_dir/common/*.v]
+lappend rtl_files {*}[glob -nocomplain $rtl_dir/neurons/*.v]
+lappend rtl_files {*}[glob -nocomplain $rtl_dir/synapses/*.v]
+lappend rtl_files {*}[glob -nocomplain $rtl_dir/router/*.v]
+lappend rtl_files {*}[glob -nocomplain $rtl_dir/layers/*.v]
+
+# Add only the specific top module we need
+set top_module_file "$rtl_dir/top/snn_accelerator_hls_top.v"
+if {[file exists $top_module_file]} {
+    lappend rtl_files $top_module_file
+}
+
+# Add axi_hls_wrapper if it exists (needed by snn_accelerator_hls_top)
+set axi_wrapper_file "$rtl_dir/top/axi_hls_wrapper.v"
+if {[file exists $axi_wrapper_file]} {
+    lappend rtl_files $axi_wrapper_file
+}
+
+if {[llength $rtl_files] > 0} {
+    add_files -norecurse $rtl_files
+    puts "  Added [llength $rtl_files] Verilog RTL files:"
+    foreach f $rtl_files {
+        puts "    - [file tail $f]"
+    }
+} else {
+    puts "  WARNING: No Verilog RTL files found in $rtl_dir"
+}
 
 #-----------------------------------------------------------------------------
 # Step 4: Add IP repository
@@ -115,12 +146,31 @@ set_property -dict [list \
     CONFIG.PCW_ENET0_PERIPHERAL_ENABLE {1} \
 ] [get_bd_cells processing_system7_0]
 
-# Add HLS SNN Top-Level IP
-create_bd_cell -type ip -vlnv kwu:hls:snn_top_hls:1.0 snn_top_hls_0
+# Add HLS SNN IP
+create_bd_cell -type ip -vlnv xilinx.com:hls:snn_top_hls:1.0 snn_top_hls_0
 
-# Add AXI Interconnect
+# Add Verilog SNN Core as hierarchy module
+set snn_core_files [list]
+lappend snn_core_files {*}[glob -nocomplain $rtl_dir/common/*.v]
+lappend snn_core_files {*}[glob -nocomplain $rtl_dir/neurons/*.v]
+lappend snn_core_files {*}[glob -nocomplain $rtl_dir/synapses/*.v]
+lappend snn_core_files {*}[glob -nocomplain $rtl_dir/router/*.v]
+
+if {[llength $snn_core_files] > 0} {
+    puts "  Creating SNN Core hierarchy with [llength $snn_core_files] Verilog files"
+    # Files are already added, just need to reference them
+}
+
+# Add AXI Interconnect for control path (GP0)
 create_bd_cell -type ip -vlnv xilinx.com:ip:axi_interconnect:2.1 axi_interconnect_0
 set_property -dict [list CONFIG.NUM_MI {1}] [get_bd_cells axi_interconnect_0]
+
+# Add AXI SmartConnect for data path (HP0) - handles AXI4 to AXI3 conversion
+create_bd_cell -type ip -vlnv xilinx.com:ip:axi_interconnect:2.1 axi_interconnect_hp0
+set_property -dict [list \
+    CONFIG.NUM_SI {2} \
+    CONFIG.NUM_MI {1} \
+] [get_bd_cells axi_interconnect_hp0]
 
 # Add AXI DMA for spike streaming
 create_bd_cell -type ip -vlnv xilinx.com:ip:axi_dma:7.1 axi_dma_0
@@ -148,6 +198,10 @@ connect_bd_net [get_bd_pins processing_system7_0/FCLK_CLK0] \
     [get_bd_pins axi_interconnect_0/ACLK] \
     [get_bd_pins axi_interconnect_0/S00_ACLK] \
     [get_bd_pins axi_interconnect_0/M00_ACLK] \
+    [get_bd_pins axi_interconnect_hp0/ACLK] \
+    [get_bd_pins axi_interconnect_hp0/S00_ACLK] \
+    [get_bd_pins axi_interconnect_hp0/S01_ACLK] \
+    [get_bd_pins axi_interconnect_hp0/M00_ACLK] \
     [get_bd_pins axi_dma_0/s_axi_lite_aclk] \
     [get_bd_pins axi_dma_0/m_axi_mm2s_aclk] \
     [get_bd_pins axi_dma_0/m_axi_s2mm_aclk] \
@@ -166,19 +220,25 @@ connect_bd_net [get_bd_pins proc_sys_reset_0/peripheral_aresetn] \
     [get_bd_pins axi_interconnect_0/ARESETN] \
     [get_bd_pins axi_interconnect_0/S00_ARESETN] \
     [get_bd_pins axi_interconnect_0/M00_ARESETN] \
+    [get_bd_pins axi_interconnect_hp0/ARESETN] \
+    [get_bd_pins axi_interconnect_hp0/S00_ARESETN] \
+    [get_bd_pins axi_interconnect_hp0/S01_ARESETN] \
+    [get_bd_pins axi_interconnect_hp0/M00_ARESETN] \
     [get_bd_pins axi_dma_0/axi_resetn]
 
-# Connect AXI interfaces
+# Connect AXI control interfaces (GP0 path)
 connect_bd_intf_net [get_bd_intf_pins processing_system7_0/M_AXI_GP0] \
     [get_bd_intf_pins axi_interconnect_0/S00_AXI]
 
 connect_bd_intf_net [get_bd_intf_pins axi_interconnect_0/M00_AXI] \
     [get_bd_intf_pins snn_top_hls_0/s_axi_ctrl]
 
-# Connect DMA to HP port for memory access
+# Connect DMA to HP port via AXI Interconnect (for AXI4 to AXI3 conversion)
 connect_bd_intf_net [get_bd_intf_pins axi_dma_0/M_AXI_MM2S] \
-    [get_bd_intf_pins processing_system7_0/S_AXI_HP0]
+    [get_bd_intf_pins axi_interconnect_hp0/S00_AXI]
 connect_bd_intf_net [get_bd_intf_pins axi_dma_0/M_AXI_S2MM] \
+    [get_bd_intf_pins axi_interconnect_hp0/S01_AXI]
+connect_bd_intf_net [get_bd_intf_pins axi_interconnect_hp0/M00_AXI] \
     [get_bd_intf_pins processing_system7_0/S_AXI_HP0]
 
 # Connect AXI-Stream interfaces
@@ -212,6 +272,10 @@ save_bd_design
 make_wrapper -files [get_files $proj_dir/$proj_name.srcs/sources_1/bd/design_1/design_1.bd] -top
 add_files -norecurse $proj_dir/$proj_name.gen/sources_1/bd/design_1/hdl/design_1_wrapper.v
 
+# Set wrapper as top module
+set_property top design_1_wrapper [current_fileset]
+update_compile_order -fileset sources_1
+
 #-----------------------------------------------------------------------------
 # Step 9: Add Constraints
 #-----------------------------------------------------------------------------
@@ -240,9 +304,9 @@ add_files -fileset constrs_1 $xdc_file
 # Step 10: Synthesis
 #-----------------------------------------------------------------------------
 puts ""
-puts "Step 10: Running synthesis..."
+puts "Step 10: Running synthesis with $num_jobs jobs..."
 
-launch_runs synth_1 -jobs 8
+launch_runs synth_1 -jobs $num_jobs
 wait_on_run synth_1
 
 if {[get_property PROGRESS [get_runs synth_1]] != "100%"} {
@@ -254,9 +318,9 @@ if {[get_property PROGRESS [get_runs synth_1]] != "100%"} {
 # Step 11: Implementation
 #-----------------------------------------------------------------------------
 puts ""
-puts "Step 11: Running implementation..."
+puts "Step 11: Running implementation with $num_jobs jobs..."
 
-launch_runs impl_1 -jobs 8
+launch_runs impl_1 -jobs $num_jobs
 wait_on_run impl_1
 
 if {[get_property PROGRESS [get_runs impl_1]] != "100%"} {
@@ -268,9 +332,9 @@ if {[get_property PROGRESS [get_runs impl_1]] != "100%"} {
 # Step 12: Bitstream
 #-----------------------------------------------------------------------------
 puts ""
-puts "Step 12: Generating bitstream..."
+puts "Step 12: Generating bitstream with $num_jobs jobs..."
 
-launch_runs impl_1 -to_step write_bitstream -jobs 8
+launch_runs impl_1 -to_step write_bitstream -jobs $num_jobs
 wait_on_run impl_1
 
 #-----------------------------------------------------------------------------

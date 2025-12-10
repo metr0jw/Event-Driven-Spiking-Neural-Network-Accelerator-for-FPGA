@@ -53,6 +53,34 @@ Detailed system architecture of the Event-Driven SNN FPGA Accelerator.
 4. **Modular Design**: Configurable layers and learning algorithms
 5. **Low Latency**: Microsecond-scale spike processing
 
+### Hardware Specifications
+
+**Target Device**: Xilinx Zynq-7020 (xc7z020clg400-1) on PYNQ-Z2  
+**Build Date**: December 10, 2025  
+**Bitstream**: `outputs/snn_integrated.bit`
+
+**Resource Utilization (Post-Place & Route)**:
+| Resource | Used | Available | Utilization |
+|----------|------|-----------|-------------|
+| **LUT** | 27,205 | 53,200 | 51.14% |
+| **FF** | 24,639 | 106,400 | 23.16% |
+| **BRAM** | 16.5 | 140 | 11.79% |
+| **DSP48E1** | 38 | 220 | 17.27% |
+
+**Clock & Timing**:
+- **Operating Frequency**: 100 MHz (10ns period)
+- **WNS (Setup Slack)**: +0.913 ns ✅
+- **WHS (Hold Slack)**: +0.025 ns ✅
+- **All timing constraints met**
+- **Interfaces**: AXI4-Lite (control), AXI4-Stream (data)
+
+**Processing Characteristics**:
+- **Neuron Capacity**: 256 neurons (MAX_NEURONS)
+- **Synapse Capacity**: 65,536 connections (256×256)
+- **Encoder Throughput**: ~1610 cycles per encoding operation
+- **Learning Update Latency**: 142 cycles (STDP), 68097 cycles (R-STDP with full sweep)
+- **Spike Processing**: Event-driven, ~16 cycle initiation interval
+
 ## Hardware Architecture
 
 ### Core Components

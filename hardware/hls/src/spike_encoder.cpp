@@ -156,12 +156,16 @@ void encode_phase(
 ) {
     #pragma HLS INLINE
     
-    // Update phase accumulator
-    ap_uint<16> phase_increment = (value * config.phase_scale) >> 4;
+    // Use a reasonable phase scale if not configured
+    ap_uint<16> scale = (config.phase_scale > 0) ? config.phase_scale : ap_uint<16>(64);
+    ap_uint<16> threshold = (config.phase_threshold > 0) ? config.phase_threshold : ap_uint<16>(1024);
+    
+    // Update phase accumulator (higher value = faster accumulation = more spikes)
+    ap_uint<16> phase_increment = (value * scale) >> 4;
     phase_acc += phase_increment;
     
     // Check for phase wrap (spike generation)
-    if (phase_acc >= config.phase_threshold) {
+    if (phase_acc >= threshold) {
         spike_event_t spike;
         spike.neuron_id = channel;
         spike.timestamp = time;
@@ -170,7 +174,7 @@ void encode_phase(
         spikes_out.write(spike);
         spike_counter++;
         
-        phase_acc -= config.phase_threshold;
+        phase_acc -= threshold;
     }
 }
 
