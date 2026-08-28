@@ -84,3 +84,8 @@ tests/
 ## License
 
 MIT License - see [LICENSE](LICENSE)
+
+## Successor
+
+Active development continues in [SpikeMold](https://github.com/jiwoonl/SpikeMold).
+This repository remains the publication V1 source.
